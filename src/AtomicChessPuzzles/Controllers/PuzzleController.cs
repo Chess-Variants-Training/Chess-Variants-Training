@@ -8,6 +8,7 @@ namespace AtomicChessPuzzles.Controllers
 {
     public class PuzzleController : Controller
     {
+        [Route("Puzzle")]
         public IActionResult Index()
         {
             return View();

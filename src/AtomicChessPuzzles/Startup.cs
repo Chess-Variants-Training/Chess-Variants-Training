@@ -22,11 +22,8 @@ namespace AtomicChessPuzzles
         public void Configure(IApplicationBuilder app)
         {
             app.UseIISPlatformHandler();
-
-            app.UseMvc(routes =>
-            {
-                routes.MapRoute("default", "{controller=Home}/{action=Index}");
-            });
+            app.UseStaticFiles();
+            app.UseMvc();
         }
 
         // Entry point for the application.

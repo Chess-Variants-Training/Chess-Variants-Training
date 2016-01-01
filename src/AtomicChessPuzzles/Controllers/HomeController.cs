@@ -11,6 +11,7 @@ namespace AtomicChessPuzzles
     public class HomeController : Controller
     {
         // GET: /<controller>/
+        [Route("/")]
         public IActionResult Index()
         {
             return View();
