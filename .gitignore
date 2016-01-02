@@ -2,3 +2,4 @@
 artifacts/
 *.xproj.user
 src/AtomicChessPuzzles/wwwroot/scripts/chessground.min.js
+data/
