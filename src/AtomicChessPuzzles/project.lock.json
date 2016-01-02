@@ -1266,6 +1266,74 @@
           "lib/net451/Microsoft.Extensions.WebEncoders.Core.dll": {}
         }
       },
+      "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel.Interfaces": "1.0.0-beta4",
+          "Microsoft.Framework.Runtime.Interfaces": "1.0.0-beta4"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        }
+      },
+      "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        }
+      },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -2661,6 +2729,74 @@
         },
         "runtime": {
           "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.Core.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel.Interfaces": "1.0.0-beta4",
+          "Microsoft.Framework.Runtime.Interfaces": "1.0.0-beta4",
+          "System.Collections": "4.0.10-beta-22816",
+          "System.Diagnostics.Debug": "4.0.10-beta-22816",
+          "System.IO.FileSystem": "4.0.0-beta-22816",
+          "System.Linq": "4.0.0-beta-22816",
+          "System.Resources.ResourceManager": "4.0.0-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Runtime.InteropServices": "4.0.20-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10-beta-22816",
+          "System.Diagnostics.Debug": "4.0.10-beta-22816",
+          "System.IO.FileSystem": "4.0.0-beta-22816",
+          "System.Linq": "4.0.0-beta-22816",
+          "System.Resources.ResourceManager": "4.0.0-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Runtime.InteropServices": "4.0.20-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        }
+      },
+      "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "System.ComponentModel": "4.0.0-beta-22816",
+          "System.IO": "4.0.10-beta-22816",
+          "System.Reflection": "4.0.10-beta-22816",
+          "System.Runtime": "4.0.20-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Threading.Tasks": "4.0.10-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll": {}
         }
       },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
@@ -4871,6 +5007,74 @@
           "lib/net451/Microsoft.Extensions.WebEncoders.Core.dll": {}
         }
       },
+      "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel.Interfaces": "1.0.0-beta4",
+          "Microsoft.Framework.Runtime.Interfaces": "1.0.0-beta4"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        }
+      },
+      "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        }
+      },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -6408,6 +6612,74 @@
           "lib/net451/Microsoft.Extensions.WebEncoders.Core.dll": {}
         }
       },
+      "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel.Interfaces": "1.0.0-beta4",
+          "Microsoft.Framework.Runtime.Interfaces": "1.0.0-beta4"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        }
+      },
+      "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "frameworkAssemblies": [
+          "Microsoft.CSharp",
+          "mscorlib",
+          "System",
+          "System.Core"
+        ],
+        "compile": {
+          "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        }
+      },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
         "type": "package",
         "frameworkAssemblies": [
@@ -7806,6 +8078,74 @@
         },
         "runtime": {
           "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.Core.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel.Interfaces": "1.0.0-beta4",
+          "Microsoft.Framework.Runtime.Interfaces": "1.0.0-beta4",
+          "System.Collections": "4.0.10-beta-22816",
+          "System.Diagnostics.Debug": "4.0.10-beta-22816",
+          "System.IO.FileSystem": "4.0.0-beta-22816",
+          "System.Linq": "4.0.0-beta-22816",
+          "System.Resources.ResourceManager": "4.0.0-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Runtime.InteropServices": "4.0.20-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10-beta-22816",
+          "System.Diagnostics.Debug": "4.0.10-beta-22816",
+          "System.IO.FileSystem": "4.0.0-beta-22816",
+          "System.Linq": "4.0.0-beta-22816",
+          "System.Resources.ResourceManager": "4.0.0-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Runtime.InteropServices": "4.0.20-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        }
+      },
+      "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "System.ComponentModel": "4.0.0-beta-22816",
+          "System.IO": "4.0.10-beta-22816",
+          "System.Reflection": "4.0.10-beta-22816",
+          "System.Runtime": "4.0.20-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Threading.Tasks": "4.0.10-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll": {}
         }
       },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
@@ -10285,6 +10625,74 @@
           "lib/dotnet5.4/Microsoft.Extensions.WebEncoders.Core.dll": {}
         }
       },
+      "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel.Interfaces": "1.0.0-beta4",
+          "Microsoft.Framework.Runtime.Interfaces": "1.0.0-beta4",
+          "System.Collections": "4.0.10-beta-22816",
+          "System.Diagnostics.Debug": "4.0.10-beta-22816",
+          "System.IO.FileSystem": "4.0.0-beta-22816",
+          "System.Linq": "4.0.0-beta-22816",
+          "System.Resources.ResourceManager": "4.0.0-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Runtime.InteropServices": "4.0.20-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "System.Collections": "4.0.10-beta-22816",
+          "System.Diagnostics.Debug": "4.0.10-beta-22816",
+          "System.IO.FileSystem": "4.0.0-beta-22816",
+          "System.Linq": "4.0.0-beta-22816",
+          "System.Resources.ResourceManager": "4.0.0-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Runtime.InteropServices": "4.0.20-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.dll": {}
+        }
+      },
+      "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "Microsoft.Framework.ConfigurationModel": "1.0.0-beta4",
+          "Newtonsoft.Json": "6.0.6"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.dll": {}
+        }
+      },
+      "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
+        "type": "package",
+        "dependencies": {
+          "System.ComponentModel": "4.0.0-beta-22816",
+          "System.IO": "4.0.10-beta-22816",
+          "System.Reflection": "4.0.10-beta-22816",
+          "System.Runtime": "4.0.20-beta-22816",
+          "System.Runtime.Extensions": "4.0.10-beta-22816",
+          "System.Threading.Tasks": "4.0.10-beta-22816"
+        },
+        "compile": {
+          "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        },
+        "runtime": {
+          "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll": {}
+        }
+      },
       "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -12664,6 +13072,72 @@
         "Microsoft.Extensions.WebEncoders.Core.1.0.0-rc1-final.nupkg",
         "Microsoft.Extensions.WebEncoders.Core.1.0.0-rc1-final.nupkg.sha512",
         "Microsoft.Extensions.WebEncoders.Core.nuspec"
+      ]
+    },
+    "Microsoft.Framework.ConfigurationModel/1.0.0-beta4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "VD5MhmQRhYVfxyDs1fyruPTj3pYwLMV5dXJkPUVg1KKbJ9qr/tEn3frJA1NN1jdeVBt1RrW5FXr+wWG9YoO9Yg==",
+      "files": [
+        "lib/dnx451/Microsoft.Framework.ConfigurationModel.dll",
+        "lib/dnx451/Microsoft.Framework.ConfigurationModel.xml",
+        "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.dll",
+        "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.xml",
+        "lib/net45/Microsoft.Framework.ConfigurationModel.dll",
+        "lib/net45/Microsoft.Framework.ConfigurationModel.xml",
+        "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.dll",
+        "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.xml",
+        "Microsoft.Framework.ConfigurationModel.1.0.0-beta4.nupkg",
+        "Microsoft.Framework.ConfigurationModel.1.0.0-beta4.nupkg.sha512",
+        "Microsoft.Framework.ConfigurationModel.nuspec"
+      ]
+    },
+    "Microsoft.Framework.ConfigurationModel.Interfaces/1.0.0-beta4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "lU9+gyEz+jSeR+QsZxZtDf0U2DS/pl3I8/m7YeKjHMnjqoxUKFbSOpzegll7bhq0Alw7/8gF2Byrcy+PlzRc/g==",
+      "files": [
+        "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.dll",
+        "lib/dnx451/Microsoft.Framework.ConfigurationModel.Interfaces.xml",
+        "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.dll",
+        "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Interfaces.xml",
+        "lib/net45/Microsoft.Framework.ConfigurationModel.Interfaces.dll",
+        "lib/net45/Microsoft.Framework.ConfigurationModel.Interfaces.xml",
+        "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.Interfaces.dll",
+        "lib/portable-net451+win81+wpa81/Microsoft.Framework.ConfigurationModel.Interfaces.xml",
+        "Microsoft.Framework.ConfigurationModel.Interfaces.1.0.0-beta4.nupkg",
+        "Microsoft.Framework.ConfigurationModel.Interfaces.1.0.0-beta4.nupkg.sha512",
+        "Microsoft.Framework.ConfigurationModel.Interfaces.nuspec"
+      ]
+    },
+    "Microsoft.Framework.ConfigurationModel.Json/1.0.0-beta4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "ygdShf5lzRsqe7/pMNSaiq6AcAy0eIhp8WFUtYfqQnsxhMJFcw/VlIFvie8+DkYhacdmGkXTF4OGopjjwfg02A==",
+      "files": [
+        "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.dll",
+        "lib/dnx451/Microsoft.Framework.ConfigurationModel.Json.xml",
+        "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.dll",
+        "lib/dnxcore50/Microsoft.Framework.ConfigurationModel.Json.xml",
+        "lib/net45/Microsoft.Framework.ConfigurationModel.Json.dll",
+        "lib/net45/Microsoft.Framework.ConfigurationModel.Json.xml",
+        "Microsoft.Framework.ConfigurationModel.Json.1.0.0-beta4.nupkg",
+        "Microsoft.Framework.ConfigurationModel.Json.1.0.0-beta4.nupkg.sha512",
+        "Microsoft.Framework.ConfigurationModel.Json.nuspec"
+      ]
+    },
+    "Microsoft.Framework.Runtime.Interfaces/1.0.0-beta4": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "RrZdqvUm8QbgxnZQuafYGo6NezoKx7VqAfAtHVzoKBm3GSV8xlPh90u1fsGhNCv37xJNk5PuRCa4Mq27ko7pLw==",
+      "files": [
+        "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.dll",
+        "lib/dnx451/Microsoft.Framework.Runtime.Interfaces.xml",
+        "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.dll",
+        "lib/dnxcore50/Microsoft.Framework.Runtime.Interfaces.xml",
+        "Microsoft.Framework.Runtime.Interfaces.1.0.0-beta4.nupkg",
+        "Microsoft.Framework.Runtime.Interfaces.1.0.0-beta4.nupkg.sha512",
+        "Microsoft.Framework.Runtime.Interfaces.nuspec"
       ]
     },
     "Microsoft.Net.Http.Headers/1.0.0-rc1-final": {
@@ -16488,7 +16962,8 @@
       "Microsoft.AspNet.IISPlatformHandler >= 1.0.0-rc1-final",
       "Microsoft.AspNet.Mvc >= 6.0.0-rc1-final",
       "Microsoft.AspNet.Server.Kestrel >= 1.0.0-rc1-final",
-      "Microsoft.AspNet.StaticFiles >= 1.0.0-rc1-final"
+      "Microsoft.AspNet.StaticFiles >= 1.0.0-rc1-final",
+      "Microsoft.Framework.ConfigurationModel.Json >= 1.0.0-beta4"
     ],
     "DNX,Version=v4.5.1": [
       "MongoDB.Driver >= 2.2.0",
