@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
+using AtomicChessPuzzles.DbRepositories;
 
 namespace AtomicChessPuzzles
 {
@@ -9,6 +10,7 @@ namespace AtomicChessPuzzles
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+            services.AddSingleton<IUserRepository, UserRepository>();
         }
 
         public void Configure(IApplicationBuilder app)
