@@ -42,8 +42,8 @@ namespace AtomicChessPuzzles.DbRepositories
         public User FindByUsername(string name)
         {
             var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == name));
-            if (found == null || !found.Any()) return null;
-            return found.First();
+            if (found == null) return null;
+            return found.FirstOrDefault();
         }
     }
 }

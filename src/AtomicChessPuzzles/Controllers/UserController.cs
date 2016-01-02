@@ -45,7 +45,13 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/Profile/{name}", Name = "Profile")]
         public IActionResult Profile(string name)
         {
-            return View();
+            Models.User user = userRepository.FindByUsername(name);
+            if (user == null)
+            {
+                return View(new ViewModels.User("Not found"));
+            }
+            ViewModels.User userViewModel = new ViewModels.User(user);
+            return View(userViewModel);
         }
     }
 }

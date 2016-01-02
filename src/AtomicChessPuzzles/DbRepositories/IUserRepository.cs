@@ -9,5 +9,7 @@ namespace AtomicChessPuzzles.DbRepositories
         void Update(User user);
 
         void Delete(User user);
+
+        User FindByUsername(string name);
     }
 }
