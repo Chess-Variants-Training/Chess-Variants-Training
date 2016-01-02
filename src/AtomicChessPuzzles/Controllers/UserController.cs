@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using AtomicChessPuzzles.DbRepositories;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Http.Internal;
-using AtomicChessPuzzles.DbRepositories;
+using System;
 
 namespace AtomicChessPuzzles.Controllers
 {
@@ -27,9 +23,6 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/New", Name = "NewUser")]
         public IActionResult New(string username, string email, string password)
         {
-            /*string username = Request["username"];
-            string email = Request["email"];
-            string password = Request["password"];*/
             Tuple<string, string> hashAndSalt = PasswordUtilities.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
