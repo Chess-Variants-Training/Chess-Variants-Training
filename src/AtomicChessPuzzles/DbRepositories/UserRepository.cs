@@ -38,5 +38,12 @@ namespace AtomicChessPuzzles.DbRepositories
         {
             userCollection.DeleteOne(new ExpressionFilterDefinition<User>(x => x.Username == user.Username));
         }
+
+        public User FindByUsername(string name)
+        {
+            var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == name));
+            if (found == null || !found.Any()) return null;
+            return found.First();
+        }
     }
 }
