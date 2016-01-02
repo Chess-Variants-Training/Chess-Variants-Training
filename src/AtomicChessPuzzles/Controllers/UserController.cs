@@ -26,11 +26,7 @@ namespace AtomicChessPuzzles.Controllers
             Tuple<string, string> hashAndSalt = PasswordUtilities.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
-            Models.User user = new Models.User();
-            user.Username = username;
-            user.Email = email;
-            user.PasswordHash = hash;
-            user.Salt = salt;
+            Models.User user = new Models.User(username, email, hash, salt);
             bool added = userRepository.Add(user);
             return RedirectToAction("Profile", new { name = username });
         }

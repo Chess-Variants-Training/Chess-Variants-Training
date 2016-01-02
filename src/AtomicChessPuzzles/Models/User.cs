@@ -18,5 +18,13 @@ namespace AtomicChessPuzzles.Models
 
         [BsonElement("salt")]
         public string Salt { get; set; }
+
+        public User(string username, string email, string passwordHash, string salt)
+        {
+            Username = username;
+            Email = email;
+            PasswordHash = passwordHash;
+            Salt = salt;
+        }
     }
 }
