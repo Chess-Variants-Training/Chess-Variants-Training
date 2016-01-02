@@ -1,6 +1,8 @@
 ﻿{
   "mongo": {
     "mongoconnectionstring": "mongodb://localhost:27017",
-    "database": "atomicchesspuzzles-dev"
+    "database": "atomicchesspuzzles-dev",
+    "usercollectionname": "users",
+    "puzzlecollectionname": "puzzles"
   }
 }
