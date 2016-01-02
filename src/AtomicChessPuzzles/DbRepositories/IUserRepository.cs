@@ -4,7 +4,7 @@ namespace AtomicChessPuzzles.DbRepositories
 {
     public interface IUserRepository
     {
-        void Add(User user);
+        bool Add(User user);
 
         void Update(User user);
 

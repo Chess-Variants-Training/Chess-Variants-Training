@@ -1,11 +1,11 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using MongoDB.Bson;
 
 namespace AtomicChessPuzzles.Models
 {
     public class User
     {
-        [BsonElement("_id")]
-        public int ID { get; set; }
+        public ObjectId Id { get; set; }
 
         [BsonElement("username")]
         public string Username { get; set; }

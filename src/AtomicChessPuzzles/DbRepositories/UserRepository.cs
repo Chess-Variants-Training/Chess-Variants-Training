@@ -1,5 +1,6 @@
 ﻿using MongoDB.Driver;
 using AtomicChessPuzzles.Models;
+using MongoDB.Bson;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -19,19 +20,22 @@ namespace AtomicChessPuzzles.DbRepositories
             userCollection = client.GetDatabase(settings.Database).GetCollection<User>(settings.UserCollectionName);
         }
 
-        public void Add(User user)
+        public bool Add(User user)
         {
+            bool exists = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == user.Username)).Any();
+            if (exists) return false;
             userCollection.InsertOne(user);
+            return true;
         }
 
         public void Update(User user)
         {
-            userCollection.ReplaceOne(new ExpressionFilterDefinition<User>(x => x.ID == user.ID), user);
+            userCollection.ReplaceOne(new ExpressionFilterDefinition<User>(x => x.Username == user.Username), user);
         }
 
         public void Delete(User user)
         {
-            userCollection.DeleteOne(new ExpressionFilterDefinition<User>(x => x.ID == user.ID));
+            userCollection.DeleteOne(new ExpressionFilterDefinition<User>(x => x.Username == user.Username));
         }
     }
 }
