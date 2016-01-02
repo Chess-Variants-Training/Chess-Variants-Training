@@ -24,7 +24,7 @@ namespace AtomicChessPuzzles.DbRepositories
         public bool Add(User user)
         {
             var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == user.Username));
-            if (found == null || !found.Any()) return false;
+            if (found == null || found.Any()) return false;
             userCollection.InsertOne(user);
             return true;
         }
