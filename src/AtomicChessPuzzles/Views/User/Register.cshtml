@@ -1,0 +1,10 @@
+﻿@{ 
+    ViewBag.Title = "Register for an account";
+}
+@using System.Web.Routing
+@{ Html.BeginForm("New", "User", FormMethod.Post); }
+<input type="text" placeholder="Username" name="username">
+<input type="password" name="password">
+<input type="text" placeholder="Email" name="email">
+<input type="submit" value="Submit">
+@{ Html.EndForm(); }
