@@ -6,7 +6,6 @@ namespace AtomicChessPuzzles.DbRepositories
     public class UserRepository : IUserRepository
     {
         MongoSettings settings;
-        IMongoDatabase database;
         IMongoCollection<User> userCollection;
 
         public UserRepository()
