@@ -19,6 +19,9 @@
     "dnx451": {
       "frameworkAssemblies": {
         "System.Web": "4.0.0.0"
+      },
+      "dependencies": {
+        "MongoDB.Driver": "2.2.0"
       }
     },
     "dnxcore50": { }
