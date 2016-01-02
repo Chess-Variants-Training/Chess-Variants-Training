@@ -13,9 +13,13 @@ namespace AtomicChessPuzzles
             services.AddSingleton<IUserRepository, UserRepository>();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             app.UseIISPlatformHandler();
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
             app.UseStaticFiles();
             app.UseMvc();
         }
