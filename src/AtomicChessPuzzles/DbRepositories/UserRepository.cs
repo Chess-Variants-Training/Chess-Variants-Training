@@ -12,9 +12,10 @@ namespace AtomicChessPuzzles.DbRepositories
         public UserRepository()
         {
             settings = new MongoSettings();
+            GetCollection();
         }
 
-        private void GetDatabase()
+        private void GetCollection()
         {
             MongoClient client = new MongoClient(settings.MongoConnectionString);
             userCollection = client.GetDatabase(settings.Database).GetCollection<User>(settings.UserCollectionName);
@@ -22,8 +23,8 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public bool Add(User user)
         {
-            bool exists = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == user.Username)).Any();
-            if (exists) return false;
+            var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == user.Username));
+            if (found == null || !found.Any()) return false;
             userCollection.InsertOne(user);
             return true;
         }
