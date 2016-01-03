@@ -1,0 +1,12 @@
+﻿@{ 
+    ViewBag.Title = "Edit your profile";
+}
+@model AtomicChessPuzzles.Models.User
+<h1>Edit your profile</h1>
+@{ Html.BeginForm("EditPost", "User", FormMethod.Post); }
+Username: @Model.Username<br>
+Email: <input type="text" name="email" value="@Model.Email"><br>
+About you:<br>
+<textarea name="about"></textarea><br>
+<input type="submit" value="Submit">
+@{ Html.EndForm(); }

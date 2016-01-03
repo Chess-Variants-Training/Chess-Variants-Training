@@ -76,5 +76,33 @@ namespace AtomicChessPuzzles.Controllers
             HttpContext.Session.Remove("user");
             return RedirectToAction("Index", "Home");
         }
+
+        [HttpGet]
+        [Route("/User/Edit")]
+        public IActionResult Edit()
+        {
+            string username = HttpContext.Session.GetString("user");
+            if (username == null)
+            {
+                return RedirectToAction("Login");
+            }
+            return View(userRepository.FindByUsername(username));
+        }
+
+        [HttpPost]
+        [Route("/User/Edit", Name = "EditPost")]
+        public IActionResult Edit(string email, string about)
+        {
+            string username = HttpContext.Session.GetString("user");
+            if (username == null)
+            {
+                return RedirectToAction("Login");
+            }
+            Models.User user = userRepository.FindByUsername(username);
+            user.Email = email;
+            user.About = about;
+            userRepository.Update(user);
+            return RedirectToAction("Profile", new { name = user.Username });
+        }
     }
 }
