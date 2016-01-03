@@ -11,6 +11,8 @@ namespace AtomicChessPuzzles
         {
             services.AddMvc();
             services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddCaching();
+            services.AddSession();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
@@ -20,6 +22,7 @@ namespace AtomicChessPuzzles
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseSession();
             app.UseStaticFiles();
             app.UseMvc();
         }

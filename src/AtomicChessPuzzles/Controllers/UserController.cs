@@ -1,5 +1,6 @@
 ﻿using AtomicChessPuzzles.DbRepositories;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Http;
 using System;
 
 namespace AtomicChessPuzzles.Controllers
@@ -41,6 +42,39 @@ namespace AtomicChessPuzzles.Controllers
             }
             ViewModels.User userViewModel = new ViewModels.User(user);
             return View(userViewModel);
+        }
+
+        [HttpGet]
+        [Route("/User/Login", Name = "Login")]
+        public IActionResult Login()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/User/Login", Name = "LoginPost")]
+        public IActionResult Login(string username, string password)
+        {
+            Models.User user = userRepository.FindByUsername(username);
+            if (user == null)
+            {
+                return RedirectToAction("Login");
+            }
+            string salt = user.Salt;
+            string hash = PasswordUtilities.HashPassword(password, salt);
+            if (hash != user.PasswordHash)
+            {
+                return RedirectToAction("Login");
+            }
+            HttpContext.Session.SetString("user", user.Username);
+            return RedirectToAction("Profile", new { name = username });
+        }
+
+        [Route("/User/Logout")]
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Remove("user");
+            return RedirectToAction("Index", "Home");
         }
     }
 }

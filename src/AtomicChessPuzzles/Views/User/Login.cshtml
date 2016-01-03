@@ -1,0 +1,8 @@
+﻿@{ 
+    ViewBag.Title = "Log in to Atomic Chess Puzzles";
+}
+@{ Html.BeginForm("LoginPost", "User", FormMethod.Post); }
+<input type="text" placeholder="Username" name="username">
+<input type="password" name="password">
+<input type="submit" value="Submit">
+@{ Html.EndForm(); }
