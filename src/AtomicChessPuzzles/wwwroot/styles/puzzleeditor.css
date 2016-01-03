@@ -1,0 +1,11 @@
+﻿div.selectable {
+    display: inline-block;
+    width: 1.5vw;
+    height: 1.5vw;
+    padding: 10px;
+    margin: 5px;
+}
+
+div.selected {
+    background-color: aquamarine;
+}

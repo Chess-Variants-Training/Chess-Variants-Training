@@ -1,0 +1,26 @@
+﻿@{ 
+    ViewBag.Title = "Puzzle editor";
+}
+@section AddToHead {
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/puzzleeditor.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
+<link rel="stylesheet" href="@Url.Content("~/styles/puzzleeditor.css")" type="text/css">
+}
+<p>Step one: set up the board.</p>
+<div id="chessground" class="brown"></div>
+<div class="selectable" data-color="white" data-role="pawn"></div>
+<div class="selectable" data-color="white" data-role="knight"></div>
+<div class="selectable" data-color="white" data-role="bishop"></div>
+<div class="selectable" data-color="white" data-role="rook"></div>
+<div class="selectable" data-color="white" data-role="queen"></div>
+<div class="selectable" data-color="white" data-role="king"></div>
+<a href="#" id="clearselection">Clear selection</a><br>
+<div class="selectable" data-color="black" data-role="pawn"></div>
+<div class="selectable" data-color="black" data-role="knight"></div>
+<div class="selectable" data-color="black" data-role="bishop"></div>
+<div class="selectable" data-color="black" data-role="rook"></div>
+<div class="selectable" data-color="black" data-role="queen"></div>
+<div class="selectable" data-color="black" data-role="king"></div>
+<p>FEN: <code id="fen"></code></p>

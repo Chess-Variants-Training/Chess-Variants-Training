@@ -3,6 +3,10 @@
 <head>
     <meta charset="utf-8">
     <title>@ViewBag.Title</title>
+    @if (IsSectionDefined("AddToHead"))
+    {
+        RenderSection("AddToHead", false);
+    }
 </head>
 <body>
     @RenderBody()

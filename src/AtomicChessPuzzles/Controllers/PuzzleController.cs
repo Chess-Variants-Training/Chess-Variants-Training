@@ -13,5 +13,11 @@ namespace AtomicChessPuzzles.Controllers
         {
             return View();
         }
+
+        [Route("Puzzle/Editor")]
+        public IActionResult Editor()
+        {
+            return View();
+        }
     }
 }

@@ -1,0 +1,74 @@
+﻿/* based on https://github.com/ornicar/chessground/blob/master/assets/theme.css but modified a lot */
+
+#chessground {
+    width: 30vw;
+    height: 30vw;
+}
+
+.brown .cg-board {
+    background-image: url('/images/board/brown.png');
+}
+
+piece.pawn.white, div.selectable[data-color="white"][data-role="pawn"] {
+    background-image: url('/images/pieces/cburnett/wP.svg')
+}
+
+piece.bishop.white, div.selectable[data-color="white"][data-role="bishop"] {
+    background-image: url('/images/pieces/cburnett/wB.svg');
+}
+
+piece.knight.white, div.selectable[data-color="white"][data-role="knight"] {
+    background-image: url('/images/pieces/cburnett/wN.svg');
+}
+
+piece.rook.white, div.selectable[data-color="white"][data-role="rook"] {
+    background-image: url('/images/pieces/cburnett/wR.svg');
+}
+
+piece.queen.white, div.selectable[data-color="white"][data-role="queen"] {
+    background-image: url('/images/pieces/cburnett/wQ.svg');
+}
+
+piece.king.white, div.selectable[data-color="white"][data-role="king"] {
+    background-image: url('/images/pieces/cburnett/wK.svg');
+}
+
+piece.pawn.black, div.selectable[data-color="black"][data-role="pawn"] {
+    background-image: url('/images/pieces/cburnett/bP.svg');
+}
+
+piece.bishop.black, div.selectable[data-color="black"][data-role="bishop"] {
+    background-image: url('/images/pieces/cburnett/bB.svg');
+}
+
+piece.knight.black, div.selectable[data-color="black"][data-role="knight"] {
+    background-image: url('/images/pieces/cburnett/bN.svg');
+}
+
+piece.rook.black, div.selectable[data-color="black"][data-role="rook"] {
+    background-image: url('/images/pieces/cburnett/bR.svg');
+}
+
+piece.queen.black, div.selectable[data-color="black"][data-role="queen"] {
+    background-image: url('/images/pieces/cburnett/bQ.svg');
+}
+
+piece.king.black, div.selectable[data-color="black"][data-role="king"] {
+    background-image: url('/images/pieces/cburnett/bK.svg');
+}
+
+.cg-board-wrap svg {
+    opacity: 0.8;
+    overflow: hidden;
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2;
+}
+
+    .cg-board-wrap svg * {
+        transition: 0.35s;
+    }
