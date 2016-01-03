@@ -1,5 +1,6 @@
 ﻿using AtomicChessPuzzles.Models;
 using MongoDB.Driver;
+using System;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -24,7 +25,14 @@ namespace AtomicChessPuzzles.DbRepositories
         {
             var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == user.Username));
             if (found != null && found.Any()) return false;
-            userCollection.InsertOne(user);
+            try
+            {
+                userCollection.InsertOne(user);
+            }
+            catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
+            {
+                return false;
+            }
             return true;
         }
 

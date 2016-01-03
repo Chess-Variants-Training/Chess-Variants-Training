@@ -5,9 +5,7 @@ namespace AtomicChessPuzzles.Models
 {
     public class User
     {
-        public ObjectId Id { get; set; }
-
-        [BsonElement("username")]
+        [BsonElement("_id")]
         public string Username { get; set; }
 
         [BsonElement("email")]
