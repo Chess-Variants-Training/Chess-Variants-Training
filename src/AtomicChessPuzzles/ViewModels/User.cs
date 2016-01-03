@@ -18,6 +18,7 @@
         {
             get
             {
+                if (PuzzlesMade == 0) return 0;
                 return PuzzlesCorrect / (float)PuzzlesMade;
             }
         }
