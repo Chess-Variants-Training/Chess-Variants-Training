@@ -1,6 +1,5 @@
-﻿using MongoDB.Driver;
-using AtomicChessPuzzles.Models;
-using MongoDB.Bson;
+﻿using AtomicChessPuzzles.Models;
+using MongoDB.Driver;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
