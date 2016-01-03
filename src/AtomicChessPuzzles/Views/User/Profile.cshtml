@@ -4,3 +4,11 @@
 @model AtomicChessPuzzles.ViewModels.User
 
 <h1>@Model.Username</h1>
+About:
+<p>
+    @Model.About
+</p>
+<p>
+    Puzzles made: @Model.PuzzlesMade<br />
+    Percentage correct: @Model.PercentageCorrect %
+</p>
