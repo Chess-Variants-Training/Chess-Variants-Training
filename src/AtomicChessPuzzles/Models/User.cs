@@ -26,12 +26,13 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("puzzleswrong")]
         public int PuzzlesWrong { get; set; }
 
-        public User(string username, string email, string passwordHash, string salt, int puzzlesCorrect, int puzzlesWrong)
+        public User(string username, string email, string passwordHash, string salt, string about, int puzzlesCorrect, int puzzlesWrong)
         {
             Username = username;
             Email = email;
             PasswordHash = passwordHash;
             Salt = salt;
+            About = about;
             PuzzlesCorrect = puzzlesCorrect;
             PuzzlesWrong = puzzlesWrong;
         }
