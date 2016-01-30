@@ -1,4 +1,4 @@
-﻿@{ 
+﻿@{
     ViewBag.Title = "Puzzle editor";
 }
 @section AddToHead {
@@ -6,7 +6,7 @@
     <script type="text/javascript" src="@Url.Content("~/scripts/puzzleeditor.js")"></script>
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
-<link rel="stylesheet" href="@Url.Content("~/styles/puzzleeditor.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/puzzleeditor.css")" type="text/css">
 }
 <p>Step one: set up the board.</p>
 <div id="chessground" class="brown"></div>
@@ -23,4 +23,15 @@
 <div class="selectable" data-color="black" data-role="rook"></div>
 <div class="selectable" data-color="black" data-role="queen"></div>
 <div class="selectable" data-color="black" data-role="king"></div>
+<p>
+    <input type="radio" name="whoseturn" value="white" id="whitetomove" checked>White to move
+    <input type="radio" name="whoseturn" value="black">Black to move
+</p>
+<p>
+    <input type="checkbox" id="whitecastlekingside" name="castling" checked>White O-O
+    <input type="checkbox" id="whitecastlequeenside" name="castling" checked>White O-O-O
+    <br>
+    <input type="checkbox" id="blackcastlekingside" name="castling" checked>Black O-O
+    <input type="checkbox" id="blackcastlequeenside" name="castling" checked>Black O-O-O
+</p>
 <p>FEN: <code id="fen"></code></p>

@@ -1,5 +1,18 @@
 ﻿function updateFen() {
-    document.getElementById("fen").innerHTML = window.ground.getFen();
+    var fenStr = window.ground.getFen();
+    if (document.getElementById("whitetomove").checked) {
+        fenStr += " w ";
+    } else {
+        fenStr += " b ";
+    }
+    var castlingStr = "";
+    if (document.getElementById("whitecastlekingside").checked) castlingStr += "K";
+    if (document.getElementById("whitecastlequeenside").checked) castlingStr += "Q";
+    if (document.getElementById("blackcastlekingside").checked) castlingStr += "k";
+    if (document.getElementById("blackcastlequeenside").checked) castlingStr += "q";
+    if (castlingStr === "") castlingStr = "-";
+    fenStr += castlingStr;
+    document.getElementById("fen").innerHTML = fenStr;
 }
 
 function dropPiece(dest) {
@@ -63,4 +76,14 @@ window.addEventListener("load", function () {
         selectable[i].addEventListener("click", pieceSelected);
     }
     document.getElementById("clearselection").addEventListener("click", clearSelection);
+
+    var whoseTurnRadioButtons = document.querySelectorAll("[name=whoseturn]");
+    for (var i = 0; i < whoseTurnRadioButtons.length; i++) {
+        whoseTurnRadioButtons[i].addEventListener("click", updateFen);
+    }
+
+    var castlingCheckboxes = document.querySelectorAll("[name=castling]");
+    for (var i = 0; i < castlingCheckboxes.length; i++) {
+        castlingCheckboxes[i].addEventListener("click", updateFen);
+    }
 });
