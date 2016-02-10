@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using AtomicChessPuzzles.DbRepositories;
+using AtomicChessPuzzles.MemoryRepositories;
 
 namespace AtomicChessPuzzles
 {
@@ -11,6 +12,7 @@ namespace AtomicChessPuzzles
         {
             services.AddMvc();
             services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<IPuzzlesBeingEditedRepository, PuzzlesBeingEditedRepository>();
             services.AddCaching();
             services.AddSession();
         }

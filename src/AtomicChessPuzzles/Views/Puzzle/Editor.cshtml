@@ -8,30 +8,36 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzleeditor.css")" type="text/css">
 }
-<p>Step one: set up the board.</p>
+<p class="step1">Step one: set up the board.</p>
+<p class="step2 hidden">Step two: set up the puzzle moves.</p>
 <div id="chessground" class="brown"></div>
-<div class="selectable" data-color="white" data-role="pawn"></div>
-<div class="selectable" data-color="white" data-role="knight"></div>
-<div class="selectable" data-color="white" data-role="bishop"></div>
-<div class="selectable" data-color="white" data-role="rook"></div>
-<div class="selectable" data-color="white" data-role="queen"></div>
-<div class="selectable" data-color="white" data-role="king"></div>
-<a href="#" id="clearselection">Clear selection</a><br>
-<div class="selectable" data-color="black" data-role="pawn"></div>
-<div class="selectable" data-color="black" data-role="knight"></div>
-<div class="selectable" data-color="black" data-role="bishop"></div>
-<div class="selectable" data-color="black" data-role="rook"></div>
-<div class="selectable" data-color="black" data-role="queen"></div>
-<div class="selectable" data-color="black" data-role="king"></div>
-<p>
+<div class="step1">
+    <div class="selectable" data-color="white" data-role="pawn"></div>
+    <div class="selectable" data-color="white" data-role="knight"></div>
+    <div class="selectable" data-color="white" data-role="bishop"></div>
+    <div class="selectable" data-color="white" data-role="rook"></div>
+    <div class="selectable" data-color="white" data-role="queen"></div>
+    <div class="selectable" data-color="white" data-role="king"></div>
+    <a href="#" id="clearselection">Clear selection</a><br>
+    <div class="selectable" data-color="black" data-role="pawn"></div>
+    <div class="selectable" data-color="black" data-role="knight"></div>
+    <div class="selectable" data-color="black" data-role="bishop"></div>
+    <div class="selectable" data-color="black" data-role="rook"></div>
+    <div class="selectable" data-color="black" data-role="queen"></div>
+    <div class="selectable" data-color="black" data-role="king"></div>
+</div>
+<p class="step1">
     <input type="radio" name="whoseturn" value="white" id="whitetomove" checked>White to move
     <input type="radio" name="whoseturn" value="black">Black to move
 </p>
-<p>
+<p class="step1">
     <input type="checkbox" id="whitecastlekingside" name="castling" checked>White O-O
     <input type="checkbox" id="whitecastlequeenside" name="castling" checked>White O-O-O
     <br>
     <input type="checkbox" id="blackcastlekingside" name="castling" checked>Black O-O
     <input type="checkbox" id="blackcastlequeenside" name="castling" checked>Black O-O-O
 </p>
-<p>FEN: <code id="fen"></code></p>
+<p class="step1">FEN: <code id="fen"></code></p>
+<p class="step2 hidden">Move list:<code id="movelist"></code></p>
+<a href="#" id="gotostep2" class="step1">Done, let me set up the puzzle moves.</a>
+<a href="#" id="submitpuzzle" class="step2 hidden">Publish!</a>

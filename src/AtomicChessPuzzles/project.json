@@ -25,6 +25,8 @@
         "System.Web": "4.0.0.0"
       },
       "dependencies": {
+        "ChessDotNet": "1.0.0-*",
+        "ChessDotNet.Variants": "1.0.0-*",
         "MongoDB.Driver": "2.2.0"
       }
     }

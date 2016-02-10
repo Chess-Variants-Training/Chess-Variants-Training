@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0-*",
+  "frameworks": {
+    "dnx451": {
+      "bin": {
+        "assembly": "../../deps/ChessDotNet.Variants.dll"
+      },
+      "dependencies": {
+        "ChessDotNet": "1.0.0-*"
+      }
+    }
+  }
+}

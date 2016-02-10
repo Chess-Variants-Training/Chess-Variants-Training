@@ -9,3 +9,7 @@
 div.selected {
     background-color: aquamarine;
 }
+
+.hidden {
+    display: none;
+}

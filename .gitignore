@@ -5,3 +5,4 @@ src/AtomicChessPuzzles/wwwroot/scripts/chessground.min.js
 src/AtomicChessPuzzles/wwwroot/styles/chessground-base.css
 src/AtomicChessPuzzles/wwwroot/images/pieces/cburnett/
 data/
+deps/

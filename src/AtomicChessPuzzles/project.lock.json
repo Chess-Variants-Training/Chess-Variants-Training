@@ -3,6 +3,17 @@
   "version": 2,
   "targets": {
     "DNX,Version=v4.5.1": {
+      "ChessDotNet/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "ChessDotNet.Variants/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "ChessDotNet": "1.0.0"
+        }
+      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -1653,6 +1664,17 @@
       }
     },
     "DNX,Version=v4.5.1/win7-x86": {
+      "ChessDotNet/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "ChessDotNet.Variants/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "ChessDotNet": "1.0.0"
+        }
+      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -3306,6 +3328,17 @@
       }
     },
     "DNX,Version=v4.5.1/win7-x64": {
+      "ChessDotNet/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1"
+      },
+      "ChessDotNet.Variants/1.0.0": {
+        "type": "project",
+        "framework": "DNX,Version=v4.5.1",
+        "dependencies": {
+          "ChessDotNet": "1.0.0"
+        }
+      },
       "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
         "type": "package",
         "dependencies": {
@@ -4960,6 +4993,14 @@
     }
   },
   "libraries": {
+    "ChessDotNet/1.0.0": {
+      "type": "project",
+      "path": "../../wrap/ChessDotNet/project.json"
+    },
+    "ChessDotNet.Variants/1.0.0": {
+      "type": "project",
+      "path": "../../wrap/ChessDotNet.Variants/project.json"
+    },
     "Microsoft.AspNet.Antiforgery/1.0.0-rc1-final": {
       "type": "package",
       "serviceable": true,
@@ -6896,6 +6937,8 @@
       "Microsoft.AspNet.Session >= 1.0.0-rc1-final"
     ],
     "DNX,Version=v4.5.1": [
+      "ChessDotNet >= 1.0.0-*",
+      "ChessDotNet.Variants >= 1.0.0-*",
       "MongoDB.Driver >= 2.2.0",
       "fx/System.Web >= 4.0.0"
     ]

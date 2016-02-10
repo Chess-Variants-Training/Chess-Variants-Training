@@ -44,6 +44,100 @@ function clearSelection(e) {
     delete window.selectedPiece;
 }
 
+function goToStep2(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var step1Elements = document.getElementsByClassName("step1");
+    for (var i = 0; i < step1Elements.length; i++) {
+        step1Elements[i].setAttribute("class", "step1 hidden");
+    }
+    var step2Elements = document.getElementsByClassName("step2");
+    for (var i = 0; i < step2Elements.length; i++) {
+        step2Elements[i].setAttribute("class", "step2");
+    }
+
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            if (!jsonResponse["success"])
+            {
+                alert("Error: " + jsonResponse["error"]);
+                return;
+            }
+            window.puzzleId = jsonResponse["id"];
+            var whoseTurn = document.getElementById("fen").innerHTML.split(" ")[1] === "w" ? "white" : "black";
+            window.ground.set({
+                orientation: whoseTurn,
+                movable: {
+                    free: false,
+                    showDests: false,
+                    events: {
+                        after: submitMove
+                    }
+                }
+            });
+            updateChessGroundValidMoves();
+        } else if (xhr.readyState === 4 && xhr.status !== 200) {
+            alert("Error: response status code is " + xhr.status);
+        }
+    };
+
+    xhr.open("POST", "/Puzzle/Editor/RegisterPuzzleForEditing");
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("fen=" + document.getElementById("fen").innerHTML + " - 0 1");
+}
+
+function submitMove(orig, dest, metadata) {
+    document.getElementById("movelist").innerHTML += " " + orig + "-" + dest;
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            if (!jsonResponse["success"]) {
+                alert("Error: " + jsonResponse["error"]);
+            }
+            window.ground.set({
+                fen: jsonResponse["fen"]
+            });
+            updateChessGroundValidMoves();
+        } else if (xhr.readyState === 4 && xhr.status !== 200) {
+            alert("Error: response status code is " + xhr.status);
+        }
+    }
+
+    xhr.open("POST", "/Puzzle/Editor/SubmitMove");
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("id=" + window.puzzleId + "&origin=" + orig + "&destination=" + dest);
+}
+
+function updateChessGroundValidMoves() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            console.log(jsonResponse);
+            if (!jsonResponse["success"])
+            {
+                alert("Error: " + jsonResponse["error"]);
+                return;
+            }
+            window.ground.set({
+                turnColor: jsonResponse["whoseturn"],
+                movable: {
+                    dests: jsonResponse["dests"],
+                    color: jsonResponse["whoseturn"],
+                }
+            });
+        } else if (xhr.readyState === 4 && xhr.status !== 200) {
+            alert("Error: response status code is " + xhr.status);
+        }
+    }
+
+    xhr.open("GET", "/Puzzle/Editor/GetValidMoves/" + window.puzzleId);
+    xhr.send();
+}
+
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: false,
@@ -86,4 +180,6 @@ window.addEventListener("load", function () {
     for (var i = 0; i < castlingCheckboxes.length; i++) {
         castlingCheckboxes[i].addEventListener("click", updateFen);
     }
+
+    document.getElementById("gotostep2").addEventListener("click", goToStep2);
 });
