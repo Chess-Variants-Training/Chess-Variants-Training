@@ -1,7 +1,9 @@
-﻿using AtomicChessPuzzles.MemoryRepositories;
+﻿using AtomicChessPuzzles.DbRepositories;
+using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
 using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
+using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,10 +14,12 @@ namespace AtomicChessPuzzles.Controllers
     public class PuzzleController : Controller
     {
         IPuzzlesBeingEditedRepository puzzlesBeingEdited;
+        IPuzzleRepository puzzleRepository;
 
-        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited)
+        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
+            puzzleRepository = _puzzleRepository;
         }
 
         [Route("Puzzle")]
@@ -87,6 +91,28 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "The given move is invalid." });
             }
             return Json(new { success = true, fen = puzzle.Game.GetFen() });
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Editor/Submit")]
+        public IActionResult SubmitPuzzle(string id, string solution)
+        {
+            Puzzle puzzle = puzzlesBeingEdited.Get(id);
+            if (puzzle == null)
+            {
+                return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
+            }
+            puzzle.Solutions.Add(solution);
+            puzzle.Author = HttpContext.Session.GetString("user") ?? "Anonymous";
+            puzzle.Game = null;
+            if (puzzleRepository.Add(puzzle))
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, error = "Something went wrong." });
+            }
         }
     }
 }

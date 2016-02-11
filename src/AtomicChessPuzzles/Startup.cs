@@ -13,6 +13,7 @@ namespace AtomicChessPuzzles
             services.AddMvc();
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IPuzzlesBeingEditedRepository, PuzzlesBeingEditedRepository>();
+            services.AddSingleton<IPuzzleRepository, PuzzleRepository>();
             services.AddCaching();
             services.AddSession();
         }

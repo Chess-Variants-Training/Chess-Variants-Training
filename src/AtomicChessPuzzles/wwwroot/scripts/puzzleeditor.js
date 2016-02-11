@@ -138,6 +138,29 @@ function updateChessGroundValidMoves() {
     xhr.send();
 }
 
+function submitPuzzle(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var solution = document.getElementById("movelist").innerHTML;
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            if (!jsonResponse["success"]) {
+                alert("Error: " + jsonResponse["error"]);
+                return;
+            }
+            alert("Success! Yay!");
+        } else if (xhr.readyState === 4 && xhr.status !== 200) {
+            alert("Error: response status code is " + xhr.status);
+        }
+    }
+
+    xhr.open("POST", "/Puzzle/Editor/Submit");
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("id=" + window.puzzleId + "&solution=" + solution.trim());
+}
+
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: false,
@@ -182,4 +205,5 @@ window.addEventListener("load", function () {
     }
 
     document.getElementById("gotostep2").addEventListener("click", goToStep2);
+    document.getElementById("submitpuzzle").addEventListener("click", submitPuzzle);
 });
