@@ -10,12 +10,10 @@ namespace AtomicChessPuzzles.DbRepositories
     {
         MongoSettings settings;
         IMongoCollection<Puzzle> puzzleCollection;
-        Random rnd;
 
         public PuzzleRepository()
         {
             settings = new MongoSettings();
-            rnd = new Random();
             GetCollection();
         }
 
