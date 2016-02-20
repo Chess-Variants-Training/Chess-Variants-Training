@@ -1,4 +1,5 @@
 ﻿using AtomicChessPuzzles.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public bool Add(Puzzle puzzle)
         {
-            var found = puzzleCollection.FindSync<Puzzle>(new ExpressionFilterDefinition<Puzzle>(x => x.ID == puzzle.ID));
+            var found = puzzleCollection.Find(new BsonDocument("_id", new BsonString(puzzle.ID)));
             if (found != null && found.Any()) return false;
             try
             {
@@ -41,27 +42,26 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public Puzzle Get(string id)
         {
-            var found = puzzleCollection.FindSync<Puzzle>(new ExpressionFilterDefinition<Puzzle>(x => string.Compare(x.ID, id, true) == 0));
+            var found = puzzleCollection.Find(new BsonDocument("_id", new BsonString(id)));
             if (found == null) return null;
             return found.FirstOrDefault();
         }
 
         public Puzzle GetOneRandomly()
         {
-            ExpressionFilterDefinition<Puzzle> filter = new ExpressionFilterDefinition<Puzzle>(x => true);
-            long count = puzzleCollection.Count(filter);
+            long count = puzzleCollection.Count(new BsonDocument());
             if (count < 1) return null;
-            return puzzleCollection.Find(filter).FirstOrDefault();
+            return puzzleCollection.Find(new BsonDocument()).FirstOrDefault();
         }
 
         public DeleteResult Remove(string id)
         {
-            return puzzleCollection.DeleteOne(x => string.Compare(x.ID, id, true) == 0);
+            return puzzleCollection.DeleteOne(new BsonDocument("_id", new BsonString(id)));
         }
 
         public DeleteResult RemoveAllBy(string author)
         {
-            return puzzleCollection.DeleteMany(new ExpressionFilterDefinition<Puzzle>(x => string.Compare(x.Author, author, true) == 0));
+            return puzzleCollection.DeleteMany(new BsonDocument("author", new BsonString(author)));
         }
     }
 }
