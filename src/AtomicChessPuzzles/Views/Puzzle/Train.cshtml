@@ -1,0 +1,15 @@
+﻿@model AtomicChessPuzzles.Models.Puzzle
+@{
+    ViewBag.Title = "Puzzle training";
+}
+@section AddToHead {
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/puzzletrain.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
+}
+
+<div id="chessground" class="brown"></div>
+<p>
+    Created by <span id="author"></span>
+</p>

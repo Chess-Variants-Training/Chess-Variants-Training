@@ -15,11 +15,13 @@ namespace AtomicChessPuzzles.Controllers
     {
         IPuzzlesBeingEditedRepository puzzlesBeingEdited;
         IPuzzleRepository puzzleRepository;
+        IPuzzlesTrainingRepository puzzlesTrainingRepository;
 
-        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository)
+        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository, IPuzzlesTrainingRepository _puzzlesTrainingRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
+            puzzlesTrainingRepository = _puzzlesTrainingRepository;
         }
 
         [Route("Puzzle")]
@@ -62,8 +64,14 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
             ReadOnlyCollection<Move> validMoves = puzzle.Game.GetValidMoves(puzzle.Game.WhoseTurn);
+            Dictionary<string, List<string>> dests = GetChessgroundDestsForMoveCollection(validMoves);
+            return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() });
+        }
+
+        Dictionary<string, List<string>> GetChessgroundDestsForMoveCollection(ReadOnlyCollection<Move> moves)
+        {
             Dictionary<string, List<string>> dests = new Dictionary<string, List<string>>();
-            foreach (Move m in validMoves)
+            foreach (Move m in moves)
             {
                 string origin = m.OriginalPosition.ToString().ToLowerInvariant();
                 string destination = m.NewPosition.ToString().ToLowerInvariant();
@@ -73,7 +81,7 @@ namespace AtomicChessPuzzles.Controllers
                 }
                 dests[origin].Add(destination);
             }
-            return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() });
+            return dests;
         }
 
         [HttpPost]
@@ -113,6 +121,91 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Something went wrong." });
             }
+        }
+
+        [HttpGet]
+        [Route("/Puzzle/Train")]
+        public IActionResult Train()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [Route("/Puzzle/Train/GetOneRandomly")]
+        public IActionResult GetOneRandomly()
+        {
+            Puzzle puzzle = puzzleRepository.GetOneRandomly();
+            if (puzzle != null)
+            {
+                return Json(new { success = true, id = puzzle.ID });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Train/Setup")]
+        public IActionResult SetupTraining(string id, string trainingSessionId = null)
+        {
+            Puzzle puzzle = puzzleRepository.Get(id);
+            if (puzzle == null)
+            {
+                return Json(new { success = false, error = "Puzzle not found." });
+            }
+            puzzle.Game = new AtomicChessGame(puzzle.InitialFen);
+            PuzzleDuringTraining pdt = new PuzzleDuringTraining();
+            pdt.Puzzle = puzzle;
+            do
+            {
+                pdt.TrainingSessionId = trainingSessionId ?? Guid.NewGuid().ToString();
+            } while (puzzlesTrainingRepository.ContainsTrainingSessionId(trainingSessionId));
+            pdt.SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
+            puzzlesTrainingRepository.Add(pdt);
+            return Json(new
+            {
+                success = true,
+                trainingSessionId = pdt.TrainingSessionId,
+                author = pdt.Puzzle.Author,
+                fen = pdt.Puzzle.InitialFen,
+                dests = GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn)),
+                whoseTurn = pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant()
+            });
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Train/SubmitMove")]
+        public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination)
+        {
+            PuzzleDuringTraining pdt = puzzlesTrainingRepository.Get(id, trainingSessionId);
+            if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
+            {
+                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0] });
+            }
+            MoveType type = pdt.Puzzle.Game.ApplyMove(new Move(origin, destination, pdt.Puzzle.Game.WhoseTurn), false);
+            if (type == MoveType.Invalid)
+            {
+                return Json(new { success = false, error = "Invalid move." });
+            }
+            pdt.SolutionMovesToDo.RemoveAt(0);
+            if (pdt.SolutionMovesToDo.Count == 0)
+            {
+                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen() });
+            }
+            string fen = pdt.Puzzle.Game.GetFen();
+            string moveToPlay = pdt.SolutionMovesToDo[0];
+            string[] parts = moveToPlay.Split('-');
+            pdt.Puzzle.Game.ApplyMove(new Move(parts[0], parts[1], pdt.Puzzle.Game.WhoseTurn), true);
+            string fenAfterPlay = pdt.Puzzle.Game.GetFen();
+            Dictionary<string, List<string>> dests = GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
+            JsonResult result = Json(new { success = true, correct = 0, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests });
+            pdt.SolutionMovesToDo.RemoveAt(0);
+            if (pdt.SolutionMovesToDo.Count == 0)
+            {
+                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests });
+            }
+            return result;
         }
     }
 }
