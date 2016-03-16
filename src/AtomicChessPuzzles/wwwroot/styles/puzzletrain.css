@@ -1,0 +1,17 @@
+﻿#result {
+    padding: 30px;
+    width: 100px;
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
+}
+
+.red {
+    background: lightcoral;
+    color: darkred;
+}
+
+.green {
+    background: aquamarine;
+    color: darkgreen;
+}

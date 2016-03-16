@@ -20,6 +20,7 @@
 }
 
 function setup(puzzleId) {
+    document.getElementById("result").setAttribute("class", "");
     window.puzzleId = puzzleId;
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function () {
@@ -74,10 +75,16 @@ function submitPuzzleMove(origin, destination, metadata) {
                 case 0:
                     break;
                 case 1:
-                    alert("Correct!");
+                    with (document.getElementById("result")) {
+                        textContent = "Success!";
+                        setAttribute("class", "green");
+                    };
                     break;
                 case -1:
-                    alert("Sorry, that's not correct. This was correct: " + jsonResponse["solution"]);
+                    with (document.getElementById("result")) {
+                        textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
+                        setAttribute("class", "red");
+                    }
             }
             if (jsonResponse["dests"]) {
                 window.ground.set({
