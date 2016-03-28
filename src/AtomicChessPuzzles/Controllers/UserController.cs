@@ -24,7 +24,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/New", Name = "NewUser")]
         public IActionResult New(string username, string email, string password)
         {
-            Tuple<string, string> hashAndSalt = PasswordUtilities.HashPassword(password);
+            Tuple<string, string> hashAndSalt = Utilities.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
             Models.User user = new Models.User(username, email, hash, salt, "", 0, 0, Models.UserRole.None);
@@ -61,7 +61,7 @@ namespace AtomicChessPuzzles.Controllers
                 return RedirectToAction("Login");
             }
             string salt = user.Salt;
-            string hash = PasswordUtilities.HashPassword(password, salt);
+            string hash = Utilities.HashPassword(password, salt);
             if (hash != user.PasswordHash)
             {
                 return RedirectToAction("Login");

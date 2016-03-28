@@ -40,5 +40,21 @@ namespace AtomicChessPuzzles.Models
             get;
             set;
         }
+
+        [BsonElement("explanation")]
+        public string ExplanationUnsafe
+        {
+            get;
+            set;
+        }
+
+        [BsonIgnore]
+        public string ExplanationSafe
+        {
+            get
+            {
+                return Utilities.SanitizeHtml(ExplanationUnsafe);
+            }
+        }
     }
 }

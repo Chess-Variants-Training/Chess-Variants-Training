@@ -85,7 +85,7 @@ function goToStep2(e) {
 
     xhr.open("POST", "/Puzzle/Editor/RegisterPuzzleForEditing");
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("fen=" + document.getElementById("fen").innerHTML + " - 0 1");
+    xhr.send("fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1"));
 }
 
 function submitMove(orig, dest, metadata) {
@@ -158,7 +158,8 @@ function submitPuzzle(e) {
 
     xhr.open("POST", "/Puzzle/Editor/Submit");
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("id=" + window.puzzleId + "&solution=" + solution.trim());
+    xhr.send("id=" + window.puzzleId + "&solution=" + encodeURIComponent(solution.trim()) +
+        "&explanation=" + encodeURIComponent(document.getElementById("puzzleExplanation").value));
 }
 
 window.addEventListener("load", function () {

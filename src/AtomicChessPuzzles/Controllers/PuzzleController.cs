@@ -103,7 +103,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Puzzle/Editor/Submit")]
-        public IActionResult SubmitPuzzle(string id, string solution)
+        public IActionResult SubmitPuzzle(string id, string solution, string explanation)
         {
             Puzzle puzzle = puzzlesBeingEdited.Get(id);
             if (puzzle == null)
@@ -113,6 +113,7 @@ namespace AtomicChessPuzzles.Controllers
             puzzle.Solutions.Add(solution);
             puzzle.Author = HttpContext.Session.GetString("user") ?? "Anonymous";
             puzzle.Game = null;
+            puzzle.ExplanationUnsafe = explanation;
             if (puzzleRepository.Add(puzzle))
             {
                 return Json(new { success = true });
@@ -181,7 +182,7 @@ namespace AtomicChessPuzzles.Controllers
             PuzzleDuringTraining pdt = puzzlesTrainingRepository.Get(id, trainingSessionId);
             if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
             {
-                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0] });
+                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe });
             }
             MoveType type = pdt.Puzzle.Game.ApplyMove(new Move(origin, destination, pdt.Puzzle.Game.WhoseTurn), false);
             if (type == MoveType.Invalid)
@@ -191,7 +192,7 @@ namespace AtomicChessPuzzles.Controllers
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen() });
+                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe });
             }
             string fen = pdt.Puzzle.Game.GetFen();
             string moveToPlay = pdt.SolutionMovesToDo[0];
@@ -203,7 +204,7 @@ namespace AtomicChessPuzzles.Controllers
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests });
+                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe });
             }
             return result;
         }

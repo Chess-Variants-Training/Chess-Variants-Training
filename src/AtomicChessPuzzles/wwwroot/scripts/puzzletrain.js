@@ -39,6 +39,7 @@ function setup(puzzleId) {
                     dests: jsonResponse["dests"]
                 }
             });
+            clearExplanation();
             document.getElementById("author").textContent = jsonResponse["author"];
             window.trainingSessionId = jsonResponse["trainingSessionId"];
         } else if (xhr.readyState === 4 && xhr.status !== 200) {
@@ -49,6 +50,14 @@ function setup(puzzleId) {
     xhr.open("POST", "/Puzzle/Train/Setup");
     xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xhr.send("id=" + window.puzzleId + (window.trainingSessionId ? "&trainingSessionId=" + window.trainingSessionId : ""));
+}
+
+function showExplanation(expl) {
+    document.getElementById("explanation").innerHTML = expl;
+}
+
+function clearExplanation() {
+    document.getElementById("explanation").innerHTML = "";
 }
 
 function submitPuzzleMove(origin, destination, metadata) {
@@ -92,6 +101,9 @@ function submitPuzzleMove(origin, destination, metadata) {
                         dests: jsonResponse["dests"]
                     }
                 });
+            }
+            if (jsonResponse["explanation"]) {
+                showExplanation(jsonResponse["explanation"]);
             }
         } else if (xhr.readyState === 4 && xhr.status !== 200) {
             alert("Error: status code is " + xhr.status);
