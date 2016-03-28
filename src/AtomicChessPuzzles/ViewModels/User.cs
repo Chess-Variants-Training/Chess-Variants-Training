@@ -6,6 +6,7 @@
         public string About { get; private set; }
         public int PuzzlesCorrect { get; private set; }
         public int PuzzlesWrong { get; private set; }
+        public Models.UserRole Role { get; private set; }
         public int PuzzlesMade
         {
             get
@@ -34,6 +35,7 @@
             About = user.About;
             PuzzlesCorrect = user.PuzzlesCorrect;
             PuzzlesWrong = user.PuzzlesWrong;
+            Role = user.Role;
         }
     }
 }
