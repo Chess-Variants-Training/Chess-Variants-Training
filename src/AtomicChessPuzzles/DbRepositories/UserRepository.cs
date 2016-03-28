@@ -23,7 +23,7 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public bool Add(User user)
         {
-            var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == user.Username));
+            var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.ID == user.ID));
             if (found != null && found.Any()) return false;
             try
             {
@@ -38,17 +38,18 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public void Update(User user)
         {
-            userCollection.ReplaceOne(new ExpressionFilterDefinition<User>(x => x.Username == user.Username), user);
+            userCollection.ReplaceOne(new ExpressionFilterDefinition<User>(x => x.ID == user.ID), user);
         }
 
         public void Delete(User user)
         {
-            userCollection.DeleteOne(new ExpressionFilterDefinition<User>(x => x.Username == user.Username));
+            userCollection.DeleteOne(new ExpressionFilterDefinition<User>(x => x.ID == user.ID));
         }
 
         public User FindByUsername(string name)
         {
-            var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.Username == name));
+            string id = name.ToLowerInvariant();
+            var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.ID == id));
             if (found == null) return null;
             return found.FirstOrDefault();
         }

@@ -6,6 +6,9 @@ namespace AtomicChessPuzzles.Models
     public class User
     {
         [BsonElement("_id")]
+        public string ID { get; set; }
+
+        [BsonElement("username")]
         public string Username { get; set; }
 
         [BsonElement("email")]
@@ -29,8 +32,9 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("role")]
         public UserRole Role { get; set; }
 
-        public User(string username, string email, string passwordHash, string salt, string about, int puzzlesCorrect, int puzzlesWrong, UserRole role)
+        public User(string id, string username, string email, string passwordHash, string salt, string about, int puzzlesCorrect, int puzzlesWrong, UserRole role)
         {
+            ID = id;
             Username = username;
             Email = email;
             PasswordHash = passwordHash;
