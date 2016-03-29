@@ -2,6 +2,13 @@
     ViewBag.Title = "Register for an account";
 }
 @using System.Web.Routing
+@if (ViewBag.Error != null)
+{
+    @foreach (string err in ViewBag.Error)
+    {
+        <div class="error">@err</div>
+    }
+}
 @{ Html.BeginForm("New", "User", FormMethod.Post); }
 <input type="text" placeholder="Username" name="username">
 <input type="password" name="password">

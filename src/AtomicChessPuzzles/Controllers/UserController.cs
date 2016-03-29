@@ -2,6 +2,7 @@
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Controllers
 {
@@ -17,13 +18,31 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/Register")]
         public IActionResult Register()
         {
+            ViewBag.Error = null;
             return View();
         }
 
         [HttpPost]
-        [Route("/User/New", Name = "NewUser")]
+        [Route("/User/Register", Name = "NewUser")]
         public IActionResult New(string username, string email, string password)
         {
+            ViewBag.Error = new List<string>();
+            if (!Utilities.IsValidUsername(username))
+            {
+                ViewBag.Error.Add("Invalid username. Usernames can only contain the characters a-z, A-Z, 0-9, _ and -.");
+            }
+            if (!Utilities.IsValidEmail(email))
+            {
+                ViewBag.Error.Add("Invalid email address.");
+            }
+            if (ViewBag.Error.Count > 0)
+            {
+                return View("Register");
+            }
+            else
+            {
+                ViewBag.Error = null;
+            }
             Tuple<string, string> hashAndSalt = Utilities.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;

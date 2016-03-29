@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Security.Cryptography;
+using System.Text.RegularExpressions;
 
 namespace AtomicChessPuzzles
 {
     public static class Utilities
     {
         const int HASH_ITERATIONS = 100000;
+        static readonly Regex allowedUserNameRegex = new Regex("^[a-zA-Z0-9_-]+$", RegexOptions.Compiled);
+        static readonly Regex emailRegex = new Regex(@"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$", RegexOptions.Compiled);
 
         public static Tuple<string, string> HashPassword(string password)
         {
@@ -28,6 +31,16 @@ namespace AtomicChessPuzzles
                              .Replace("<", "&lt;")
                              .Replace(">", "&gt;")
                              .Replace("\"", "&quot;");
+        }
+
+        public static bool IsValidUsername(string username)
+        {
+            return allowedUserNameRegex.IsMatch(username);
+        }
+
+        public static bool IsValidEmail(string email)
+        {
+            return emailRegex.IsMatch(email);
         }
     }
 }
