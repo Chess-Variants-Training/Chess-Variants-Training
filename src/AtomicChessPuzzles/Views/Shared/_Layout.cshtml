@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <title>@ViewBag.Title</title>
     <link href="~/styles/topbar.css" rel="stylesheet">
+    <link href="~/styles/main.css" rel="stylesheet">
     @if (IsSectionDefined("AddToHead"))
     {
         RenderSection("AddToHead", false);
@@ -17,6 +18,8 @@
             <li>@Html.ActionLink("Contribute", "Editor", "Puzzle", null, null)</li>
         </ul>
     </div>
+    <div id="bodycontainer">
     @RenderBody()
+    </div>
 </body>
 </html>
