@@ -1,30 +1,27 @@
 ﻿#topbar-menu {
-    margin-left: 15%;
+    width: 70%;
+    margin: auto;
+    padding-top: 7px;
+    padding-bottom: 7px;
+    padding-left: 0;
 }
 
-#topbar-menu li {
-    display: inline;
-    padding: 0;
-}
-
-    #topbar-menu li a {
-        padding: 7px;
-        font-weight: bold;
-        text-decoration: none;
-        color: white;
+    #topbar-menu li {
+        display: inline;
     }
 
-    #topbar-menu li a:hover {
-        background-color: #803015;
-    }
+        #topbar-menu li a {
+            font-weight: bold;
+            text-decoration: none;
+            color: white;
+            padding: 7px;
+        }
 
-
-#topbar-menu {
-    padding: 0;
-}
+            #topbar-menu li a:hover {
+                background-color: #803015;
+            }
 
 #topbar {
-    padding: 0.1px;
     background-color: #AA5639;
 }
 
