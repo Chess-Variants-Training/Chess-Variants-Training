@@ -3,12 +3,20 @@
 <head>
     <meta charset="utf-8">
     <title>@ViewBag.Title</title>
+    <link href="~/styles/topbar.css" rel="stylesheet">
     @if (IsSectionDefined("AddToHead"))
     {
         RenderSection("AddToHead", false);
     }
 </head>
 <body>
+    <div id="topbar">
+        <ul id="topbar-menu">
+            <li>@Html.ActionLink("Home", "Index", "Home", null, null)</li>
+            <li>@Html.ActionLink("Train", "Train", "Puzzle", null, null)</li>
+            <li>@Html.ActionLink("Contribute", "Editor", "Puzzle", null, null)</li>
+        </ul>
+    </div>
     @RenderBody()
 </body>
 </html>

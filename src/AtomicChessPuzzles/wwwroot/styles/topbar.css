@@ -1,0 +1,33 @@
+﻿#topbar-menu {
+    margin-left: 15%;
+}
+
+#topbar-menu li {
+    display: inline;
+    padding: 0;
+}
+
+    #topbar-menu li a {
+        padding: 7px;
+        font-weight: bold;
+        text-decoration: none;
+        color: white;
+    }
+
+    #topbar-menu li a:hover {
+        background-color: #803015;
+    }
+
+
+#topbar-menu {
+    padding: 0;
+}
+
+#topbar {
+    padding: 0.1px;
+    background-color: #AA5639;
+}
+
+body {
+    margin: 0;
+}
