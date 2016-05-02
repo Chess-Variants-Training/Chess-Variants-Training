@@ -2,12 +2,21 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>@ViewBag.Title</title>
+    <title>
+        @if (IsSectionDefined("Title"))
+        {
+            @RenderSection("title");@: | Atomic Chess Puzzles
+        }
+        else
+        {
+            @:No title | Atomic Chess Puzzles
+        }
+    </title>
     <link href="~/styles/topbar.css" rel="stylesheet">
     <link href="~/styles/main.css" rel="stylesheet">
     @if (IsSectionDefined("AddToHead"))
     {
-        RenderSection("AddToHead", false);
+        RenderSection("AddToHead");
     }
 </head>
 <body>
@@ -19,7 +28,7 @@
         </ul>
     </div>
     <div id="bodycontainer">
-    @RenderBody()
+        @RenderBody()
     </div>
 </body>
 </html>
