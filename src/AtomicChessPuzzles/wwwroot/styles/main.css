@@ -1,5 +1,6 @@
 ﻿div#bodycontainer {
     width: 70%;
+    max-width: 1100px;
     margin: auto;
     padding-left: 7px;
 }

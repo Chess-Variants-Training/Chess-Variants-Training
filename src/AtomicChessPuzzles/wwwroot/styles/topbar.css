@@ -1,5 +1,6 @@
 ﻿#topbar-menu {
     width: 70%;
+    max-width: 1100px;
     margin: auto;
     padding-top: 7px;
     padding-bottom: 7px;
