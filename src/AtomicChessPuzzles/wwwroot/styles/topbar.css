@@ -28,3 +28,7 @@
 body {
     margin: 0;
 }
+
+li.right {
+    float: right;
+}
