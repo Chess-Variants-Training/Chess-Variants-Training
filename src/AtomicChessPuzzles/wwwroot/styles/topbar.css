@@ -7,18 +7,19 @@
     padding-left: 0;
 }
 
-    #topbar-menu li {
+    #topbar-menu > li {
         display: inline;
+        position: relative;
     }
 
-        #topbar-menu li a {
+        #topbar-menu > li > a, #username {
             font-weight: bold;
             text-decoration: none;
             color: white;
             padding: 7px;
         }
 
-            #topbar-menu li a:hover {
+            #topbar-menu > li > a:hover, #username:hover {
                 background-color: #803015;
             }
 
@@ -33,3 +34,32 @@ body {
 li.right {
     float: right;
 }
+
+#user-nav-content.invisible {
+    display: none;
+}
+
+#user-nav-content.visible {
+    position: absolute;
+    right: 0;
+    left: auto;
+    list-style: none;
+    -webkit-box-shadow: 5px 5px 11px 0px rgba(0,0,0,0.6);
+    -moz-box-shadow: 5px 5px 11px 0px rgba(0,0,0,0.6);
+    box-shadow: 5px 5px 11px 0px rgba(0,0,0,0.6);
+    padding: 0;
+}
+
+#user-nav-content > li > a {
+    display: block;
+    background: red;
+    padding: 10px;
+    text-decoration: none;
+    color: white;
+    background-color: #4A9470;
+    white-space: nowrap;
+}
+
+    #user-nav-content > li > a:hover {
+        background-color: #0F5935;
+    }
