@@ -8,6 +8,7 @@ using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AtomicChessPuzzles.Controllers
 {
@@ -16,12 +17,15 @@ namespace AtomicChessPuzzles.Controllers
         IPuzzlesBeingEditedRepository puzzlesBeingEdited;
         IPuzzleRepository puzzleRepository;
         IPuzzlesTrainingRepository puzzlesTrainingRepository;
+        ICommentRepository commentRepository;
 
-        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository, IPuzzlesTrainingRepository _puzzlesTrainingRepository)
+        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
+            IPuzzlesTrainingRepository _puzzlesTrainingRepository, ICommentRepository _commentRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
             puzzlesTrainingRepository = _puzzlesTrainingRepository;
+            commentRepository = _commentRepository;
         }
 
         [Route("Puzzle")]
@@ -207,6 +211,37 @@ namespace AtomicChessPuzzles.Controllers
                 result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe });
             }
             return result;
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Comment/PostComment", Name = "PostComment")]
+        public IActionResult PostComment(string commentBody, string puzzleId)
+        {
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", commentBody, null, puzzleId, 0);
+            bool success = commentRepository.Add(comment);
+            if (success)
+            {
+                return Json(new { success = true, bodySanitized = comment.BodySanitized });
+            }
+            else
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpGet]
+        [Route("/Puzzle/Comment/GetComments", Name = "GetComments")]
+        public IActionResult GetComments(string puzzleId)
+        {
+            List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
+            if (comments == null || comments.Count == 0)
+            {
+                return Json(new { count = 0 });
+            }
+            else
+            {
+                return Json(new { count = comments.Count, comments = comments.Select(x => new { author = x.Author, body = x.BodySanitized, score = x.Score }).ToArray() });
+            }
         }
     }
 }

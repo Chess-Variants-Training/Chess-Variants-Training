@@ -40,6 +40,8 @@ function setup(puzzleId) {
                 }
             });
             clearExplanation();
+            clearComments();
+            loadComments();
             document.getElementById("author").textContent = jsonResponse["author"];
             window.trainingSessionId = jsonResponse["trainingSessionId"];
         } else if (xhr.readyState === 4 && xhr.status !== 200) {
@@ -115,6 +117,57 @@ function submitPuzzleMove(origin, destination, metadata) {
     xhr.send("id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&origin=" + origin + "&destination=" + destination);
 }
 
+function submitComment(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            if (!jsonResponse["success"]) {
+                alert("Error: could not post comment.");
+                return;
+            }
+            appendComment(getUsernameFromTopbar(), jsonResponse["bodySanitized"]);
+        }
+    };
+    xhr.open("POST", "/Puzzle/Comment/PostComment");
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send("commentBody=" + encodeURIComponent(document.getElementById("commentBody").value) + "&puzzleId=" + window.puzzleId);
+}
+
+function clearComments() {
+    document.getElementById("commentContainer").innerHTML = "";
+}
+
+function appendComment(author, bodySan) {
+    var p = document.createElement("p");
+    p.innerHTML = "<em>" + author + ":</em> " + bodySan;
+    var cmtContainer = document.getElementById("commentContainer");
+    cmtContainer.insertBefore(p, cmtContainer.firstElementChild);
+}
+
+function loadComments() {
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status === 200) {
+            var jsonResponse = JSON.parse(xhr.responseText);
+            var commentCount = jsonResponse["count"];
+            if (commentCount === 0) {
+                document.getElementById("commentContainer").innerHTML = "There are no comments on this puzzle.";
+                return;
+            }
+            var commentsFromResponse = jsonResponse["comments"];
+            for (var i = 0; i < commentsFromResponse.length; i++) {
+                var curr = commentsFromResponse[i];
+                appendComment(curr["author"], curr["body"]);
+            }
+        }
+    };
+    xhr.open("GET", "/Puzzle/Comment/GetComments?puzzleId=" + window.puzzleId);
+    xhr.send();
+}
+
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: false,
@@ -127,5 +180,6 @@ window.addEventListener("load", function () {
             }
         }
     });
+    document.getElementById("submitCommentLink").addEventListener("click", submitComment);
     startWithRandomPuzzle();
 });
