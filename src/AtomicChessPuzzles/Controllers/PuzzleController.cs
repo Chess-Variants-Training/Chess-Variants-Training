@@ -225,7 +225,7 @@ namespace AtomicChessPuzzles.Controllers
             }
             else
             {
-                return Json(new { success = false });
+                return Json(new { success = false, error = "Could not post comment." });
             }
         }
 
@@ -236,11 +236,11 @@ namespace AtomicChessPuzzles.Controllers
             List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
             if (comments == null || comments.Count == 0)
             {
-                return Json(new { count = 0 });
+                return Json(new { success = true, count = 0 });
             }
             else
             {
-                return Json(new { count = comments.Count, comments = comments.Select(x => new { author = x.Author, body = x.BodySanitized, score = x.Score }).ToArray() });
+                return Json(new { success = true, count = comments.Count, comments = comments.Select(x => new { author = x.Author, body = x.BodySanitized, score = x.Score }).ToArray() });
             }
         }
     }
