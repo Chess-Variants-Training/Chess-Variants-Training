@@ -55,16 +55,8 @@ function goToStep2(e) {
     for (var i = 0; i < step2Elements.length; i++) {
         step2Elements[i].setAttribute("class", "step2");
     }
-
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var jsonResponse = JSON.parse(xhr.responseText);
-            if (!jsonResponse["success"])
-            {
-                alert("Error: " + jsonResponse["error"]);
-                return;
-            }
+    jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
+        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1"), function (req, jsonResponse) {
             window.puzzleId = jsonResponse["id"];
             var whoseTurn = document.getElementById("fen").innerHTML.split(" ")[1] === "w" ? "white" : "black";
             window.ground.set({
@@ -78,88 +70,47 @@ function goToStep2(e) {
                 }
             });
             updateChessGroundValidMoves();
-        } else if (xhr.readyState === 4 && xhr.status !== 200) {
-            alert("Error: response status code is " + xhr.status);
-        }
-    };
-
-    xhr.open("POST", "/Puzzle/Editor/RegisterPuzzleForEditing");
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1"));
+        }, function (req, err) {
+            alert(err);
+        });
 }
 
 function submitMove(orig, dest, metadata) {
     document.getElementById("movelist").innerHTML += " " + orig + "-" + dest;
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var jsonResponse = JSON.parse(xhr.responseText);
-            if (!jsonResponse["success"]) {
-                alert("Error: " + jsonResponse["error"]);
-            }
-            window.ground.set({
-                fen: jsonResponse["fen"]
-            });
-            updateChessGroundValidMoves();
-        } else if (xhr.readyState === 4 && xhr.status !== 200) {
-            alert("Error: response status code is " + xhr.status);
-        }
-    }
-
-    xhr.open("POST", "/Puzzle/Editor/SubmitMove");
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("id=" + window.puzzleId + "&origin=" + orig + "&destination=" + dest);
+    jsonXhr("/Puzzle/Editor/SubmitMove", "POST", "id=" + window.puzzleId + "&origin=" + orig + "&destination=" + dest, function (req, jsonResponse) {
+        window.ground.set({
+            fen: jsonResponse["fen"]
+        });
+        updateChessGroundValidMoves();
+    }, function (req, err) {
+        alert(err);
+    });
 }
 
 function updateChessGroundValidMoves() {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var jsonResponse = JSON.parse(xhr.responseText);
-            console.log(jsonResponse);
-            if (!jsonResponse["success"])
-            {
-                alert("Error: " + jsonResponse["error"]);
-                return;
+    jsonXhr("/Puzzle/Editor/GetValidMoves/" + window.puzzleId, "GET", null, function (req, jsonResponse) {
+        window.ground.set({
+            turnColor: jsonResponse["whoseturn"],
+            movable: {
+                dests: jsonResponse["dests"],
+                color: jsonResponse["whoseturn"],
             }
-            window.ground.set({
-                turnColor: jsonResponse["whoseturn"],
-                movable: {
-                    dests: jsonResponse["dests"],
-                    color: jsonResponse["whoseturn"],
-                }
-            });
-        } else if (xhr.readyState === 4 && xhr.status !== 200) {
-            alert("Error: response status code is " + xhr.status);
-        }
-    }
-
-    xhr.open("GET", "/Puzzle/Editor/GetValidMoves/" + window.puzzleId);
-    xhr.send();
+        });
+    }, function (req, err) {
+        alert(err);
+    });
 }
 
 function submitPuzzle(e) {
     e = e || window.event;
     e.preventDefault();
     var solution = document.getElementById("movelist").innerHTML;
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4 && xhr.status === 200) {
-            var jsonResponse = JSON.parse(xhr.responseText);
-            if (!jsonResponse["success"]) {
-                alert("Error: " + jsonResponse["error"]);
-                return;
-            }
-            alert("Success! Yay!");
-        } else if (xhr.readyState === 4 && xhr.status !== 200) {
-            alert("Error: response status code is " + xhr.status);
-        }
-    }
-
-    xhr.open("POST", "/Puzzle/Editor/Submit");
-    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhr.send("id=" + window.puzzleId + "&solution=" + encodeURIComponent(solution.trim()) +
-        "&explanation=" + encodeURIComponent(document.getElementById("puzzleExplanation").value));
+    jsonXhr("/Puzzle/Editor/Submit", "POST", "id=" + window.puzzleId + "&solution=" + encodeURIComponent(solution.trim()) +
+        "&explanation=" + encodeURIComponent(document.getElementById("puzzleExplanation").value), function (req, jsonResponse) {
+            alert("Success!");
+        }, function (req, err) {
+            alert(err);
+        });
 }
 
 window.addEventListener("load", function () {
