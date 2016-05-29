@@ -51,18 +51,12 @@ namespace AtomicChessPuzzles.DbRepositories
             return commentCollection.Find(new BsonDocument("puzzleId", new BsonString(puzzleId))).ToList();
         }
 
-        public void Edit(string id, string newBodyUnsanitized)
+        public bool Edit(string id, string newBodyUnsanitized)
         {
             FilterDefinition<Comment> filter = Builders<Comment>.Filter.Eq("_id", id);
             UpdateDefinition<Comment> update = Builders<Comment>.Update.Set("bodyUnsanitized", newBodyUnsanitized);
-            commentCollection.UpdateOne(filter, update);
-        }
-
-        public void AdjustScore(string id, int change)
-        {
-            FilterDefinition<Comment> filter = Builders<Comment>.Filter.Eq("_id", id);
-            UpdateDefinition<Comment> update = Builders<Comment>.Update.Inc("score", change);
-            commentCollection.UpdateOne(filter, update);
+            UpdateResult res = commentCollection.UpdateOne(filter, update);
+            return res.IsAcknowledged && res.MatchedCount != 0;
         }
     }
 }

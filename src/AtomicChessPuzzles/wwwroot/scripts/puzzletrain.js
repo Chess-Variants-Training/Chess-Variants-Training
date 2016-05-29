@@ -91,32 +91,106 @@ function submitComment(e) {
 }
 
 function clearComments() {
-    document.getElementById("commentContainer").innerHTML = "";
-}
-
-function appendComment(author, bodySan) {
-    var p = document.createElement("p");
-    p.innerHTML = "<em>" + author + ":</em> " + bodySan;
-    var cmtContainer = document.getElementById("commentContainer");
-    cmtContainer.insertBefore(p, cmtContainer.firstElementChild);
+    var commentContainer = document.getElementById("commentContainer");
+    var voteLinks = commentContainer.querySelectorAll("a[data-vote]");
+    for (var i = 0; i < voteLinks.length; i++) {
+        voteLinks[i].removeEventListener("click", voteClicked);
+    }
+    var replyLinks = commentContainer.querySelectorAll("a[data-to]");
+    for (var i = 0; i < replyLinks.length; i++) {
+        replyLinks[i].removeEventListener("click", replyLinkClicked);
+    }
+    var sendLinks = commentContainer.getElementsByClassName("send-reply");
+    for (var i = 0; i < sendLinks.length; i++) {
+        sendLinks[i].removeEventListener("click", sendLinkClicked);
+    }
+    var cancelLinks = commentContainer.getElementsByClassName("cancel-reply");
+    for (var i = 0; i < cancelLinks.length; i++) {
+        cancelLinks[i].removeEventListener("click", cancelLinkClicked);
+    }
+    while (commentContainer.firstChild) {
+        commentContainer.removeChild(commentContainer.firstChild);
+    }
 }
 
 function loadComments() {
-    jsonXhr("/Puzzle/Comment/GetComments?puzzleId=" + window.puzzleId, "GET", null, function (req, jsonResponse) {
-        var commentCount = jsonResponse["count"];
-        if (commentCount === 0) {
-            document.getElementById("commentContainer").innerHTML = "There are no comments on this puzzle.";
-            return;
+    xhr("/Puzzle/Comment/ViewComments?puzzleId=" + window.puzzleId, "GET", null, function (req) {
+        document.getElementById("commentContainer").innerHTML = req.responseText;
+        var comments = document.getElementById("commentContainer").querySelectorAll(".comment");
+        for (var i = 0; i < comments.length; i++) {
+            comments[i].style.marginLeft = comments[i].dataset.indentlevel + "vw";
         }
-        var commentsFromResponse = jsonResponse["comments"];
-        for (var i = 0; i < commentsFromResponse.length; i++) {
-            var curr = commentsFromResponse[i];
-            appendComment(curr["author"], curr["body"]);
+        var voteLinks = document.getElementById("commentContainer").querySelectorAll("a[data-vote]");
+        for (var i = 0; i < voteLinks.length; i++) {
+            voteLinks[i].addEventListener("click", voteClicked);
         }
+        var replyLinks = document.getElementById("commentContainer").querySelectorAll("a[data-to]");
+        for (var i = 0; i < replyLinks.length; i++) {
+            replyLinks[i].addEventListener("click", replyLinkClicked);
+        }
+        var sendLinks = document.getElementById("commentContainer").getElementsByClassName("send-reply");
+        for (var i = 0; i < sendLinks.length; i++) {
+            sendLinks[i].addEventListener("click", sendLinkClicked);
+        }
+        var cancelLinks = document.getElementById("commentContainer").getElementsByClassName("cancel-reply");
+        for (var i = 0; i < cancelLinks.length; i++) {
+            cancelLinks[i].addEventListener("click", cancelLinkClicked);
+        }
+    }, function (req, err) {
+        alert(err);
+    });
+}
+
+function upvoteComment(commentId) {
+    jsonXhr("/Puzzle/Comment/Upvote", "POST", "commentId=" + commentId, function (req, jsonResponse) { }, function (req, err) { alert(err); });
+}
+
+function downvoteComment(commentId) {
+    jsonXhr("/Puzzle/Comment/Downvote", "POST", "commentId=" + commentId, function (req, jsonResponse) { }, function (req, err) { alert(err); });
+}
+
+function undoVote(commentId) {
+    jsonXhr("/Puzzle/Comment/UndoVote", "POST", "commentId=" + commentId, function (req, jsonResponse) { }, function (req, err) { alert(err); });
+}
+
+function sendReply(to, body) {
+    jsonXhr("/Puzzle/Comment/Reply", "POST", "to=" + to + "&body=" + encodeURIComponent(body) + "&puzzleId=" + window.puzzleId, function (req, jsonResponse) {
+        clearComments();
+        loadComments();
     },
     function (req, err) {
         alert(err);
-    })
+    });
+}
+
+function voteClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var target = e.target;
+    if (target.dataset.vote === "up") {
+        upvoteComment(target.dataset.commentid);
+    } else {
+        downvoteComment(target.dataset.commentid);
+    }
+}
+
+function replyLinkClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
+    (document.getElementById("to-" + e.target.dataset.to) || { style: {} }).style.display = "block";
+}
+
+function sendLinkClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var to = e.target.parentElement.id.slice(3);
+    var body = e.target.parentElement.firstElementChild.value;
+    sendReply(to, body);
+}
+
+function cancelLinkClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
 }
 
 window.addEventListener("load", function () {

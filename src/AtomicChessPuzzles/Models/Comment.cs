@@ -27,17 +27,13 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("puzzleId")]
         public string PuzzleID { get; set; }
 
-        [BsonElement("score")]
-        public int Score { get; set; }
-
-        public Comment(string id, string author, string bodyUnsanitized, string parentId, string puzzleId, int score)
+        public Comment(string id, string author, string bodyUnsanitized, string parentId, string puzzleId)
         {
             ID = id;
             Author = author;
             BodyUnsanitized = bodyUnsanitized;
             ParentID = parentId;
             PuzzleID = puzzleId;
-            Score = score;
         }
     }
 }

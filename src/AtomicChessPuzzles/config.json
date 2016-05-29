@@ -4,6 +4,7 @@
     "database": "atomicchesspuzzles-dev",
     "usercollectionname": "users",
     "puzzlecollectionname": "puzzles",
-    "commentcollectionname": "comments"
+    "commentcollectionname": "comments",
+    "commentvotecollectionname": "commentvotes"
   }
 }

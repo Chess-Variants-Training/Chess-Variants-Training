@@ -11,8 +11,6 @@ namespace AtomicChessPuzzles.DbRepositories
 
         List<Comment> GetByPuzzle(string puzzleId);
 
-        void Edit(string id, string newBodyUnsanitized);
-
-        void AdjustScore(string id, int scoreChange);
+        bool Edit(string id, string newBodyUnsanitized);
     }
 }

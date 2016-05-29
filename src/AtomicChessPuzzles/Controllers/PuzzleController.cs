@@ -18,14 +18,16 @@ namespace AtomicChessPuzzles.Controllers
         IPuzzleRepository puzzleRepository;
         IPuzzlesTrainingRepository puzzlesTrainingRepository;
         ICommentRepository commentRepository;
+        ICommentVoteRepository commentVoteRepository;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
-            IPuzzlesTrainingRepository _puzzlesTrainingRepository, ICommentRepository _commentRepository)
+            IPuzzlesTrainingRepository _puzzlesTrainingRepository, ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
             puzzlesTrainingRepository = _puzzlesTrainingRepository;
             commentRepository = _commentRepository;
+            commentVoteRepository = _commentVoteRepository;
         }
 
         [Route("Puzzle")]
@@ -217,7 +219,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", commentBody, null, puzzleId, 0);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", commentBody, null, puzzleId);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -230,17 +232,61 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpGet]
-        [Route("/Puzzle/Comment/GetComments", Name = "GetComments")]
-        public IActionResult GetComments(string puzzleId)
+        [Route("/Puzzle/Comment/ViewComments", Name = "ViewComments")]
+        public IActionResult ViewComments(string puzzleId)
         {
-            List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
-            if (comments == null || comments.Count == 0)
+            if (puzzleId == null)
             {
-                return Json(new { success = true, count = 0 });
+                return View("Comments", null);
+            }
+            List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
+            ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository).Ordered;
+            return View("Comments", roComments);
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Comment/Upvote")]
+        public IActionResult Upvote(string commentId)
+        {
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, HttpContext.Session.GetString("user") ?? "Anonymous", commentId));
+            if (success)
+            {
+                return Json(new { success = true });
             }
             else
             {
-                return Json(new { success = true, count = comments.Count, comments = comments.Select(x => new { author = x.Author, body = x.BodySanitized, score = x.Score }).ToArray() });
+                return Json(new { success = false, error = "Couldn't vote. Have you already voted?" });
+            }
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Comment/Downvote")]
+        public IActionResult Downvote(string commentId)
+        {
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, HttpContext.Session.GetString("user") ?? "Anonymous", commentId));
+            if (success)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, error = "Couldn't vote. Have you already voted?" });
+            }
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Comment/Reply")]
+        public IActionResult Reply(string to, string body, string puzzleId)
+        {
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", body, to, puzzleId);
+            bool success = commentRepository.Add(comment);
+            if (success)
+            {
+                return Json(new { success = true, bodySanitized = comment.BodySanitized });
+            }
+            else
+            {
+                return Json(new { success = false, error = "Could not post comment." });
             }
         }
     }

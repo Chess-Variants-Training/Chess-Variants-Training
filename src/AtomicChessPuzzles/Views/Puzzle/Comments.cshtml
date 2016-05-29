@@ -1,0 +1,37 @@
+﻿@{
+    Layout = null;
+}
+@model System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>
+
+@if (Model == null || Model.Count == 0)
+{
+    @:No comments found.
+}
+else
+{
+    foreach (AtomicChessPuzzles.ViewModels.Comment comment in Model)
+    {
+        <div id="@comment.ID" class="comment" data-indentlevel="@comment.IndentLevel">
+            <div class="vote-arrows">
+                <a data-vote="up" data-commentid="@comment.ID" href="#">+1</a>
+                <div class="score">@comment.Score</div>
+                <a data-vote="down" data-commentid="@comment.ID" href="#">-1</a>
+            </div>
+            <div class="comment-content">
+                <div class="comment-content-row">
+                    <em>@comment.Author</em>:
+                </div>
+                <div class="comment-content-row">
+                    @comment.BodySanitized
+                </div>
+                <div class="comment-content-row controls-row">
+                    Report | <a href="#" data-to="@comment.ID">Reply</a>
+                </div>
+                <div class="comment-content-row" id="to-@comment.ID" style="display:none;">
+                    <textarea></textarea><br>
+                    <a href="#" class="send-reply">Send</a> or <a href="#" class="cancel-reply">Cancel</a>
+                </div>
+            </div>
+        </div>
+    }
+}
