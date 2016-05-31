@@ -1,21 +1,22 @@
 ﻿@{
     Layout = null;
 }
-@model System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>
-
-@if (Model == null || Model.Count == 0)
+@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<string, AtomicChessPuzzles.Models.VoteType>>
+@if (Model == null || Model.Item1 == null || Model.Item1.Count == 0)
 {
     @:No comments found.
 }
 else
 {
-    foreach (AtomicChessPuzzles.ViewModels.Comment comment in Model)
+    foreach (AtomicChessPuzzles.ViewModels.Comment comment in Model.Item1)
     {
+        string upvoteButtonClass = Model.Item2.ContainsKey(comment.ID) && Model.Item2[comment.ID] == AtomicChessPuzzles.Models.VoteType.Upvote ? "upvote-highlighted" : null;
+        string downvoteButtonClass = Model.Item2.ContainsKey(comment.ID) && Model.Item2[comment.ID] == AtomicChessPuzzles.Models.VoteType.Downvote ? "downvote-highlighted" : null;
         <div id="@comment.ID" class="comment" data-indentlevel="@comment.IndentLevel">
             <div class="vote-arrows">
-                <a data-vote="up" data-commentid="@comment.ID" href="#">+1</a>
+                <a data-vote="up" data-commentid="@comment.ID" href="#" class="@upvoteButtonClass">+1</a>
                 <div class="score">@comment.Score</div>
-                <a data-vote="down" data-commentid="@comment.ID" href="#">-1</a>
+                <a data-vote="down" data-commentid="@comment.ID" href="#" class="@downvoteButtonClass">-1</a>
             </div>
             <div class="comment-content">
                 <div class="comment-content-row">

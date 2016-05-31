@@ -27,17 +27,8 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public bool Add(CommentVote vote)
         {
-            var found = voteCollection.Find(new BsonDocument("_id", new BsonString(vote.ID)));
-            if (found != null && found.Any()) return false;
-            try
-            {
-                voteCollection.InsertOne(vote);
-            }
-            catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
-            {
-                return false;
-            }
-            return true;
+            ReplaceOneResult result = voteCollection.ReplaceOne(new BsonDocument("_id", new BsonString(vote.ID)), vote, new UpdateOptions() { IsUpsert = true });
+            return result.IsAcknowledged;
         }
 
         public bool Undo(string voteId)
@@ -80,6 +71,25 @@ namespace AtomicChessPuzzles.DbRepositories
                 score += vote.Type == VoteType.Upvote ? 1 : -1;
             }
             return score;
+        }
+
+        public Dictionary<string, VoteType> VotesByUserOnThoseComments(string voter, List<string> commentIds)
+        {
+            voter = voter.ToLowerInvariant();
+            FilterDefinitionBuilder<CommentVote> builder = Builders<CommentVote>.Filter;
+            FilterDefinition<CommentVote> filter = builder.Where(x => commentIds.Contains(x.AffectedComment) && x.Voter == voter);
+            var found = voteCollection.Find(filter);
+            Dictionary<string, VoteType> result = new Dictionary<string, VoteType>();
+            if (found == null)
+            {
+                return result;
+            }
+            var enumerable = found.ToEnumerable();
+            foreach (CommentVote vote in enumerable)
+            {
+                result.Add(vote.AffectedComment, vote.Type);
+            }
+            return result;
         }
     }
 }

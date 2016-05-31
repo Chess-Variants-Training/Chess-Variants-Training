@@ -241,7 +241,13 @@ namespace AtomicChessPuzzles.Controllers
             }
             List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
             ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository).Ordered;
-            return View("Comments", roComments);
+            Dictionary<string, VoteType> votesByCurrentUser = new Dictionary<string, VoteType>();
+            if (HttpContext.Session.GetString("user") != null)
+            {
+                votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(HttpContext.Session.GetString("user"), comments.Select(x => x.ID).ToList());
+            }
+            Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>>(roComments, votesByCurrentUser);
+            return View("Comments", model);
         }
 
         [HttpPost]
@@ -271,6 +277,21 @@ namespace AtomicChessPuzzles.Controllers
             else
             {
                 return Json(new { success = false, error = "Couldn't vote. Have you already voted?" });
+            }
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Comment/UndoVote")]
+        public IActionResult UndoVote(string commentId)
+        {
+            bool success = commentVoteRepository.Undo(HttpContext.Session.GetString("user") ?? "Anonymous", commentId);
+            if (success)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, error = "Couldn't undo vote." });
             }
         }
 

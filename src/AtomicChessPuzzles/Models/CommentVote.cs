@@ -18,6 +18,7 @@ namespace AtomicChessPuzzles.Models
 
         public CommentVote(VoteType type, string voter, string affectedComment)
         {
+            voter = voter.ToLowerInvariant();
             ID = voter + ":" + affectedComment;
             Type = type;
             Voter = voter;

@@ -1,4 +1,5 @@
 ﻿using AtomicChessPuzzles.Models;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -10,5 +11,6 @@ namespace AtomicChessPuzzles.DbRepositories
         bool UndoAllByVoter(string userId);
         bool ResetCommentScore(string commentId);
         int GetScoreForComment(string commentId);
+        Dictionary<string, VoteType> VotesByUserOnThoseComments(string voter, List<string> commentIds);
     }
 }

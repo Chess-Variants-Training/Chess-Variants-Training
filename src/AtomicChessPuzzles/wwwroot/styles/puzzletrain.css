@@ -45,3 +45,11 @@
 .controls-row {
     font-size: 0.8em;
 }
+
+.upvote-highlighted {
+    background: green;
+}
+
+.downvote-highlighted {
+    background: red;
+}

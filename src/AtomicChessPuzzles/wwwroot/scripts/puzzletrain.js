@@ -83,7 +83,8 @@ function submitComment(e) {
     e = e || window.event;
     e.preventDefault();
     jsonXhr("/Puzzle/Comment/PostComment", "POST", "commentBody=" + encodeURIComponent(document.getElementById("commentBody").value) + "&puzzleId=" + window.puzzleId, function (req, jsonResponse) {
-        appendComment(getUsernameFromTopbar(), jsonResponse["bodySanitized"]);
+        clearComments();
+        loadComments();
     },
     function (req, err) {
         alert(err);
@@ -142,15 +143,30 @@ function loadComments() {
 }
 
 function upvoteComment(commentId) {
-    jsonXhr("/Puzzle/Comment/Upvote", "POST", "commentId=" + commentId, function (req, jsonResponse) { }, function (req, err) { alert(err); });
+    jsonXhr("/Puzzle/Comment/Upvote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
+        clearComments();
+        loadComments();
+    }, function (req, err) {
+        alert(err);
+    });
 }
 
 function downvoteComment(commentId) {
-    jsonXhr("/Puzzle/Comment/Downvote", "POST", "commentId=" + commentId, function (req, jsonResponse) { }, function (req, err) { alert(err); });
+    jsonXhr("/Puzzle/Comment/Downvote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
+        clearComments();
+        loadComments();
+    }, function (req, err) {
+        alert(err);
+    });
 }
 
 function undoVote(commentId) {
-    jsonXhr("/Puzzle/Comment/UndoVote", "POST", "commentId=" + commentId, function (req, jsonResponse) { }, function (req, err) { alert(err); });
+    jsonXhr("/Puzzle/Comment/UndoVote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
+        clearComments();
+        loadComments();
+    }, function (req, err) {
+        alert(err);
+    });
 }
 
 function sendReply(to, body) {
@@ -168,9 +184,17 @@ function voteClicked(e) {
     e.preventDefault();
     var target = e.target;
     if (target.dataset.vote === "up") {
-        upvoteComment(target.dataset.commentid);
+        if (target.classList.contains("upvote-highlighted")) {
+            undoVote(target.dataset.commentid);
+        } else {
+            upvoteComment(target.dataset.commentid);
+        }
     } else {
-        downvoteComment(target.dataset.commentid);
+        if (target.classList.contains("downvote-highlighted")) {
+            undoVote(target.dataset.commentid);
+        } else {
+            downvoteComment(target.dataset.commentid);
+        }
     }
 }
 
