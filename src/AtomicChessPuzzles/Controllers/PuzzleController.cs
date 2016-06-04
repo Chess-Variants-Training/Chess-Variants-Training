@@ -186,14 +186,19 @@ namespace AtomicChessPuzzles.Controllers
         public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination)
         {
             PuzzleDuringTraining pdt = puzzlesTrainingRepository.Get(id, trainingSessionId);
-            if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
-            {
-                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe });
-            }
             MoveType type = pdt.Puzzle.Game.ApplyMove(new Move(origin, destination, pdt.Puzzle.Game.WhoseTurn), false);
             if (type == MoveType.Invalid)
             {
                 return Json(new { success = false, error = "Invalid move." });
+            }
+            GameStatus status = pdt.Puzzle.Game.Status;
+            if (status.Event == GameEvent.Checkmate || status.Event == GameEvent.VariantEnd)
+            {
+                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe });
+            }
+            if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
+            {
+                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe });
             }
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
