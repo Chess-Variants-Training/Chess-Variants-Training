@@ -42,6 +42,11 @@ function submitPuzzleMove(origin, destination, metadata) {
         window.ground.set({
             fen: jsonResponse["fen"]
         });
+        if (jsonResponse["check"] && !jsonResponse["play"]) {
+            window.ground.setCheck(jsonResponse["check"]);
+        } else {
+            window.ground.set({ check: null });
+        }
         if (jsonResponse["play"]) {
             var parts = jsonResponse["play"].split("-");
             window.ground.move(parts[0], parts[1]);

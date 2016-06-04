@@ -192,18 +192,19 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "Invalid move." });
             }
             GameStatus status = pdt.Puzzle.Game.Status;
+            string check = status.Event == GameEvent.Check || status.Event == GameEvent.Checkmate ? ChessUtilities.GetOpponentOf(status.PlayerWhoCausedEvent).ToString().ToLowerInvariant() : null;
             if (status.Event == GameEvent.Checkmate || status.Event == GameEvent.VariantEnd)
             {
-                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe });
+                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check });
             }
             if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
             {
-                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe });
+                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe, check = check });
             }
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe });
+                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check });
             }
             string fen = pdt.Puzzle.Game.GetFen();
             string moveToPlay = pdt.SolutionMovesToDo[0];
@@ -211,11 +212,11 @@ namespace AtomicChessPuzzles.Controllers
             pdt.Puzzle.Game.ApplyMove(new Move(parts[0], parts[1], pdt.Puzzle.Game.WhoseTurn), true);
             string fenAfterPlay = pdt.Puzzle.Game.GetFen();
             Dictionary<string, List<string>> dests = GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
-            JsonResult result = Json(new { success = true, correct = 0, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests });
+            JsonResult result = Json(new { success = true, correct = 0, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, check = check });
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe });
+                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe, check = check });
             }
             return result;
         }
