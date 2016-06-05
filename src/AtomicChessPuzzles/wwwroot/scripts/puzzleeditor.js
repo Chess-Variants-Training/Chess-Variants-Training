@@ -46,7 +46,7 @@ function clearSelection(e) {
 
 function goToStep2(e) {
     e = e || window.event;
-    e.preventDefault();
+    clearSelection(e);
     var step1Elements = document.getElementsByClassName("step1");
     for (var i = 0; i < step1Elements.length; i++) {
         step1Elements[i].setAttribute("class", "step1 hidden");
