@@ -42,7 +42,7 @@ function submitPuzzleMove(origin, destination, metadata) {
         window.ground.set({
             fen: jsonResponse["fen"]
         });
-        if (jsonResponse["check"] && !jsonResponse["play"]) {
+        if (jsonResponse["check"]) {
             window.ground.setCheck(jsonResponse["check"]);
         } else {
             window.ground.set({ check: null });
@@ -53,6 +53,9 @@ function submitPuzzleMove(origin, destination, metadata) {
             window.ground.set({
                 fen: jsonResponse["fenAfterPlay"]
             });
+            if (jsonResponse["checkAfterAutoMove"]) {
+                window.ground.setCheck(jsonResponse["checkAfterAutoMove"]);
+            }
         }
         switch (jsonResponse["correct"]) {
             case 0:
