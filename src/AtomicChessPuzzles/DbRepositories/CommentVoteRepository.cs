@@ -77,7 +77,7 @@ namespace AtomicChessPuzzles.DbRepositories
         {
             voter = voter.ToLowerInvariant();
             FilterDefinitionBuilder<CommentVote> builder = Builders<CommentVote>.Filter;
-            FilterDefinition<CommentVote> filter = builder.Where(x => commentIds.Contains(x.AffectedComment) && x.Voter == voter);
+            FilterDefinition<CommentVote> filter = builder.In("affectedComment", commentIds) & builder.Eq("voter", voter);
             var found = voteCollection.Find(filter);
             Dictionary<string, VoteType> result = new Dictionary<string, VoteType>();
             if (found == null)
