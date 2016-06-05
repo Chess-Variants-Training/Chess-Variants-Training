@@ -53,7 +53,7 @@ namespace AtomicChessPuzzles.Models
         {
             get
             {
-                return Utilities.SanitizeHtml(ExplanationUnsafe);
+                return Utilities.SanitizeHtml(ExplanationUnsafe ?? "No explanation provided.");
             }
         }
     }
