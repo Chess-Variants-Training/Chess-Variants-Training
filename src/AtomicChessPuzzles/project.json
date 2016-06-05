@@ -27,6 +27,7 @@
       "dependencies": {
         "ChessDotNet": "1.0.0-*",
         "ChessDotNet.Variants": "1.0.0-*",
+        "Glicko2": "1.0.0-*",
         "MongoDB.Driver": "2.2.0"
       }
     }

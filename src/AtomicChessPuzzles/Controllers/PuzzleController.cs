@@ -19,15 +19,18 @@ namespace AtomicChessPuzzles.Controllers
         IPuzzlesTrainingRepository puzzlesTrainingRepository;
         ICommentRepository commentRepository;
         ICommentVoteRepository commentVoteRepository;
+        IUserRepository userRepository;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
-            IPuzzlesTrainingRepository _puzzlesTrainingRepository, ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository)
+            IPuzzlesTrainingRepository _puzzlesTrainingRepository, ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository,
+            IUserRepository _userRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
             puzzlesTrainingRepository = _puzzlesTrainingRepository;
             commentRepository = _commentRepository;
             commentVoteRepository = _commentVoteRepository;
+            userRepository = _userRepository;
         }
 
         [Route("Puzzle")]
@@ -120,6 +123,7 @@ namespace AtomicChessPuzzles.Controllers
             puzzle.Author = HttpContext.Session.GetString("user") ?? "Anonymous";
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;
+            puzzle.Rating = new Rating(1500, 350, 0.06);
             if (puzzleRepository.Add(puzzle))
             {
                 return Json(new { success = true });
@@ -195,16 +199,31 @@ namespace AtomicChessPuzzles.Controllers
             string check = status.Event == GameEvent.Check || status.Event == GameEvent.Checkmate ? ChessUtilities.GetOpponentOf(status.PlayerWhoCausedEvent).ToString().ToLowerInvariant() : null;
             if (status.Event == GameEvent.Checkmate || status.Event == GameEvent.VariantEnd)
             {
-                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check });
+                string loggedInUser = HttpContext.Session.GetString("user");
+                if (loggedInUser != null)
+                {
+                    AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
+                }
+                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
             }
             if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
             {
-                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe, check = check });
+                string loggedInUser = HttpContext.Session.GetString("user");
+                if (loggedInUser != null)
+                {
+                    AdjustRating(loggedInUser, pdt.Puzzle.ID, false);
+                }
+                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
             }
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check });
+                string loggedInUser = HttpContext.Session.GetString("user");
+                if (loggedInUser != null)
+                {
+                    AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
+                }
+                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
             }
             string fen = pdt.Puzzle.Game.GetFen();
             string moveToPlay = pdt.SolutionMovesToDo[0];
@@ -218,9 +237,35 @@ namespace AtomicChessPuzzles.Controllers
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe, checkAfterAutoMove = checkAfterAutoMove });
+                string loggedInUser = HttpContext.Session.GetString("user");
+                if (loggedInUser != null)
+                {
+                    AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
+                }
+                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe, checkAfterAutoMove = checkAfterAutoMove, rating = (int)pdt.Puzzle.Rating.Value });
             }
             return result;
+        }
+
+        void AdjustRating(string userId, string puzzleId, bool correct)
+        {
+            // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
+            User user = userRepository.FindByUsername(userId);
+            Puzzle puzzle = puzzleRepository.Get(puzzleId);
+            if (user.SolvedPuzzles.Contains(puzzle.ID))
+            {
+                return;
+            }
+            Glicko2.RatingCalculator calculator = new Glicko2.RatingCalculator();
+            Glicko2.Rating userRating = new Glicko2.Rating(calculator, user.Rating.Value, user.Rating.RatingDeviation, user.Rating.Volatility);
+            Glicko2.Rating puzzleRating = new Glicko2.Rating(calculator, puzzle.Rating.Value, puzzle.Rating.RatingDeviation, puzzle.Rating.Volatility);
+            Glicko2.RatingPeriodResults results = new Glicko2.RatingPeriodResults();
+            results.AddResult(correct ? userRating : puzzleRating, correct ? puzzleRating : userRating);
+            calculator.UpdateRatings(results);
+            user.Rating = new Rating(userRating.GetRating(), userRating.GetRatingDeviation(), userRating.GetVolatility());
+            user.SolvedPuzzles.Add(puzzle.ID);
+            userRepository.Update(user);
+            puzzleRepository.UpdateRating(puzzle.ID, new Rating(puzzleRating.GetRating(), puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
         }
 
         [HttpPost]

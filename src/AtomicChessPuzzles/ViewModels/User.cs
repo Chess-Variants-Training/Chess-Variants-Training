@@ -7,6 +7,7 @@
         public int PuzzlesCorrect { get; private set; }
         public int PuzzlesWrong { get; private set; }
         public Models.UserRole Role { get; private set; }
+        public int Rating { get; private set; }
         public int PuzzlesMade
         {
             get
@@ -36,6 +37,7 @@
             PuzzlesCorrect = user.PuzzlesCorrect;
             PuzzlesWrong = user.PuzzlesWrong;
             Role = user.Role;
+            Rating = (int)user.Rating.Value;
         }
     }
 }

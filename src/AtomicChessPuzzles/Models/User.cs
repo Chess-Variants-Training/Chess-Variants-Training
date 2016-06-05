@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Models
 {
@@ -32,7 +33,14 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("role")]
         public UserRole Role { get; set; }
 
-        public User(string id, string username, string email, string passwordHash, string salt, string about, int puzzlesCorrect, int puzzlesWrong, UserRole role)
+        [BsonElement("rating")]
+        public Rating Rating { get; set; }
+
+        [BsonElement("solvedPuzzles")]
+        public List<string> SolvedPuzzles { get; set; }
+
+        public User(string id, string username, string email, string passwordHash, string salt, string about,
+            int puzzlesCorrect, int puzzlesWrong, UserRole role, Rating rating, List<string> solvedPuzzles)
         {
             ID = id;
             Username = username;
@@ -43,6 +51,8 @@ namespace AtomicChessPuzzles.Models
             PuzzlesCorrect = puzzlesCorrect;
             PuzzlesWrong = puzzlesWrong;
             Role = role;
+            Rating = rating;
+            SolvedPuzzles = solvedPuzzles;
         }
     }
 }

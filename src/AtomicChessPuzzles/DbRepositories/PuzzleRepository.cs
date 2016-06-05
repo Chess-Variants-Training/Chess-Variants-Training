@@ -61,5 +61,13 @@ namespace AtomicChessPuzzles.DbRepositories
         {
             return puzzleCollection.DeleteMany(new BsonDocument("author", new BsonString(author)));
         }
+
+        public bool UpdateRating(string id, Rating newRating)
+        {
+            UpdateDefinitionBuilder<Puzzle> builder = new UpdateDefinitionBuilder<Puzzle>();
+            UpdateDefinition<Puzzle> def = builder.Set("rating", newRating);
+            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonString(id)), def);
+            return result.IsAcknowledged && result.MatchedCount != 0;
+        }
     }
 }

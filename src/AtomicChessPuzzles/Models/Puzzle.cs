@@ -56,5 +56,12 @@ namespace AtomicChessPuzzles.Models
                 return Utilities.SanitizeHtml(ExplanationUnsafe ?? "No explanation provided.");
             }
         }
+
+        [BsonElement("rating")]
+        public Rating Rating
+        {
+            get;
+            set;
+        }
     }
 }

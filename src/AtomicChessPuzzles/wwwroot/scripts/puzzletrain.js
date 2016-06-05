@@ -80,7 +80,7 @@ function submitPuzzleMove(origin, destination, metadata) {
             });
         }
         if (jsonResponse["explanation"]) {
-            showExplanation(jsonResponse["explanation"]);
+            showExplanation(jsonResponse["explanation"] + "<br><br>Puzzle rating: " + jsonResponse["rating"]);
         }
     }, function (req, err) {
         alert(err);
