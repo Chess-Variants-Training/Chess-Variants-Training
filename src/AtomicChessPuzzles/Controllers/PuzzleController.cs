@@ -145,14 +145,19 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Train/GetOneRandomly")]
         public IActionResult GetOneRandomly()
         {
-            Puzzle puzzle = puzzleRepository.GetOneRandomly();
+            List<string> toBeExcluded = new List<string>();
+            if (HttpContext.Session.GetString("user") != null)
+            {
+                toBeExcluded = userRepository.FindByUsername(HttpContext.Session.GetString("user")).SolvedPuzzles;
+            }
+            Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded);
             if (puzzle != null)
             {
                 return Json(new { success = true, id = puzzle.ID });
             }
             else
             {
-                return Json(new { success = false });
+                return Json(new { success = false, error = "There are no more puzzles for you." });
             }
         }
 
@@ -264,6 +269,14 @@ namespace AtomicChessPuzzles.Controllers
             calculator.UpdateRatings(results);
             user.Rating = new Rating(userRating.GetRating(), userRating.GetRatingDeviation(), userRating.GetVolatility());
             user.SolvedPuzzles.Add(puzzle.ID);
+            if (correct)
+            {
+                user.PuzzlesCorrect++;
+            }
+            else
+            {
+                user.PuzzlesWrong++;
+            }
             userRepository.Update(user);
             puzzleRepository.UpdateRating(puzzle.ID, new Rating(puzzleRating.GetRating(), puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
         }

@@ -2,6 +2,7 @@
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace AtomicChessPuzzles.DbRepositories
@@ -45,11 +46,13 @@ namespace AtomicChessPuzzles.DbRepositories
             return found.FirstOrDefault();
         }
 
-        public Puzzle GetOneRandomly()
+        public Puzzle GetOneRandomly(List<string> excludedIds)
         {
-            long count = puzzleCollection.Count(new BsonDocument());
-            if (count < 1) return null;
-            return puzzleCollection.Find(new BsonDocument()).FirstOrDefault();
+            FilterDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Filter;
+            FilterDefinition<Puzzle> filter = builder.Nin("_id", excludedIds);
+            var found = puzzleCollection.Find(filter);
+            if (found == null) return null;
+            return found.FirstOrDefault();
         }
 
         public DeleteResult Remove(string id)

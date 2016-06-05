@@ -1,4 +1,6 @@
-﻿namespace AtomicChessPuzzles.ViewModels
+﻿using System;
+
+namespace AtomicChessPuzzles.ViewModels
 {
     public class User
     {
@@ -21,7 +23,7 @@
             get
             {
                 if (PuzzlesMade == 0) return 0;
-                return PuzzlesCorrect / (float)PuzzlesMade;
+                return (float)Math.Round(PuzzlesCorrect / (float)PuzzlesMade * 100, 1, MidpointRounding.AwayFromZero);
             }
         }
 

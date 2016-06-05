@@ -1,5 +1,6 @@
 ﻿using AtomicChessPuzzles.Models;
 using MongoDB.Driver;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -9,7 +10,7 @@ namespace AtomicChessPuzzles.DbRepositories
 
         Puzzle Get(string id);
 
-        Puzzle GetOneRandomly();
+        Puzzle GetOneRandomly(List<string> excludedIds);
 
         DeleteResult Remove(string id);
 
