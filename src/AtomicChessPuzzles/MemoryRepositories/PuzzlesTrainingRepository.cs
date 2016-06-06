@@ -32,5 +32,10 @@ namespace AtomicChessPuzzles.MemoryRepositories
         {
             return puzzles.Any(x => x.TrainingSessionId == trainingSessionId);
         }
+
+        public IEnumerable<PuzzleDuringTraining> GetForTrainingSessionId(string trainingSessionId)
+        {
+            return puzzles.Where(x => x.TrainingSessionId == trainingSessionId);
+        }
     }
 }

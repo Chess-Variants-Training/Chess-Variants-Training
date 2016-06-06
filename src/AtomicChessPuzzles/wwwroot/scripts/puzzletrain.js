@@ -1,5 +1,5 @@
 ﻿function startWithRandomPuzzle() {
-    jsonXhr("/Puzzle/Train/GetOneRandomly", "GET", null, function (req, jsonResponse) {
+    jsonXhr("/Puzzle/Train/GetOneRandomly" + (window.trainingSessionId ? "?trainingSessionId=" + window.trainingSessionId : ""), "GET", null, function (req, jsonResponse) {
         setup(jsonResponse["id"]);
     }, function (req, err) {
         alert(err);
@@ -7,13 +7,14 @@
 }
 
 function setup(puzzleId) {
-    document.getElementById("result").setAttribute("class", "");
     window.puzzleId = puzzleId;
     jsonXhr("/Puzzle/Train/Setup", "POST", "id=" + window.puzzleId + (window.trainingSessionId ? "&trainingSessionId=" + window.trainingSessionId : ""), function (req, jsonResponse) {
         window.ground.set({
             fen: jsonResponse["fen"],
             orientation: jsonResponse["whoseTurn"],
             turnColor: jsonResponse["whoseTurn"],
+            lastMove: null,
+            selected: null,
             movable: {
                 free: false,
                 dests: jsonResponse["dests"]
@@ -22,6 +23,8 @@ function setup(puzzleId) {
         clearExplanation();
         clearComments();
         loadComments();
+        document.getElementById("result").setAttribute("class", "");
+        document.getElementById("result").innerHTML = "";
         document.getElementById("author").textContent = jsonResponse["author"];
         window.trainingSessionId = jsonResponse["trainingSessionId"];
     }, function (req, err) {
@@ -61,6 +64,7 @@ function submitPuzzleMove(origin, destination, metadata) {
             case 0:
                 break;
             case 1:
+                document.getElementById("nextPuzzleLink").style.display = "block";
                 with (document.getElementById("result")) {
                     textContent = "Success!";
                     setAttribute("class", "green");
@@ -68,6 +72,7 @@ function submitPuzzleMove(origin, destination, metadata) {
                 break;
             case -1:
                 with (document.getElementById("result")) {
+                    document.getElementById("nextPuzzleLink").style.display = "block";
                     textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
                     setAttribute("class", "red");
                 }
@@ -225,6 +230,13 @@ function cancelLinkClicked(e) {
     e.preventDefault();
 }
 
+function nextPuzzle(e) {
+    e = e || window.event;
+    e.preventDefault();
+    e.target.style.display = "none";
+    startWithRandomPuzzle();
+}
+
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: false,
@@ -238,5 +250,6 @@ window.addEventListener("load", function () {
         }
     });
     document.getElementById("submitCommentLink").addEventListener("click", submitComment);
+    document.getElementById("nextPuzzleLink").addEventListener("click", nextPuzzle);
     startWithRandomPuzzle();
 });

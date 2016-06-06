@@ -143,12 +143,16 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpGet]
         [Route("/Puzzle/Train/GetOneRandomly")]
-        public IActionResult GetOneRandomly()
+        public IActionResult GetOneRandomly(string trainingSessionId = null)
         {
             List<string> toBeExcluded = new List<string>();
             if (HttpContext.Session.GetString("user") != null)
             {
                 toBeExcluded = userRepository.FindByUsername(HttpContext.Session.GetString("user")).SolvedPuzzles;
+            }
+            else if (trainingSessionId != null)
+            {
+                toBeExcluded = puzzlesTrainingRepository.GetForTrainingSessionId(trainingSessionId).Select(x => x.Puzzle.ID).ToList();
             }
             Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded);
             if (puzzle != null)
@@ -173,10 +177,17 @@ namespace AtomicChessPuzzles.Controllers
             puzzle.Game = new AtomicChessGame(puzzle.InitialFen);
             PuzzleDuringTraining pdt = new PuzzleDuringTraining();
             pdt.Puzzle = puzzle;
-            do
+            if (trainingSessionId == null)
             {
-                pdt.TrainingSessionId = trainingSessionId ?? Guid.NewGuid().ToString();
-            } while (puzzlesTrainingRepository.ContainsTrainingSessionId(trainingSessionId));
+                do
+                {
+                    pdt.TrainingSessionId = Guid.NewGuid().ToString();
+                } while (puzzlesTrainingRepository.ContainsTrainingSessionId(trainingSessionId));
+            }
+            else
+            {
+                pdt.TrainingSessionId = trainingSessionId;
+            }
             pdt.SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
             puzzlesTrainingRepository.Add(pdt);
             return Json(new

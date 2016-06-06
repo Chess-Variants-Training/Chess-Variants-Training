@@ -1,4 +1,5 @@
 ﻿using AtomicChessPuzzles.Models;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.MemoryRepositories
 {
@@ -13,5 +14,7 @@ namespace AtomicChessPuzzles.MemoryRepositories
         bool Contains(string id, string trainingSessionId);
 
         bool ContainsTrainingSessionId(string trainingSessionId);
+
+        IEnumerable<PuzzleDuringTraining> GetForTrainingSessionId(string trainingSessionId);
     }
 }
