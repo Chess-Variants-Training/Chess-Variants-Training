@@ -146,9 +146,13 @@ namespace AtomicChessPuzzles.Controllers
         public IActionResult GetOneRandomly(string trainingSessionId = null)
         {
             List<string> toBeExcluded = new List<string>();
+            double nearRating = 1500;
             if (HttpContext.Session.GetString("user") != null)
             {
-                toBeExcluded = userRepository.FindByUsername(HttpContext.Session.GetString("user")).SolvedPuzzles;
+                string userId = HttpContext.Session.GetString("user");
+                User u = userRepository.FindByUsername(userId);
+                toBeExcluded = u.SolvedPuzzles;
+                nearRating = u.Rating.Value;
             }
             else if (trainingSessionId != null)
             {

@@ -10,7 +10,7 @@ namespace AtomicChessPuzzles.DbRepositories
 
         Puzzle Get(string id);
 
-        Puzzle GetOneRandomly(List<string> excludedIds);
+        Puzzle GetOneRandomly(List<string> excludedIds, double nearRating = 1500);
 
         DeleteResult Remove(string id);
 
