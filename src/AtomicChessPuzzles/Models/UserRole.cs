@@ -1,15 +1,43 @@
-﻿using System;
+﻿using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Models
 {
-    [Flags]
-    public enum UserRole
+    public static class UserRole
     {
-        None = 0,
-        PuzzleReviewer = 1,
-        PuzzleEditor = 2,
-        CommentModerator = 4,
-        UserModerator = 8,
-        Admin = 16
+        public const string NONE = "None";
+
+        public const string PUZZLE_REVIEWER = "PuzzleReviewer";
+        public const string PUZZLE_EDITOR = "PuzzleEditor";
+
+        public const string COMMENT_MODERATOR = "CommentModerator";
+        public const string USER_MODERATOR = "UserModerator";
+
+        public const string ADMIN = "Admin";
+
+        public static string UserRolesToString(List<string> roles)
+        {
+            return string.Join(",", roles);
+        }
+
+        public static bool HasAtLeastThePrivilegesOf(string actualPrivilege, string privilegeToCheckAgainst)
+        {
+            if (actualPrivilege == ADMIN) return true;
+
+            switch (privilegeToCheckAgainst)
+            {
+                case ADMIN:
+                    return actualPrivilege == ADMIN;
+                case USER_MODERATOR:
+                    return actualPrivilege == USER_MODERATOR;
+                case COMMENT_MODERATOR:
+                    return actualPrivilege == COMMENT_MODERATOR || actualPrivilege == USER_MODERATOR;
+                case PUZZLE_EDITOR:
+                    return actualPrivilege == PUZZLE_EDITOR;
+                case PUZZLE_REVIEWER:
+                    return actualPrivilege == PUZZLE_REVIEWER || actualPrivilege == PUZZLE_EDITOR;
+                default:
+                    return false;
+            }
+        }
     }
 }

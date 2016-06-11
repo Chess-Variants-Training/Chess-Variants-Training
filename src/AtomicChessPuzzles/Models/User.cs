@@ -30,8 +30,8 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("puzzleswrong")]
         public int PuzzlesWrong { get; set; }
 
-        [BsonElement("role")]
-        public UserRole Role { get; set; }
+        [BsonElement("roles")]
+        public List<string> Roles { get; set; }
 
         [BsonElement("rating")]
         public Rating Rating { get; set; }
@@ -40,7 +40,7 @@ namespace AtomicChessPuzzles.Models
         public List<string> SolvedPuzzles { get; set; }
 
         public User(string id, string username, string email, string passwordHash, string salt, string about,
-            int puzzlesCorrect, int puzzlesWrong, UserRole role, Rating rating, List<string> solvedPuzzles)
+            int puzzlesCorrect, int puzzlesWrong, List<string> roles, Rating rating, List<string> solvedPuzzles)
         {
             ID = id;
             Username = username;
@@ -50,7 +50,7 @@ namespace AtomicChessPuzzles.Models
             About = about;
             PuzzlesCorrect = puzzlesCorrect;
             PuzzlesWrong = puzzlesWrong;
-            Role = role;
+            Roles = roles;
             Rating = rating;
             SolvedPuzzles = solvedPuzzles;
         }

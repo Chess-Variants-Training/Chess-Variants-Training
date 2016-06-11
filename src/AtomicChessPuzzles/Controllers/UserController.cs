@@ -47,7 +47,7 @@ namespace AtomicChessPuzzles.Controllers
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
             Models.User user = new Models.User(username.ToLowerInvariant(), username, email, hash, salt, "", 0, 0,
-                Models.UserRole.None, new Models.Rating(1500, 350, 0.06), new List<string>());
+                new List<string>() { Models.UserRole.NONE }, new Models.Rating(1500, 350, 0.06), new List<string>());
             bool added = userRepository.Add(user);
             return RedirectToAction("Profile", new { name = username });
         }

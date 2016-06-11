@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.ViewModels
 {
@@ -8,7 +9,7 @@ namespace AtomicChessPuzzles.ViewModels
         public string About { get; private set; }
         public int PuzzlesCorrect { get; private set; }
         public int PuzzlesWrong { get; private set; }
-        public Models.UserRole Role { get; private set; }
+        public List<string> Roles { get; private set; }
         public int Rating { get; private set; }
         public int PuzzlesMade
         {
@@ -38,7 +39,7 @@ namespace AtomicChessPuzzles.ViewModels
             About = user.About;
             PuzzlesCorrect = user.PuzzlesCorrect;
             PuzzlesWrong = user.PuzzlesWrong;
-            Role = user.Role;
+            Roles = user.Roles;
             Rating = (int)user.Rating.Value;
         }
     }
