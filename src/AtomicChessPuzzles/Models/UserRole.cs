@@ -19,6 +19,18 @@ namespace AtomicChessPuzzles.Models
             return string.Join(",", roles);
         }
 
+        public static bool HasAtLeastThePrivilegesOf(List<string> actualPrivileges, string privilegeToCheckAgainst)
+        {
+            foreach (string actualPrivilege in actualPrivileges)
+            {
+                if (HasAtLeastThePrivilegesOf(actualPrivilege, privilegeToCheckAgainst))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         public static bool HasAtLeastThePrivilegesOf(string actualPrivilege, string privilegeToCheckAgainst)
         {
             if (actualPrivilege == ADMIN) return true;
