@@ -120,7 +120,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
             }
             puzzle.Solutions.Add(solution);
-            puzzle.Author = HttpContext.Session.GetString("user") ?? "Anonymous";
+            puzzle.Author = HttpContext.Session.GetString("username") ?? "Anonymous";
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;
             puzzle.Rating = new Rating(1500, 350, 0.06);
@@ -147,9 +147,9 @@ namespace AtomicChessPuzzles.Controllers
         {
             List<string> toBeExcluded = new List<string>();
             double nearRating = 1500;
-            if (HttpContext.Session.GetString("user") != null)
+            if (HttpContext.Session.GetString("username") != null)
             {
-                string userId = HttpContext.Session.GetString("user");
+                string userId = HttpContext.Session.GetString("username");
                 User u = userRepository.FindByUsername(userId);
                 toBeExcluded = u.SolvedPuzzles;
                 nearRating = u.Rating.Value;
@@ -219,7 +219,7 @@ namespace AtomicChessPuzzles.Controllers
             string check = status.Event == GameEvent.Check || status.Event == GameEvent.Checkmate ? ChessUtilities.GetOpponentOf(status.PlayerWhoCausedEvent).ToString().ToLowerInvariant() : null;
             if (status.Event == GameEvent.Checkmate || status.Event == GameEvent.VariantEnd)
             {
-                string loggedInUser = HttpContext.Session.GetString("user");
+                string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
                     AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
@@ -228,7 +228,7 @@ namespace AtomicChessPuzzles.Controllers
             }
             if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
             {
-                string loggedInUser = HttpContext.Session.GetString("user");
+                string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
                     AdjustRating(loggedInUser, pdt.Puzzle.ID, false);
@@ -238,7 +238,7 @@ namespace AtomicChessPuzzles.Controllers
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                string loggedInUser = HttpContext.Session.GetString("user");
+                string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
                     AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
@@ -257,7 +257,7 @@ namespace AtomicChessPuzzles.Controllers
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
             {
-                string loggedInUser = HttpContext.Session.GetString("user");
+                string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
                     AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
@@ -300,7 +300,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", commentBody, null, puzzleId, false);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", commentBody, null, puzzleId, false);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -324,9 +324,9 @@ namespace AtomicChessPuzzles.Controllers
             ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository).Ordered;
             Dictionary<string, VoteType> votesByCurrentUser = new Dictionary<string, VoteType>();
             bool hasCommentModerationPrivilege = false;
-            if (HttpContext.Session.GetString("user") != null)
+            if (HttpContext.Session.GetString("userid") != null)
             {
-                string userId = HttpContext.Session.GetString("user");
+                string userId = HttpContext.Session.GetString("userid");
                 votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(userId, comments.Select(x => x.ID).ToList());
                 hasCommentModerationPrivilege = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindByUsername(userId).Roles, UserRole.COMMENT_MODERATOR);
             }
@@ -338,7 +338,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/Upvote")]
         public IActionResult Upvote(string commentId)
         {
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, HttpContext.Session.GetString("user") ?? "Anonymous", commentId));
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, HttpContext.Session.GetString("userid") ?? "Anonymous", commentId));
             if (success)
             {
                 return Json(new { success = true });
@@ -353,7 +353,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/Downvote")]
         public IActionResult Downvote(string commentId)
         {
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, HttpContext.Session.GetString("user") ?? "Anonymous", commentId));
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, HttpContext.Session.GetString("userid") ?? "Anonymous", commentId));
             if (success)
             {
                 return Json(new { success = true });
@@ -368,7 +368,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/UndoVote")]
         public IActionResult UndoVote(string commentId)
         {
-            bool success = commentVoteRepository.Undo(HttpContext.Session.GetString("user") ?? "Anonymous", commentId);
+            bool success = commentVoteRepository.Undo(HttpContext.Session.GetString("userid") ?? "Anonymous", commentId);
             if (success)
             {
                 return Json(new { success = true });
@@ -383,7 +383,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/Reply")]
         public IActionResult Reply(string to, string body, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", body, to, puzzleId, false);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", body, to, puzzleId, false);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -399,7 +399,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/Mod/Delete")]
         public IActionResult DeleteComment(string commentId)
         {
-            string username = HttpContext.Session.GetString("user");
+            string username = HttpContext.Session.GetString("username");
             if (username == null)
             {
                 return Json(new { success = false, error = "Not authorized" });

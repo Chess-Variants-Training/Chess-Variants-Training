@@ -86,14 +86,16 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return RedirectToAction("Login");
             }
-            HttpContext.Session.SetString("user", user.Username);
+            HttpContext.Session.SetString("username", user.Username);
+            HttpContext.Session.SetString("userid", user.ID);
             return RedirectToAction("Profile", new { name = username });
         }
 
         [Route("/User/Logout")]
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("user");
+            HttpContext.Session.Remove("username");
+            HttpContext.Session.Remove("userid");
             return RedirectToAction("Index", "Home");
         }
 
@@ -101,7 +103,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/Edit")]
         public IActionResult Edit()
         {
-            string username = HttpContext.Session.GetString("user");
+            string username = HttpContext.Session.GetString("username");
             if (username == null)
             {
                 return RedirectToAction("Login");
@@ -113,7 +115,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/Edit", Name = "EditPost")]
         public IActionResult Edit(string email, string about)
         {
-            string username = HttpContext.Session.GetString("user");
+            string username = HttpContext.Session.GetString("username");
             if (username == null)
             {
                 return RedirectToAction("Login");

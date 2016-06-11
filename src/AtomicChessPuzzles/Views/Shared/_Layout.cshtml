@@ -29,7 +29,7 @@
             <li>@Html.ActionLink("Contribute", "Editor", "Puzzle", null, null)</li>
             <li class="right">
                 @{  string u = null;
-                    if (string.IsNullOrEmpty((u = Context.Session.GetString("user"))))
+                    if (string.IsNullOrEmpty((u = Context.Session.GetString("username"))))
                     {
                         @:@Html.ActionLink("Log in", "Login", "User", null, null)
                     }
