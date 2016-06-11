@@ -122,6 +122,10 @@ function clearComments() {
     for (var i = 0; i < cancelLinks.length; i++) {
         cancelLinks[i].removeEventListener("click", cancelLinkClicked);
     }
+    var modLinks = document.getElementById("commentContainer").getElementsByClassName("mod-link");
+    for (var i = 0; i < modLinks.length; i++) {
+        modLinks[i].removeEventListener("click", modLinkClicked);
+    }
     while (commentContainer.firstChild) {
         commentContainer.removeChild(commentContainer.firstChild);
     }
@@ -149,6 +153,10 @@ function loadComments() {
         var cancelLinks = document.getElementById("commentContainer").getElementsByClassName("cancel-reply");
         for (var i = 0; i < cancelLinks.length; i++) {
             cancelLinks[i].addEventListener("click", cancelLinkClicked);
+        }
+        var modLinks = document.getElementById("commentContainer").getElementsByClassName("mod-link");
+        for (var i = 0; i < modLinks.length; i++) {
+            modLinks[i].addEventListener("click", modLinkClicked);
         }
     }, function (req, err) {
         alert(err);
@@ -228,6 +236,19 @@ function sendLinkClicked(e) {
 function cancelLinkClicked(e) {
     e = e || window.event;
     e.preventDefault();
+}
+
+function modLinkClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var action = e.target.dataset.action;
+    var commentId = e.target.dataset.commentid;
+    jsonXhr("/Puzzle/Comment/Mod/" + action, "POST", "commentId=" + commentId, function (req, jsonResponse) {
+        clearComments();
+        loadComments();
+    }, function (req, err) {
+        alert(err);
+    });
 }
 
 function nextPuzzle(e) {

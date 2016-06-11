@@ -12,14 +12,16 @@ namespace AtomicChessPuzzles.ViewModels
         public string Author { get; set; }
         public int Score { get; set; }
         public int IndentLevel { get; set; }
+        public bool Deleted { get; set; }
 
-        public Comment(Models.Comment orig, int indentLevel, int score)
+        public Comment(Models.Comment orig, int indentLevel, int score, bool deleted)
         {
             ID = orig.ID;
             BodySanitized = orig.BodySanitized;
             Author = orig.Author;
             Score = score;
             IndentLevel = indentLevel;
+            Deleted = deleted;
         }
     }
 }

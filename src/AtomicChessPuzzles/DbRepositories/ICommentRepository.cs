@@ -12,5 +12,7 @@ namespace AtomicChessPuzzles.DbRepositories
         List<Comment> GetByPuzzle(string puzzleId);
 
         bool Edit(string id, string newBodyUnsanitized);
+
+        bool SoftDelete(string id);
     }
 }

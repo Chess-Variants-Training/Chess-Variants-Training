@@ -58,5 +58,13 @@ namespace AtomicChessPuzzles.DbRepositories
             UpdateResult res = commentCollection.UpdateOne(filter, update);
             return res.IsAcknowledged && res.MatchedCount != 0;
         }
+
+        public bool SoftDelete(string id)
+        {
+            FilterDefinition<Comment> filter = Builders<Comment>.Filter.Eq("_id", id);
+            UpdateDefinition<Comment> update = Builders<Comment>.Update.Set("deleted", true);
+            UpdateResult res = commentCollection.UpdateOne(filter, update);
+            return res.IsAcknowledged && res.MatchedCount != 0;
+        }
     }
 }

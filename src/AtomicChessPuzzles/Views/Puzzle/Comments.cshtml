@@ -1,7 +1,7 @@
 ﻿@{
     Layout = null;
 }
-@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<string, AtomicChessPuzzles.Models.VoteType>>
+@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<string, AtomicChessPuzzles.Models.VoteType>, bool>
 @if (Model == null || Model.Item1 == null || Model.Item1.Count == 0)
 {
     @:No comments found.
@@ -23,10 +23,14 @@ else
                     <em>@comment.Author</em>:
                 </div>
                 <div class="comment-content-row">
-                    @comment.BodySanitized
+                    @(!comment.Deleted ? comment.BodySanitized : "[deleted]")
                 </div>
                 <div class="comment-content-row controls-row">
                     Report | <a href="#" data-to="@comment.ID">Reply</a>
+                    @if (Model.Item3)
+                    {
+                        @:| <a href="#" class="mod-link" data-action="Delete" data-commentid="@comment.ID">Delete</a>
+                    }
                 </div>
                 <div class="comment-content-row" id="to-@comment.ID" style="display:none;">
                     <textarea></textarea><br>

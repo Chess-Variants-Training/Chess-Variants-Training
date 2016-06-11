@@ -53,3 +53,7 @@
 .downvote-highlighted {
     background: red;
 }
+
+.mod-link {
+    color: red;
+}

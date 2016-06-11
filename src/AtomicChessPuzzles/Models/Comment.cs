@@ -27,13 +27,17 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("puzzleId")]
         public string PuzzleID { get; set; }
 
-        public Comment(string id, string author, string bodyUnsanitized, string parentId, string puzzleId)
+        [BsonElement("deleted")]
+        public bool Deleted { get; set; }
+
+        public Comment(string id, string author, string bodyUnsanitized, string parentId, string puzzleId, bool deleted)
         {
             ID = id;
             Author = author;
             BodyUnsanitized = bodyUnsanitized;
             ParentID = parentId;
             PuzzleID = puzzleId;
+            Deleted = deleted;
         }
     }
 }

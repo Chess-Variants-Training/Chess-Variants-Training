@@ -300,7 +300,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", commentBody, null, puzzleId);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", commentBody, null, puzzleId, false);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -323,11 +323,14 @@ namespace AtomicChessPuzzles.Controllers
             List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
             ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository).Ordered;
             Dictionary<string, VoteType> votesByCurrentUser = new Dictionary<string, VoteType>();
+            bool hasCommentModerationPrivilege = false;
             if (HttpContext.Session.GetString("user") != null)
             {
-                votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(HttpContext.Session.GetString("user"), comments.Select(x => x.ID).ToList());
+                string userId = HttpContext.Session.GetString("user");
+                votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(userId, comments.Select(x => x.ID).ToList());
+                hasCommentModerationPrivilege = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindByUsername(userId).Roles, UserRole.COMMENT_MODERATOR);
             }
-            Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>>(roComments, votesByCurrentUser);
+            Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>, bool> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>, bool>(roComments, votesByCurrentUser, hasCommentModerationPrivilege);
             return View("Comments", model);
         }
 
@@ -380,7 +383,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Comment/Reply")]
         public IActionResult Reply(string to, string body, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", body, to, puzzleId);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("user") ?? "Anonymous", body, to, puzzleId, false);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -389,6 +392,31 @@ namespace AtomicChessPuzzles.Controllers
             else
             {
                 return Json(new { success = false, error = "Could not post comment." });
+            }
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Comment/Mod/Delete")]
+        public IActionResult DeleteComment(string commentId)
+        {
+            string username = HttpContext.Session.GetString("user");
+            if (username == null)
+            {
+                return Json(new { success = false, error = "Not authorized" });
+            }
+            bool isPrivileged = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindByUsername(username).Roles, UserRole.COMMENT_MODERATOR);
+            if (!isPrivileged)
+            {
+                return Json(new { success = false, error = "Not authorized" });
+            }
+            bool deleteSuccess = commentRepository.SoftDelete(commentId);
+            if (deleteSuccess)
+            {
+                return Json(new { success = true });
+            }
+            else
+            {
+                return Json(new { success = false, error = "Couldn't delete comment. Does it exist?" });
             }
         }
     }

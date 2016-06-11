@@ -25,7 +25,7 @@ namespace AtomicChessPuzzles.ViewModels
         {
             List<Comment> result = new List<Comment>();
 
-            IEnumerable<Comment> currentTopLevel = list.Where(x => x.ParentID == parent).Select(x => new Comment(x, indentLevel, voteRepo.GetScoreForComment(x.ID))).OrderByDescending(x => x.Score);
+            IEnumerable<Comment> currentTopLevel = list.Where(x => x.ParentID == parent).Select(x => new Comment(x, indentLevel, voteRepo.GetScoreForComment(x.ID), x.Deleted)).OrderByDescending(x => x.Score);
             foreach (Comment comment in currentTopLevel)
             {
                 result.Add(comment);
