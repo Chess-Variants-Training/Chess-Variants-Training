@@ -22,7 +22,13 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("reasonExplanation")]
         public string ReasonExplanation { get; set; }
 
-        public Report(string id, string type, string reporter, string reported, string reason, string reasonExplanation)
+        [BsonElement("handled")]
+        public bool Handled { get; set; }
+
+        [BsonElement("judgementAfterHandling")]
+        public string JudgementAfterHandling { get; set; }
+
+        public Report(string id, string type, string reporter, string reported, string reason, string reasonExplanation, bool handled, string judgementAfterHandling)
         {
             ID = id;
             Type = type;
@@ -30,6 +36,8 @@ namespace AtomicChessPuzzles.Models
             Reported = reported;
             Reason = reason;
             ReasonExplanation = reasonExplanation;
+            Handled = handled;
+            JudgementAfterHandling = judgementAfterHandling;
         }
     }
 }
