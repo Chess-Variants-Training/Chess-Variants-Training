@@ -10,6 +10,7 @@ namespace AtomicChessPuzzles
         public string PuzzleCollectionName { get; private set; }
         public string CommentCollectionName { get; private set; }
         public string CommentVoteCollectionName { get; private set; }
+        public string ReportCollectionName { get; private set; }
 
         public MongoSettings()
         {
@@ -20,6 +21,7 @@ namespace AtomicChessPuzzles
             PuzzleCollectionName = config.Get<string>("mongo:puzzlecollectionname");
             CommentCollectionName = config.Get<string>("mongo:commentcollectionname");
             CommentVoteCollectionName = config.Get<string>("mongo:commentvotecollectionname");
+            ReportCollectionName = config.Get<string>("mongo:reportcollectionname");
         }
     }
 }

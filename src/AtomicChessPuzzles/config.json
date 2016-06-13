@@ -5,6 +5,7 @@
     "usercollectionname": "users",
     "puzzlecollectionname": "puzzles",
     "commentcollectionname": "comments",
-    "commentvotecollectionname": "commentvotes"
+    "commentvotecollectionname": "commentvotes",
+    "reportcollectionname": "reports"
   }
 }
