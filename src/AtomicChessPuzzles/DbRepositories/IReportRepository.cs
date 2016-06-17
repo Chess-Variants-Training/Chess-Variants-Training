@@ -1,4 +1,5 @@
 ﻿using AtomicChessPuzzles.Models;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -9,5 +10,7 @@ namespace AtomicChessPuzzles.DbRepositories
         bool MarkHelpful(string reportId);
 
         bool MarkDeclined(string reportId);
+
+        List<Report> GetByType(string type);
     }
 }

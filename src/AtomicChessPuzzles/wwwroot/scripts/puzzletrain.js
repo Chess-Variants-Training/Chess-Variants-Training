@@ -122,6 +122,10 @@ function clearComments() {
     for (var i = 0; i < cancelLinks.length; i++) {
         cancelLinks[i].removeEventListener("click", cancelLinkClicked);
     }
+    var reportLinks = document.getElementById("commentContainer").getElementsByClassName("report-link");
+    for (var i = 0; i < reportLinks.length; i++) {
+        reportLinks[i].removeEventListener("click", reportLinkClicked);
+    }
     var modLinks = document.getElementById("commentContainer").getElementsByClassName("mod-link");
     for (var i = 0; i < modLinks.length; i++) {
         modLinks[i].removeEventListener("click", modLinkClicked);
@@ -153,6 +157,10 @@ function loadComments() {
         var cancelLinks = document.getElementById("commentContainer").getElementsByClassName("cancel-reply");
         for (var i = 0; i < cancelLinks.length; i++) {
             cancelLinks[i].addEventListener("click", cancelLinkClicked);
+        }
+        var reportLinks = document.getElementById("commentContainer").getElementsByClassName("report-link");
+        for (var i = 0; i < reportLinks.length; i++) {
+            reportLinks[i].addEventListener("click", reportLinkClicked);
         }
         var modLinks = document.getElementById("commentContainer").getElementsByClassName("mod-link");
         for (var i = 0; i < modLinks.length; i++) {
@@ -236,6 +244,13 @@ function sendLinkClicked(e) {
 function cancelLinkClicked(e) {
     e = e || window.event;
     e.preventDefault();
+}
+
+function reportLinkClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var itemToReport = e.target.dataset.item;
+    jsonXhr("/Report/Submit/Comment", "POST", "item=" + itemToReport, function (req, jsonResponse) { }, function (req, err) { alert(err); });
 }
 
 function modLinkClicked(e) {

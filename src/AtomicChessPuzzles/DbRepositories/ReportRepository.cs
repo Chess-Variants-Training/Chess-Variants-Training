@@ -3,6 +3,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -54,6 +55,17 @@ namespace AtomicChessPuzzles.DbRepositories
         public bool MarkDeclined(string reportId)
         {
             return Handle(reportId, "declined");
+        }
+
+        public List<Report> GetByType(string type)
+        {
+            FilterDefinition<Report> filter = Builders<Report>.Filter.Eq("type", type);
+            var found = reportCollection.Find(filter);
+            if (found == null)
+            {
+                return new List<Report>();
+            }
+            return found.ToList();
         }
     }
 }
