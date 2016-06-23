@@ -14,6 +14,8 @@ namespace AtomicChessPuzzles.Controllers
         IReportRepository reportRepository;
         IUserRepository userRepository;
 
+        public static readonly string[] ValidCommentReportReasons = new string[] { "Offensive", "Spam", "Off-topic", "Other" };
+
         public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository)
         {
             reportRepository = _reportRepository;
@@ -43,14 +45,17 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Report/Submit/{type}")]
-        public IActionResult SubmitReport(string type, string item)
+        public IActionResult SubmitReport(string type, string item, string reason, string reasonExplanation)
         {
             if (type != "Comment")
             {
                 return Json(new { success = false, error = "Unknown report type." });
             }
-            Report report = new Report(Guid.NewGuid().ToString(), type, HttpContext.Session.GetString("username") ?? "Anonymous", item, "Inappropriate", "This comment has been reported", false, null);
-            // TODO: allow giving a reason and reason explanation
+            if (!ValidCommentReportReasons.Contains(reason))
+            {
+                return Json(new { success = false, error = "Invalid reason" });
+            }
+            Report report = new Report(Guid.NewGuid().ToString(), type, HttpContext.Session.GetString("username") ?? "Anonymous", item, reason, reasonExplanation, false, null);
             if (reportRepository.Add(report))
             {
                 return Json(new { success = true });
@@ -59,6 +64,13 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Reporting failed." });
             }
+        }
+
+        [HttpGet]
+        [Route("/Report/Dialog/Comment")]
+        public IActionResult CommentReportDialog()
+        {
+            return View();
         }
     }
 }

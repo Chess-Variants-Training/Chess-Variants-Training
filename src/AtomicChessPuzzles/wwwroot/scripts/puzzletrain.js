@@ -250,7 +250,43 @@ function reportLinkClicked(e) {
     e = e || window.event;
     e.preventDefault();
     var itemToReport = e.target.dataset.item;
-    jsonXhr("/Report/Submit/Comment", "POST", "item=" + itemToReport, function (req, jsonResponse) { }, function (req, err) { alert(err); });
+    if (!window.reportDialogHtml) {
+        xhr("/Report/Dialog/Comment", "GET", null, function (req) {
+            window.reportDialogHtml = req.responseText;
+            showReportDialog(itemToReport);
+        }, function (req, err) {
+            alert(err);
+        });
+    }
+    else {
+        showReportDialog(itemToReport);
+    }
+}
+
+function showReportDialog(itemToReport) {
+    var itemToReportElement = document.getElementById(itemToReport);
+    itemToReportElement.getElementsByClassName("comment-content")[0].style.display = "none";
+    itemToReportElement.insertAdjacentHTML("beforeend", window.reportDialogHtml);
+    itemToReportElement.getElementsByClassName("report-dialog")[0].lastElementChild.addEventListener("click", reportLinkInDialogClicked);
+}
+
+function removeReportDialog(itemReported) {
+    var itemReportedElement = document.getElementById(itemReported);
+    itemReportedElement.getElementsByClassName("comment-content")[0].style.display = "flex";
+    itemReportedElement.removeChild(itemReportedElement.getElementsByClassName("report-dialog")[0]);
+}
+
+function reportLinkInDialogClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var parent = e.target.parentElement;
+    jsonXhr("/Report/Submit/Comment", "POST", "item=" + parent.parentElement.id + "&reason=" + parent.getElementsByTagName("select")[0].value + "&reasonExplanation=" + encodeURIComponent(parent.getElementsByTagName("textarea")[0].value),
+        function (req, jsonResponse) {
+            removeReportDialog(parent.parentElement.id);
+        },
+        function (req, err) {
+            alert(err);
+        });
 }
 
 function modLinkClicked(e) {
