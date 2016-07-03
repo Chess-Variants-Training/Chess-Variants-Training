@@ -63,5 +63,19 @@ namespace AtomicChessPuzzles.Models
             get;
             set;
         }
+
+        [BsonElement("inReview")]
+        public bool InReview
+        {
+            get;
+            set;
+        }
+
+        [BsonElement("approved")]
+        public bool Approved
+        {
+            get;
+            set;
+        }
     }
 }

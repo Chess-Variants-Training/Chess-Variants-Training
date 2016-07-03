@@ -50,7 +50,8 @@ namespace AtomicChessPuzzles.DbRepositories
         public Puzzle GetOneRandomly(List<string> excludedIds, double nearRating = 1500)
         {
             FilterDefinitionBuilder<Puzzle> filterBuilder = Builders<Puzzle>.Filter;
-            FilterDefinition<Puzzle> filter = filterBuilder.Nin("_id", excludedIds);
+            FilterDefinition<Puzzle> filter = filterBuilder.Nin("_id", excludedIds) & filterBuilder.Eq("inReview", false)
+                                              & filterBuilder.Eq("approved", true);
             FilterDefinition<Puzzle> lteFilter = filter;
             FilterDefinition<Puzzle> gtFilter = filter;
             bool higherRated = RandomBoolean();
@@ -90,6 +91,28 @@ namespace AtomicChessPuzzles.DbRepositories
         private bool RandomBoolean()
         {
             return rnd.Next() % 2 == 0;
+        }
+
+        public List<Puzzle> InReview()
+        {
+            FilterDefinition<Puzzle> filter = Builders<Puzzle>.Filter.Eq("inReview", true);
+            return puzzleCollection.Find(filter).ToList();
+        }
+
+        public bool Approve(string id)
+        {
+            UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
+            UpdateDefinition<Puzzle> def = builder.Set("approved", true).Set("inReview", false);
+            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonString(id)), def);
+            return result.IsAcknowledged && result.MatchedCount != 0;
+        }
+
+        public bool Reject(string id)
+        {
+            UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
+            UpdateDefinition<Puzzle> def = builder.Set("approved", false).Set("inReview", false);
+            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonString(id)), def);
+            return result.IsAcknowledged && result.MatchedCount != 0;
         }
     }
 }

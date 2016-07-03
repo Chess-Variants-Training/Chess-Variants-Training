@@ -17,5 +17,11 @@ namespace AtomicChessPuzzles.DbRepositories
         DeleteResult RemoveAllBy(string author);
 
         bool UpdateRating(string id, Rating newRating);
+
+        List<Puzzle> InReview();
+
+        bool Approve(string id);
+
+        bool Reject(string id);
     }
 }

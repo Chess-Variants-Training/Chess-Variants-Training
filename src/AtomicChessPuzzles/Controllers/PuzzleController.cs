@@ -124,6 +124,8 @@ namespace AtomicChessPuzzles.Controllers
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;
             puzzle.Rating = new Rating(1500, 350, 0.06);
+            puzzle.InReview = true;
+            puzzle.Approved = false;
             if (puzzleRepository.Add(puzzle))
             {
                 return Json(new { success = true });
@@ -139,6 +141,14 @@ namespace AtomicChessPuzzles.Controllers
         public IActionResult Train()
         {
             return View();
+        }
+
+        [HttpGet]
+        [Route("/p/{id}", Name = "TrainId")]
+        public IActionResult TrainId(string id)
+        {
+            Puzzle p = puzzleRepository.Get(id);
+            return View("Train", p);
         }
 
         [HttpGet]
@@ -272,7 +282,7 @@ namespace AtomicChessPuzzles.Controllers
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
             User user = userRepository.FindByUsername(userId);
             Puzzle puzzle = puzzleRepository.Get(puzzleId);
-            if (user.SolvedPuzzles.Contains(puzzle.ID))
+            if (user.SolvedPuzzles.Contains(puzzle.ID) || puzzle.InReview)
             {
                 return;
             }

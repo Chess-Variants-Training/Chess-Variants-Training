@@ -304,6 +304,7 @@ function modLinkClicked(e) {
 
 function nextPuzzle(e) {
     e = e || window.event;
+    if (e.target.getAttribute("href") !== "#") return true;
     e.preventDefault();
     e.target.style.display = "none";
     startWithRandomPuzzle();
@@ -323,5 +324,9 @@ window.addEventListener("load", function () {
     });
     document.getElementById("submitCommentLink").addEventListener("click", submitComment);
     document.getElementById("nextPuzzleLink").addEventListener("click", nextPuzzle);
-    startWithRandomPuzzle();
+    if (!window.selectedPuzzle) {
+        startWithRandomPuzzle();
+    } else {
+        setup(window.selectedPuzzle);
+    }
 });
