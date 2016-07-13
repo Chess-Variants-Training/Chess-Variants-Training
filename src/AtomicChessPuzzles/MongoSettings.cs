@@ -11,6 +11,8 @@ namespace AtomicChessPuzzles
         public string CommentCollectionName { get; private set; }
         public string CommentVoteCollectionName { get; private set; }
         public string ReportCollectionName { get; private set; }
+        public string PositionCollectionName { get; private set; }
+        public string TimedTrainingScoreCollectionName { get; private set; }
 
         public MongoSettings()
         {
@@ -22,6 +24,8 @@ namespace AtomicChessPuzzles
             CommentCollectionName = config.Get<string>("mongo:commentcollectionname");
             CommentVoteCollectionName = config.Get<string>("mongo:commentvotecollectionname");
             ReportCollectionName = config.Get<string>("mongo:reportcollectionname");
+            PositionCollectionName = config.Get<string>("mongo:positioncollectionname");
+            TimedTrainingScoreCollectionName = config.Get<string>("mongo:timedtrainingscorecollectionname");
         }
     }
 }

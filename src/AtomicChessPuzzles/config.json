@@ -6,6 +6,8 @@
     "puzzlecollectionname": "puzzles",
     "commentcollectionname": "comments",
     "commentvotecollectionname": "commentvotes",
-    "reportcollectionname": "reports"
+    "reportcollectionname": "reports",
+    "positioncollectionname": "positions",
+    "timedtrainingscorecollectionname": "timedtrainingscores"
   }
 }

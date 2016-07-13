@@ -20,10 +20,14 @@ namespace AtomicChessPuzzles.Controllers
         ICommentRepository commentRepository;
         ICommentVoteRepository commentVoteRepository;
         IUserRepository userRepository;
+        ITimedTrainingSessionRepository timedTrainingSessionRepository;
+        IPositionRepository positionRepository;
+        ITimedTrainingScoreRepository timedTrainingScoreRepository;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
             IPuzzlesTrainingRepository _puzzlesTrainingRepository, ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository,
-            IUserRepository _userRepository)
+            IUserRepository _userRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository, IPositionRepository _positionRepository,
+            ITimedTrainingScoreRepository _timedTrainingScoreRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
@@ -31,6 +35,9 @@ namespace AtomicChessPuzzles.Controllers
             commentRepository = _commentRepository;
             commentVoteRepository = _commentVoteRepository;
             userRepository = _userRepository;
+            timedTrainingSessionRepository = _timedTrainingSessionRepository;
+            positionRepository = _positionRepository;
+            timedTrainingScoreRepository = _timedTrainingScoreRepository;
         }
 
         [Route("Puzzle")]
@@ -428,6 +435,86 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Couldn't delete comment. Does it exist?" });
             }
+        }
+
+        [HttpGet]
+        [Route("/Puzzle/Train-Timed/Mate-In-One")]
+        public IActionResult TimedMateInOne()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Train-Timed/Mate-In-One/Start")]
+        public IActionResult StartMateInOneTraining()
+        {
+            string sessionId = Guid.NewGuid().ToString();
+            DateTime startTime = DateTime.UtcNow;
+            DateTime endTime = startTime + new TimeSpan(0, 1, 0);
+            TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
+                                        (HttpContext.Session.GetString("userid") ?? "anonymous").ToLower(), "mateInOne");
+            timedTrainingSessionRepository.Add(session);
+            TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
+            AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
+            timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
+            return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
+                              dests = GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)) });
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Train-Timed/Mate-In-One/VerifyAndGetNext")]
+        public IActionResult MateInOneVerifyAndGetNext(string sessionId, string origin, string destination)
+        {
+            TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
+            if (session == null)
+            {
+                return Json(new { success = false, error = "Training session ID not found." });
+            }
+            if (session.Ended)
+            {
+                if (!session.RecordedInDb)
+                {
+                    timedTrainingScoreRepository.Add(session.Score);
+                    session.RecordedInDb = true;
+                }
+                return Json(new { success = true, ended = true });
+            }
+            bool correctMove = false;
+            MoveType moveType = session.AssociatedGame.ApplyMove(new Move(origin, destination, session.AssociatedGame.WhoseTurn), false);
+            if (moveType != MoveType.Invalid)
+            {
+                GameEvent gameEvent = session.AssociatedGame.Status.Event;
+                correctMove = gameEvent == GameEvent.Checkmate || gameEvent == GameEvent.VariantEnd;
+            }
+            if (correctMove)
+            {
+                session.Score.Score++;
+            }
+            TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
+            AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
+            timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
+            return Json(new { success = true, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
+                              dests = GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)),
+                              correct = correctMove });
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Train-Timed/Mate-In-One/AcknowledgeEnd")]
+        public IActionResult AcknowledgeEnd(string sessionId)
+        {
+            TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
+            if (session == null)
+            {
+                return Json(new { success = false, error = "Training session ID not found." });
+            }
+            if (!session.RecordedInDb)
+            {
+                timedTrainingScoreRepository.Add(session.Score);
+                session.RecordedInDb = true;
+            }
+            double score = session.Score.Score;
+            timedTrainingSessionRepository.Remove(session.SessionID);
+            return Json(new { success = true, score = score });
         }
     }
 }
