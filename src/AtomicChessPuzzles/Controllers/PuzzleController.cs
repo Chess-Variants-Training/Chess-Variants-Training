@@ -452,7 +452,7 @@ namespace AtomicChessPuzzles.Controllers
             DateTime startTime = DateTime.UtcNow;
             DateTime endTime = startTime + new TimeSpan(0, 1, 0);
             TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
-                                        (HttpContext.Session.GetString("userid") ?? "anonymous").ToLower(), "mateInOne");
+                                        (HttpContext.Session.GetString("userid") ?? "").ToLower(), "mateInOne");
             timedTrainingSessionRepository.Add(session);
             TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
             AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
@@ -472,7 +472,7 @@ namespace AtomicChessPuzzles.Controllers
             }
             if (session.Ended)
             {
-                if (!session.RecordedInDb)
+                if (!session.RecordedInDb && !string.IsNullOrEmpty(session.Score.Owner))
                 {
                     timedTrainingScoreRepository.Add(session.Score);
                     session.RecordedInDb = true;
@@ -507,7 +507,7 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Training session ID not found." });
             }
-            if (!session.RecordedInDb)
+            if (!session.RecordedInDb && !string.IsNullOrEmpty(session.Score.Owner))
             {
                 timedTrainingScoreRepository.Add(session.Score);
                 session.RecordedInDb = true;
