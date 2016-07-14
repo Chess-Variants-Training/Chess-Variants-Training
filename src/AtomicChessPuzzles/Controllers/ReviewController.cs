@@ -1,14 +1,7 @@
 using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
-using ChessDotNet;
-using ChessDotNet.Variants.Atomic;
-using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
 
 namespace AtomicChessPuzzles.Controllers
 {
