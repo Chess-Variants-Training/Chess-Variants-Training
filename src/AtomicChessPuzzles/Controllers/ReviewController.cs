@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Controllers
 {
-    public class ReviewController : Controller
+    public class ReviewController : ErrorCapableController
     {
         IPuzzleRepository puzzleRepository;
         IUserRepository userRepository;
