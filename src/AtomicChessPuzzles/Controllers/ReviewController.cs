@@ -1,4 +1,5 @@
 using AtomicChessPuzzles.DbRepositories;
+using AtomicChessPuzzles.HttpErrors;
 using AtomicChessPuzzles.Models;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Mvc.Filters;
@@ -11,6 +12,7 @@ namespace AtomicChessPuzzles.Controllers
     {
         IPuzzleRepository puzzleRepository;
         IUserRepository userRepository;
+        const string NEEDS_REVIEWER_ROLE = "You need to have at least the Puzzle Reviewer role to be able to review puzzles.";
 
         public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository)
         {
@@ -23,14 +25,14 @@ namespace AtomicChessPuzzles.Controllers
             string userId = context.HttpContext.Session.GetString("userid");
             if (userId == null)
             {
-                context.Result = Json(new { success = false, error = "Not authorized." });
+                context.Result = ViewResultForHttpError(context.HttpContext, new NotAuthorized(NEEDS_REVIEWER_ROLE));
                 return;
             }
             User user = userRepository.FindByUsername(userId);
             bool authorized = UserRole.HasAtLeastThePrivilegesOf(user.Roles, UserRole.PUZZLE_REVIEWER);
             if (!authorized)
             {
-                context.Result = Json(new { success = false, error = "Not authorized." });
+                context.Result = ViewResultForHttpError(context.HttpContext, new NotAuthorized(NEEDS_REVIEWER_ROLE));
                 return;
             }
             base.OnActionExecuting(context);
