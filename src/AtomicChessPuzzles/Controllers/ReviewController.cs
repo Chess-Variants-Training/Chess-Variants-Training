@@ -1,6 +1,8 @@
 using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.Models;
 using Microsoft.AspNet.Mvc;
+using Microsoft.AspNet.Mvc.Filters;
+using Microsoft.AspNet.Http;
 using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Controllers
@@ -8,10 +10,30 @@ namespace AtomicChessPuzzles.Controllers
     public class ReviewController : Controller
     {
         IPuzzleRepository puzzleRepository;
+        IUserRepository userRepository;
 
-        public ReviewController(IPuzzleRepository _puzzleRepository)
+        public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository)
         {
             puzzleRepository = _puzzleRepository;
+            userRepository = _userRepository;
+        }
+
+        public override void OnActionExecuting(ActionExecutingContext context)
+        {
+            string userId = context.HttpContext.Session.GetString("userid");
+            if (userId == null)
+            {
+                context.Result = Json(new { success = false, error = "Not authorized." });
+                return;
+            }
+            User user = userRepository.FindByUsername(userId);
+            bool authorized = UserRole.HasAtLeastThePrivilegesOf(user.Roles, UserRole.PUZZLE_REVIEWER);
+            if (!authorized)
+            {
+                context.Result = Json(new { success = false, error = "Not authorized." });
+                return;  
+            }
+            base.OnActionExecuting(context);
         }
 
         [Route("/Review")]
