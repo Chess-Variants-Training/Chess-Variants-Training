@@ -6,15 +6,17 @@ using Microsoft.AspNet.Mvc;
 using AtomicChessPuzzles.DbRepositories;
 using Microsoft.AspNet.Http;
 using AtomicChessPuzzles.Models;
+using AtomicChessPuzzles.HttpErrors;
 
 namespace AtomicChessPuzzles.Controllers
 {
-    public class ReportController : Controller
+    public class ReportController : ErrorCapableController
     {
         IReportRepository reportRepository;
         IUserRepository userRepository;
 
         public static readonly string[] ValidCommentReportReasons = new string[] { "Offensive", "Spam", "Off-topic", "Other" };
+        const string LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE = "You need to have at least the Comment Moderator role to view the list of comment reports.";
 
         public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository)
         {
@@ -28,8 +30,7 @@ namespace AtomicChessPuzzles.Controllers
             string userId = HttpContext.Session.GetString("userid");
             if (userId == null)
             {
-                Response.StatusCode = 403;
-                return Json(new { success = false, error = "You have no access." });
+                return ViewResultForHttpError(HttpContext, new NotAuthorized(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
             }
             User user = userRepository.FindByUsername(userId);
             if (UserRole.HasAtLeastThePrivilegesOf(user.Roles, UserRole.COMMENT_MODERATOR))
@@ -38,8 +39,7 @@ namespace AtomicChessPuzzles.Controllers
             }
             else
             {
-                Response.StatusCode = 403;
-                return Json(new { success = false, error = "You have no access." });
+                return ViewResultForHttpError(HttpContext, new NotAuthorized(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
             }
         }
 
