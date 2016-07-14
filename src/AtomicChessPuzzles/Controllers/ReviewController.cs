@@ -31,7 +31,7 @@ namespace AtomicChessPuzzles.Controllers
             if (!authorized)
             {
                 context.Result = Json(new { success = false, error = "Not authorized." });
-                return;  
+                return;
             }
             base.OnActionExecuting(context);
         }
