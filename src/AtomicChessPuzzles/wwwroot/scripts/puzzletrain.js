@@ -106,30 +106,6 @@ function submitComment(e) {
 
 function clearComments() {
     var commentContainer = document.getElementById("commentContainer");
-    var voteLinks = commentContainer.querySelectorAll("a[data-vote]");
-    for (var i = 0; i < voteLinks.length; i++) {
-        voteLinks[i].removeEventListener("click", voteClicked);
-    }
-    var replyLinks = commentContainer.querySelectorAll("a[data-to]");
-    for (var i = 0; i < replyLinks.length; i++) {
-        replyLinks[i].removeEventListener("click", replyLinkClicked);
-    }
-    var sendLinks = commentContainer.getElementsByClassName("send-reply");
-    for (var i = 0; i < sendLinks.length; i++) {
-        sendLinks[i].removeEventListener("click", sendLinkClicked);
-    }
-    var cancelLinks = commentContainer.getElementsByClassName("cancel-reply");
-    for (var i = 0; i < cancelLinks.length; i++) {
-        cancelLinks[i].removeEventListener("click", cancelLinkClicked);
-    }
-    var reportLinks = document.getElementById("commentContainer").getElementsByClassName("report-link");
-    for (var i = 0; i < reportLinks.length; i++) {
-        reportLinks[i].removeEventListener("click", reportLinkClicked);
-    }
-    var modLinks = document.getElementById("commentContainer").getElementsByClassName("mod-link");
-    for (var i = 0; i < modLinks.length; i++) {
-        modLinks[i].removeEventListener("click", modLinkClicked);
-    }
     while (commentContainer.firstChild) {
         commentContainer.removeChild(commentContainer.firstChild);
     }
