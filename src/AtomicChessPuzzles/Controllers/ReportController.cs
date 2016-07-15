@@ -16,7 +16,7 @@ namespace AtomicChessPuzzles.Controllers
         IUserRepository userRepository;
 
         public static readonly string[] ValidCommentReportReasons = new string[] { "Offensive", "Spam", "Off-topic", "Other" };
-        const string LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE = "You need to have at least the Comment Moderator role to view the list of comment reports.";
+        const string LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE = "You need to be logged in and have at least the Comment Moderator role to view the list of comment reports.";
 
         public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository)
         {

@@ -12,7 +12,7 @@ namespace AtomicChessPuzzles.Controllers
     {
         IPuzzleRepository puzzleRepository;
         IUserRepository userRepository;
-        const string NEEDS_REVIEWER_ROLE = "You need to have at least the Puzzle Reviewer role to be able to review puzzles.";
+        const string NEEDS_REVIEWER_ROLE = "You need to be logged in and have at least the Puzzle Reviewer role to be able to review puzzles.";
 
         public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository)
         {
