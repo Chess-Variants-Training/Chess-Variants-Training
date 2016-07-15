@@ -30,7 +30,7 @@ namespace AtomicChessPuzzles.Controllers
             string userId = HttpContext.Session.GetString("userid");
             if (userId == null)
             {
-                return ViewResultForHttpError(HttpContext, new NotAuthorized(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
+                return ViewResultForHttpError(HttpContext, new Unauthorized(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
             }
             User user = userRepository.FindByUsername(userId);
             if (UserRole.HasAtLeastThePrivilegesOf(user.Roles, UserRole.COMMENT_MODERATOR))
@@ -39,7 +39,7 @@ namespace AtomicChessPuzzles.Controllers
             }
             else
             {
-                return ViewResultForHttpError(HttpContext, new NotAuthorized(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
+                return ViewResultForHttpError(HttpContext, new Unauthorized(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
             }
         }
 
