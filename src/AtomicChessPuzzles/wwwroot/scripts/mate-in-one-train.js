@@ -53,6 +53,10 @@ function verifyAndGetNext(origin, destination, metadata) {
                 end();
                 return;
             }
+            var li = document.createElement("li");
+            var text = document.createTextNode(jsonResponse["correct"] ? "Correct" : "Incorrect");
+            li.appendChild(text);
+            document.getElementById("previous").appendChild(li);
             showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"]);
         }, function (req, err) {
             alert(err);
