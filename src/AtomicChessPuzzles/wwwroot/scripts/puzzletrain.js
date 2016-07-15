@@ -23,6 +23,7 @@ function setup(puzzleId) {
         clearExplanation();
         clearComments();
         loadComments();
+        document.getElementById("nextPuzzleLink").classList.add("nodisplay");
         document.getElementById("result").setAttribute("class", "");
         document.getElementById("result").innerHTML = "";
         document.getElementById("author").textContent = jsonResponse["author"];
@@ -64,15 +65,15 @@ function submitPuzzleMove(origin, destination, metadata) {
             case 0:
                 break;
             case 1:
-                document.getElementById("nextPuzzleLink").style.display = "block";
+                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
                 with (document.getElementById("result")) {
                     textContent = "Success!";
                     setAttribute("class", "green");
                 };
                 break;
             case -1:
+                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
                 with (document.getElementById("result")) {
-                    document.getElementById("nextPuzzleLink").style.display = "block";
                     textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
                     setAttribute("class", "red");
                 }
@@ -282,7 +283,6 @@ function nextPuzzle(e) {
     e = e || window.event;
     if (e.target.getAttribute("href") !== "#") return true;
     e.preventDefault();
-    e.target.style.display = "none";
     startWithRandomPuzzle();
 }
 
