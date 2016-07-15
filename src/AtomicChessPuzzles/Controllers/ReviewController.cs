@@ -25,14 +25,14 @@ namespace AtomicChessPuzzles.Controllers
             string userId = context.HttpContext.Session.GetString("userid");
             if (userId == null)
             {
-                context.Result = ViewResultForHttpError(context.HttpContext, new Unauthorized(NEEDS_REVIEWER_ROLE));
+                context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden(NEEDS_REVIEWER_ROLE));
                 return;
             }
             User user = userRepository.FindByUsername(userId);
             bool authorized = UserRole.HasAtLeastThePrivilegesOf(user.Roles, UserRole.PUZZLE_REVIEWER);
             if (!authorized)
             {
-                context.Result = ViewResultForHttpError(context.HttpContext, new Unauthorized(NEEDS_REVIEWER_ROLE));
+                context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden(NEEDS_REVIEWER_ROLE));
                 return;
             }
             base.OnActionExecuting(context);
