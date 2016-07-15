@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace AtomicChessPuzzles.ViewModels
+﻿namespace AtomicChessPuzzles.ViewModels
 {
     public class Comment
     {
