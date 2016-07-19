@@ -18,22 +18,14 @@ namespace AtomicChessPuzzles.Controllers
         IPuzzleRepository puzzleRepository;
         IPuzzlesTrainingRepository puzzlesTrainingRepository;
         IUserRepository userRepository;
-        ITimedTrainingSessionRepository timedTrainingSessionRepository;
-        IPositionRepository positionRepository;
-        ITimedTrainingScoreRepository timedTrainingScoreRepository;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
-            IPuzzlesTrainingRepository _puzzlesTrainingRepository,
-            IUserRepository _userRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository, IPositionRepository _positionRepository,
-            ITimedTrainingScoreRepository _timedTrainingScoreRepository)
+            IPuzzlesTrainingRepository _puzzlesTrainingRepository, IUserRepository _userRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
             puzzlesTrainingRepository = _puzzlesTrainingRepository;
             userRepository = _userRepository;
-            timedTrainingSessionRepository = _timedTrainingSessionRepository;
-            positionRepository = _positionRepository;
-            timedTrainingScoreRepository = _timedTrainingScoreRepository;
         }
 
         [Route("Puzzle")]
@@ -76,24 +68,8 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
             ReadOnlyCollection<Move> validMoves = puzzle.Game.GetValidMoves(puzzle.Game.WhoseTurn);
-            Dictionary<string, List<string>> dests = GetChessgroundDestsForMoveCollection(validMoves);
+            Dictionary<string, List<string>> dests = Utilities.GetChessgroundDestsForMoveCollection(validMoves);
             return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() });
-        }
-
-        Dictionary<string, List<string>> GetChessgroundDestsForMoveCollection(ReadOnlyCollection<Move> moves)
-        {
-            Dictionary<string, List<string>> dests = new Dictionary<string, List<string>>();
-            foreach (Move m in moves)
-            {
-                string origin = m.OriginalPosition.ToString().ToLowerInvariant();
-                string destination = m.NewPosition.ToString().ToLowerInvariant();
-                if (!dests.ContainsKey(origin))
-                {
-                    dests.Add(origin, new List<string>());
-                }
-                dests[origin].Add(destination);
-            }
-            return dests;
         }
 
         [HttpPost]
@@ -213,7 +189,7 @@ namespace AtomicChessPuzzles.Controllers
                 trainingSessionId = pdt.TrainingSessionId,
                 author = pdt.Puzzle.Author,
                 fen = pdt.Puzzle.InitialFen,
-                dests = GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn)),
+                dests = Utilities.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn)),
                 whoseTurn = pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant()
             });
         }
@@ -265,7 +241,7 @@ namespace AtomicChessPuzzles.Controllers
             string fenAfterPlay = pdt.Puzzle.Game.GetFen();
             GameStatus statusAfterAutoMove = pdt.Puzzle.Game.Status;
             string checkAfterAutoMove = statusAfterAutoMove.Event == GameEvent.Check || statusAfterAutoMove.Event == GameEvent.Checkmate ? ChessUtilities.GetOpponentOf(statusAfterAutoMove.PlayerWhoCausedEvent).ToString().ToLowerInvariant() : null;
-            Dictionary<string, List<string>> dests = GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
+            Dictionary<string, List<string>> dests = Utilities.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
             JsonResult result = Json(new { success = true, correct = 0, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, checkAfterAutoMove = checkAfterAutoMove });
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
@@ -308,86 +284,6 @@ namespace AtomicChessPuzzles.Controllers
             }
             userRepository.Update(user);
             puzzleRepository.UpdateRating(puzzle.ID, new Rating(puzzleRating.GetRating(), puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
-        }
-
-        [HttpGet]
-        [Route("/Puzzle/Train-Timed/Mate-In-One")]
-        public IActionResult TimedMateInOne()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        [Route("/Puzzle/Train-Timed/Mate-In-One/Start")]
-        public IActionResult StartMateInOneTraining()
-        {
-            string sessionId = Guid.NewGuid().ToString();
-            DateTime startTime = DateTime.UtcNow;
-            DateTime endTime = startTime + new TimeSpan(0, 1, 0);
-            TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
-                                        (HttpContext.Session.GetString("userid") ?? "").ToLower(), "mateInOne");
-            timedTrainingSessionRepository.Add(session);
-            TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
-            AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
-            timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
-            return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
-                              dests = GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)) });
-        }
-
-        [HttpPost]
-        [Route("/Puzzle/Train-Timed/Mate-In-One/VerifyAndGetNext")]
-        public IActionResult MateInOneVerifyAndGetNext(string sessionId, string origin, string destination)
-        {
-            TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
-            if (session == null)
-            {
-                return Json(new { success = false, error = "Training session ID not found." });
-            }
-            if (session.Ended)
-            {
-                if (!session.RecordedInDb && !string.IsNullOrEmpty(session.Score.Owner))
-                {
-                    timedTrainingScoreRepository.Add(session.Score);
-                    session.RecordedInDb = true;
-                }
-                return Json(new { success = true, ended = true });
-            }
-            bool correctMove = false;
-            MoveType moveType = session.AssociatedGame.ApplyMove(new Move(origin, destination, session.AssociatedGame.WhoseTurn), false);
-            if (moveType != MoveType.Invalid)
-            {
-                GameEvent gameEvent = session.AssociatedGame.Status.Event;
-                correctMove = gameEvent == GameEvent.Checkmate || gameEvent == GameEvent.VariantEnd;
-            }
-            if (correctMove)
-            {
-                session.Score.Score++;
-            }
-            TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
-            AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
-            timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
-            return Json(new { success = true, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
-                              dests = GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)),
-                              correct = correctMove });
-        }
-
-        [HttpPost]
-        [Route("/Puzzle/Train-Timed/Mate-In-One/AcknowledgeEnd")]
-        public IActionResult AcknowledgeEnd(string sessionId)
-        {
-            TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
-            if (session == null)
-            {
-                return Json(new { success = false, error = "Training session ID not found." });
-            }
-            if (!session.RecordedInDb && !string.IsNullOrEmpty(session.Score.Owner))
-            {
-                timedTrainingScoreRepository.Add(session.Score);
-                session.RecordedInDb = true;
-            }
-            double score = session.Score.Score;
-            timedTrainingSessionRepository.Remove(session.SessionID);
-            return Json(new { success = true, score = score });
         }
     }
 }
