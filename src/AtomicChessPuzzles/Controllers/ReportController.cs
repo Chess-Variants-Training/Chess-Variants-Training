@@ -3,42 +3,27 @@ using System.Linq;
 using Microsoft.AspNet.Mvc;
 using AtomicChessPuzzles.DbRepositories;
 using Microsoft.AspNet.Http;
+using AtomicChessPuzzles.Attributes;
 using AtomicChessPuzzles.Models;
-using AtomicChessPuzzles.HttpErrors;
 
 namespace AtomicChessPuzzles.Controllers
 {
-    public class ReportController : ErrorCapableController
+    public class ReportController : RestrictedController
     {
         IReportRepository reportRepository;
-        IUserRepository userRepository;
 
         public static readonly string[] ValidCommentReportReasons = new string[] { "Offensive", "Spam", "Off-topic", "Other" };
-        const string LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE = "You need to be logged in and have at least the Comment Moderator role to view the list of comment reports.";
 
-        public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository)
+        public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository) : base(_userRepository)
         {
             reportRepository = _reportRepository;
-            userRepository = _userRepository;
         }
 
         [Route("/Report/List/Comments")]
+        [Restricted(true, UserRole.COMMENT_MODERATOR)]
         public IActionResult ListCommentReports()
         {
-            string userId = HttpContext.Session.GetString("userid");
-            if (userId == null)
-            {
-                return ViewResultForHttpError(HttpContext, new Forbidden(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
-            }
-            User user = userRepository.FindByUsername(userId);
-            if (UserRole.HasAtLeastThePrivilegesOf(user.Roles, UserRole.COMMENT_MODERATOR))
-            {
-                return View("List", reportRepository.GetByType("Comment"));
-            }
-            else
-            {
-                return ViewResultForHttpError(HttpContext, new Forbidden(LISTCOMMENTREPORTS_NEEDS_MODERATOR_ROLE));
-            }
+            return View("List", reportRepository.GetByType("Comment"));
         }
 
         [HttpPost]

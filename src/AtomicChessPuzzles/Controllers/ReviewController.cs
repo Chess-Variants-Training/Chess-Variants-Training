@@ -1,41 +1,19 @@
+using AtomicChessPuzzles.Attributes;
 using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.HttpErrors;
 using AtomicChessPuzzles.Models;
 using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Mvc.Filters;
-using Microsoft.AspNet.Http;
 using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Controllers
 {
-    public class ReviewController : ErrorCapableController
+    [Restricted(true, UserRole.PUZZLE_REVIEWER)]
+    public class ReviewController : RestrictedController
     {
         IPuzzleRepository puzzleRepository;
-        IUserRepository userRepository;
-        const string NEEDS_REVIEWER_ROLE = "You need to be logged in and have at least the Puzzle Reviewer role to be able to review puzzles.";
 
-        public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository)
+        public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository) : base(_userRepository)
         {
             puzzleRepository = _puzzleRepository;
-            userRepository = _userRepository;
-        }
-
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            string userId = context.HttpContext.Session.GetString("userid");
-            if (userId == null)
-            {
-                context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden(NEEDS_REVIEWER_ROLE));
-                return;
-            }
-            User user = userRepository.FindByUsername(userId);
-            bool authorized = UserRole.HasAtLeastThePrivilegesOf(user.Roles, UserRole.PUZZLE_REVIEWER);
-            if (!authorized)
-            {
-                context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden(NEEDS_REVIEWER_ROLE));
-                return;
-            }
-            base.OnActionExecuting(context);
         }
 
         [Route("/Review")]

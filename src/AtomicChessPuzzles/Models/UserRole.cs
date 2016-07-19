@@ -19,7 +19,7 @@ namespace AtomicChessPuzzles.Models
             return string.Join(",", roles);
         }
 
-        public static bool HasAtLeastThePrivilegesOf(List<string> actualPrivileges, string privilegeToCheckAgainst)
+        public static bool HasAtLeastThePrivilegesOf(IEnumerable<string> actualPrivileges, string privilegeToCheckAgainst)
         {
             foreach (string actualPrivilege in actualPrivileges)
             {
@@ -50,6 +50,18 @@ namespace AtomicChessPuzzles.Models
                 default:
                     return false;
             }
+        }
+
+        public static bool HasAtLeastThePrivilegesOf(IEnumerable<string> actualPrivileges, IEnumerable<string> privilegesToCheckAgainst)
+        {
+            foreach (string pr in privilegesToCheckAgainst)
+            {
+                if (HasAtLeastThePrivilegesOf(actualPrivileges, pr))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
