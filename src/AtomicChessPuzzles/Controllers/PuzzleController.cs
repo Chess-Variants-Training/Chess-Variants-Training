@@ -284,6 +284,7 @@ namespace AtomicChessPuzzles.Controllers
             return result;
         }
 
+        [NonAction]
         void AdjustRating(string userId, string puzzleId, bool correct)
         {
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
