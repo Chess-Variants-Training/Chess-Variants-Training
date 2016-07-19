@@ -96,7 +96,7 @@ function submitPuzzleMove(origin, destination, metadata) {
 function submitComment(e) {
     e = e || window.event;
     e.preventDefault();
-    jsonXhr("/Puzzle/Comment/PostComment", "POST", "commentBody=" + encodeURIComponent(document.getElementById("commentBody").value) + "&puzzleId=" + window.puzzleId, function (req, jsonResponse) {
+    jsonXhr("/Comment/PostComment", "POST", "commentBody=" + encodeURIComponent(document.getElementById("commentBody").value) + "&puzzleId=" + window.puzzleId, function (req, jsonResponse) {
         clearComments();
         loadComments();
     },
@@ -113,7 +113,7 @@ function clearComments() {
 }
 
 function loadComments() {
-    xhr("/Puzzle/Comment/ViewComments?puzzleId=" + window.puzzleId, "GET", null, function (req) {
+    xhr("/Comment/ViewComments?puzzleId=" + window.puzzleId, "GET", null, function (req) {
         document.getElementById("commentContainer").innerHTML = req.responseText;
         var comments = document.getElementById("commentContainer").querySelectorAll(".comment");
         for (var i = 0; i < comments.length; i++) {
@@ -149,7 +149,7 @@ function loadComments() {
 }
 
 function upvoteComment(commentId) {
-    jsonXhr("/Puzzle/Comment/Upvote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
+    jsonXhr("/Comment/Upvote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
         clearComments();
         loadComments();
     }, function (req, err) {
@@ -158,7 +158,7 @@ function upvoteComment(commentId) {
 }
 
 function downvoteComment(commentId) {
-    jsonXhr("/Puzzle/Comment/Downvote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
+    jsonXhr("/Comment/Downvote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
         clearComments();
         loadComments();
     }, function (req, err) {
@@ -167,7 +167,7 @@ function downvoteComment(commentId) {
 }
 
 function undoVote(commentId) {
-    jsonXhr("/Puzzle/Comment/UndoVote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
+    jsonXhr("/Comment/UndoVote", "POST", "commentId=" + commentId, function (req, jsonResponse) {
         clearComments();
         loadComments();
     }, function (req, err) {
@@ -176,7 +176,7 @@ function undoVote(commentId) {
 }
 
 function sendReply(to, body) {
-    jsonXhr("/Puzzle/Comment/Reply", "POST", "to=" + to + "&body=" + encodeURIComponent(body) + "&puzzleId=" + window.puzzleId, function (req, jsonResponse) {
+    jsonXhr("/Comment/Reply", "POST", "to=" + to + "&body=" + encodeURIComponent(body) + "&puzzleId=" + window.puzzleId, function (req, jsonResponse) {
         clearComments();
         loadComments();
     },
@@ -271,7 +271,7 @@ function modLinkClicked(e) {
     e.preventDefault();
     var action = e.target.dataset.action;
     var commentId = e.target.dataset.commentid;
-    jsonXhr("/Puzzle/Comment/Mod/" + action, "POST", "commentId=" + commentId, function (req, jsonResponse) {
+    jsonXhr("/Comment/Mod/" + action, "POST", "commentId=" + commentId, function (req, jsonResponse) {
         clearComments();
         loadComments();
     }, function (req, err) {
