@@ -24,7 +24,7 @@ function setup(puzzleId) {
         clearComments();
         loadComments();
         document.getElementById("nextPuzzleLink").classList.add("nodisplay");
-        document.getElementById("result").setAttribute("class", "");
+        document.getElementById("result").setAttribute("class", "nodisplay");
         document.getElementById("result").innerHTML = "";
         document.getElementById("author").textContent = jsonResponse["author"];
         window.trainingSessionId = jsonResponse["trainingSessionId"];
