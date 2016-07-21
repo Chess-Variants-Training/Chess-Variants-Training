@@ -1,6 +1,7 @@
 ﻿using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
+using AtomicChessPuzzles.Services;
 using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNet.Http;
@@ -18,14 +19,16 @@ namespace AtomicChessPuzzles.Controllers
         IPuzzleRepository puzzleRepository;
         IPuzzlesTrainingRepository puzzlesTrainingRepository;
         IUserRepository userRepository;
+        IRatingUpdater ratingUpdater;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
-            IPuzzlesTrainingRepository _puzzlesTrainingRepository, IUserRepository _userRepository)
+            IPuzzlesTrainingRepository _puzzlesTrainingRepository, IUserRepository _userRepository, IRatingUpdater _ratingUpdater)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
             puzzlesTrainingRepository = _puzzlesTrainingRepository;
             userRepository = _userRepository;
+            ratingUpdater = _ratingUpdater;
         }
 
         [Route("Puzzle")]
@@ -211,7 +214,7 @@ namespace AtomicChessPuzzles.Controllers
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
-                    AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
+                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
                 }
                 return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
             }
@@ -220,7 +223,7 @@ namespace AtomicChessPuzzles.Controllers
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
-                    AdjustRating(loggedInUser, pdt.Puzzle.ID, false);
+                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, false);
                 }
                 return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
             }
@@ -230,7 +233,7 @@ namespace AtomicChessPuzzles.Controllers
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
-                    AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
+                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
                 }
                 return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
             }
@@ -249,41 +252,11 @@ namespace AtomicChessPuzzles.Controllers
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
-                    AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
+                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
                 }
                 result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe, checkAfterAutoMove = checkAfterAutoMove, rating = (int)pdt.Puzzle.Rating.Value });
             }
             return result;
-        }
-
-        [NonAction]
-        void AdjustRating(string userId, string puzzleId, bool correct)
-        {
-            // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
-            User user = userRepository.FindByUsername(userId);
-            Puzzle puzzle = puzzleRepository.Get(puzzleId);
-            if (user.SolvedPuzzles.Contains(puzzle.ID) || puzzle.InReview)
-            {
-                return;
-            }
-            Glicko2.RatingCalculator calculator = new Glicko2.RatingCalculator();
-            Glicko2.Rating userRating = new Glicko2.Rating(calculator, user.Rating.Value, user.Rating.RatingDeviation, user.Rating.Volatility);
-            Glicko2.Rating puzzleRating = new Glicko2.Rating(calculator, puzzle.Rating.Value, puzzle.Rating.RatingDeviation, puzzle.Rating.Volatility);
-            Glicko2.RatingPeriodResults results = new Glicko2.RatingPeriodResults();
-            results.AddResult(correct ? userRating : puzzleRating, correct ? puzzleRating : userRating);
-            calculator.UpdateRatings(results);
-            user.Rating = new Rating(userRating.GetRating(), userRating.GetRatingDeviation(), userRating.GetVolatility());
-            user.SolvedPuzzles.Add(puzzle.ID);
-            if (correct)
-            {
-                user.PuzzlesCorrect++;
-            }
-            else
-            {
-                user.PuzzlesWrong++;
-            }
-            userRepository.Update(user);
-            puzzleRepository.UpdateRating(puzzle.ID, new Rating(puzzleRating.GetRating(), puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
         }
     }
 }
