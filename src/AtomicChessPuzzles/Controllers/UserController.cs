@@ -1,4 +1,5 @@
 ﻿using AtomicChessPuzzles.DbRepositories;
+using AtomicChessPuzzles.Services;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System;
@@ -9,10 +10,14 @@ namespace AtomicChessPuzzles.Controllers
     public class UserController : Controller
     {
         IUserRepository userRepository;
+        IValidator validator;
+        IPasswordHasher passwordHasher;
 
-        public UserController(IUserRepository _userRepository)
+        public UserController(IUserRepository _userRepository, IValidator _validator, IPasswordHasher _passwordHasher)
         {
             userRepository = _userRepository;
+            validator = _validator;
+            passwordHasher = _passwordHasher;
         }
         [HttpGet]
         [Route("/User/Register")]
@@ -27,11 +32,11 @@ namespace AtomicChessPuzzles.Controllers
         public IActionResult New(string username, string email, string password)
         {
             ViewBag.Error = new List<string>();
-            if (!Utilities.IsValidUsername(username))
+            if (!validator.IsValidUsername(username))
             {
                 ViewBag.Error.Add("Invalid username. Usernames can only contain the characters a-z, A-Z, 0-9, _ and -.");
             }
-            if (!Utilities.IsValidEmail(email))
+            if (!validator.IsValidEmail(email))
             {
                 ViewBag.Error.Add("Invalid email address.");
             }
@@ -43,7 +48,7 @@ namespace AtomicChessPuzzles.Controllers
             {
                 ViewBag.Error = null;
             }
-            Tuple<string, string> hashAndSalt = Utilities.HashPassword(password);
+            Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
             Models.User user = new Models.User(username.ToLowerInvariant(), username, email, hash, salt, "", 0, 0,
@@ -81,7 +86,7 @@ namespace AtomicChessPuzzles.Controllers
                 return RedirectToAction("Login");
             }
             string salt = user.Salt;
-            string hash = Utilities.HashPassword(password, salt);
+            string hash = passwordHasher.HashPassword(password, salt);
             if (hash != user.PasswordHash)
             {
                 return RedirectToAction("Login");

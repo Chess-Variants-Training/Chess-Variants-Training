@@ -23,6 +23,9 @@ namespace AtomicChessPuzzles
             services.AddSingleton<ITimedTrainingSessionRepository, TimedTrainingSessionRepository>();
             services.AddSingleton<ITimedTrainingScoreRepository, TimedTrainingScoreRepository>();
             services.AddSingleton<IRatingUpdater, RatingUpdater>();
+            services.AddSingleton<IMoveCollectionTransformer, MoveCollectionTransformer>();
+            services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<IValidator, Validator>();
             services.AddCaching();
             services.AddSession();
         }

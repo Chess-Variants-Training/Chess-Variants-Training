@@ -1,6 +1,7 @@
 using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
+using AtomicChessPuzzles.Services;
 using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNet.Mvc;
@@ -15,6 +16,7 @@ namespace AtomicChessPuzzles.Controllers
         IPositionRepository positionRepository;
         ITimedTrainingSessionRepository timedTrainingSessionRepository;
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
+        IMoveCollectionTransformer moveCollectionTransformer;
 
         public TimedTrainingController(ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository,
                                        ITimedTrainingSessionRepository _timedTrainingSessionRepository, ITimedTrainingScoreRepository _timedTrainingScoreRepository)
@@ -45,7 +47,7 @@ namespace AtomicChessPuzzles.Controllers
             AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
             timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
             return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
-                              dests = Utilities.GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)) });
+                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)) });
         }
 
         [HttpPost]
@@ -81,7 +83,7 @@ namespace AtomicChessPuzzles.Controllers
             AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
             timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
             return Json(new { success = true, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
-                              dests = Utilities.GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)),
+                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)),
                               correct = correctMove });
         }
 

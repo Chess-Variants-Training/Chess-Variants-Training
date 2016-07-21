@@ -20,15 +20,18 @@ namespace AtomicChessPuzzles.Controllers
         IPuzzlesTrainingRepository puzzlesTrainingRepository;
         IUserRepository userRepository;
         IRatingUpdater ratingUpdater;
+        IMoveCollectionTransformer moveCollectionTransformer;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
-            IPuzzlesTrainingRepository _puzzlesTrainingRepository, IUserRepository _userRepository, IRatingUpdater _ratingUpdater)
+            IPuzzlesTrainingRepository _puzzlesTrainingRepository, IUserRepository _userRepository, IRatingUpdater _ratingUpdater,
+            IMoveCollectionTransformer _movecollectionTransformer)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
             puzzlesTrainingRepository = _puzzlesTrainingRepository;
             userRepository = _userRepository;
             ratingUpdater = _ratingUpdater;
+            moveCollectionTransformer = _movecollectionTransformer;
         }
 
         [Route("Puzzle")]
@@ -71,7 +74,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
             ReadOnlyCollection<Move> validMoves = puzzle.Game.GetValidMoves(puzzle.Game.WhoseTurn);
-            Dictionary<string, List<string>> dests = Utilities.GetChessgroundDestsForMoveCollection(validMoves);
+            Dictionary<string, List<string>> dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(validMoves);
             return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() });
         }
 
@@ -192,7 +195,7 @@ namespace AtomicChessPuzzles.Controllers
                 trainingSessionId = pdt.TrainingSessionId,
                 author = pdt.Puzzle.Author,
                 fen = pdt.Puzzle.InitialFen,
-                dests = Utilities.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn)),
+                dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn)),
                 whoseTurn = pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant()
             });
         }
@@ -244,7 +247,7 @@ namespace AtomicChessPuzzles.Controllers
             string fenAfterPlay = pdt.Puzzle.Game.GetFen();
             GameStatus statusAfterAutoMove = pdt.Puzzle.Game.Status;
             string checkAfterAutoMove = statusAfterAutoMove.Event == GameEvent.Check || statusAfterAutoMove.Event == GameEvent.Checkmate ? ChessUtilities.GetOpponentOf(statusAfterAutoMove.PlayerWhoCausedEvent).ToString().ToLowerInvariant() : null;
-            Dictionary<string, List<string>> dests = Utilities.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
+            Dictionary<string, List<string>> dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
             JsonResult result = Json(new { success = true, correct = 0, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, checkAfterAutoMove = checkAfterAutoMove });
             pdt.SolutionMovesToDo.RemoveAt(0);
             if (pdt.SolutionMovesToDo.Count == 0)
