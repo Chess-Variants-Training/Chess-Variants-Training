@@ -2,8 +2,6 @@ using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
 using AtomicChessPuzzles.Services;
-using ChessDotNet;
-using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System;
@@ -18,13 +16,14 @@ namespace AtomicChessPuzzles.Controllers
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
 
-        public TimedTrainingController(ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository,
-                                       ITimedTrainingSessionRepository _timedTrainingSessionRepository, ITimedTrainingScoreRepository _timedTrainingScoreRepository)
+        public TimedTrainingController(ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository,
+                                       ITimedTrainingScoreRepository _timedTrainingScoreRepository, IMoveCollectionTransformer _moveCollectionTransformer)
         {
             timedTrainingRepository = _timedTrainingRepository;
             positionRepository = _positionRepository;
             timedTrainingSessionRepository = _timedTrainingSessionRepository;
             timedTrainingScoreRepository = _timedTrainingScoreRepository;
+            moveCollectionTransformer = _moveCollectionTransformer;
         }
         [HttpGet]
         [Route("/Puzzle/Train-Timed/Mate-In-One")]
@@ -44,10 +43,9 @@ namespace AtomicChessPuzzles.Controllers
                                         (HttpContext.Session.GetString("userid") ?? "").ToLower(), "mateInOne");
             timedTrainingSessionRepository.Add(session);
             TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
-            AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
-            timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
-            return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
-                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)) });
+            session.SetPosition(randomPosition);
+            return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
+                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)) });
         }
 
         [HttpPost]
@@ -68,22 +66,11 @@ namespace AtomicChessPuzzles.Controllers
                 }
                 return Json(new { success = true, ended = true });
             }
-            bool correctMove = false;
-            MoveType moveType = session.AssociatedGame.ApplyMove(new Move(origin, destination, session.AssociatedGame.WhoseTurn), false);
-            if (moveType != MoveType.Invalid)
-            {
-                GameEvent gameEvent = session.AssociatedGame.Status.Event;
-                correctMove = gameEvent == GameEvent.Checkmate || gameEvent == GameEvent.VariantEnd;
-            }
-            if (correctMove)
-            {
-                session.Score.Score++;
-            }
+            bool correctMove = session.VerifyMove(origin, destination);
             TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
-            AtomicChessGame associatedGame = new AtomicChessGame(randomPosition.FEN);
-            timedTrainingSessionRepository.SetCurrentFen(sessionId, randomPosition.FEN, associatedGame);
-            return Json(new { success = true, fen = randomPosition.FEN, color = associatedGame.WhoseTurn.ToString().ToLowerInvariant(),
-                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(associatedGame.GetValidMoves(associatedGame.WhoseTurn)),
+            session.SetPosition(randomPosition);
+            return Json(new { success = true, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
+                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)),
                               correct = correctMove });
         }
 

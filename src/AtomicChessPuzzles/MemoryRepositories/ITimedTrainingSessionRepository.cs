@@ -1,5 +1,4 @@
 using AtomicChessPuzzles.Models;
-using ChessDotNet.Variants.Atomic;
 
 namespace AtomicChessPuzzles.MemoryRepositories
 {
@@ -10,7 +9,5 @@ namespace AtomicChessPuzzles.MemoryRepositories
         TimedTrainingSession Get(string sessionId);
 
         void Remove(string sessionId);
-
-        void SetCurrentFen(string sessionId, string fen, AtomicChessGame associatedGame);
     }
 }

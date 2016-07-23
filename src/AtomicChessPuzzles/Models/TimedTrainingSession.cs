@@ -1,3 +1,4 @@
+using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
 using System;
 
@@ -28,6 +29,32 @@ namespace AtomicChessPuzzles.Models
             EndsAt = endsAt;
             RecordedInDb = false;
             Score = new TimedTrainingScore(0, type, owner);
+        }
+
+        public bool VerifyMove(string origin, string destination)
+        {
+            bool correctMove = false;
+            MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn), false);
+            if (moveType != MoveType.Invalid)
+            {
+                GameEvent gameEvent = AssociatedGame.Status.Event;
+                correctMove = gameEvent == GameEvent.Checkmate || gameEvent == GameEvent.VariantEnd;
+            }
+            else
+            {
+                correctMove = false;
+            }
+            if (correctMove)
+            {
+                Score.Score++;
+            }
+            return correctMove;
+        }
+
+        public void SetPosition(TrainingPosition position)
+        {
+            AssociatedGame = new AtomicChessGame(position.FEN);
+            CurrentFen = position.FEN;
         }
     }
 }
