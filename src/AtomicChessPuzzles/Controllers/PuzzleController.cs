@@ -210,9 +210,8 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Invalid move." });
             }
-            GameStatus status = pdt.Puzzle.Game.Status;
-            string check = status.Event == GameEvent.Check || status.Event == GameEvent.Checkmate ? ChessUtilities.GetOpponentOf(status.PlayerWhoCausedEvent).ToString().ToLowerInvariant() : null;
-            if (status.Event == GameEvent.Checkmate || status.Event == GameEvent.VariantEnd)
+            string check = pdt.Puzzle.Game.IsInCheck(pdt.Puzzle.Game.WhoseTurn) ? pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
+            if (pdt.Puzzle.Game.IsCheckmated(pdt.Puzzle.Game.WhoseTurn) || pdt.Puzzle.Game.KingIsGone(pdt.Puzzle.Game.WhoseTurn))
             {
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
@@ -245,8 +244,7 @@ namespace AtomicChessPuzzles.Controllers
             string[] parts = moveToPlay.Split('-');
             pdt.Puzzle.Game.ApplyMove(new Move(parts[0], parts[1], pdt.Puzzle.Game.WhoseTurn), true);
             string fenAfterPlay = pdt.Puzzle.Game.GetFen();
-            GameStatus statusAfterAutoMove = pdt.Puzzle.Game.Status;
-            string checkAfterAutoMove = statusAfterAutoMove.Event == GameEvent.Check || statusAfterAutoMove.Event == GameEvent.Checkmate ? ChessUtilities.GetOpponentOf(statusAfterAutoMove.PlayerWhoCausedEvent).ToString().ToLowerInvariant() : null;
+            string checkAfterAutoMove = pdt.Puzzle.Game.IsInCheck(pdt.Puzzle.Game.WhoseTurn) ? pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
             Dictionary<string, List<string>> dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
             JsonResult result = Json(new { success = true, correct = 0, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, checkAfterAutoMove = checkAfterAutoMove });
             pdt.SolutionMovesToDo.RemoveAt(0);

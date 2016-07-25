@@ -37,8 +37,7 @@ namespace AtomicChessPuzzles.Models
             MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn), false);
             if (moveType != MoveType.Invalid)
             {
-                GameEvent gameEvent = AssociatedGame.Status.Event;
-                correctMove = gameEvent == GameEvent.Checkmate || gameEvent == GameEvent.VariantEnd;
+                correctMove = AssociatedGame.IsCheckmated(AssociatedGame.WhoseTurn) || AssociatedGame.KingIsGone(AssociatedGame.WhoseTurn);
             }
             else
             {
