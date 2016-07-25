@@ -23,7 +23,10 @@ function end() {
     if (window.ended) return;
     clearInterval(window.interval);
     window.ended = true;
-    document.getElementById("start-training").textContent = "0";
+    var reloadLink = document.getElementById("start-training");
+    reloadLink.innerHTML = "Train again";
+    reloadLink.classList.add("start-link");
+    reloadLink.addEventListener('click', function () { window.location.reload(); });
     window.ground.stop();
     jsonXhr("/Puzzle/Train-Timed/Mate-In-One/AcknowledgeEnd", "POST", "sessionId=" + window.sessionId, function (req, jsonResponse) {
         document.getElementById("score").textContent = "Score: " + jsonResponse["score"];
