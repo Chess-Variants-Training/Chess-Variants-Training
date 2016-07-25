@@ -67,11 +67,18 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = true, ended = true });
             }
             bool correctMove = session.VerifyMove(origin, destination);
-            TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
-            session.SetPosition(randomPosition);
-            return Json(new { success = true, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
+            if (correctMove)
+            {
+                TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
+                session.SetPosition(randomPosition);
+            }
+            else
+            {
+                session.RetryCurrentPosition();
+            }
+            return Json(new { success = true, fen = session.CurrentFen, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
                               dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)),
-                              correct = correctMove });
+                              currentScore = session.Score.Score });
         }
 
         [HttpPost]

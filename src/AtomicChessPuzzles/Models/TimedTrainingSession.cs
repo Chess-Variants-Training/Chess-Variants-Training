@@ -11,6 +11,7 @@ namespace AtomicChessPuzzles.Models
         public DateTime EndsAt { get; private set; }
         public string CurrentFen { get; set; }
         public AtomicChessGame AssociatedGame { get; set; }
+        TrainingPosition currentPosition = null;
         public bool Ended
         { 
             get
@@ -52,8 +53,14 @@ namespace AtomicChessPuzzles.Models
 
         public void SetPosition(TrainingPosition position)
         {
+            currentPosition = position;
             AssociatedGame = new AtomicChessGame(position.FEN);
             CurrentFen = position.FEN;
+        }
+
+        public void RetryCurrentPosition()
+        {
+            SetPosition(currentPosition);
         }
     }
 }

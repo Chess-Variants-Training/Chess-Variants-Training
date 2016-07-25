@@ -26,7 +26,7 @@ function end() {
     document.getElementById("start-training").textContent = "0";
     window.ground.stop();
     jsonXhr("/Puzzle/Train-Timed/Mate-In-One/AcknowledgeEnd", "POST", "sessionId=" + window.sessionId, function (req, jsonResponse) {
-        document.getElementById("start-training").textContent = "Score: " + jsonResponse["score"];
+        document.getElementById("score").textContent = "Score: " + jsonResponse["score"];
     }, function (req, err) {
         alert(err);
     });
@@ -53,10 +53,7 @@ function verifyAndGetNext(origin, destination, metadata) {
                 end();
                 return;
             }
-            var li = document.createElement("li");
-            var text = document.createTextNode(jsonResponse["correct"] ? "Correct" : "Incorrect");
-            li.appendChild(text);
-            document.getElementById("previous").appendChild(li);
+            document.getElementById("score").textContent = "Score: " + jsonResponse["currentScore"];
             showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"]);
         }, function (req, err) {
             alert(err);
