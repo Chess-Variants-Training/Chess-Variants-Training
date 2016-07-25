@@ -1,6 +1,7 @@
 using AtomicChessPuzzles.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using System;
 using System.Linq;
 
 namespace AtomicChessPuzzles.DbRepositories
@@ -9,6 +10,7 @@ namespace AtomicChessPuzzles.DbRepositories
     {
         MongoSettings settings;
         IMongoCollection<TrainingPosition> positionCollection;
+        Random rnd = new Random();
 
         public PositionRepository()
         {
@@ -24,9 +26,13 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public TrainingPosition GetRandomMateInOne()
         {
-            var found = positionCollection.Find(new BsonDocument("type", new BsonString("mateInOne")));
+            double x = rnd.NextDouble();
+            double y = rnd.NextDouble();
+            FilterDefinitionBuilder<TrainingPosition> filterBuilder = Builders<TrainingPosition>.Filter;
+            FilterDefinition<TrainingPosition> filter = filterBuilder.Eq("type", "mateInOne") & filterBuilder.Near("location", x, y);
+            var found = positionCollection.Find(filter);
             if (found == null) return null;
-            else return found.First(); // TODO: actual randomness
+            else return found.Limit(1).First();
         }
     }
 }
