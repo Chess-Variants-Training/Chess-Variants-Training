@@ -41,8 +41,16 @@ function clearExplanation() {
     document.getElementById("explanation").innerHTML = "";
 }
 
-function submitPuzzleMove(origin, destination, metadata) {
-    jsonXhr("/Puzzle/Train/SubmitMove", "POST", "id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&origin=" + origin + "&destination=" + destination, function (req, jsonResponse) {
+function processPuzzleMove(origin, destination, metadata) {
+    if (ChessgroundExtensions.needsPromotion(window.ground, destination)) {
+        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitPuzzleMove);
+    } else {
+        submitPuzzleMove(origin, destination, null);
+    }
+}
+
+function submitPuzzleMove(origin, destination, promotion) {
+    jsonXhr("/Puzzle/Train/SubmitMove", "POST", "id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&origin=" + origin + "&destination=" + destination + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
         window.ground.set({
             fen: jsonResponse["fen"]
         });
@@ -294,7 +302,7 @@ window.addEventListener("load", function () {
             dropOff: "revert",
             showDests: false,
             events: {
-                after: submitPuzzleMove
+                after: processPuzzleMove
             }
         }
     });

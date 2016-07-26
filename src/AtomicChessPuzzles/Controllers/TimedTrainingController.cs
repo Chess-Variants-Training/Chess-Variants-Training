@@ -50,7 +50,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Puzzle/Train-Timed/Mate-In-One/VerifyAndGetNext")]
-        public IActionResult MateInOneVerifyAndGetNext(string sessionId, string origin, string destination)
+        public IActionResult MateInOneVerifyAndGetNext(string sessionId, string origin, string destination, string promotion = null)
         {
             TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
             if (session == null)
@@ -66,7 +66,7 @@ namespace AtomicChessPuzzles.Controllers
                 }
                 return Json(new { success = true, ended = true });
             }
-            bool correctMove = session.VerifyMove(origin, destination);
+            bool correctMove = session.VerifyMove(origin, destination, promotion);
             if (correctMove)
             {
                 TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();

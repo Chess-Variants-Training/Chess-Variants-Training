@@ -76,8 +76,19 @@ function goToStep2(e) {
 }
 
 function submitMove(orig, dest, metadata) {
+    if (ChessgroundExtensions.needsPromotion(window.ground, dest)) {
+        ChessgroundExtensions.drawPromotionDialog(orig, dest, document.getElementById("chessground"), doSubmitMoveRequest);
+    } else {
+        doSubmitMoveRequest(orig, dest, null);
+    }
+}
+
+function doSubmitMoveRequest(orig, dest, promotion) {
     document.getElementById("movelist").innerHTML += " " + orig + "-" + dest;
-    jsonXhr("/Puzzle/Editor/SubmitMove", "POST", "id=" + window.puzzleId + "&origin=" + orig + "&destination=" + dest, function (req, jsonResponse) {
+    if (promotion) {
+        document.getElementById("movelist").innerHTML += "=" + (promotion !== "knight" ? promotion.charAt(0).toUpperCase() : "N");
+    }
+    jsonXhr("/Puzzle/Editor/SubmitMove", "POST", "id=" + window.puzzleId + "&origin=" + orig + "&destination=" + dest + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
         window.ground.set({
             fen: jsonResponse["fen"]
         });

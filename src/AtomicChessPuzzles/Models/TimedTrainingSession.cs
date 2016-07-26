@@ -1,4 +1,5 @@
 using ChessDotNet;
+using ChessDotNet.Pieces;
 using ChessDotNet.Variants.Atomic;
 using System;
 
@@ -32,10 +33,15 @@ namespace AtomicChessPuzzles.Models
             Score = new TimedTrainingScore(0, type, owner);
         }
 
-        public bool VerifyMove(string origin, string destination)
+        public bool VerifyMove(string origin, string destination, string promotion)
         {
             bool correctMove = false;
-            MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn), false);
+            Piece promotionPiece = null;
+            if (promotion != null)
+            {
+                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, AssociatedGame.WhoseTurn);
+            }
+            MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn, promotionPiece), false);
             if (moveType != MoveType.Invalid)
             {
                 correctMove = AssociatedGame.IsCheckmated(AssociatedGame.WhoseTurn) || AssociatedGame.KingIsGone(AssociatedGame.WhoseTurn);

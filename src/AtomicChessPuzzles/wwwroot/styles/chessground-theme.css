@@ -3,6 +3,7 @@
 #chessground {
     width: 30vw;
     height: 30vw;
+    position: relative;
 }
 
 .brown .cg-board {
@@ -72,3 +73,19 @@ piece.king.black, div.selectable[data-color="black"][data-role="king"] {
     .cg-board-wrap svg * {
         transition: 0.35s;
     }
+
+#promotion-choice {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+    #promotion-choice piece {
+        background-color: orange;
+    }
+
+        #promotion-choice piece:hover {
+            background-color: orangered;
+        }

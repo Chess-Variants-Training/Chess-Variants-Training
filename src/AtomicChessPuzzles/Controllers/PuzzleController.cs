@@ -3,6 +3,7 @@ using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
 using AtomicChessPuzzles.Services;
 using ChessDotNet;
+using ChessDotNet.Pieces;
 using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -80,14 +81,23 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("Puzzle/Editor/SubmitMove")]
-        public IActionResult SubmitMove(string id, string origin, string destination)
+        public IActionResult SubmitMove(string id, string origin, string destination, string promotion = null)
         {
             Puzzle puzzle = puzzlesBeingEdited.Get(id);
             if (puzzle == null)
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
-            MoveType type = puzzle.Game.ApplyMove(new Move(origin, destination, puzzle.Game.WhoseTurn), false);
+            Piece promotionPiece = null;
+            if (promotion != null)
+            {
+                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, puzzle.Game.WhoseTurn);
+                if (promotionPiece == null)
+                {
+                    return Json(new { success = false, error = "Invalid promotion piece." });
+                }
+            }
+            MoveType type = puzzle.Game.ApplyMove(new Move(origin, destination, puzzle.Game.WhoseTurn, promotionPiece), false);
             if (type.HasFlag(MoveType.Invalid))
             {
                 return Json(new { success = false, error = "The given move is invalid." });
@@ -202,10 +212,19 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Puzzle/Train/SubmitMove")]
-        public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination)
+        public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination, string promotion = null)
         {
             PuzzleDuringTraining pdt = puzzlesTrainingRepository.Get(id, trainingSessionId);
-            MoveType type = pdt.Puzzle.Game.ApplyMove(new Move(origin, destination, pdt.Puzzle.Game.WhoseTurn), false);
+            Piece promotionPiece = null;
+            if (promotion != null)
+            {
+                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, pdt.Puzzle.Game.WhoseTurn);
+                if (promotionPiece == null)
+                {
+                    return Json(new { success = false, error = "Invalid promotion piece." });
+                }
+            }
+            MoveType type = pdt.Puzzle.Game.ApplyMove(new Move(origin, destination, pdt.Puzzle.Game.WhoseTurn, promotionPiece), false);
             if (type == MoveType.Invalid)
             {
                 return Json(new { success = false, error = "Invalid move." });
@@ -220,7 +239,7 @@ namespace AtomicChessPuzzles.Controllers
                 }
                 return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
             }
-            if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination, true) != 0)
+            if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination + (promotion != null ? "=" + char.ToUpperInvariant(promotionPiece.GetFenCharacter()) : ""), true) != 0)
             {
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
