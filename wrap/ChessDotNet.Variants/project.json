@@ -6,7 +6,7 @@
         "assembly": "../../deps/ChessDotNet.Variants.dll"
       },
       "dependencies": {
-        "ChessDotNet": "1.0.0-*"
+        "ChessDotNet": "0.9.0-*"
       }
     }
   }
