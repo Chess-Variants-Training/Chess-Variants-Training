@@ -1,3 +1,0 @@
-[submodule "src/AtomicChessPuzzles/chessground"]
-	path = src/AtomicChessPuzzles/chessground
-	url = https://github.com/ornicar/chessground.git
