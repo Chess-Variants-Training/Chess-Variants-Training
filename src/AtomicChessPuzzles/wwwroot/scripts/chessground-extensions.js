@@ -8,13 +8,6 @@
         element.appendChild(promotionChoiceElement);
         var file = destination.charAt(0);
         var rank = parseInt(destination.charAt(1), 10);
-        var originalPieces = {};
-        if (rank === 8) {
-            var squares = [file + "8", file + "7", file + "6", file + "5"];
-        }
-        else {
-            squares = [file + "1", file + "2", file + "3", file + "4"];
-        }
         var color = rank === 1 ? "black" : "white";
         for (var i = 0; i < 4; i++) {
             switch (i) {
@@ -33,7 +26,10 @@
             }
             promotionPiece["color"] = color;
             var left = (file.charCodeAt(0) - 97) * 12.5;
-            var top = (8 - parseInt(squares[i].charAt(1), 10)) * 12.5;
+            if (color === "black") {
+                left = 87.5 - left;
+            }
+            var top = i * 12.5;
             var square = document.createElement("square");
             square.style.left = left + "%";
             square.style.top = top + "%";
