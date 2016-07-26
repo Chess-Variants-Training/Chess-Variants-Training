@@ -2,6 +2,7 @@ function start() {
     window.ended = false;
     document.getElementById("start-training").removeEventListener("onclick", start);
     document.getElementById("start-training").classList.remove("start-link");
+    document.getElementById("score").textContent = "Score: 0";
     jsonXhr("/Puzzle/Train-Timed/Mate-In-One/Start", "POST", null, function (req, jsonResponse) {
         window.sessionId = jsonResponse["sessionId"];
         document.getElementById("start-training").textContent = jsonResponse["seconds"].toString();
@@ -26,8 +27,8 @@ function end() {
     var reloadLink = document.getElementById("start-training");
     reloadLink.innerHTML = "Train again";
     reloadLink.classList.add("start-link");
-    reloadLink.addEventListener('click', function () { window.location.reload(); });
-    window.ground.stop();
+    reloadLink.addEventListener('click', start);
+    window.ground.set({ movable: { dests: {} } });
     jsonXhr("/Puzzle/Train-Timed/Mate-In-One/AcknowledgeEnd", "POST", "sessionId=" + window.sessionId, function (req, jsonResponse) {
         document.getElementById("score").textContent = "Score: " + jsonResponse["score"];
     }, function (req, err) {
