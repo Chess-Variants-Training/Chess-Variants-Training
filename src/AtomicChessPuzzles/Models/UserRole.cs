@@ -33,7 +33,7 @@ namespace AtomicChessPuzzles.Models
 
         public static bool HasAtLeastThePrivilegesOf(string actualPrivilege, string privilegeToCheckAgainst)
         {
-            if (actualPrivilege == ADMIN) return true;
+            if (actualPrivilege == ADMIN || privilegeToCheckAgainst == NONE) return true;
 
             switch (privilegeToCheckAgainst)
             {
