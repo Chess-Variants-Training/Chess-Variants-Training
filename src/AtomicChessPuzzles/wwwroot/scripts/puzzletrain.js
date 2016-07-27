@@ -103,6 +103,7 @@ function submitComment(e) {
     e = e || window.event;
     e.preventDefault();
     jsonXhr("/Comment/PostComment", "POST", "commentBody=" + encodeURIComponent(document.getElementById("commentBody").value) + "&puzzleId=" + window.puzzleId, function (req, jsonResponse) {
+        document.getElementById("commentBody").value = "";
         clearComments();
         loadComments();
     },
