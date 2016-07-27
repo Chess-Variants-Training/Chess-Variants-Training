@@ -1,4 +1,5 @@
-﻿@{
+﻿@using Microsoft.AspNet.Http;
+@{
     Layout = null;
 }
 @model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<string, AtomicChessPuzzles.Models.VoteType>, bool>
@@ -14,9 +15,26 @@ else
         string downvoteButtonClass = Model.Item2.ContainsKey(comment.ID) && Model.Item2[comment.ID] == AtomicChessPuzzles.Models.VoteType.Downvote ? "downvote-highlighted" : null;
         <div id="@comment.ID" class="comment" data-indentlevel="@comment.IndentLevel">
             <div class="vote-arrows">
-                <a data-vote="up" data-commentid="@comment.ID" href="#" class="@upvoteButtonClass">+1</a>
+                @{ 
+                    bool loggedIn = Context.Session.GetString("userid") != null;
+                }
+                @if (loggedIn)
+                {
+                    <a data-vote="up" data-commentid="@comment.ID" href="#" class="@upvoteButtonClass">+1</a>
+                }
+                else
+                {
+                    <span>&nbsp;</span>
+                }
                 <div class="score">@comment.Score</div>
-                <a data-vote="down" data-commentid="@comment.ID" href="#" class="@downvoteButtonClass">-1</a>
+                @if (loggedIn)
+                {
+                    <a data-vote="down" data-commentid="@comment.ID" href="#" class="@downvoteButtonClass">-1</a>
+                }
+                else
+                {
+                    <span>&nbsp;</span>
+                }
             </div>
             <div class="comment-content">
                 <div class="comment-content-row">
