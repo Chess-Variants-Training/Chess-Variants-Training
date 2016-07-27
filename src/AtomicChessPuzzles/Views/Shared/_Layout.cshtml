@@ -36,7 +36,6 @@
                     }
                     else
                     {
-                        //@:@Html.ActionLink(u, "Profile", "User", new { name = u }, null)
                         @:<a id="username" href="#">@u</a><ul id="user-nav-content" class="invisible"><li>@Html.ActionLink("Profile", "Profile", "User", new { name = u }, null)</li><li>@Html.ActionLink("Log out", "Logout", "User")</li></ul>
                     }
                 }
