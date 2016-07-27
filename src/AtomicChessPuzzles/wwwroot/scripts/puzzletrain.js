@@ -304,7 +304,10 @@ window.addEventListener("load", function () {
             }
         }
     });
-    document.getElementById("submitCommentLink").addEventListener("click", submitComment);
+    var submitCommentLink = document.getElementById("submitCommentLink");
+    if (submitCommentLink) {
+        submitCommentLink.addEventListener("click", submitComment);
+    }
     document.getElementById("nextPuzzleLink").addEventListener("click", nextPuzzle);
     if (!window.selectedPuzzle) {
         startWithRandomPuzzle();

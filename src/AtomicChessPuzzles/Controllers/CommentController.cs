@@ -1,3 +1,4 @@
+using AtomicChessPuzzles.Attributes;
 using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.Models;
 using Microsoft.AspNet.Http;
@@ -9,20 +10,19 @@ using System.Linq;
 
 namespace AtomicChessPuzzles.Controllers
 {
-    public class CommentController : Controller
+    public class CommentController : RestrictedController
     {
         ICommentRepository commentRepository;
         ICommentVoteRepository commentVoteRepository;
-        IUserRepository userRepository;
 
         public CommentController(ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository,
-                                 IUserRepository _userRepository)
+                                 IUserRepository _userRepository) : base(_userRepository)
         {
             commentRepository = _commentRepository;
             commentVoteRepository = _commentVoteRepository;
-            userRepository = _userRepository;
         }
 
+        [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
@@ -61,6 +61,7 @@ namespace AtomicChessPuzzles.Controllers
             return View("Comments", model);
         }
 
+        [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/Upvote")]
         public IActionResult Upvote(string commentId)
@@ -76,6 +77,7 @@ namespace AtomicChessPuzzles.Controllers
             }
         }
 
+        [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/Downvote")]
         public IActionResult Downvote(string commentId)
@@ -91,6 +93,7 @@ namespace AtomicChessPuzzles.Controllers
             }
         }
 
+        [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/UndoVote")]
         public IActionResult UndoVote(string commentId)
@@ -106,6 +109,7 @@ namespace AtomicChessPuzzles.Controllers
             }
         }
 
+        [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/Reply")]
         public IActionResult Reply(string to, string body, string puzzleId)

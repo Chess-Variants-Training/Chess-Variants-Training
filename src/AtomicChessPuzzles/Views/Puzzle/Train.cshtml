@@ -1,6 +1,7 @@
-﻿@model AtomicChessPuzzles.Models.Puzzle
+﻿@using Microsoft.AspNet.Http;
+@model AtomicChessPuzzles.Models.Puzzle
 @section Title {
-    @if (Model != null && Model.InReview) 
+    @if (Model != null && Model.InReview)
     {
         @:Puzzle review
     }
@@ -25,7 +26,6 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
-
 <div id="chessground" class="brown"></div>
 <p>
     Created by <span id="author"></span>
@@ -46,8 +46,15 @@ else
     @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
 }
 <p id="explanation"></p>
-Leave a comment:<br>
-<textarea name="commentBody" id="commentBody"></textarea>
-<a href="#" id="submitCommentLink">Submit</a>
+@if (Context.Session.GetString("userid") != null)
+{
+    @:Leave a comment:<br>
+    <textarea name="commentBody" id="commentBody"></textarea>
+    <a href="#" id="submitCommentLink">Submit</a>
+}
+else
+{
+    @:You need to be logged in to submit a comment.
+}
 <p>Comments:</p>
 <div id="commentContainer"></div>
