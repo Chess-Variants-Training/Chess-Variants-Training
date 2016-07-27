@@ -29,5 +29,22 @@ namespace AtomicChessPuzzles
                     return null;
             }
         }
+
+        public static Piece GetPromotionPieceFromChar(char piece, Player owner)
+        {
+            switch (piece)
+            {
+                case 'Q':
+                    return new Queen(owner);
+                case 'N':
+                    return new Knight(owner);
+                case 'R':
+                    return new Rook(owner);
+                case 'B':
+                    return new Bishop(owner);
+                default:
+                    return null;
+            }
+        }
     }
 }

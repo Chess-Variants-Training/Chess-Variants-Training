@@ -60,8 +60,6 @@ function submitPuzzleMove(origin, destination, promotion) {
             window.ground.set({ check: null });
         }
         if (jsonResponse["play"]) {
-            var parts = jsonResponse["play"].split("-");
-            window.ground.move(parts[0], parts[1]);
             window.ground.set({
                 fen: jsonResponse["fenAfterPlay"]
             });

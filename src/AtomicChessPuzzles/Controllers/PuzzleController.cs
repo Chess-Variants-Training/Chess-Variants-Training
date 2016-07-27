@@ -10,6 +10,7 @@ using Microsoft.AspNet.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Dynamic;
 using System.Linq;
 
 namespace AtomicChessPuzzles.Controllers
@@ -215,68 +216,32 @@ namespace AtomicChessPuzzles.Controllers
         public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination, string promotion = null)
         {
             PuzzleDuringTraining pdt = puzzlesTrainingRepository.Get(id, trainingSessionId);
-            Piece promotionPiece = null;
-            if (promotion != null)
-            {
-                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, pdt.Puzzle.Game.WhoseTurn);
-                if (promotionPiece == null)
-                {
-                    return Json(new { success = false, error = "Invalid promotion piece." });
-                }
-            }
-            MoveType type = pdt.Puzzle.Game.ApplyMove(new Move(origin, destination, pdt.Puzzle.Game.WhoseTurn, promotionPiece), false);
-            if (type == MoveType.Invalid)
-            {
-                return Json(new { success = false, error = "Invalid move." });
-            }
-            string check = pdt.Puzzle.Game.IsInCheck(pdt.Puzzle.Game.WhoseTurn) ? pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
-            if (pdt.Puzzle.Game.IsCheckmated(pdt.Puzzle.Game.WhoseTurn) || pdt.Puzzle.Game.KingIsGone(pdt.Puzzle.Game.WhoseTurn))
+            SubmittedMoveResponse response = pdt.ApplyMove(origin, destination, promotion);
+            dynamic jsonResp = new ExpandoObject();
+            if (response.Correct == 1)
             {
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
                     ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
                 }
-                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
+                jsonResp.rating = (int)pdt.Puzzle.Rating.Value;
             }
-            if (string.Compare(pdt.SolutionMovesToDo[0], origin + "-" + destination + (promotion != null ? "=" + char.ToUpperInvariant(promotionPiece.GetFenCharacter()) : ""), true) != 0)
+            jsonResp.success = response.Success;
+            jsonResp.correct = response.Correct;
+            jsonResp.check = response.Check;
+            if (response.Error != null) jsonResp.error = response.Error;
+            if (response.Solution != null) jsonResp.solution = response.Solution;
+            if (response.FEN != null) jsonResp.fen = response.FEN;
+            if (response.ExplanationSafe != null) jsonResp.explanation = response.ExplanationSafe;
+            if (response.Play != null)
             {
-                string loggedInUser = HttpContext.Session.GetString("userid");
-                if (loggedInUser != null)
-                {
-                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, false);
-                }
-                return Json(new { success = true, correct = -1, solution = pdt.Puzzle.Solutions[0], explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
+                jsonResp.play = response.Play;
+                jsonResp.fenAfterPlay = response.FenAfterPlay;
+                jsonResp.checkAfterAutoMove = response.CheckAfterAutoMove;
             }
-            pdt.SolutionMovesToDo.RemoveAt(0);
-            if (pdt.SolutionMovesToDo.Count == 0)
-            {
-                string loggedInUser = HttpContext.Session.GetString("userid");
-                if (loggedInUser != null)
-                {
-                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
-                }
-                return Json(new { success = true, correct = 1, solution = pdt.Puzzle.Solutions[0], fen = pdt.Puzzle.Game.GetFen(), explanation = pdt.Puzzle.ExplanationSafe, check = check, rating = (int)pdt.Puzzle.Rating.Value });
-            }
-            string fen = pdt.Puzzle.Game.GetFen();
-            string moveToPlay = pdt.SolutionMovesToDo[0];
-            string[] parts = moveToPlay.Split('-');
-            pdt.Puzzle.Game.ApplyMove(new Move(parts[0], parts[1], pdt.Puzzle.Game.WhoseTurn), true);
-            string fenAfterPlay = pdt.Puzzle.Game.GetFen();
-            string checkAfterAutoMove = pdt.Puzzle.Game.IsInCheck(pdt.Puzzle.Game.WhoseTurn) ? pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
-            Dictionary<string, List<string>> dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn));
-            JsonResult result = Json(new { success = true, correct = 0, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, checkAfterAutoMove = checkAfterAutoMove });
-            pdt.SolutionMovesToDo.RemoveAt(0);
-            if (pdt.SolutionMovesToDo.Count == 0)
-            {
-                string loggedInUser = HttpContext.Session.GetString("userid");
-                if (loggedInUser != null)
-                {
-                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
-                }
-                result = Json(new { success = true, correct = 1, fen = fen, play = moveToPlay, fenAfterPlay = fenAfterPlay, dests = dests, explanation = pdt.Puzzle.ExplanationSafe, checkAfterAutoMove = checkAfterAutoMove, rating = (int)pdt.Puzzle.Rating.Value });
-            }
-            return result;
+            if (response.Moves != null) jsonResp.dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(response.Moves);
+            return Json(jsonResp);
         }
     }
 }
