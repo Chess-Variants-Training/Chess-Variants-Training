@@ -126,20 +126,11 @@ namespace AtomicChessPuzzles.Controllers
             }
         }
 
+        [Restricted(true, UserRole.COMMENT_MODERATOR)]
         [HttpPost]
         [Route("/Comment/Mod/Delete")]
         public IActionResult DeleteComment(string commentId)
         {
-            string username = HttpContext.Session.GetString("username");
-            if (username == null)
-            {
-                return Json(new { success = false, error = "Not authorized" });
-            }
-            bool isPrivileged = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindByUsername(username).Roles, UserRole.COMMENT_MODERATOR);
-            if (!isPrivileged)
-            {
-                return Json(new { success = false, error = "Not authorized" });
-            }
             bool deleteSuccess = commentRepository.SoftDelete(commentId);
             if (deleteSuccess)
             {
