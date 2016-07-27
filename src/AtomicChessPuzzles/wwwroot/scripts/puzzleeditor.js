@@ -77,7 +77,7 @@ function goToStep2(e) {
 
 function submitMove(orig, dest, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, dest)) {
-        ChessgroundExtensions.drawPromotionDialog(orig, dest, document.getElementById("chessground"), doSubmitMoveRequest);
+        ChessgroundExtensions.drawPromotionDialog(orig, dest, document.getElementById("chessground"), doSubmitMoveRequest, window.ground);
     } else {
         doSubmitMoveRequest(orig, dest, null);
     }

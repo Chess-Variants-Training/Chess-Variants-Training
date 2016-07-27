@@ -2,7 +2,7 @@
     needsPromotion: function (ground, dest) {
         return (dest[1] === "8" || dest[1] === "1") && ground.getPieces()[dest]["role"] === "pawn";
     },
-    drawPromotionDialog: function (origin, destination, element, pieceSelected) {
+    drawPromotionDialog: function (origin, destination, element, pieceSelected, ground) {
         var promotionChoiceElement = document.createElement("div");
         promotionChoiceElement.id = "promotion-choice";
         element.appendChild(promotionChoiceElement);
@@ -26,10 +26,10 @@
             }
             promotionPiece["color"] = color;
             var left = (file.charCodeAt(0) - 97) * 12.5;
-            if (color === "black") {
+            if (ground.getOrientation() === "black") {
                 left = 87.5 - left;
             }
-            var top = i * 12.5;
+            var top = ground.getOrientation() === color ? i * 12.5 : (7 - i) * 12.5;
             var square = document.createElement("square");
             square.style.left = left + "%";
             square.style.top = top + "%";

@@ -43,7 +43,7 @@ function clearExplanation() {
 
 function processPuzzleMove(origin, destination, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, destination)) {
-        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitPuzzleMove);
+        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitPuzzleMove, window.ground);
     } else {
         submitPuzzleMove(origin, destination, null);
     }
