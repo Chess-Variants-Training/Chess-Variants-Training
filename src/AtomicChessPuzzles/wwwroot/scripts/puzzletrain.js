@@ -150,6 +150,17 @@ function loadComments() {
         for (var i = 0; i < modLinks.length; i++) {
             modLinks[i].addEventListener("click", modLinkClicked);
         }
+        if (window.location.search !== "") {
+            var matches = /[?&]c=[0-9a-zA-Z_-]+/.exec(window.location.search);
+            if (matches) {
+                var id = matches[0].slice(3);
+                var highlighted = document.getElementById(id);
+                if (highlighted) {
+                    highlighted.scrollIntoView(true);
+                    highlighted.style.backgroundColor = "#feb15a";
+                }
+            }
+        }
     }, function (req, err) {
         alert(err);
     });
