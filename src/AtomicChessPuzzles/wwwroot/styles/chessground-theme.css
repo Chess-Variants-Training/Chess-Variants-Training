@@ -1,8 +1,10 @@
 ﻿/* based on https://github.com/ornicar/chessground/blob/master/assets/theme.css but modified a lot */
 
 #chessground {
-    width: 30vw;
-    height: 30vw;
+    width: 40vw;
+    height: 40vw;
+    max-width: 628px;
+    max-height: 628px;
     position: relative;
 }
 
