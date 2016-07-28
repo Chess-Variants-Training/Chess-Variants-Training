@@ -208,8 +208,7 @@ namespace AtomicChessPuzzles.Controllers
                     return Json(new { success = false, error = "Puzzle training session ID not found." });
                 }
             }
-            session.Current = puzzle;
-            session.SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
+            session.Setup(puzzle);
             return Json(new
             {
                 success = true,

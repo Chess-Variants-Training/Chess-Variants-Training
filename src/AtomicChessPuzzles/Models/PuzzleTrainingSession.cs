@@ -14,8 +14,14 @@ namespace AtomicChessPuzzles.Models
         public PuzzleTrainingSession(string sessionId)
         {
             SessionID = sessionId;
-            FENs = new List<string>();
             PastPuzzleIds = new List<string>();
+        }
+
+        public void Setup(Puzzle puzzle)
+        {
+            Current = puzzle;
+            SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
+            FENs = new List<string>();
         }
 
         public SubmittedMoveResponse ApplyMove(string origin, string destination, string promotion)
