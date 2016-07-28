@@ -19,21 +19,21 @@ namespace AtomicChessPuzzles.Controllers
     {
         IPuzzlesBeingEditedRepository puzzlesBeingEdited;
         IPuzzleRepository puzzleRepository;
-        IPuzzlesTrainingRepository puzzlesTrainingRepository;
         IUserRepository userRepository;
         IRatingUpdater ratingUpdater;
         IMoveCollectionTransformer moveCollectionTransformer;
+        IPuzzleTrainingSessionRepository puzzleTrainingSessionRepository;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
-            IPuzzlesTrainingRepository _puzzlesTrainingRepository, IUserRepository _userRepository, IRatingUpdater _ratingUpdater,
-            IMoveCollectionTransformer _movecollectionTransformer)
+            IUserRepository _userRepository, IRatingUpdater _ratingUpdater,
+            IMoveCollectionTransformer _movecollectionTransformer, IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
-            puzzlesTrainingRepository = _puzzlesTrainingRepository;
             userRepository = _userRepository;
             ratingUpdater = _ratingUpdater;
             moveCollectionTransformer = _movecollectionTransformer;
+            puzzleTrainingSessionRepository = _puzzleTrainingSessionRepository;
         }
 
         [Route("Puzzle")]
@@ -151,7 +151,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Train/GetOneRandomly")]
         public IActionResult GetOneRandomly(string trainingSessionId = null)
         {
-            List<string> toBeExcluded = new List<string>();
+            List<string> toBeExcluded;
             double nearRating = 1500;
             if (HttpContext.Session.GetString("username") != null)
             {
@@ -162,7 +162,11 @@ namespace AtomicChessPuzzles.Controllers
             }
             else if (trainingSessionId != null)
             {
-                toBeExcluded = puzzlesTrainingRepository.GetForTrainingSessionId(trainingSessionId).Select(x => x.Puzzle.ID).ToList();
+                toBeExcluded = puzzleTrainingSessionRepository.Get(trainingSessionId)?.PastPuzzleIds ?? new List<string>();
+            }
+            else
+            {
+                toBeExcluded = new List<string>();
             }
             Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded);
             if (puzzle != null)
@@ -185,29 +189,35 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "Puzzle not found." });
             }
             puzzle.Game = new AtomicChessGame(puzzle.InitialFen);
-            PuzzleDuringTraining pdt = new PuzzleDuringTraining();
-            pdt.Puzzle = puzzle;
+            PuzzleTrainingSession session;
             if (trainingSessionId == null)
             {
+                string g;
                 do
                 {
-                    pdt.TrainingSessionId = Guid.NewGuid().ToString();
-                } while (puzzlesTrainingRepository.ContainsTrainingSessionId(trainingSessionId));
+                    g = Guid.NewGuid().ToString();
+                } while (puzzleTrainingSessionRepository.ContainsTrainingSessionId(g));
+                session = new PuzzleTrainingSession(g);
+                puzzleTrainingSessionRepository.Add(session);
             }
             else
             {
-                pdt.TrainingSessionId = trainingSessionId;
+                session = puzzleTrainingSessionRepository.Get(trainingSessionId);
+                if (session == null)
+                {
+                    return Json(new { success = false, error = "Puzzle training session ID not found." });
+                }
             }
-            pdt.SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
-            puzzlesTrainingRepository.Add(pdt);
+            session.Current = puzzle;
+            session.SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
             return Json(new
             {
                 success = true,
-                trainingSessionId = pdt.TrainingSessionId,
-                author = pdt.Puzzle.Author,
-                fen = pdt.Puzzle.InitialFen,
-                dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(pdt.Puzzle.Game.GetValidMoves(pdt.Puzzle.Game.WhoseTurn)),
-                whoseTurn = pdt.Puzzle.Game.WhoseTurn.ToString().ToLowerInvariant()
+                trainingSessionId = session.SessionID,
+                author = session.Current.Author,
+                fen = session.Current.InitialFen,
+                dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.Current.Game.GetValidMoves(session.Current.Game.WhoseTurn)),
+                whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant()
             });
         }
 
@@ -215,17 +225,17 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Train/SubmitMove")]
         public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination, string promotion = null)
         {
-            PuzzleDuringTraining pdt = puzzlesTrainingRepository.Get(id, trainingSessionId);
-            SubmittedMoveResponse response = pdt.ApplyMove(origin, destination, promotion);
+            PuzzleTrainingSession session = puzzleTrainingSessionRepository.Get(trainingSessionId);
+            SubmittedMoveResponse response = session.ApplyMove(origin, destination, promotion);
             dynamic jsonResp = new ExpandoObject();
             if (response.Correct == 1 || response.Correct == -1)
             {
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
-                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, response.Correct == 1);
+                    ratingUpdater.AdjustRating(loggedInUser, session.Current.ID, response.Correct == 1);
                 }
-                jsonResp.rating = (int)pdt.Puzzle.Rating.Value;
+                jsonResp.rating = (int)session.Current.Rating.Value;
             }
             jsonResp.success = response.Success;
             jsonResp.correct = response.Correct;

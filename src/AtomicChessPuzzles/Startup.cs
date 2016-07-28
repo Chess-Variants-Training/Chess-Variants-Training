@@ -15,7 +15,7 @@ namespace AtomicChessPuzzles
             services.AddSingleton<IUserRepository, UserRepository>();
             services.AddSingleton<IPuzzlesBeingEditedRepository, PuzzlesBeingEditedRepository>();
             services.AddSingleton<IPuzzleRepository, PuzzleRepository>();
-            services.AddSingleton<IPuzzlesTrainingRepository, PuzzlesTrainingRepository>();
+            services.AddSingleton<IPuzzleTrainingSessionRepository, PuzzleTrainingSessionRepository>();
             services.AddSingleton<ICommentRepository, CommentRepository>();
             services.AddSingleton<ICommentVoteRepository, CommentVoteRepository>();
             services.AddSingleton<IReportRepository, ReportRepository>();
