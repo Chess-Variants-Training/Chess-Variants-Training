@@ -30,11 +30,9 @@
     <div id="chessground" class="brown"></div>
     <div id="next-to-ground">
         <div id="result"></div>
+        <p>Created by <span id="author"></span></p>
     </div>
 </div>
-<p>
-    Created by <span id="author"></span>
-</p>
 @if (Model != null && Model.InReview)
 {
     <p data-object="@Model.ID">
