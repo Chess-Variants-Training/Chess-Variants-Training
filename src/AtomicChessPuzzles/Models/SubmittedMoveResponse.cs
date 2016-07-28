@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace AtomicChessPuzzles.Models
@@ -73,6 +74,12 @@ namespace AtomicChessPuzzles.Models
         {
             get;
             set;
-        }   
+        }
+
+        public List<string> FENs
+        {
+            get;
+            set;
+        }
     }
 }

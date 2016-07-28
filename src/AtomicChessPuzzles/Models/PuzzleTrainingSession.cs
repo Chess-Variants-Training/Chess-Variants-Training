@@ -15,13 +15,15 @@ namespace AtomicChessPuzzles.Models
         {
             SessionID = sessionId;
             PastPuzzleIds = new List<string>();
+            FENs = new List<string>();
         }
 
         public void Setup(Puzzle puzzle)
         {
             Current = puzzle;
             SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
-            FENs = new List<string>();
+            FENs.Clear();
+            FENs.Add(puzzle.InitialFen);
         }
 
         public SubmittedMoveResponse ApplyMove(string origin, string destination, string promotion)
@@ -53,13 +55,16 @@ namespace AtomicChessPuzzles.Models
             }
 
             response.Check = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
+            string fen = Current.Game.GetFen();
+            FENs.Add(fen);
 
             if (Current.Game.IsCheckmated(Current.Game.WhoseTurn) || Current.Game.KingIsGone(Current.Game.WhoseTurn))
             {
                 response.Correct = 1;
-                response.FEN = Current.Game.GetFen();
+                response.FEN = fen;
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
+                response.FENs = FENs;
                 return response;
             }
 
@@ -69,6 +74,13 @@ namespace AtomicChessPuzzles.Models
                 response.Solution = Current.Solutions[0];
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
+                foreach (string move in SolutionMovesToDo)
+                {
+                    string[] p = move.Split('-', '=');
+                    Current.Game.ApplyMove(new Move(p[0], p[1], Current.Game.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], Current.Game.WhoseTurn)), true);
+                    FENs.Add(Current.Game.GetFen());
+                }
+                response.FENs = FENs;
                 return response;
             }
 
@@ -77,19 +89,20 @@ namespace AtomicChessPuzzles.Models
             {
                 response.Correct = 1;
                 response.Solution = Current.Solutions[0];
-                response.FEN = Current.Game.GetFen();
+                response.FEN = fen;
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
+                response.FENs = FENs;
                 return response;
             }
 
-            response.FEN = Current.Game.GetFen();
+            response.FEN = fen;
 
             string moveToPlay = SolutionMovesToDo[0];
             string[] parts = moveToPlay.Split('-', '=');
             Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(parts[2][0], Current.Game.WhoseTurn)), true);
             response.Play = moveToPlay;
-            response.FenAfterPlay = Current.Game.GetFen();
+            response.FenAfterPlay = fen;
             response.CheckAfterAutoMove = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
             response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
             response.Correct = 0;
@@ -99,6 +112,7 @@ namespace AtomicChessPuzzles.Models
                 response.Correct = 1;
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
+                response.FENs = FENs;
             }
             return response;
         }

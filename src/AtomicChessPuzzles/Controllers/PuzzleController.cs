@@ -250,6 +250,7 @@ namespace AtomicChessPuzzles.Controllers
                 jsonResp.checkAfterAutoMove = response.CheckAfterAutoMove;
             }
             if (response.Moves != null) jsonResp.dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(response.Moves);
+            if (response.FENs != null) jsonResp.fens = response.FENs;
             return Json(jsonResp);
         }
     }
