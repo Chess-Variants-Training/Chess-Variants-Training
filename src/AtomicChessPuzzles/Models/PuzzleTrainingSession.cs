@@ -102,7 +102,8 @@ namespace AtomicChessPuzzles.Models
             string[] parts = moveToPlay.Split('-', '=');
             Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(parts[2][0], Current.Game.WhoseTurn)), true);
             response.Play = moveToPlay;
-            response.FenAfterPlay = fen;
+            response.FenAfterPlay = Current.Game.GetFen();
+            FENs.Add(response.FenAfterPlay);
             response.CheckAfterAutoMove = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
             response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
             response.Correct = 0;
