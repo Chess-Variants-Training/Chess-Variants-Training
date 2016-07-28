@@ -33,6 +33,16 @@
         <p>Created by <span id="author"></span></p>
         <p id="puzzleRating"></p>
         <p id="explanation"></p>
+        <p>
+            @if (Model == null)
+            {
+                <a href="#" id="nextPuzzleLink">Next puzzle</a>
+            }
+            else
+            {
+                @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
+            }
+        </p>
     </div>
 </div>
 @if (Model != null && Model.InReview)
@@ -40,14 +50,6 @@
     <p data-object="@Model.ID">
         <a href="#" id="approve-puzzle">Approve</a> | <a href="#" id="reject-puzzle">Reject</a>
     </p>
-}
-@if (Model == null)
-{
-    <a href="#" id="nextPuzzleLink">Next puzzle</a>
-}
-else
-{
-    @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
 }
 @if (Context.Session.GetString("userid") != null)
 {
