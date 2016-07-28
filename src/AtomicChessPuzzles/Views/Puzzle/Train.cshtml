@@ -26,7 +26,12 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
-<div id="chessground" class="brown"></div>
+<div id="ground-container">
+    <div id="chessground" class="brown"></div>
+    <div id="next-to-ground">
+        <div id="result"></div>
+    </div>
+</div>
 <p>
     Created by <span id="author"></span>
 </p>
@@ -36,7 +41,6 @@
         <a href="#" id="approve-puzzle">Approve</a> | <a href="#" id="reject-puzzle">Reject</a>
     </p>
 }
-<div id="result"></div>
 @if (Model == null)
 {
     <a href="#" id="nextPuzzleLink">Next puzzle</a>
