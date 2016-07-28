@@ -16,6 +16,11 @@
     color: darkgreen;
 }
 
+.blue {
+    background: #61B7E8;
+    color: #2836E8;
+}
+
 .comment {
     display: flex;
     padding: 3px;

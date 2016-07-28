@@ -24,8 +24,8 @@ function setup(puzzleId) {
         clearComments();
         loadComments();
         document.getElementById("nextPuzzleLink").classList.add("nodisplay");
-        document.getElementById("result").setAttribute("class", "nodisplay");
-        document.getElementById("result").innerHTML = "";
+        document.getElementById("result").setAttribute("class", "blue");
+        document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse["author"];
         window.trainingSessionId = jsonResponse["trainingSessionId"];
     }, function (req, err) {
@@ -71,14 +71,14 @@ function submitPuzzleMove(origin, destination, promotion) {
             case 0:
                 break;
             case 1:
-                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
+                document.getElementById("nextPuzzleLink").classList.remove("blue");
                 with (document.getElementById("result")) {
                     textContent = "Success!";
                     setAttribute("class", "green");
                 };
                 break;
             case -1:
-                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
+                document.getElementById("nextPuzzleLink").classList.remove("blue");
                 with (document.getElementById("result")) {
                     textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
                     setAttribute("class", "red");
