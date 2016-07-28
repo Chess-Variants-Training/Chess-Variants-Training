@@ -71,14 +71,14 @@ function submitPuzzleMove(origin, destination, promotion) {
             case 0:
                 break;
             case 1:
-                document.getElementById("nextPuzzleLink").classList.remove("blue");
+                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
                 with (document.getElementById("result")) {
                     textContent = "Success!";
                     setAttribute("class", "green");
                 };
                 break;
             case -1:
-                document.getElementById("nextPuzzleLink").classList.remove("blue");
+                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
                 with (document.getElementById("result")) {
                     textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
                     setAttribute("class", "red");
