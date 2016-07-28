@@ -3,7 +3,6 @@ using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
 using AtomicChessPuzzles.Services;
 using ChessDotNet;
-using ChessDotNet.Pieces;
 using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
@@ -11,7 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
-using System.Linq;
 
 namespace AtomicChessPuzzles.Controllers
 {
