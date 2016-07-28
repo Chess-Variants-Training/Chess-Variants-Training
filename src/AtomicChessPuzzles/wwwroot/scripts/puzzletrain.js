@@ -21,6 +21,7 @@ function setup(puzzleId) {
             }
         });
         clearExplanation();
+        clearPuzzleRating();
         clearComments();
         loadComments();
         document.getElementById("nextPuzzleLink").classList.add("nodisplay");
@@ -31,6 +32,14 @@ function setup(puzzleId) {
     }, function (req, err) {
         alert(err);
     });
+}
+
+function showPuzzleRating(r) {
+    document.getElementById("puzzleRating").innerHTML = "Puzzle rating: " + r;
+}
+
+function clearPuzzleRating() {
+    document.getElementById("puzzleRating").innerHTML = "";
 }
 
 function showExplanation(expl) {
@@ -92,7 +101,10 @@ function submitPuzzleMove(origin, destination, promotion) {
             });
         }
         if (jsonResponse["explanation"]) {
-            showExplanation(jsonResponse["explanation"] + "<br><br>Puzzle rating: " + jsonResponse["rating"]);
+            showExplanation(jsonResponse["explanation"]);
+        }
+        if (jsonResponse["rating"]) {
+            showPuzzleRating(jsonResponse["rating"]);
         }
     }, function (req, err) {
         alert(err);
