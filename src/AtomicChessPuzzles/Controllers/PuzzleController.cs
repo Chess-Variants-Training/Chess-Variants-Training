@@ -218,12 +218,12 @@ namespace AtomicChessPuzzles.Controllers
             PuzzleDuringTraining pdt = puzzlesTrainingRepository.Get(id, trainingSessionId);
             SubmittedMoveResponse response = pdt.ApplyMove(origin, destination, promotion);
             dynamic jsonResp = new ExpandoObject();
-            if (response.Correct == 1)
+            if (response.Correct == 1 || response.Correct == -1)
             {
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
-                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, true);
+                    ratingUpdater.AdjustRating(loggedInUser, pdt.Puzzle.ID, response.Correct == 1);
                 }
                 jsonResp.rating = (int)pdt.Puzzle.Rating.Value;
             }
