@@ -62,9 +62,11 @@ function processPuzzleMove(origin, destination, metadata) {
 
 function submitPuzzleMove(origin, destination, promotion) {
     jsonXhr("/Puzzle/Train/SubmitMove", "POST", "id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&origin=" + origin + "&destination=" + destination + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
-        window.ground.set({
-            fen: jsonResponse["fen"]
-        });
+        if (jsonResponse["fen"]) {
+            window.ground.set({
+                fen: jsonResponse["fen"]
+            });
+        }
         if (jsonResponse["check"]) {
             window.ground.setCheck(jsonResponse["check"]);
         } else {
