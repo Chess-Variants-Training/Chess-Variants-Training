@@ -66,57 +66,26 @@ namespace AtomicChessPuzzles.Models
             response.Check = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
             Checks.Add(response.Check);
             string fen = Current.Game.GetFen();
+            response.FEN = fen;
             FENs.Add(fen);
             Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotionPiece == null ? "" : "=" + char.ToUpper(promotionPiece.GetFenCharacter()).ToString()));
 
             if (Current.Game.IsCheckmated(Current.Game.WhoseTurn) || Current.Game.KingIsGone(Current.Game.WhoseTurn))
             {
-                response.Correct = 1;
-                response.FEN = fen;
-                response.ExplanationSafe = Current.ExplanationSafe;
-                PastPuzzleIds.Add(Current.ID);
-                response.ReplayFENs = FENs;
-                response.ReplayChecks = Checks;
-                response.ReplayMoves = Moves;
+                FillResponse(response, true);
                 return response;
             }
 
             if (string.Compare(SolutionMovesToDo[0], origin + "-" + destination + (promotion != null ? "=" + char.ToUpperInvariant(promotionPiece.GetFenCharacter()) : ""), true) != 0)
             {
-                response.Correct = -1;
-                response.Solution = Current.Solutions[0];
-                response.ExplanationSafe = Current.ExplanationSafe;
-                PastPuzzleIds.Add(Current.ID);
-                Moves.RemoveAt(Moves.Count - 1);
-                FENs.RemoveAt(FENs.Count - 1);
-                Checks.RemoveAt(Checks.Count - 1);
-                response.FEN = FENs[FENs.Count - 1];
-                AtomicChessGame correctGame = new AtomicChessGame(response.FEN);
-                foreach (string move in SolutionMovesToDo)
-                {
-                    string[] p = move.Split('-', '=');
-                    correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], correctGame.WhoseTurn)), true);
-                    FENs.Add(correctGame.GetFen());
-                    Checks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
-                    Moves.Add(move);
-                }
-                response.ReplayFENs = FENs;
-                response.ReplayChecks = Checks;
-                response.ReplayMoves = Moves;
+                FillResponse(response, false);
                 return response;
             }
 
             SolutionMovesToDo.RemoveAt(0);
             if (SolutionMovesToDo.Count == 0)
             {
-                response.Correct = 1;
-                response.Solution = Current.Solutions[0];
-                response.FEN = fen;
-                response.ExplanationSafe = Current.ExplanationSafe;
-                PastPuzzleIds.Add(Current.ID);
-                response.ReplayFENs = FENs;
-                response.ReplayChecks = Checks;
-                response.ReplayMoves = Moves;
+                FillResponse(response, true);
                 return response;
             }
 
@@ -136,14 +105,40 @@ namespace AtomicChessPuzzles.Models
             SolutionMovesToDo.RemoveAt(0);
             if (SolutionMovesToDo.Count == 0)
             {
-                response.Correct = 1;
-                response.ExplanationSafe = Current.ExplanationSafe;
-                PastPuzzleIds.Add(Current.ID);
-                response.ReplayFENs = FENs;
-                response.ReplayChecks = Checks;
-                response.ReplayMoves = Moves;
+                FillResponse(response, true);
             }
             return response;
+        }
+
+        void FillResponse(SubmittedMoveResponse response, bool correct)
+        {
+            response.Correct = correct ? 1 : -1;
+            response.ExplanationSafe = Current.ExplanationSafe;
+            response.Solution = Current.Solutions[0];
+
+            PastPuzzleIds.Add(Current.ID);
+
+            if (!correct)
+            {
+                Moves.RemoveAt(Moves.Count - 1);
+                FENs.RemoveAt(FENs.Count - 1);
+                Checks.RemoveAt(Checks.Count - 1);
+
+                response.FEN = FENs[FENs.Count - 1];
+
+                AtomicChessGame correctGame = new AtomicChessGame(response.FEN);
+                foreach (string move in SolutionMovesToDo)
+                {
+                    string[] p = move.Split('-', '=');
+                    correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], correctGame.WhoseTurn)), true);
+                    FENs.Add(correctGame.GetFen());
+                    Checks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
+                    Moves.Add(move);
+                }
+            }
+            response.ReplayFENs = FENs;
+            response.ReplayChecks = Checks;
+            response.ReplayMoves = Moves;
         }
     }
 }
