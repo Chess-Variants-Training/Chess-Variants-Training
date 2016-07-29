@@ -9,6 +9,8 @@ namespace AtomicChessPuzzles.Models
         public Puzzle Current { get; set; }
         public List<string> SolutionMovesToDo { get; set; }
         public List<string> FENs { get; set; }
+        public List<string> Checks { get; set; }
+        public List<string> Moves { get; set; }
         public List<string> PastPuzzleIds { get; set; }
 
         public PuzzleTrainingSession(string sessionId)
@@ -16,6 +18,8 @@ namespace AtomicChessPuzzles.Models
             SessionID = sessionId;
             PastPuzzleIds = new List<string>();
             FENs = new List<string>();
+            Checks = new List<string>();
+            Moves = new List<string>();
         }
 
         public void Setup(Puzzle puzzle)
@@ -24,6 +28,10 @@ namespace AtomicChessPuzzles.Models
             SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
             FENs.Clear();
             FENs.Add(puzzle.InitialFen);
+            Checks.Clear();
+            Checks.Add(Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null);
+            Moves.Clear();
+            Moves.Add(null);
         }
 
         public SubmittedMoveResponse ApplyMove(string origin, string destination, string promotion)
@@ -55,8 +63,10 @@ namespace AtomicChessPuzzles.Models
             }
 
             response.Check = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
+            Checks.Add(response.Check);
             string fen = Current.Game.GetFen();
             FENs.Add(fen);
+            Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotionPiece == null ? "" : "=" + char.ToUpper(promotionPiece.GetFenCharacter()).ToString()));
 
             if (Current.Game.IsCheckmated(Current.Game.WhoseTurn) || Current.Game.KingIsGone(Current.Game.WhoseTurn))
             {
@@ -64,7 +74,9 @@ namespace AtomicChessPuzzles.Models
                 response.FEN = fen;
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
-                response.FENs = FENs;
+                response.ReplayFENs = FENs;
+                response.ReplayChecks = Checks;
+                response.ReplayMoves = Moves;
                 return response;
             }
 
@@ -80,7 +92,8 @@ namespace AtomicChessPuzzles.Models
                     Current.Game.ApplyMove(new Move(p[0], p[1], Current.Game.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], Current.Game.WhoseTurn)), true);
                     FENs.Add(Current.Game.GetFen());
                 }
-                response.FENs = FENs;
+                response.ReplayFENs = FENs;
+                response.ReplayChecks = Checks;
                 return response;
             }
 
@@ -92,7 +105,9 @@ namespace AtomicChessPuzzles.Models
                 response.FEN = fen;
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
-                response.FENs = FENs;
+                response.ReplayFENs = FENs;
+                response.ReplayChecks = Checks;
+                response.ReplayMoves = Moves;
                 return response;
             }
 
@@ -102,9 +117,11 @@ namespace AtomicChessPuzzles.Models
             string[] parts = moveToPlay.Split('-', '=');
             Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(parts[2][0], Current.Game.WhoseTurn)), true);
             response.Play = moveToPlay;
+            Moves.Add(moveToPlay);
             response.FenAfterPlay = Current.Game.GetFen();
             FENs.Add(response.FenAfterPlay);
             response.CheckAfterAutoMove = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
+            Checks.Add(response.CheckAfterAutoMove);
             response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
             response.Correct = 0;
             SolutionMovesToDo.RemoveAt(0);
@@ -113,7 +130,9 @@ namespace AtomicChessPuzzles.Models
                 response.Correct = 1;
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
-                response.FENs = FENs;
+                response.ReplayFENs = FENs;
+                response.ReplayChecks = Checks;
+                response.ReplayMoves = Moves;
             }
             return response;
         }

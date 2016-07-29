@@ -76,7 +76,19 @@ namespace AtomicChessPuzzles.Models
             set;
         }
 
-        public List<string> FENs
+        public List<string> ReplayFENs
+        {
+            get;
+            set;
+        }
+
+        public List<string> ReplayMoves
+        {
+            get;
+            set;
+        }
+
+        public List<string> ReplayChecks
         {
             get;
             set;

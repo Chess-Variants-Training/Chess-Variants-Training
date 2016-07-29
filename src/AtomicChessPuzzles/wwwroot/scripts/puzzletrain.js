@@ -9,6 +9,7 @@
 function setup(puzzleId) {
     window.puzzleId = puzzleId;
     jsonXhr("/Puzzle/Train/Setup", "POST", "id=" + window.puzzleId + (window.trainingSessionId ? "&trainingSessionId=" + window.trainingSessionId : ""), function (req, jsonResponse) {
+        window.replay = null;
         window.ground.set({
             fen: jsonResponse["fen"],
             orientation: jsonResponse["whoseTurn"],
@@ -28,6 +29,7 @@ function setup(puzzleId) {
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse["author"];
+        document.getElementById("controls").classList.add("nodisplay");
         window.trainingSessionId = jsonResponse["trainingSessionId"];
     }, function (req, err) {
         alert(err);
@@ -70,7 +72,8 @@ function submitPuzzleMove(origin, destination, promotion) {
         }
         if (jsonResponse["play"]) {
             window.ground.set({
-                fen: jsonResponse["fenAfterPlay"]
+                fen: jsonResponse["fenAfterPlay"],
+                lastMove: jsonResponse["play"].substr(0, 5).split("-")
             });
             if (jsonResponse["checkAfterAutoMove"]) {
                 window.ground.setCheck(jsonResponse["checkAfterAutoMove"]);
@@ -106,10 +109,12 @@ function submitPuzzleMove(origin, destination, promotion) {
         if (jsonResponse["rating"]) {
             showPuzzleRating(jsonResponse["rating"]);
         }
-        if (jsonResponse["fens"]) {
+        if (jsonResponse["replayFens"]) {
             window.replay = {};
-            window.replay.fens = jsonResponse["fens"];
+            window.replay.fens = jsonResponse["replayFens"];
             window.replay.current = window.replay.fens.indexOf(jsonResponse["fen"] || window.ground.getFen());
+            window.replay.checks = jsonResponse["replayChecks"];
+            window.replay.moves = jsonResponse["replayMoves"];
             document.getElementById("controls").classList.remove("nodisplay");
         }
     }, function (req, err) {
@@ -333,7 +338,17 @@ function replayControlClicked(e) {
     } else if (e.target.id === "controls-end") {
         window.replay.current = window.replay.fens.length - 1;
     }
-    window.ground.set({ fen: window.replay.fens[window.replay.current] });
+    var lastMove = window.replay.moves[window.replay.current];
+    window.ground.set({
+        fen: window.replay.fens[window.replay.current],
+        lastMove: lastMove ? lastMove.substr(0, 5).split("-") : null
+    });
+    var currentCheck = window.replay.checks[window.replay.current];
+    if (currentCheck) {
+        window.ground.setCheck(currentCheck);
+    } else {
+        window.ground.set({ check: null });
+    }
 }
 
 window.addEventListener("load", function () {
