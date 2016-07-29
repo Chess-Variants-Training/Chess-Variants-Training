@@ -97,7 +97,7 @@ namespace AtomicChessPuzzles.Models
                     string[] p = move.Split('-', '=');
                     correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], correctGame.WhoseTurn)), true);
                     FENs.Add(correctGame.GetFen());
-                    Checks.Add(Current.Game.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
+                    Checks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
                     Moves.Add(move);
                 }
                 response.ReplayFENs = FENs;
