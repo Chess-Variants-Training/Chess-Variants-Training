@@ -27,7 +27,15 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
 <div id="ground-container">
-    <div id="chessground" class="brown"></div>
+    <div>
+        <div id="chessground" class="brown"></div>
+        <div id="controls" class="nodisplay">
+            <div id="controls-begin">|&lt;&lt;</div>
+            <div id="controls-prev">|&lt;</div>
+            <div id="controls-next">&gt;|</div>
+            <div id="controls-end">&gt;&gt;|</div>
+        </div>
+    </div>
     <div id="next-to-ground">
         <div id="result"></div>
         <p>Created by <span id="author"></span></p>

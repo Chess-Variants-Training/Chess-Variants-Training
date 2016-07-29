@@ -106,6 +106,12 @@ function submitPuzzleMove(origin, destination, promotion) {
         if (jsonResponse["rating"]) {
             showPuzzleRating(jsonResponse["rating"]);
         }
+        if (jsonResponse["fens"]) {
+            window.replay = {};
+            window.replay.fens = jsonResponse["fens"];
+            window.replay.current = window.replay.fens.indexOf(jsonResponse["fen"] || window.ground.getFen());
+            document.getElementById("controls").classList.remove("nodisplay");
+        }
     }, function (req, err) {
         alert(err);
     });
@@ -316,6 +322,20 @@ function nextPuzzle(e) {
     startWithRandomPuzzle();
 }
 
+function replayControlClicked(e) {
+    if (!window.replay) return;
+    if (e.target.id === "controls-begin") {
+        window.replay.current = 0;
+    } else if (e.target.id === "controls-prev" && window.replay.current !== 0) {
+        window.replay.current--;
+    } else if (e.target.id === "controls-next" && window.replay.current !== window.replay.fens.length - 1) {
+        window.replay.current++;
+    } else if (e.target.id === "controls-end") {
+        window.replay.current = window.replay.fens.length - 1;
+    }
+    window.ground.set({ fen: window.replay.fens[window.replay.current] });
+}
+
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: false,
@@ -337,5 +357,9 @@ window.addEventListener("load", function () {
         startWithRandomPuzzle();
     } else {
         setup(window.selectedPuzzle);
+    }
+    var controlIds = ["controls-begin", "controls-prev", "controls-next", "controls-end"];
+    for (var i = 0; i < controlIds.length; i++) {
+        document.getElementById(controlIds[i]).addEventListener("click", replayControlClicked);
     }
 });

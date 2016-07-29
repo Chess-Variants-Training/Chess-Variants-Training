@@ -62,3 +62,27 @@
 .mod-link {
     color: red;
 }
+
+#controls:not(.nodisplay) {
+    display: flex;
+    flex-direction: row;
+}
+
+    #controls > div {
+        flex: 1;
+        text-align: center;
+        background-color: #E2E2E2;
+        font-weight: bold;
+        padding-top: 10px;
+        padding-bottom: 10px;
+        border: 1px solid black;
+        cursor: pointer;
+        -moz-user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+    }
+
+        #controls > div:hover {
+            background-color: #61B7E8;
+        }
