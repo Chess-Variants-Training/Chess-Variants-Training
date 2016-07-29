@@ -41,7 +41,7 @@
         <p>Created by <span id="author"></span></p>
         <p id="puzzleRating"></p>
         <p id="explanation"></p>
-        <p>
+        <p id="puzzleLinkContainer" class="nodisplay">
             @if (Model == null)
             {
                 <a href="#" id="nextPuzzleLink">Next puzzle</a>
@@ -50,6 +50,7 @@
             {
                 @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
             }
+            | <a href="#" id="retryPuzzleLink">Retry puzzle</a>
         </p>
     </div>
 </div>

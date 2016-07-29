@@ -25,7 +25,7 @@ function setup(puzzleId) {
         clearPuzzleRating();
         clearComments();
         loadComments();
-        document.getElementById("nextPuzzleLink").classList.add("nodisplay");
+        document.getElementById("puzzleLinkContainer").setAttribute("class", "nodisplay");
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse["author"];
@@ -85,14 +85,14 @@ function submitPuzzleMove(origin, destination, promotion) {
             case 0:
                 break;
             case 1:
-                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
+                document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
                 with (document.getElementById("result")) {
                     textContent = "Success!";
                     setAttribute("class", "green");
                 };
                 break;
             case -1:
-                document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
+                document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
                 window.ground.set({ lastMove: null });
                 with (document.getElementById("result")) {
                     textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
@@ -330,6 +330,11 @@ function nextPuzzle(e) {
     startWithRandomPuzzle();
 }
 
+function retryPuzzle(e) {
+    e.preventDefault();
+    setup(window.puzzleId);
+}
+
 function replayControlClicked(e) {
     if (!window.replay) return;
     if (e.target.id === "controls-begin") {
@@ -371,6 +376,7 @@ window.addEventListener("load", function () {
         submitCommentLink.addEventListener("click", submitComment);
     }
     document.getElementById("nextPuzzleLink").addEventListener("click", nextPuzzle);
+    document.getElementById("retryPuzzleLink").addEventListener("click", retryPuzzle);
     if (!window.selectedPuzzle) {
         startWithRandomPuzzle();
     } else {
