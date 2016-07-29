@@ -369,6 +369,9 @@ window.addEventListener("load", function () {
             events: {
                 after: processPuzzleMove
             }
+        },
+        drawable: {
+            enabled: true
         }
     });
     var submitCommentLink = document.getElementById("submitCommentLink");
