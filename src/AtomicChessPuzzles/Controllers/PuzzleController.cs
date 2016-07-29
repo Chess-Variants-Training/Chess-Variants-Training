@@ -238,7 +238,6 @@ namespace AtomicChessPuzzles.Controllers
             jsonResp.correct = response.Correct;
             jsonResp.check = response.Check;
             if (response.Error != null) jsonResp.error = response.Error;
-            if (response.Solution != null) jsonResp.solution = response.Solution;
             if (response.FEN != null) jsonResp.fen = response.FEN;
             if (response.ExplanationSafe != null) jsonResp.explanation = response.ExplanationSafe;
             if (response.Play != null)

@@ -114,7 +114,6 @@ namespace AtomicChessPuzzles.Models
         {
             response.Correct = correct ? 1 : -1;
             response.ExplanationSafe = Current.ExplanationSafe;
-            response.Solution = Current.Solutions[0];
 
             PastPuzzleIds.Add(Current.ID);
 

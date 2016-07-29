@@ -28,12 +28,6 @@ namespace AtomicChessPuzzles.Models
             set;
         }
 
-        public string Solution
-        {
-            get;
-            set;
-        }
-
         public string FEN
         {
             get;
