@@ -93,6 +93,7 @@ function submitPuzzleMove(origin, destination, promotion) {
                 break;
             case -1:
                 document.getElementById("nextPuzzleLink").classList.remove("nodisplay");
+                window.ground.set({ lastMove: null });
                 with (document.getElementById("result")) {
                     textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
                     setAttribute("class", "red");

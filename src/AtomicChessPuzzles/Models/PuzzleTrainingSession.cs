@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Variants.Atomic;
 using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Models
@@ -86,14 +87,22 @@ namespace AtomicChessPuzzles.Models
                 response.Solution = Current.Solutions[0];
                 response.ExplanationSafe = Current.ExplanationSafe;
                 PastPuzzleIds.Add(Current.ID);
+                Moves.RemoveAt(Moves.Count - 1);
+                FENs.RemoveAt(FENs.Count - 1);
+                Checks.RemoveAt(Checks.Count - 1);
+                response.FEN = FENs[FENs.Count - 1];
+                AtomicChessGame correctGame = new AtomicChessGame(response.FEN);
                 foreach (string move in SolutionMovesToDo)
                 {
                     string[] p = move.Split('-', '=');
-                    Current.Game.ApplyMove(new Move(p[0], p[1], Current.Game.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], Current.Game.WhoseTurn)), true);
-                    FENs.Add(Current.Game.GetFen());
+                    correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], correctGame.WhoseTurn)), true);
+                    FENs.Add(correctGame.GetFen());
+                    Checks.Add(Current.Game.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
+                    Moves.Add(move);
                 }
                 response.ReplayFENs = FENs;
                 response.ReplayChecks = Checks;
+                response.ReplayMoves = Moves;
                 return response;
             }
 
