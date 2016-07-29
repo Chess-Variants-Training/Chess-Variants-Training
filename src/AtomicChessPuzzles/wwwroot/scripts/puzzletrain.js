@@ -95,7 +95,7 @@ function submitPuzzleMove(origin, destination, promotion) {
                 document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
                 window.ground.set({ lastMove: null });
                 with (document.getElementById("result")) {
-                    textContent = "Sorry, that's not correct. This was correct: " + jsonResponse["solution"];
+                    textContent = "Puzzle failed.";
                     setAttribute("class", "red");
                 }
         }
