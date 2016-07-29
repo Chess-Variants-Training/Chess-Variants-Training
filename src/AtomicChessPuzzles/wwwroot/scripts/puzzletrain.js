@@ -7,8 +7,8 @@
 }
 
 function setup(puzzleId) {
-    window.puzzleId = puzzleId;
-    jsonXhr("/Puzzle/Train/Setup", "POST", "id=" + window.puzzleId + (window.trainingSessionId ? "&trainingSessionId=" + window.trainingSessionId : ""), function (req, jsonResponse) {
+    jsonXhr("/Puzzle/Train/Setup", "POST", "id=" + puzzleId + (window.trainingSessionId ? "&trainingSessionId=" + window.trainingSessionId : ""), function (req, jsonResponse) {
+        window.puzzleId = puzzleId;
         window.replay = null;
         window.ground.set({
             fen: jsonResponse["fen"],
