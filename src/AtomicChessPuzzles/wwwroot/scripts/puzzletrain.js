@@ -1,6 +1,6 @@
 ﻿function startWithRandomPuzzle() {
     jsonXhr("/Puzzle/Train/GetOneRandomly" + (window.trainingSessionId ? "?trainingSessionId=" + window.trainingSessionId : ""), "GET", null, function (req, jsonResponse) {
-        setup(jsonResponse["id"]);
+        setup(jsonResponse.id);
     }, function (req, err) {
         alert(err);
     });
@@ -11,14 +11,14 @@ function setup(puzzleId) {
         window.puzzleId = puzzleId;
         window.replay = null;
         window.ground.set({
-            fen: jsonResponse["fen"],
-            orientation: jsonResponse["whoseTurn"],
-            turnColor: jsonResponse["whoseTurn"],
+            fen: jsonResponse.fen,
+            orientation: jsonResponse.whoseTurn,
+            turnColor: jsonResponse.whoseTurn,
             lastMove: null,
             selected: null,
             movable: {
                 free: false,
-                dests: jsonResponse["dests"]
+                dests: jsonResponse.dests
             }
         });
         clearExplanation();
@@ -28,9 +28,9 @@ function setup(puzzleId) {
         document.getElementById("puzzleLinkContainer").setAttribute("class", "nodisplay");
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
-        document.getElementById("author").textContent = jsonResponse["author"];
+        document.getElementById("author").textContent = jsonResponse.author;
         document.getElementById("controls").classList.add("nodisplay");
-        window.trainingSessionId = jsonResponse["trainingSessionId"];
+        window.trainingSessionId = jsonResponse.trainingSessionId;
     }, function (req, err) {
         alert(err);
     });
@@ -62,26 +62,26 @@ function processPuzzleMove(origin, destination, metadata) {
 
 function submitPuzzleMove(origin, destination, promotion) {
     jsonXhr("/Puzzle/Train/SubmitMove", "POST", "id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&origin=" + origin + "&destination=" + destination + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
-        if (jsonResponse["fen"]) {
+        if (jsonResponse.fen) {
             window.ground.set({
-                fen: jsonResponse["fen"]
+                fen: jsonResponse.fen
             });
         }
-        if (jsonResponse["check"]) {
-            window.ground.setCheck(jsonResponse["check"]);
+        if (jsonResponse.check) {
+            window.ground.setCheck(jsonResponse.check);
         } else {
             window.ground.set({ check: null });
         }
-        if (jsonResponse["play"]) {
+        if (jsonResponse.play) {
             window.ground.set({
-                fen: jsonResponse["fenAfterPlay"],
-                lastMove: jsonResponse["play"].substr(0, 5).split("-")
+                fen: jsonResponse.fenAfterPlay,
+                lastMove: jsonResponse.play.substr(0, 5).split("-")
             });
-            if (jsonResponse["checkAfterAutoMove"]) {
-                window.ground.setCheck(jsonResponse["checkAfterAutoMove"]);
+            if (jsonResponse.checkAfterAutoMove) {
+                window.ground.setCheck(jsonResponse.checkAfterAutoMove);
             }
         }
-        switch (jsonResponse["correct"]) {
+        switch (jsonResponse.correct) {
             case 0:
                 break;
             case 1:
@@ -99,25 +99,25 @@ function submitPuzzleMove(origin, destination, promotion) {
                     setAttribute("class", "red");
                 }
         }
-        if (jsonResponse["dests"]) {
+        if (jsonResponse.dests) {
             window.ground.set({
                 movable: {
-                    dests: jsonResponse["dests"]
+                    dests: jsonResponse.dests
                 }
             });
         }
-        if (jsonResponse["explanation"]) {
-            showExplanation(jsonResponse["explanation"]);
+        if (jsonResponse.explanation) {
+            showExplanation(jsonResponse.explanation);
         }
-        if (jsonResponse["rating"]) {
-            showPuzzleRating(jsonResponse["rating"]);
+        if (jsonResponse.rating) {
+            showPuzzleRating(jsonResponse.rating);
         }
-        if (jsonResponse["replayFens"]) {
+        if (jsonResponse.replayFens) {
             window.replay = {};
-            window.replay.fens = jsonResponse["replayFens"];
-            window.replay.current = window.replay.fens.indexOf(jsonResponse["fen"] || window.ground.getFen());
-            window.replay.checks = jsonResponse["replayChecks"];
-            window.replay.moves = jsonResponse["replayMoves"];
+            window.replay.fens = jsonResponse.replayFens;
+            window.replay.current = window.replay.fens.indexOf(jsonResponse.fen || window.ground.getFen());
+            window.replay.checks = jsonResponse.replayChecks;
+            window.replay.moves = jsonResponse.replayMoves;
             document.getElementById("controls").classList.remove("nodisplay");
         }
     }, function (req, err) {
