@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AtomicChessPuzzles.Configuration;
 using AtomicChessPuzzles.Models;
 using MongoDB.Driver;
 using MongoDB.Bson;
@@ -11,9 +12,9 @@ namespace AtomicChessPuzzles.DbRepositories
         MongoSettings settings;
         IMongoCollection<CommentVote> voteCollection;
 
-        public CommentVoteRepository()
+        public CommentVoteRepository(ISettings appSettings)
         {
-            settings = new MongoSettings();
+            settings = appSettings.Mongo;
             GetCollection();
         }
 

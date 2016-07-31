@@ -1,13 +1,13 @@
 ﻿{
   "mongo": {
-    "mongoconnectionstring": "mongodb://localhost:27017",
+    "mongoConnectionString": "mongodb://localhost:27017",
     "database": "atomicchesspuzzles-dev",
-    "usercollectionname": "users",
-    "puzzlecollectionname": "puzzles",
-    "commentcollectionname": "comments",
-    "commentvotecollectionname": "commentvotes",
-    "reportcollectionname": "reports",
-    "positioncollectionname": "positions",
-    "timedtrainingscorecollectionname": "timedtrainingscores"
+    "userCollectionName": "users",
+    "puzzleCollectionName": "puzzles",
+    "commentCollectionName": "comments",
+    "commentVoteCollectionName": "commentvotes",
+    "reportCollectionName": "reports",
+    "positionCollectionName": "positions",
+    "timedTrainingScoreCollectionName": "timedtrainingscores"
   }
 }

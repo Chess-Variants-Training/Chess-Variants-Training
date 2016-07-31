@@ -1,3 +1,4 @@
+using AtomicChessPuzzles.Configuration;
 using AtomicChessPuzzles.Models;
 using MongoDB.Driver;
 using System;
@@ -11,9 +12,9 @@ namespace AtomicChessPuzzles.DbRepositories
         IMongoCollection<TrainingPosition> positionCollection;
         Random rnd = new Random();
 
-        public PositionRepository()
+        public PositionRepository(ISettings appSettings)
         {
-            settings = new MongoSettings();
+            settings = appSettings.Mongo;
             GetCollection();
         }
 

@@ -1,4 +1,5 @@
-﻿using AtomicChessPuzzles.Models;
+﻿using AtomicChessPuzzles.Configuration;
+using AtomicChessPuzzles.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -13,9 +14,9 @@ namespace AtomicChessPuzzles.DbRepositories
         IMongoCollection<Puzzle> puzzleCollection;
         Random rnd = new Random();
 
-        public PuzzleRepository()
+        public PuzzleRepository(ISettings appSettings)
         {
-            settings = new MongoSettings();
+            settings = appSettings.Mongo;
             GetCollection();
         }
 

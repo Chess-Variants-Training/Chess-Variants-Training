@@ -1,3 +1,4 @@
+using AtomicChessPuzzles.Configuration;
 using AtomicChessPuzzles.Models;
 using MongoDB.Driver;
 using System;
@@ -9,9 +10,9 @@ namespace AtomicChessPuzzles.DbRepositories
         MongoSettings settings;
         IMongoCollection<TimedTrainingScore> scoreCollection;
 
-        public TimedTrainingScoreRepository()
+        public TimedTrainingScoreRepository(ISettings appSettings)
         {
-            settings = new MongoSettings();
+            settings = appSettings.Mongo;
             GetCollection();
         }
 

@@ -1,4 +1,5 @@
-﻿using AtomicChessPuzzles.Models;
+﻿using AtomicChessPuzzles.Configuration;
+using AtomicChessPuzzles.Models;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
@@ -12,9 +13,9 @@ namespace AtomicChessPuzzles.DbRepositories
         MongoSettings settings;
         IMongoCollection<Report> reportCollection;
 
-        public ReportRepository()
+        public ReportRepository(ISettings appSettings)
         {
-            settings = new MongoSettings();
+            settings = appSettings.Mongo;
             GetCollection();
         }
 
