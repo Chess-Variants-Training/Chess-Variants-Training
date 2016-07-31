@@ -1,5 +1,4 @@
 using ChessDotNet;
-using ChessDotNet.Pieces;
 using ChessDotNet.Variants.Atomic;
 using System;
 
