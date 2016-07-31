@@ -22,6 +22,13 @@ namespace AtomicChessPuzzles.Models
         }
         public bool RecordedInDb { get; set; }
         public TimedTrainingScore Score { get; set; }
+        public bool AutoAcknowledegable
+        {
+            get
+            {
+                return DateTime.UtcNow >= EndsAt + new TimeSpan(0, 1, 0);
+            }
+        }
 
 
         public TimedTrainingSession(string sessionId, DateTime startedAt, DateTime endsAt, string owner, string type)
