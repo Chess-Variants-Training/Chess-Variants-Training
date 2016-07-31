@@ -3,7 +3,7 @@ function start() {
     document.getElementById("start-training").removeEventListener("onclick", start);
     document.getElementById("start-training").classList.remove("start-link");
     document.getElementById("score").textContent = "Score: 0";
-    jsonXhr("/Puzzle/Train-Timed/Mate-In-One/Start", "POST", null, function (req, jsonResponse) {
+    jsonXhr("/Timed-Training/Mate-In-One/Start", "POST", null, function (req, jsonResponse) {
         window.sessionId = jsonResponse["sessionId"];
         document.getElementById("start-training").textContent = jsonResponse["seconds"].toString();
         window.secondsLeft = jsonResponse["seconds"];
@@ -29,7 +29,7 @@ function end() {
     reloadLink.classList.add("start-link");
     reloadLink.addEventListener('click', start);
     window.ground.set({ movable: { dests: {} } });
-    jsonXhr("/Puzzle/Train-Timed/Mate-In-One/AcknowledgeEnd", "POST", "sessionId=" + window.sessionId, function (req, jsonResponse) {
+    jsonXhr("/Timed-Training/Mate-In-One/AcknowledgeEnd", "POST", "sessionId=" + window.sessionId, function (req, jsonResponse) {
         document.getElementById("score").textContent = "Score: " + jsonResponse["score"];
     }, function (req, err) {
         alert(err);
@@ -59,7 +59,7 @@ function processMove(origin, destination, metadata) {
 
 function verifyAndGetNext(origin, destination, promotion) {
     if (window.ended) return;
-    jsonXhr("/Puzzle/Train-Timed/Mate-In-One/VerifyAndGetNext", "POST",
+    jsonXhr("/Timed-Training/Mate-In-One/VerifyAndGetNext", "POST",
         "sessionId=" + window.sessionId + "&origin=" + origin + "&destination=" + destination + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
             if (jsonResponse["ended"] && !window.ended) {
                 end();

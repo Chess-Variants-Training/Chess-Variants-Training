@@ -26,14 +26,14 @@ namespace AtomicChessPuzzles.Controllers
             moveCollectionTransformer = _moveCollectionTransformer;
         }
         [HttpGet]
-        [Route("/Puzzle/Train-Timed/Mate-In-One")]
+        [Route("/Timed-Training/Mate-In-One")]
         public IActionResult TimedMateInOne()
         {
             return View();
         }
 
         [HttpPost]
-        [Route("/Puzzle/Train-Timed/Mate-In-One/Start")]
+        [Route("/Timed-Training/Mate-In-One/Start")]
         public IActionResult StartMateInOneTraining()
         {
             string sessionId = Guid.NewGuid().ToString();
@@ -49,7 +49,7 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpPost]
-        [Route("/Puzzle/Train-Timed/Mate-In-One/VerifyAndGetNext")]
+        [Route("/Timed-Training/Mate-In-One/VerifyAndGetNext")]
         public IActionResult MateInOneVerifyAndGetNext(string sessionId, string origin, string destination, string promotion = null)
         {
             TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
@@ -82,7 +82,7 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpPost]
-        [Route("/Puzzle/Train-Timed/Mate-In-One/AcknowledgeEnd")]
+        [Route("/Timed-Training/Mate-In-One/AcknowledgeEnd")]
         public IActionResult AcknowledgeEnd(string sessionId)
         {
             TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
