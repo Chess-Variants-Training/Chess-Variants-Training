@@ -5,6 +5,9 @@
 
 .start-link {
     color: blue;
-    text-decoration: underline;
     cursor: pointer;
 }
+
+    .start-link:hover {
+        color: red;
+    }
