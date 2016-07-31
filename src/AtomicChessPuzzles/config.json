@@ -9,5 +9,6 @@
     "reportCollectionName": "reports",
     "positionCollectionName": "positions",
     "timedTrainingScoreCollectionName": "timedtrainingscores"
-  }
+  },
+  "timedTrainingSessionAutoAcknowledgerDelay": 10
 }

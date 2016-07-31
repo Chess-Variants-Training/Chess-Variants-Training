@@ -1,3 +1,4 @@
+using AtomicChessPuzzles.Configuration;
 using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.Models;
 using System.Collections.Generic;
@@ -12,11 +13,11 @@ namespace AtomicChessPuzzles.MemoryRepositories
         ITimedTrainingScoreRepository scoreRepository;
         bool shouldAutoAcknowledge = true;
 
-        public TimedTrainingSessionRepository(ITimedTrainingScoreRepository _scoreRepository)
+        public TimedTrainingSessionRepository(ITimedTrainingScoreRepository _scoreRepository, ISettings appSettings)
         {
             scoreRepository = _scoreRepository;
             Thread cleanUpThread = new Thread(AutoAcknowledgeOldSessions);
-            cleanUpThread.Start(10);
+            cleanUpThread.Start(appSettings.TimedTrainingSessionAutoAcknowledgerDelay);
         }
 
         public void Add(TimedTrainingSession session)

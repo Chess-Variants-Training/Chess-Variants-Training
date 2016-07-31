@@ -10,6 +10,12 @@ namespace AtomicChessPuzzles.Configuration
             set;
         }
 
+        public int TimedTrainingSessionAutoAcknowledgerDelay
+        {
+            get;
+            set;
+        }
+
         public Settings()
         {
             var config = new ConfigurationBuilder().AddJsonFile("config.json").Build();
@@ -24,6 +30,8 @@ namespace AtomicChessPuzzles.Configuration
             Mongo.ReportCollectionName = config.Get<string>("mongo:reportCollectionName");
             Mongo.PositionCollectionName = config.Get<string>("mongo:positionCollectionName");
             Mongo.TimedTrainingScoreCollectionName = config.Get<string>("mongo:timedTrainingScoreCollectionName");
+
+            TimedTrainingSessionAutoAcknowledgerDelay = config.Get<int>("timedTrainingSessionAutoAcknowledgerDelay");
         }
     }
 }
