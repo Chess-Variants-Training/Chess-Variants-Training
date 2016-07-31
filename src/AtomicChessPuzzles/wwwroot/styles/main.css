@@ -13,3 +13,11 @@ div#bodycontainer {
 .nodisplay {
     display: none;
 }
+
+a {
+    text-decoration: none;
+}
+
+    a:hover {
+        color: red;
+    }
