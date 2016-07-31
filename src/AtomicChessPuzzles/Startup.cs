@@ -13,21 +13,30 @@ namespace AtomicChessPuzzles
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            // Configuration
             services.AddSingleton<ISettings, Settings>();
-            services.AddSingleton<IUserRepository, UserRepository>();
-            services.AddSingleton<IPuzzlesBeingEditedRepository, PuzzlesBeingEditedRepository>();
-            services.AddSingleton<IPuzzleRepository, PuzzleRepository>();
-            services.AddSingleton<IPuzzleTrainingSessionRepository, PuzzleTrainingSessionRepository>();
+
+            // Database repositories
             services.AddSingleton<ICommentRepository, CommentRepository>();
             services.AddSingleton<ICommentVoteRepository, CommentVoteRepository>();
-            services.AddSingleton<IReportRepository, ReportRepository>();
             services.AddSingleton<IPositionRepository, PositionRepository>();
-            services.AddSingleton<ITimedTrainingSessionRepository, TimedTrainingSessionRepository>();
+            services.AddSingleton<IPuzzleRepository, PuzzleRepository>();
+            services.AddSingleton<IReportRepository, ReportRepository>();
             services.AddSingleton<ITimedTrainingScoreRepository, TimedTrainingScoreRepository>();
-            services.AddSingleton<IRatingUpdater, RatingUpdater>();
+            services.AddSingleton<IUserRepository, UserRepository>();
+
+            // Memory repositories
+            services.AddSingleton<IPuzzlesBeingEditedRepository, PuzzlesBeingEditedRepository>();
+            services.AddSingleton<IPuzzleTrainingSessionRepository, PuzzleTrainingSessionRepository>();
+            services.AddSingleton<ITimedTrainingSessionRepository, TimedTrainingSessionRepository>();
+
+            // Miscellaneous services
             services.AddSingleton<IMoveCollectionTransformer, MoveCollectionTransformer>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<IRatingUpdater, RatingUpdater>();
             services.AddSingleton<IValidator, Validator>();
+
             services.AddCaching();
             services.AddSession();
         }
