@@ -87,5 +87,17 @@ namespace AtomicChessPuzzles.Models
             get;
             set;
         }
+
+        public string[] LastMove
+        {
+            get;
+            set;
+        }
+
+        public bool DrawAfterAutoMove
+        {
+            get;
+            set;
+        }
     }
 }
