@@ -33,7 +33,6 @@ namespace AtomicChessPuzzles
             services.AddSingleton<ITimedTrainingSessionRepository, TimedTrainingSessionRepository>();
 
             // Miscellaneous services
-            services.AddSingleton<IBoardGenerator, BoardGenerator>();
             services.AddSingleton<IMoveCollectionTransformer, MoveCollectionTransformer>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<IRatingUpdater, RatingUpdater>();

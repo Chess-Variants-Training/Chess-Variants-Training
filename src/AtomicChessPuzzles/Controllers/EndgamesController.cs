@@ -12,13 +12,11 @@ namespace AtomicChessPuzzles.Controllers
 {
     public class EndgamesController : Controller
     {
-        IBoardGenerator boardGenerator;
         IEndgameTrainingSessionRepository endgameTrainingSessionRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
 
-        public EndgamesController(IBoardGenerator _boardGenerator, IEndgameTrainingSessionRepository _endgameTrainingSessionRepository, IMoveCollectionTransformer _moveCollectionTransformer)
+        public EndgamesController(IEndgameTrainingSessionRepository _endgameTrainingSessionRepository, IMoveCollectionTransformer _moveCollectionTransformer)
         {
-            boardGenerator = _boardGenerator;
             endgameTrainingSessionRepository = _endgameTrainingSessionRepository;
             moveCollectionTransformer = _moveCollectionTransformer;
         }
@@ -29,10 +27,10 @@ namespace AtomicChessPuzzles.Controllers
             return View();
         }
 
-        IActionResult StartNewSession(Piece[] required, bool adjacentKings)
+        IActionResult StartNewSession(Piece[][] board)
         {
             GameCreationData gcd = new GameCreationData();
-            gcd.Board = boardGenerator.Generate(required, adjacentKings);
+            gcd.Board = board;
             gcd.EnPassant = null;
             gcd.HalfMoveClock = 0;
             gcd.FullMoveNumber = 1;
@@ -57,13 +55,21 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Endgames/KRR-K-Adjacent-Kings", Name = "KRRvsKWithAdjacentKings")]
         public IActionResult KRRvsKWithAdjacentKings()
         {
-            return StartNewSession(new Piece[] { new King(Player.White), new King(Player.Black), new Rook(Player.White), new Rook(Player.White) }, true);
+            Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                             .AddAdjacentKings()
+                                             .AddWhiteRook()
+                                             .AddWhiteRook();
+            return StartNewSession(board);
         }
 
         [Route("/Endgames/KQQ-K-Adjacent-Kings", Name = "KQQvsKWithAdjacentKings")]
         public IActionResult KQQvsKWithAdjacentKings()
         {
-            return StartNewSession(new Piece[] { new King(Player.White), new King(Player.Black), new Queen(Player.White), new Queen(Player.White) }, true);
+            Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                             .AddAdjacentKings()
+                                             .AddWhiteQueen()
+                                             .AddWhiteQueen();
+            return StartNewSession(board);
         }
 
         [Route("/Endgames/GetValidMoves/{trainingSessionId}")]
