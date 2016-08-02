@@ -4,6 +4,7 @@ using ChessDotNet.Variants.Atomic;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace AtomicChessPuzzles.Models
 {
@@ -29,10 +30,30 @@ namespace AtomicChessPuzzles.Models
             private set;
         }
 
+        public bool WasAlreadyCheckmate
+        {
+            get;
+            private set;
+        }
+
         public EndgameTrainingSession(string sessionId, AtomicChessGame game)
         {
             SessionID = sessionId;
             Game = game;
+            if (Game.IsInCheck(Player.Black))
+            {
+                Game = new AtomicChessGame(Game.GetFen().Replace(" w ", " b "));
+                ReadOnlyCollection<Move> validMoves = Game.GetValidMoves(Player.Black);
+                if (validMoves.Count == 0)
+                {
+                    WasAlreadyCheckmate = true;
+                }
+                else
+                {
+                    Game.ApplyMove(validMoves[rnd.Next(0, validMoves.Count)], true);
+                    Game = new AtomicChessGame(string.Join(" ", Game.GetFen().Split(' ').Take(4)) + " 0 1");
+                }
+            }
             InitialFEN = Game.GetFen();
         }
 

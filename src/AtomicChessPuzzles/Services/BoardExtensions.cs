@@ -85,6 +85,29 @@ namespace AtomicChessPuzzles.Services
             return board;
         }
 
+        public static Piece[][] AddSeparatedKings(this Piece[][] board)
+        {
+            int x, y;
+            do
+            {
+                x = GetRandomInt(8);
+                y = GetRandomInt(8);
+            } while (board[y][x] != null);
+
+            board[y][x] = new King(Player.White);
+
+            int x2, y2;
+            do
+            {
+                x2 = x + (GetRandomInt(3, 8) * (GetRandomInt(2) == 0 ? 1 : -1));
+                y2 = y + (GetRandomInt(3, 8) * (GetRandomInt(2) == 0 ? 1 : -1));
+            } while (x2 < 0 || x2 > 7 || y2 < 0 || y2 > 7 || board[y2][x2] != null);
+
+            board[y2][x2] = new King(Player.Black);
+
+            return board;
+        }
+
         static Piece[][] AddPiece(this Piece[][] board, Piece piece)
         {
             int x, y;
@@ -101,14 +124,12 @@ namespace AtomicChessPuzzles.Services
 
         public static Piece[][] AddWhiteQueen(this Piece[][] board)
         {
-            board.AddPiece(new Queen(Player.White));
-            return board;
+            return board.AddPiece(new Queen(Player.White));
         }
 
         public static Piece[][] AddWhiteRook(this Piece[][] board)
         {
-            board.AddPiece(new Rook(Player.White));
-            return board;
+            return board.AddPiece(new Rook(Player.White));
         }
 
         public static Piece[][] AddBlockedPawns(this Piece[][] board)
@@ -124,6 +145,11 @@ namespace AtomicChessPuzzles.Services
             board[y - 1][x] = new Pawn(Player.Black);
 
             return board;
+        }
+
+        public static Piece[][] AddWhiteKnight(this Piece[][] board)
+        {
+            return board.AddPiece(new Knight(Player.White));
         }
     }
 }

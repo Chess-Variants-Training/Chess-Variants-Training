@@ -47,6 +47,11 @@ namespace AtomicChessPuzzles.Controllers
             } while (endgameTrainingSessionRepository.Exists(sessionId));
 
             EndgameTrainingSession session = new EndgameTrainingSession(sessionId, game);
+            if (session.WasAlreadyCheckmate)
+            {
+                return null;
+            }
+
             endgameTrainingSessionRepository.Add(session);
             string fen = session.InitialFEN;
             return View("Train", new Tuple<string, string>(fen, sessionId));
@@ -80,6 +85,22 @@ namespace AtomicChessPuzzles.Controllers
                                              .AddBlockedPawns()
                                              .AddWhiteQueen();
             return StartNewSession(board);
+        }
+
+
+        [Route("/Endgames/Checkmate-Knight-Rook", Name = "CheckmateWithKnightAndRook")]
+        public IActionResult CheckmateWithKnightAndRook()
+        {
+            IActionResult result;
+            do
+            {
+                Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                                 .AddSeparatedKings()
+                                                 .AddWhiteRook()
+                                                 .AddWhiteKnight();
+                result = StartNewSession(board);
+            } while (result == null);
+            return result;
         }
 
         [Route("/Endgames/GetValidMoves/{trainingSessionId}")]
