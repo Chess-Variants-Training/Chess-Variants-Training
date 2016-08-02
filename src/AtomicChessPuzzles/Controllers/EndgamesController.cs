@@ -88,8 +88,8 @@ namespace AtomicChessPuzzles.Controllers
         }
 
 
-        [Route("/Endgames/Checkmate-Knight-Rook", Name = "CheckmateWithKnightAndRook")]
-        public IActionResult CheckmateWithKnightAndRook()
+        [Route("/Endgames/KRN-K-Separated-Kings", Name = "KRNvsKWithSeparatedKings")]
+        public IActionResult KRNvsKWithSeparatedKings()
         {
             IActionResult result;
             do
@@ -101,6 +101,16 @@ namespace AtomicChessPuzzles.Controllers
                 result = StartNewSession(board);
             } while (result == null);
             return result;
+        }
+
+        [Route("/Endgames/KRN-K-Adjacent-Kings", Name = "KRNvsKWithAdjacentKings")]
+        public IActionResult KRNvsKWithAdjacentKings()
+        {
+            Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                             .AddAdjacentKings()
+                                             .AddWhiteRook()
+                                             .AddWhiteKnight();
+            return StartNewSession(board);
         }
 
         [Route("/Endgames/GetValidMoves/{trainingSessionId}")]
