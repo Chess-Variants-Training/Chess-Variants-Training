@@ -49,6 +49,7 @@ namespace AtomicChessPuzzles.Models
             }
             response.Success = true;
             response.Check = Game.IsInCheck(Game.WhoseTurn) ? Game.WhoseTurn.ToString().ToLowerInvariant() : null;
+            response.FEN = Game.GetFen();
 
             if (Game.IsCheckmated(Game.WhoseTurn) || Game.KingIsGone(Game.WhoseTurn))
             {
@@ -67,7 +68,6 @@ namespace AtomicChessPuzzles.Models
             }
 
             response.Correct = 0;
-            response.FEN = Game.GetFen();
             Position whiteKing = null;
             Position blackKing = null;
             for (int i = 0; i < 8; i++)
