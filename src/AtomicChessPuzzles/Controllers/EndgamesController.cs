@@ -72,6 +72,16 @@ namespace AtomicChessPuzzles.Controllers
             return StartNewSession(board);
         }
 
+        [Route("/Endgames/KQ-K-Adjacent-Kings-Blocked-Pawn", Name = "KQvsKWithAdjacentKingsAndBlockedPawn")]
+        public IActionResult KQvsKWithAdjacentKingsAndBlockedPawn()
+        {
+            Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                             .AddAdjacentKings()
+                                             .AddBlockedPawns()
+                                             .AddWhiteQueen();
+            return StartNewSession(board);
+        }
+
         [Route("/Endgames/GetValidMoves/{trainingSessionId}")]
         public IActionResult GetValidMoves(string trainingSessionId)
         {

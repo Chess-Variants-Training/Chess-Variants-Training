@@ -27,6 +27,11 @@ namespace AtomicChessPuzzles.Services
             return Math.Abs(Guid.NewGuid().GetHashCode()) % exclusiveUpperBound;
         }
 
+        static int GetRandomInt(int inclusiveLowerBound, int exclusiveUpperBound)
+        {
+            return new Random(Guid.NewGuid().GetHashCode()).Next(inclusiveLowerBound, exclusiveUpperBound);
+        }
+
         static int[][] adjacentSquaresRelativePositions = new int[][]
         {
                 new int[2] { -1, 0 },
@@ -103,6 +108,21 @@ namespace AtomicChessPuzzles.Services
         public static Piece[][] AddWhiteRook(this Piece[][] board)
         {
             board.AddPiece(new Rook(Player.White));
+            return board;
+        }
+
+        public static Piece[][] AddBlockedPawns(this Piece[][] board)
+        {
+            int x, y;
+            do
+            {
+                x = GetRandomInt(8);
+                y = GetRandomInt(2, 7);
+            } while (board[y][x] != null && board[y - 1][x] != null);
+
+            board[y][x] = new Pawn(Player.White);
+            board[y - 1][x] = new Pawn(Player.Black);
+
             return board;
         }
     }
