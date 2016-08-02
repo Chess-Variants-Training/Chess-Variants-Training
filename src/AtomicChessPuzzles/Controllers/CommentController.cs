@@ -27,7 +27,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", commentBody, null, puzzleId, false);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", commentBody, null, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -114,7 +114,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/Reply")]
         public IActionResult Reply(string to, string body, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", body, to, puzzleId, false);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", body, to, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {

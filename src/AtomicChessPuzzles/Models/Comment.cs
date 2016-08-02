@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace AtomicChessPuzzles.Models
 {
@@ -30,7 +31,10 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("deleted")]
         public bool Deleted { get; set; }
 
-        public Comment(string id, string author, string bodyUnsanitized, string parentId, string puzzleId, bool deleted)
+        [BsonElement("datePostedUtc")]
+        public DateTime DatePostedUtc { get; set; }
+
+        public Comment(string id, string author, string bodyUnsanitized, string parentId, string puzzleId, bool deleted, DateTime creationDateUtc)
         {
             ID = id;
             Author = author;
@@ -38,6 +42,7 @@ namespace AtomicChessPuzzles.Models
             ParentID = parentId;
             PuzzleID = puzzleId;
             Deleted = deleted;
+            DatePostedUtc = creationDateUtc;
         }
     }
 }
