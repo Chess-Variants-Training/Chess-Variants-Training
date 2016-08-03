@@ -1,9 +1,13 @@
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace AtomicChessPuzzles.Models
 {
     public class TimedTrainingScore
     {
+        public ObjectId Id { get; set; }
+
         [BsonElement("score")]
         public double Score { get; set; }
 
@@ -13,11 +17,15 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("owner")]
         public string Owner { get; set; }
 
-        public TimedTrainingScore(double score, string type, string owner)
+        [BsonElement("dateRecorded")]
+        public DateTime DateRecordedUtc { get; set; }
+
+        public TimedTrainingScore(double score, string type, string owner, DateTime dateRecordedUtc)
         {
             Score = score;
             Type = type;
             Owner = owner;
+            DateRecordedUtc = dateRecordedUtc;
         }
     }
 }

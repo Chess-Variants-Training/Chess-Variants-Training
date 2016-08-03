@@ -2,6 +2,7 @@ using AtomicChessPuzzles.Configuration;
 using AtomicChessPuzzles.Models;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -33,6 +34,14 @@ namespace AtomicChessPuzzles.DbRepositories
                 return false;
             }
             return true;
+        }
+
+        public List<TimedTrainingScore> GetLatestScores(string owner)
+        {
+            return scoreCollection.Find(Builders<TimedTrainingScore>.Filter.Eq("owner", owner))
+                                  .Sort(Builders<TimedTrainingScore>.Sort.Descending("dateRecorded"))
+                                  .Limit(15)
+                                  .ToList();
         }
     }
 }

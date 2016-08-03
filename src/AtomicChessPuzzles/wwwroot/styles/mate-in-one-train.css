@@ -11,3 +11,14 @@
     .start-link:hover {
         color: red;
     }
+
+#latest-scores {
+    border-collapse: collapse;
+    height: 100%;
+}
+
+    #latest-scores td, #latest-scores th {
+        border-collapse: collapse;
+        border: 1px solid black;
+        text-align: center;
+    }

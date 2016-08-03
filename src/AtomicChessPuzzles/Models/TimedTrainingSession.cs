@@ -36,7 +36,7 @@ namespace AtomicChessPuzzles.Models
             StartedAt = startedAt;
             EndsAt = endsAt;
             RecordedInDb = false;
-            Score = new TimedTrainingScore(0, type, owner);
+            Score = new TimedTrainingScore(0, type, owner, DateTime.UtcNow);
         }
 
         public bool VerifyMove(string origin, string destination, string promotion)

@@ -5,6 +5,7 @@ using AtomicChessPuzzles.Services;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Controllers
 {
@@ -29,7 +30,13 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Timed-Training/Mate-In-One")]
         public IActionResult TimedMateInOne()
         {
-            return View();
+            List<TimedTrainingScore> latestScores = null;
+            string userId;
+            if((userId = HttpContext.Session.GetString("userid")) != null)
+            {
+                latestScores = timedTrainingScoreRepository.GetLatestScores(userId);
+            }
+            return View(latestScores);
         }
 
         [HttpPost]
