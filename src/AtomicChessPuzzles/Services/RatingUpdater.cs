@@ -1,5 +1,6 @@
 using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.Models;
+using System;
 
 namespace AtomicChessPuzzles.Services
 {
@@ -7,11 +8,13 @@ namespace AtomicChessPuzzles.Services
     {
         IUserRepository userRepository;
         IPuzzleRepository puzzleRepository;
+        IRatingRepository ratingRepository;
 
-        public RatingUpdater(IUserRepository _userRepository, IPuzzleRepository _puzzleRepository)
+        public RatingUpdater(IUserRepository _userRepository, IPuzzleRepository _puzzleRepository, IRatingRepository _ratingRepository)
         {
             userRepository = _userRepository;
             puzzleRepository = _puzzleRepository;
+            ratingRepository = _ratingRepository;
         }
 
         public void AdjustRating(string userId, string puzzleId, bool correct)
@@ -41,6 +44,9 @@ namespace AtomicChessPuzzles.Services
             }
             userRepository.Update(user);
             puzzleRepository.UpdateRating(puzzle.ID, new Rating(puzzleRating.GetRating(), puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
+
+            RatingWithMetadata rwm = new RatingWithMetadata(user.Rating, DateTime.UtcNow, user.ID);
+            ratingRepository.Add(rwm);
         }
     }
 }
