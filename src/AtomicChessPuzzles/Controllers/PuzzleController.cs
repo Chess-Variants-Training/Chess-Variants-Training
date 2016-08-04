@@ -64,7 +64,6 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpGet]
-        [ResponseCache(Duration = 0, NoStore = true)]
         [Route("Puzzle/Editor/GetValidMoves/{id}")]
         public IActionResult GetValidMoves(string id)
         {
