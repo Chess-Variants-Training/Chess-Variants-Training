@@ -35,9 +35,9 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [Route("/Puzzle")]
-        public IActionResult Index()
+        public IActionResult Train()
         {
-            return View();
+            return View("Train");
         }
 
         [Route("/Puzzle/Editor")]
@@ -127,13 +127,6 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Something went wrong." });
             }
-        }
-
-        [HttpGet]
-        [Route("/Puzzle/Trainn")]
-        public IActionResult Train()
-        {
-            return View();
         }
 
         [HttpGet]
