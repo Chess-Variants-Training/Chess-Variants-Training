@@ -36,6 +36,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Report/Submit/{type}")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult SubmitReport(string type, string item, string reason, string reasonExplanation)
         {
             string[] validTypes = new string[] { "Comment", "Puzzle" };
@@ -68,6 +69,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpGet]
         [Route("/Report/Dialog/Puzzle")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult PuzzleReportDialog()
         {
             return View();
