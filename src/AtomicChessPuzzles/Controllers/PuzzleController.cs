@@ -130,7 +130,7 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpGet]
-        [Route("/Puzzle/Train")]
+        [Route("/Puzzle/Trainn")]
         public IActionResult Train()
         {
             return View();
