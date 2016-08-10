@@ -34,6 +34,13 @@ namespace AtomicChessPuzzles.Controllers
             return View("List", reportRepository.GetByType("Comment"));
         }
 
+        [Route("/Report/List/Puzzles")]
+        [Restricted(true, UserRole.PUZZLE_EDITOR)]
+        public IActionResult ListPuzzleReports()
+        {
+            return View("List", reportRepository.GetByType("Puzzle"));
+        }
+
         [HttpPost]
         [Route("/Report/Submit/{type}")]
         [Restricted(true, UserRole.NONE)]
