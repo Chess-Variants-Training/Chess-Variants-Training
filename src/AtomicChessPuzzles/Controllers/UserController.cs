@@ -1,4 +1,5 @@
 ﻿using AtomicChessPuzzles.DbRepositories;
+using AtomicChessPuzzles.HttpErrors;
 using AtomicChessPuzzles.Services;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
@@ -7,7 +8,7 @@ using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Controllers
 {
-    public class UserController : Controller
+    public class UserController : ErrorCapableController
     {
         IUserRepository userRepository;
         IValidator validator;
@@ -63,7 +64,7 @@ namespace AtomicChessPuzzles.Controllers
             Models.User user = userRepository.FindByUsername(name);
             if (user == null)
             {
-                return View(new ViewModels.User("Not found"));
+                return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user '{0}' could not be found.", name)));
             }
             ViewModels.User userViewModel = new ViewModels.User(user);
             return View(userViewModel);
