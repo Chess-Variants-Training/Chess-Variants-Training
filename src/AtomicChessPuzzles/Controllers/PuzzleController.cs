@@ -34,20 +34,20 @@ namespace AtomicChessPuzzles.Controllers
             puzzleTrainingSessionRepository = _puzzleTrainingSessionRepository;
         }
 
-        [Route("Puzzle")]
+        [Route("/Puzzle")]
         public IActionResult Index()
         {
             return View();
         }
 
-        [Route("Puzzle/Editor")]
+        [Route("/Puzzle/Editor")]
         public IActionResult Editor()
         {
             return View();
         }
 
         [HttpPost]
-        [Route("Puzzle/Editor/RegisterPuzzleForEditing")]
+        [Route("/Puzzle/Editor/RegisterPuzzleForEditing")]
         public IActionResult RegisterPuzzleForEditing(string fen)
         {
             AtomicChessGame game = new AtomicChessGame(fen);
@@ -64,7 +64,7 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpGet]
-        [Route("Puzzle/Editor/GetValidMoves/{id}")]
+        [Route("/Puzzle/Editor/GetValidMoves/{id}")]
         public IActionResult GetValidMoves(string id)
         {
             Puzzle puzzle = puzzlesBeingEdited.Get(id);
@@ -78,7 +78,7 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpPost]
-        [Route("Puzzle/Editor/SubmitMove")]
+        [Route("/Puzzle/Editor/SubmitMove")]
         public IActionResult SubmitMove(string id, string origin, string destination, string promotion = null)
         {
             Puzzle puzzle = puzzlesBeingEdited.Get(id);
