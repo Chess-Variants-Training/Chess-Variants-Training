@@ -55,7 +55,7 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Invalid reason" });
             }
-            Report report = new Report(Guid.NewGuid().ToString(), type, HttpContext.Session.GetString("username") ?? "Anonymous", item, reason, reasonExplanation, false, null);
+            Report report = new Report(Guid.NewGuid().ToString(), type, HttpContext.Session.GetString("username"), item, reason, reasonExplanation, false, null);
             if (reportRepository.Add(report))
             {
                 return Json(new { success = true });
