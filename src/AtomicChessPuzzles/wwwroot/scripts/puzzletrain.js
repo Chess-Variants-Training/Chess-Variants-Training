@@ -26,6 +26,7 @@ function setup(puzzleId) {
         clearComments();
         loadComments();
         document.getElementById("puzzleLinkContainer").setAttribute("class", "nodisplay");
+        document.getElementById("reportLinkContainer").setAttribute("class", "nodisplay");
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse.author;
@@ -86,6 +87,7 @@ function submitPuzzleMove(origin, destination, promotion) {
                 break;
             case 1:
                 document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
+                document.getElementById("reportLinkContainer").classList.remove("nodisplay");
                 with (document.getElementById("result")) {
                     textContent = "Success!";
                     setAttribute("class", "green");
@@ -93,6 +95,7 @@ function submitPuzzleMove(origin, destination, promotion) {
                 break;
             case -1:
                 document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
+                document.getElementById("reportLinkContainer").classList.remove("nodisplay");
                 window.ground.set({ lastMove: null });
                 with (document.getElementById("result")) {
                     textContent = "Puzzle failed.";
@@ -170,7 +173,7 @@ function loadComments() {
         }
         var reportLinks = document.getElementById("commentContainer").getElementsByClassName("report-link");
         for (var i = 0; i < reportLinks.length; i++) {
-            reportLinks[i].addEventListener("click", reportLinkClicked);
+            reportLinks[i].addEventListener("click", reportCommentLinkClicked);
         }
         var modLinks = document.getElementById("commentContainer").getElementsByClassName("mod-link");
         for (var i = 0; i < modLinks.length; i++) {
@@ -267,13 +270,13 @@ function cancelLinkClicked(e) {
     e.preventDefault();
 }
 
-function reportLinkClicked(e) {
+function reportCommentLinkClicked(e) {
     e = e || window.event;
     e.preventDefault();
     var itemToReport = e.target.dataset.item;
-    if (!window.reportDialogHtml) {
+    if (!window.reportCommentDialogHtml) {
         xhr("/Report/Dialog/Comment", "GET", null, function (req) {
-            window.reportDialogHtml = req.responseText;
+            window.reportCommentDialogHtml = req.responseText;
             showReportDialog(itemToReport);
         }, function (req, err) {
             alert(err);
@@ -287,7 +290,7 @@ function reportLinkClicked(e) {
 function showReportDialog(itemToReport) {
     var itemToReportElement = document.getElementById(itemToReport);
     itemToReportElement.getElementsByClassName("comment-content")[0].style.display = "none";
-    itemToReportElement.insertAdjacentHTML("beforeend", window.reportDialogHtml);
+    itemToReportElement.insertAdjacentHTML("beforeend", window.reportCommentDialogHtml);
     itemToReportElement.getElementsByClassName("report-dialog")[0].lastElementChild.addEventListener("click", reportLinkInDialogClicked);
 }
 
@@ -335,6 +338,44 @@ function retryPuzzle(e) {
     setup(window.puzzleId);
 }
 
+function reportPuzzleLinkClicked(e) {
+    e = e || window.event;
+    e.preventDefault();
+    if (!window.reportPuzzleHtml) {
+        xhr("/Report/Dialog/Puzzle", "GET", null, function(req) {
+            document.getElementById("reportDialogContainer").innerHTML = req.responseText;
+            document.getElementById("submitPuzzleReportLink").addEventListener("click", submitPuzzleReport);
+            showPuzzleReportDialog();
+        }, function(req, err) {
+            alert(err);
+        });
+    } else {
+        showPuzzleReportDialog();
+    }
+}
+
+function submitPuzzleReport(e) {
+    e = e || window.event;
+    e.preventDefault();
+    var explanation = document.getElementById("puzzleReportExplanation").value;
+    var reason = document.getElementById("puzzleReportReason").value;
+    jsonXhr("/Report/Submit/Puzzle", "POST", "item=" + puzzleId + "&reason=" + encodeURIComponent(reason) + "&reasonExplanation=" + encodeURIComponent(explanation),
+            function(req, jsonResponse) {
+                document.getElementById("puzzleReportExplanation").value = "";
+                hidePuzzleReportDialog();
+            }, function(req, err) { alert(err); });
+}
+
+function showPuzzleReportDialog() {
+    document.getElementById("next-to-ground-inner").classList.add("nodisplay");
+    document.getElementById("reportDialogContainer").classList.remove("nodisplay");
+}
+
+function hidePuzzleReportDialog() {
+    document.getElementById("next-to-ground-inner").classList.remove("nodisplay");
+    document.getElementById("reportDialogContainer").classList.add("nodisplay");
+}
+
 function replayControlClicked(e) {
     if (!window.replay) return;
     if (e.target.id === "controls-begin") {
@@ -380,6 +421,9 @@ window.addEventListener("load", function () {
     }
     document.getElementById("nextPuzzleLink").addEventListener("click", nextPuzzle);
     document.getElementById("retryPuzzleLink").addEventListener("click", retryPuzzle);
+    if (document.getElementById("reportPuzzleLink")) {
+        document.getElementById("reportPuzzleLink").addEventListener("click", reportPuzzleLinkClicked);
+    }
     if (!window.selectedPuzzle) {
         startWithRandomPuzzle();
     } else {

@@ -37,21 +37,34 @@
         </div>
     </div>
     <div id="next-to-ground">
-        <div id="result"></div>
-        <p>Created by <span id="author"></span></p>
-        <p id="puzzleRating"></p>
-        <p id="explanation"></p>
-        <p id="puzzleLinkContainer" class="nodisplay">
-            @if (Model == null)
+        <div id="next-to-ground-inner">
+            <div id="result"></div>
+            <p>Created by <span id="author"></span></p>
+            <p id="puzzleRating"></p>
+            <p id="explanation"></p>
+            <p id="puzzleLinkContainer" class="nodisplay">
+                @if (Model == null)
+                {
+                    <a href="#" id="nextPuzzleLink">Next puzzle</a>
+                }
+                else
+                {
+                    @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
+                }
+                | <a href="#" id="retryPuzzleLink">Retry puzzle</a>
+            </p>
+            @if (Context.Session.GetString("userid") != null)
             {
-                <a href="#" id="nextPuzzleLink">Next puzzle</a>
+                <p id="reportLinkContainer" class="nodisplay">
+                    <a href="#" id="reportPuzzleLink">Report puzzle</a>
+                </p>
             }
-            else
-            {
-                @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
-            }
-            | <a href="#" id="retryPuzzleLink">Retry puzzle</a>
-        </p>
+        </div>
+        @if (Context.Session.GetString("userid") != null)
+        {
+            <div id="reportDialogContainer">
+            </div>
+        }
     </div>
 </div>
 @if (Model != null && Model.InReview)

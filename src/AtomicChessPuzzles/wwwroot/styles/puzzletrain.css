@@ -86,3 +86,7 @@
         #controls > div:hover {
             background-color: #61B7E8;
         }
+
+#puzzleReportExplanation {
+    width: 100%
+}

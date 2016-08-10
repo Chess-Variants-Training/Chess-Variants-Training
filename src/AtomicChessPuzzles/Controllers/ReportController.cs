@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Mvc;
 using AtomicChessPuzzles.DbRepositories;
@@ -13,6 +14,13 @@ namespace AtomicChessPuzzles.Controllers
         IReportRepository reportRepository;
 
         public static readonly string[] ValidCommentReportReasons = new string[] { "Offensive", "Spam", "Off-topic", "Other" };
+        public static readonly string[] ValidPuzzleReportReasons = new string[] { "Inaccurate", "Too many options", "Missing answer" };
+
+        static readonly Dictionary<string, string[]> validReasonsForType = new Dictionary<string, string[]>()
+        {
+            { "Comment", ValidCommentReportReasons },
+            { "Puzzle", ValidPuzzleReportReasons }
+        };
 
         public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository) : base(_userRepository)
         {
@@ -30,11 +38,12 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Report/Submit/{type}")]
         public IActionResult SubmitReport(string type, string item, string reason, string reasonExplanation)
         {
-            if (type != "Comment")
+            string[] validTypes = new string[] { "Comment", "Puzzle" };
+            if (!validTypes.Contains(type))
             {
                 return Json(new { success = false, error = "Unknown report type." });
             }
-            if (!ValidCommentReportReasons.Contains(reason))
+            if (!validReasonsForType[type].Contains(reason))
             {
                 return Json(new { success = false, error = "Invalid reason" });
             }
@@ -51,7 +60,15 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpGet]
         [Route("/Report/Dialog/Comment")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult CommentReportDialog()
+        {
+            return View();
+        }
+
+        [HttpGet]
+        [Route("/Report/Dialog/Puzzle")]
+        public IActionResult PuzzleReportDialog()
         {
             return View();
         }
