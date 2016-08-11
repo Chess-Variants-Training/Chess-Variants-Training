@@ -26,7 +26,9 @@ function setup(puzzleId) {
         clearComments();
         loadComments();
         document.getElementById("puzzleLinkContainer").setAttribute("class", "nodisplay");
-        document.getElementById("reportLinkContainer").setAttribute("class", "nodisplay");
+        if (document.getElementById("reportLinkContainer")) {
+            document.getElementById("reportLinkContainer").setAttribute("class", "nodisplay");
+        }
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse.author;
@@ -45,12 +47,35 @@ function clearPuzzleRating() {
     document.getElementById("puzzleRating").innerHTML = "";
 }
 
-function showExplanation(expl) {
-    document.getElementById("explanation").innerHTML = expl;
+
+function addExplanation(expl) {
+    document.getElementById("explanation").classList.remove("nodisplay");
+    document.getElementById("explanationInner").innerHTML = expl;
+}
+
+function toggleExplanation(e) {
+    e = e || window.event;
+    e.preventDefault();
+    if (document.getElementById("toggleExplanationLink").textContent === "[hide]") {
+        hideExplanation();
+    } else {
+        showExplanation();
+    }
+}
+
+function showExplanation() {
+    document.getElementById("explanationInner").classList.remove("nodisplay");
+    document.getElementById("toggleExplanationLink").textContent = "[hide]";
+}
+
+function hideExplanation() {
+    document.getElementById("explanationInner").classList.add("nodisplay");
+    document.getElementById("toggleExplanationLink").textContent = "[show]";
 }
 
 function clearExplanation() {
-    document.getElementById("explanation").innerHTML = "";
+    document.getElementById("explanation").classList.add("nodisplay");
+    document.getElementById("explanationInner").innerHTML = "";
 }
 
 function processPuzzleMove(origin, destination, metadata) {
@@ -87,7 +112,9 @@ function submitPuzzleMove(origin, destination, promotion) {
                 break;
             case 1:
                 document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
-                document.getElementById("reportLinkContainer").classList.remove("nodisplay");
+                if (document.getElementById("reportLinkContainer")) {
+                    document.getElementById("reportLinkContainer").classList.remove("nodisplay");
+                }
                 with (document.getElementById("result")) {
                     textContent = "Success!";
                     setAttribute("class", "green");
@@ -95,7 +122,9 @@ function submitPuzzleMove(origin, destination, promotion) {
                 break;
             case -1:
                 document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
-                document.getElementById("reportLinkContainer").classList.remove("nodisplay");
+                if (document.getElementById("reportLinkContainer")) {
+                    document.getElementById("reportLinkContainer").classList.remove("nodisplay");
+                }
                 window.ground.set({ lastMove: null });
                 with (document.getElementById("result")) {
                     textContent = "Puzzle failed.";
@@ -110,7 +139,7 @@ function submitPuzzleMove(origin, destination, promotion) {
             });
         }
         if (jsonResponse.explanation) {
-            showExplanation(jsonResponse.explanation);
+            addExplanation(jsonResponse.explanation);
         }
         if (jsonResponse.rating) {
             showPuzzleRating(jsonResponse.rating);
@@ -421,6 +450,7 @@ window.addEventListener("load", function () {
     }
     document.getElementById("nextPuzzleLink").addEventListener("click", nextPuzzle);
     document.getElementById("retryPuzzleLink").addEventListener("click", retryPuzzle);
+    document.getElementById("toggleExplanationLink").addEventListener("click", toggleExplanation);
     if (document.getElementById("reportPuzzleLink")) {
         document.getElementById("reportPuzzleLink").addEventListener("click", reportPuzzleLinkClicked);
     }
