@@ -3,6 +3,11 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
+    @if (IsSectionDefined("Description"))
+    {
+        @:<meta name="description" content="@RenderSection("Description")">
+    }
+    <meta name="keywords" content="atomic-chess,atomic,chess,puzzles,tactics,training,endgames">
     <title>
         @if (IsSectionDefined("Title"))
         {
