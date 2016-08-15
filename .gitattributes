@@ -1,1 +1,11 @@
 * text=auto
+
+*.cs text
+*.cshtml text
+*.html text
+*.css text
+*.js text
+*.txt text
+*.json text
+
+*.dll binary
