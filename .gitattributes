@@ -7,5 +7,5 @@
 *.js text
 *.txt text
 *.json text
-
-*.dll binary
+*.xproj text
+*.sln text
