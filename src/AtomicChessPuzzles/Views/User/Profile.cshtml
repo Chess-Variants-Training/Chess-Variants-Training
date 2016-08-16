@@ -1,6 +1,7 @@
 ﻿@model AtomicChessPuzzles.ViewModels.User
 @section Title {Profile page of @Model.Username}
 @section AddToHead {
+    <link rel="stylesheet" href="@Url.Content("~/styles/profile.css")">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/profile-page.js")"></script>
 }
@@ -20,7 +21,7 @@ About:
 <p>
     Rating: @Model.Rating
 </p>
-<div id="ratingChartWithOptions" style="border: 1px solid #ddd; padding: 2px;">
+<div id="ratingChartWithOptions">
     Range:
     <select id="ratingChartDateRangeSelector" autocomplete="off">
         <option value="all" selected>All</option>
@@ -37,7 +38,7 @@ About:
         <option value="endDay">Rating at the end of the day</option>
         <option value="bestDay">Best rating of the day</option>
     </select>
-    <div style="width: 100%; height: 400px">
-        <canvas id="ratingChart" style="width: 100%; height: 100%"></canvas>
+    <div>
+        <canvas id="ratingChart"></canvas>
     </div>
 </div>
