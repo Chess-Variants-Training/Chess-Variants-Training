@@ -1,6 +1,7 @@
 ﻿using AtomicChessPuzzles.Configuration;
 using AtomicChessPuzzles.Models;
 using MongoDB.Driver;
+using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.DbRepositories
 {
@@ -24,6 +25,12 @@ namespace AtomicChessPuzzles.DbRepositories
         public void Add(RatingWithMetadata ratingWithMetadata)
         {
             ratingCollection.InsertOne(ratingWithMetadata);
+        }
+
+        public List<RatingWithMetadata> GetFor(string user)
+        {
+            FilterDefinition<RatingWithMetadata> filter = Builders<RatingWithMetadata>.Filter.Eq("owner", user.ToLower());
+            return ratingCollection.Find(filter).ToList();
         }
     }
 }

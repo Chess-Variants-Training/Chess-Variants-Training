@@ -5,18 +5,21 @@ using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System;
 using System.Collections.Generic;
+using AtomicChessPuzzles.Models;
 
 namespace AtomicChessPuzzles.Controllers
 {
     public class UserController : ErrorCapableController
     {
         IUserRepository userRepository;
+        IRatingRepository ratingRepository;
         IValidator validator;
         IPasswordHasher passwordHasher;
 
-        public UserController(IUserRepository _userRepository, IValidator _validator, IPasswordHasher _passwordHasher)
+        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher)
         {
             userRepository = _userRepository;
+            ratingRepository = _ratingRepository;
             validator = _validator;
             passwordHasher = _passwordHasher;
         }
@@ -131,6 +134,21 @@ namespace AtomicChessPuzzles.Controllers
             user.About = about;
             userRepository.Update(user);
             return RedirectToAction("Profile", new { name = user.Username });
+        }
+
+        [HttpGet]
+        [Route("/User/RatingChartData/{user}")]
+        public IActionResult RatingChartData(string user)
+        {
+            List<RatingWithMetadata> ratings = ratingRepository.GetFor(user);
+            List<string> labels = new List<string>();
+            List<int> values = new List<int>();
+            for (int i = 0; i < ratings.Count; i++)
+            {
+                labels.Add(ratings[i].TimestampUtc.ToString());
+                values.Add((int)ratings[i].Rating.Value);
+            }
+            return Json(new { success = true, labels = labels, ratings = values });
         }
     }
 }
