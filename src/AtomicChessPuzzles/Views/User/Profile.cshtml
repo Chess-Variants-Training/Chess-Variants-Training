@@ -20,6 +20,17 @@ About:
 <p>
     Rating: @Model.Rating
 </p>
-<div style="width: 100%; height: 400px">
-    <canvas id="ratingChart" style="width: 100%; height: 100%"></canvas>
+<div id="ratingChartWithOptions" style="border: 1px solid #ddd; padding: 2px;">
+    Range:
+    <select id="ratingChartDateRangeSelector" autocomplete="off">
+        <option value="all" selected>All</option>
+        <option value="1d">Today (UTC)</option>
+        <option value="7d">Last 7 days</option>
+        <option value="30d">Last 30 days</option>
+        <option value="1y">1 year</option>
+        <option value="ytd">Year-to-date</option>
+    </select>
+    <div style="width: 100%; height: 400px">
+        <canvas id="ratingChart" style="width: 100%; height: 100%"></canvas>
+    </div>
 </div>

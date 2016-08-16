@@ -1,4 +1,5 @@
 ﻿using AtomicChessPuzzles.Models;
+using System;
 using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.DbRepositories
@@ -8,5 +9,7 @@ namespace AtomicChessPuzzles.DbRepositories
         void Add(RatingWithMetadata ratingWithMetaData);
 
         List<RatingWithMetadata> GetFor(string user);
+
+        List<RatingWithMetadata> GetForUserOnRange(string user, DateTime from, DateTime to);
     }
 }

@@ -1,5 +1,14 @@
 ﻿window.addEventListener("load", function () {
-    jsonXhr("/User/RatingChartData/" + document.getElementsByTagName("h1")[0].textContent, "GET", null, function (req, jsonResponse) {
+    var username = document.getElementsByTagName("h1")[0].textContent;
+    updateChartData(username, "all");
+    document.getElementById("ratingChartDateRangeSelector").addEventListener("change", function (e) {
+        e = e || window.event;
+        updateChartData(username, e.target.options[e.target.selectedIndex].value);
+    });
+});
+
+function updateChartData(user, range) {
+    jsonXhr("/User/RatingChartData/" + user + "?range=" + range, "GET", null, function (req, jsonResponse) {
         var ctx = document.getElementById("ratingChart").getContext("2d");
         var data = {
             labels: jsonResponse["labels"],
@@ -29,5 +38,5 @@
         });
     }, function (req, err) {
         alert(err);
-    })
-});
+    });
+}
