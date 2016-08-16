@@ -30,6 +30,13 @@ About:
         <option value="1y">1 year</option>
         <option value="ytd">Year-to-date</option>
     </select>
+    <br>
+    Show:
+    <select id="ratingChartShownSelector" autocomplete="off">
+        <option value="each" selected>Rating after each puzzle</option>
+        <option value="endDay">Rating at the end of the day</option>
+        <option value="bestDay">Best rating of the day</option>
+    </select>
     <div style="width: 100%; height: 400px">
         <canvas id="ratingChart" style="width: 100%; height: 100%"></canvas>
     </div>

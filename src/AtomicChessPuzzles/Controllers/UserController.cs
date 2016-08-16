@@ -6,6 +6,7 @@ using Microsoft.AspNet.Http;
 using System;
 using System.Collections.Generic;
 using AtomicChessPuzzles.Models;
+using System.Linq;
 
 namespace AtomicChessPuzzles.Controllers
 {
@@ -138,33 +139,52 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpGet]
         [Route("/User/RatingChartData/{user}")]
-        public IActionResult RatingChartData(string user, string range)
+        public IActionResult RatingChartData(string user, string range, string show)
         {
             List<RatingWithMetadata> ratings;
             DateTime utcNow = DateTime.UtcNow;
+
+            string label;
+            if (show == "each")
+            {
+                label = "Rating";
+            }
+            else if (show == "bestDay")
+            {
+                label = "Best rating of the day";
+            }
+            else if (show == "endDay")
+            {
+                label = "Rating at end of day";
+            }
+            else
+            {
+                return Json(new { success = false, error = "Invalid 'show' parameter." });
+            }
+
             if (range == "all")
             {
-                ratings = ratingRepository.GetFor(user);
+                ratings = ratingRepository.Get(user, null, null, show);
             }
             else if (range == "1d")
             {
-                ratings = ratingRepository.GetForUserOnRange(user, utcNow.Date, utcNow);
+                ratings = ratingRepository.Get(user, utcNow.Date, utcNow, show);
             }
             else if (range == "7d")
             {
-                ratings = ratingRepository.GetForUserOnRange(user, (utcNow - new TimeSpan(7, 0, 0, 0)).Date, utcNow);
+                ratings = ratingRepository.Get(user, (utcNow - new TimeSpan(7, 0, 0, 0)).Date, utcNow, show);
             }
             else if (range == "30d")
             {
-                ratings = ratingRepository.GetForUserOnRange(user, (utcNow - new TimeSpan(30, 0, 0, 0)).Date, utcNow);
+                ratings = ratingRepository.Get(user, (utcNow - new TimeSpan(30, 0, 0, 0)).Date, utcNow, show);
             }
             else if (range == "1y")
             {
-                ratings = ratingRepository.GetForUserOnRange(user, new DateTime(utcNow.Year - 1, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, utcNow.Millisecond), utcNow);
+                ratings = ratingRepository.Get(user, new DateTime(utcNow.Year - 1, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, utcNow.Millisecond), utcNow, show);
             }
             else if (range == "ytd")
             {
-                ratings = ratingRepository.GetForUserOnRange(user, new DateTime(utcNow.Year, 1, 1, 0, 0, 0, 0), utcNow);
+                ratings = ratingRepository.Get(user, new DateTime(utcNow.Year, 1, 1, 0, 0, 0, 0), utcNow, show);
             }
             else
             {
@@ -174,10 +194,17 @@ namespace AtomicChessPuzzles.Controllers
             List<int> values = new List<int>();
             for (int i = 0; i < ratings.Count; i++)
             {
-                labels.Add(ratings[i].TimestampUtc.ToString());
+                if (show == "each")
+                {
+                    labels.Add(ratings[i].TimestampUtc.ToString());
+                }
+                else
+                {
+                    labels.Add(ratings[i].TimestampUtc.ToShortDateString());
+                }
                 values.Add((int)ratings[i].Rating.Value);
             }
-            return Json(new { success = true, labels = labels, ratings = values });
+            return Json(new { success = true, label = label, labels = labels, ratings = values });
         }
     }
 }

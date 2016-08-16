@@ -8,8 +8,6 @@ namespace AtomicChessPuzzles.DbRepositories
     {
         void Add(RatingWithMetadata ratingWithMetaData);
 
-        List<RatingWithMetadata> GetFor(string user);
-
-        List<RatingWithMetadata> GetForUserOnRange(string user, DateTime from, DateTime to);
+        List<RatingWithMetadata> Get(string user, DateTime? from, DateTime? to, string show);
     }
 }

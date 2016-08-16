@@ -1,20 +1,23 @@
 ﻿window.addEventListener("load", function () {
-    var username = document.getElementsByTagName("h1")[0].textContent;
-    updateChartData(username, "all");
-    document.getElementById("ratingChartDateRangeSelector").addEventListener("change", function (e) {
-        e = e || window.event;
-        updateChartData(username, e.target.options[e.target.selectedIndex].value);
-    });
+    updateChartData();
+    document.getElementById("ratingChartDateRangeSelector").addEventListener("change", updateChartData);
+    document.getElementById("ratingChartShownSelector").addEventListener("change", updateChartData);
 });
 
-function updateChartData(user, range) {
-    jsonXhr("/User/RatingChartData/" + user + "?range=" + range, "GET", null, function (req, jsonResponse) {
+function updateChartData() {
+    if (window.ratingLineChart) {
+        window.ratingLineChart.destroy();
+    }
+    var user = document.getElementsByTagName("h1")[0].textContent;
+    var range = document.getElementById("ratingChartDateRangeSelector").value;
+    var show = document.getElementById("ratingChartShownSelector").value;
+    jsonXhr("/User/RatingChartData/" + user + "?range=" + range + "&show=" + show, "GET", null, function (req, jsonResponse) {
         var ctx = document.getElementById("ratingChart").getContext("2d");
         var data = {
             labels: jsonResponse["labels"],
             datasets: [
                 {
-                    label: "Puzzle rating",
+                    label: jsonResponse["label"],
                     lineTension: 0,
                     fill: false,
                     borderColor: "red",
@@ -26,7 +29,7 @@ function updateChartData(user, range) {
                 }
             ]
         };
-        Chart.Line(ctx, {
+        window.ratingLineChart = Chart.Line(ctx, {
             data: data,
             options: {
                 responsive: true,
