@@ -7,4 +7,3 @@ src/AtomicChessPuzzles/wwwroot/images/pieces/cburnett/
 data/
 deps/
 project.lock.json
-Chart.bundle.min.js
