@@ -9,15 +9,17 @@ namespace AtomicChessPuzzles.Services
         IUserRepository userRepository;
         IPuzzleRepository puzzleRepository;
         IRatingRepository ratingRepository;
+        IAttemptRepository attemptRepository;
 
-        public RatingUpdater(IUserRepository _userRepository, IPuzzleRepository _puzzleRepository, IRatingRepository _ratingRepository)
+        public RatingUpdater(IUserRepository _userRepository, IPuzzleRepository _puzzleRepository, IRatingRepository _ratingRepository, IAttemptRepository _attemptRepository)
         {
             userRepository = _userRepository;
             puzzleRepository = _puzzleRepository;
             ratingRepository = _ratingRepository;
+            attemptRepository = _attemptRepository;
         }
 
-        public void AdjustRating(string userId, string puzzleId, bool correct)
+        public void AdjustRating(string userId, string puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded)
         {
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
             User user = userRepository.FindByUsername(userId);
@@ -27,12 +29,15 @@ namespace AtomicChessPuzzles.Services
                 return;
             }
             Glicko2.RatingCalculator calculator = new Glicko2.RatingCalculator();
-            Glicko2.Rating userRating = new Glicko2.Rating(calculator, user.Rating.Value, user.Rating.RatingDeviation, user.Rating.Volatility);
-            Glicko2.Rating puzzleRating = new Glicko2.Rating(calculator, puzzle.Rating.Value, puzzle.Rating.RatingDeviation, puzzle.Rating.Volatility);
+            double oldUserRating = user.Rating.Value;
+            double oldPuzzleRating = puzzle.Rating.Value;
+            Glicko2.Rating userRating = new Glicko2.Rating(calculator, oldUserRating, user.Rating.RatingDeviation, user.Rating.Volatility);
+            Glicko2.Rating puzzleRating = new Glicko2.Rating(calculator, oldPuzzleRating, puzzle.Rating.RatingDeviation, puzzle.Rating.Volatility);
             Glicko2.RatingPeriodResults results = new Glicko2.RatingPeriodResults();
             results.AddResult(correct ? userRating : puzzleRating, correct ? puzzleRating : userRating);
             calculator.UpdateRatings(results);
-            user.Rating = new Rating(userRating.GetRating(), userRating.GetRatingDeviation(), userRating.GetVolatility());
+            double newUserRating = userRating.GetRating();
+            user.Rating = new Rating(newUserRating, userRating.GetRatingDeviation(), userRating.GetVolatility());
             user.SolvedPuzzles.Add(puzzle.ID);
             if (correct)
             {
@@ -43,9 +48,14 @@ namespace AtomicChessPuzzles.Services
                 user.PuzzlesWrong++;
             }
             userRepository.Update(user);
-            puzzleRepository.UpdateRating(puzzle.ID, new Rating(puzzleRating.GetRating(), puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
+            double newPuzzleRating = puzzleRating.GetRating();
+            puzzleRepository.UpdateRating(puzzle.ID, new Rating(newPuzzleRating, puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
 
-            RatingWithMetadata rwm = new RatingWithMetadata(user.Rating, DateTime.UtcNow, user.ID);
+
+            Attempt attempt = new Attempt(userId, puzzleId, attemptStarted, attemptEnded, newUserRating - oldUserRating, newPuzzleRating - oldPuzzleRating, correct);
+            attemptRepository.Add(attempt);
+
+            RatingWithMetadata rwm = new RatingWithMetadata(user.Rating, attemptEnded, user.ID);
             ratingRepository.Add(rwm);
         }
     }

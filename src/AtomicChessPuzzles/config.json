@@ -9,7 +9,8 @@
     "reportCollectionName": "reports",
     "positionCollectionName": "positions",
     "timedTrainingScoreCollectionName": "timedtrainingscores",
-    "ratingCollectionName": "ratings"
+    "ratingCollectionName": "ratings",
+    "attemptCollectionName": "attempts"
   },
   "timedTrainingSessionAutoAcknowledgerDelay": 10
 }

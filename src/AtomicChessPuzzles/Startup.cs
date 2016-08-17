@@ -18,6 +18,7 @@ namespace AtomicChessPuzzles
             services.AddSingleton<ISettings, Settings>();
 
             // Database repositories
+            services.AddSingleton<IAttemptRepository, AttemptRepository>();
             services.AddSingleton<ICommentRepository, CommentRepository>();
             services.AddSingleton<ICommentVoteRepository, CommentVoteRepository>();
             services.AddSingleton<IPositionRepository, PositionRepository>();

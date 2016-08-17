@@ -222,7 +222,7 @@ namespace AtomicChessPuzzles.Controllers
                 string loggedInUser = HttpContext.Session.GetString("userid");
                 if (loggedInUser != null)
                 {
-                    ratingUpdater.AdjustRating(loggedInUser, session.Current.ID, response.Correct == 1);
+                    ratingUpdater.AdjustRating(loggedInUser, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value);
                 }
                 jsonResp.rating = (int)session.Current.Rating.Value;
             }

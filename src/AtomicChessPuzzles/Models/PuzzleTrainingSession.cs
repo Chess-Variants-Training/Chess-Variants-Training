@@ -1,5 +1,6 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
+using System;
 using System.Collections.Generic;
 
 namespace AtomicChessPuzzles.Models
@@ -13,6 +14,8 @@ namespace AtomicChessPuzzles.Models
         public List<string> Checks { get; set; }
         public List<string> Moves { get; set; }
         public List<string> PastPuzzleIds { get; set; }
+        public DateTime? CurrentPuzzleStartedUtc { get; set; }
+        public DateTime? CurrentPuzzleEndedUtc { get; set; }
 
         public PuzzleTrainingSession(string sessionId)
         {
@@ -26,6 +29,8 @@ namespace AtomicChessPuzzles.Models
         public void Setup(Puzzle puzzle)
         {
             Current = puzzle;
+            CurrentPuzzleStartedUtc = DateTime.UtcNow;
+            CurrentPuzzleEndedUtc = null;
             SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
             FENs.Clear();
             FENs.Add(puzzle.InitialFen);
@@ -72,20 +77,20 @@ namespace AtomicChessPuzzles.Models
 
             if (Current.Game.IsCheckmated(Current.Game.WhoseTurn) || Current.Game.KingIsGone(Current.Game.WhoseTurn))
             {
-                FillResponse(response, true);
+                PuzzleFinished(response, true);
                 return response;
             }
 
             if (string.Compare(SolutionMovesToDo[0], origin + "-" + destination + (promotion != null ? "=" + char.ToUpperInvariant(promotionPiece.GetFenCharacter()) : ""), true) != 0)
             {
-                FillResponse(response, false);
+                PuzzleFinished(response, false);
                 return response;
             }
 
             SolutionMovesToDo.RemoveAt(0);
             if (SolutionMovesToDo.Count == 0)
             {
-                FillResponse(response, true);
+                PuzzleFinished(response, true);
                 return response;
             }
 
@@ -105,13 +110,15 @@ namespace AtomicChessPuzzles.Models
             SolutionMovesToDo.RemoveAt(0);
             if (SolutionMovesToDo.Count == 0)
             {
-                FillResponse(response, true);
+                PuzzleFinished(response, true);
             }
             return response;
         }
 
-        void FillResponse(SubmittedMoveResponse response, bool correct)
+        void PuzzleFinished(SubmittedMoveResponse response, bool correct)
         {
+            CurrentPuzzleEndedUtc = DateTime.UtcNow;
+
             response.Correct = correct ? 1 : -1;
             response.ExplanationSafe = Current.ExplanationSafe;
 

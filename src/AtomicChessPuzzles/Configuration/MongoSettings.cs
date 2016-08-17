@@ -12,5 +12,6 @@
         public string PositionCollectionName { get; set; }
         public string TimedTrainingScoreCollectionName { get; set; }
         public string RatingCollectionName { get; set; }
+        public string AttemptCollectionName { get; set; }
     }
 }
