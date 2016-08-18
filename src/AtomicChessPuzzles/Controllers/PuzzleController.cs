@@ -43,6 +43,7 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [Route("/Puzzle/Editor")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult Editor()
         {
             return View();

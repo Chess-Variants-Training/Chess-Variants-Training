@@ -101,6 +101,10 @@ namespace AtomicChessPuzzles.Controllers
             }
             HttpContext.Session.SetString("username", user.Username);
             HttpContext.Session.SetInt32("userid", user.ID);
+            if (UserRole.HasAtLeastThePrivilegesOf(user.Roles, new string[] { UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR }))
+            {
+                HttpContext.Session.SetString("reportLink", "true");
+            }
             return RedirectToAction("Profile", new { name = username });
         }
 
@@ -109,6 +113,10 @@ namespace AtomicChessPuzzles.Controllers
         {
             HttpContext.Session.Remove("username");
             HttpContext.Session.Remove("userid");
+            if (HttpContext.Session.Keys.Contains("reportLink"))
+            {
+                HttpContext.Session.Remove("reportLink");
+            }
             return RedirectToAction("Index", "Home");
         }
 

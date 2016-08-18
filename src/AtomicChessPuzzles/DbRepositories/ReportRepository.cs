@@ -68,5 +68,11 @@ namespace AtomicChessPuzzles.DbRepositories
             }
             return found.ToList();
         }
+
+        public List<Report> GetByTypes(IEnumerable<string> types)
+        {
+            FilterDefinition<Report> filter = Builders<Report>.Filter.In("type", types);
+            return reportCollection.Find(filter).ToList();
+        }
     }
 }

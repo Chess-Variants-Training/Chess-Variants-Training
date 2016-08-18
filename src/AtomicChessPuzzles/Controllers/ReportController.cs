@@ -27,6 +27,24 @@ namespace AtomicChessPuzzles.Controllers
             reportRepository = _reportRepository;
         }
 
+        [Route("/Report/List/All")]
+        [Restricted(true, UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR)]
+        public IActionResult ListAll()
+        {
+            User user = userRepository.FindById(HttpContext.Session.GetInt32("userid").Value);
+            List<string> roles = user.Roles;
+            List<string> types = new List<string>();
+            if (UserRole.HasAtLeastThePrivilegesOf(roles, UserRole.COMMENT_MODERATOR))
+            {
+                types.Add("Comment");
+            }
+            if (UserRole.HasAtLeastThePrivilegesOf(roles, UserRole.PUZZLE_EDITOR))
+            {
+                types.Add("Puzzle");
+            }
+            return View("List", reportRepository.GetByTypes(types));
+        }
+
         [Route("/Report/List/Comments")]
         [Restricted(true, UserRole.COMMENT_MODERATOR)]
         public IActionResult ListCommentReports()

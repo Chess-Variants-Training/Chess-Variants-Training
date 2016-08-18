@@ -32,7 +32,10 @@
         <ul id="topbar-menu">
             <li>@Html.ActionLink("Home", "Index", "Home", null, null)</li>
             <li>@Html.ActionLink("Train", "Train", "Puzzle", null, null)</li>
-            <li>@Html.ActionLink("Contribute", "Editor", "Puzzle", null, null)</li>
+            @if (Context.Session.GetInt32("userid").HasValue)
+            {
+                <li>@Html.ActionLink("Contribute", "Editor", "Puzzle", null, null)</li>
+            }
             <li class="right">
                 @{  string u = null;
                     if (string.IsNullOrEmpty((u = Context.Session.GetString("username"))))
@@ -45,6 +48,10 @@
                     }
                 }
             </li>
+            @if (Context.Session.GetString("reportLink") == "true")
+            {
+                <li class="right">@Html.ActionLink("Reports", "ListAll", "Report")</li>
+            }
         </ul>
     </div>
     <div id="bodycontainer">

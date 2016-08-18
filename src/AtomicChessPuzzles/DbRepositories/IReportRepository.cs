@@ -12,5 +12,7 @@ namespace AtomicChessPuzzles.DbRepositories
         bool MarkDeclined(string reportId);
 
         List<Report> GetByType(string type);
+
+        List<Report> GetByTypes(IEnumerable<string> types);
     }
 }
