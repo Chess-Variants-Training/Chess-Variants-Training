@@ -20,8 +20,8 @@ namespace AtomicChessPuzzles.DbRepositories
 
         List<Puzzle> InReview();
 
-        bool Approve(string id);
+        bool Approve(int id);
 
-        bool Reject(string id);
+        bool Reject(int id);
     }
 }

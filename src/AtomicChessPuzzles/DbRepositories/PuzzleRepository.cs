@@ -100,19 +100,19 @@ namespace AtomicChessPuzzles.DbRepositories
             return puzzleCollection.Find(filter).ToList();
         }
 
-        public bool Approve(string id)
+        public bool Approve(int id)
         {
             UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
             UpdateDefinition<Puzzle> def = builder.Set("approved", true).Set("inReview", false);
-            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonString(id)), def);
+            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
 
-        public bool Reject(string id)
+        public bool Reject(int id)
         {
             UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
             UpdateDefinition<Puzzle> def = builder.Set("approved", false).Set("inReview", false);
-            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonString(id)), def);
+            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
     }

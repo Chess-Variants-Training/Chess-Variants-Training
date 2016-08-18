@@ -24,8 +24,8 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpPost]
-        [Route("/Review/Approve/{id}")]
-        public IActionResult Approve(string id)
+        [Route("/Review/Approve/{id:int}")]
+        public IActionResult Approve(int id)
         {
             if (puzzleRepository.Approve(id))
             {
@@ -38,8 +38,8 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpPost]
-        [Route("/Review/Reject/{id}")]
-        public IActionResult Reject(string id)
+        [Route("/Review/Reject/{id:int}")]
+        public IActionResult Reject(int id)
         {
             if (puzzleRepository.Reject(id))
             {
