@@ -155,15 +155,10 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpGet]
-        [Route("/p/{id}", Name = "TrainId")]
-        public IActionResult TrainId(string id)
+        [Route("/p/{id:int}", Name = "TrainId")]
+        public IActionResult TrainId(int id)
         {
-            int puzzleId;
-            if (!int.TryParse(id, out puzzleId))
-            {
-                return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("The given puzzle could not be found."));
-            }
-            Puzzle p = puzzleRepository.Get(puzzleId);
+            Puzzle p = puzzleRepository.Get(id);
             if (p == null)
             {
                 return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("The given puzzle could not be found."));
