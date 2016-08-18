@@ -35,7 +35,7 @@ namespace AtomicChessPuzzles.Models
         }
 
         [BsonElement("author")]
-        public string Author
+        public int Author
         {
             get;
             set;

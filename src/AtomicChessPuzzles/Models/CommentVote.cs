@@ -11,14 +11,13 @@ namespace AtomicChessPuzzles.Models
         public VoteType Type { get; set; }
 
         [BsonElement("voter")]
-        public string Voter { get; set; }
+        public int Voter { get; set; }
 
         [BsonElement("affectedComment")]
         public string AffectedComment { get; set; }
 
-        public CommentVote(VoteType type, string voter, string affectedComment)
+        public CommentVote(VoteType type, int voter, string affectedComment)
         {
-            voter = voter.ToLowerInvariant();
             ID = voter + ":" + affectedComment;
             Type = type;
             Voter = voter;

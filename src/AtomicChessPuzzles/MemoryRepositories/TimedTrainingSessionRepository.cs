@@ -45,7 +45,7 @@ namespace AtomicChessPuzzles.MemoryRepositories
                 {
                     if (sessionsCopy[i].AutoAcknowledegable)
                     {
-                        if (!sessionsCopy[i].RecordedInDb && !string.IsNullOrEmpty(sessionsCopy[i].Score.Owner))
+                        if (!sessionsCopy[i].RecordedInDb && sessionsCopy[i].Score.Owner.HasValue)
                         {
                             scoreRepository.Add(sessionsCopy[i].Score);
                         }

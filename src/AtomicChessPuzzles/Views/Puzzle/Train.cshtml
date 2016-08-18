@@ -27,6 +27,7 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
 @section Description{Improve your tactics by solving atomic chess puzzles!}
+@{ bool loggedIn = Context.Session.GetInt32("userid").HasValue; }
 <div id="ground-container">
     <div>
         <div id="chessground" class="brown"></div>
@@ -54,14 +55,14 @@
                 }
                 | <a href="#" id="retryPuzzleLink">Retry puzzle</a>
             </p>
-            @if (Context.Session.GetString("userid") != null)
+            @if (loggedIn)
             {
                 <p id="reportLinkContainer" class="nodisplay">
                     <a href="#" id="reportPuzzleLink">Report puzzle</a>
                 </p>
             }
         </div>
-        @if (Context.Session.GetString("userid") != null)
+        @if (loggedIn)
         {
             <div id="reportDialogContainer">
             </div>
@@ -74,7 +75,7 @@
         <a href="#" id="approve-puzzle">Approve</a> | <a href="#" id="reject-puzzle">Reject</a>
     </p>
 }
-@if (Context.Session.GetString("userid") != null)
+@if (loggedIn)
 {
     @:Leave a comment:<br>
     <textarea name="commentBody" id="commentBody"></textarea>

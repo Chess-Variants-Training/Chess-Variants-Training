@@ -16,7 +16,7 @@ else
         <div id="@comment.ID" class="comment" data-indentlevel="@comment.IndentLevel">
             <div class="vote-arrows">
                 @{
-                    bool loggedIn = Context.Session.GetString("userid") != null;
+                    bool loggedIn = Context.Session.GetInt32("userid").HasValue;
                 }
                 @if (loggedIn)
                 {

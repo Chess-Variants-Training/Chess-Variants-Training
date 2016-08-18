@@ -30,7 +30,7 @@ namespace AtomicChessPuzzles.Models
         }
 
 
-        public TimedTrainingSession(string sessionId, DateTime startedAt, DateTime endsAt, string owner, string type)
+        public TimedTrainingSession(string sessionId, DateTime startedAt, DateTime endsAt, int? owner, string type)
         {
             SessionID = sessionId;
             StartedAt = startedAt;

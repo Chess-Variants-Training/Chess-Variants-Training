@@ -15,12 +15,12 @@ namespace AtomicChessPuzzles.Models
         public string Type { get; set; }
 
         [BsonElement("owner")]
-        public string Owner { get; set; }
+        public int? Owner { get; set; }
 
         [BsonElement("dateRecorded")]
         public DateTime DateRecordedUtc { get; set; }
 
-        public TimedTrainingScore(double score, string type, string owner, DateTime dateRecordedUtc)
+        public TimedTrainingScore(double score, string type, int? owner, DateTime dateRecordedUtc)
         {
             Score = score;
             Type = type;

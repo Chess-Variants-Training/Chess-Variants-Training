@@ -14,7 +14,7 @@ namespace AtomicChessPuzzles.DbRepositories
 
         DeleteResult Remove(string id);
 
-        DeleteResult RemoveAllBy(string author);
+        DeleteResult RemoveAllBy(int author);
 
         bool UpdateRating(string id, Rating newRating);
 

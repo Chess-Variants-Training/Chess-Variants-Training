@@ -31,10 +31,10 @@ namespace AtomicChessPuzzles.Controllers
         public IActionResult TimedMateInOne()
         {
             List<TimedTrainingScore> latestScores = null;
-            string userId;
-            if((userId = HttpContext.Session.GetString("userid")) != null)
+            int? userId;
+            if((userId = HttpContext.Session.GetInt32("userid")).HasValue)
             {
-                latestScores = timedTrainingScoreRepository.GetLatestScores(userId);
+                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
             }
             return View(latestScores);
         }
@@ -47,7 +47,7 @@ namespace AtomicChessPuzzles.Controllers
             DateTime startTime = DateTime.UtcNow;
             DateTime endTime = startTime + new TimeSpan(0, 1, 0);
             TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
-                                        (HttpContext.Session.GetString("userid") ?? "").ToLower(), "mateInOne");
+                                        HttpContext.Session.GetInt32("userid"), "mateInOne");
             timedTrainingSessionRepository.Add(session);
             TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
             session.SetPosition(randomPosition);
@@ -66,7 +66,7 @@ namespace AtomicChessPuzzles.Controllers
             }
             if (session.Ended)
             {
-                if (!session.RecordedInDb && !string.IsNullOrEmpty(session.Score.Owner))
+                if (!session.RecordedInDb && session.Score.Owner.HasValue)
                 {
                     timedTrainingScoreRepository.Add(session.Score);
                     session.RecordedInDb = true;
@@ -97,7 +97,7 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Training session ID not found." });
             }
-            if (!session.RecordedInDb && !string.IsNullOrEmpty(session.Score.Owner))
+            if (!session.RecordedInDb && session.Score.Owner.HasValue)
             {
                 timedTrainingScoreRepository.Add(session.Score);
                 session.RecordedInDb = true;

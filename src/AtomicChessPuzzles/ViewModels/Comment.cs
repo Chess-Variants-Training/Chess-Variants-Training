@@ -11,11 +11,11 @@
         public string PuzzleID { get; set; }
         public string DatePosted { get; set; }
 
-        public Comment(Models.Comment orig, int indentLevel, int score, bool deleted)
+        public Comment(Models.Comment orig, int indentLevel, int score, bool deleted, string authorUsername)
         {
             ID = orig.ID;
             BodySanitized = orig.BodySanitized;
-            Author = orig.Author;
+            Author = authorUsername;
             Score = score;
             IndentLevel = indentLevel;
             Deleted = deleted;

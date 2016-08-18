@@ -10,7 +10,8 @@
     "positionCollectionName": "positions",
     "timedTrainingScoreCollectionName": "timedtrainingscores",
     "ratingCollectionName": "ratings",
-    "attemptCollectionName": "attempts"
+    "attemptCollectionName": "attempts",
+    "counterCollectionName": "counters"
   },
   "timedTrainingSessionAutoAcknowledgerDelay": 10
 }

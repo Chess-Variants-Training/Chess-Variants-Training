@@ -27,7 +27,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", commentBody, null, puzzleId, false, DateTime.UtcNow);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetInt32("userid").Value, commentBody, null, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -48,14 +48,14 @@ namespace AtomicChessPuzzles.Controllers
                 return View("Comments", null);
             }
             List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
-            ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository).Ordered;
+            ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository, userRepository).Ordered;
             Dictionary<string, VoteType> votesByCurrentUser = new Dictionary<string, VoteType>();
             bool hasCommentModerationPrivilege = false;
-            if (HttpContext.Session.GetString("userid") != null)
+            int? userId = HttpContext.Session.GetInt32("userid");
+            if (userId.HasValue)
             {
-                string userId = HttpContext.Session.GetString("userid");
-                votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(userId, comments.Select(x => x.ID).ToList());
-                hasCommentModerationPrivilege = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindByUsername(userId).Roles, UserRole.COMMENT_MODERATOR);
+                votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(userId.Value, comments.Select(x => x.ID).ToList());
+                hasCommentModerationPrivilege = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindById(userId.Value).Roles, UserRole.COMMENT_MODERATOR);
             }
             Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>, bool> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<string, VoteType>, bool>(roComments, votesByCurrentUser, hasCommentModerationPrivilege);
             return View("Comments", model);
@@ -66,7 +66,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/Upvote")]
         public IActionResult Upvote(string commentId)
         {
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, HttpContext.Session.GetString("userid") ?? "Anonymous", commentId));
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, HttpContext.Session.GetInt32("userid").Value, commentId));
             if (success)
             {
                 return Json(new { success = true });
@@ -82,7 +82,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/Downvote")]
         public IActionResult Downvote(string commentId)
         {
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, HttpContext.Session.GetString("userid") ?? "Anonymous", commentId));
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, HttpContext.Session.GetInt32("userid").Value, commentId));
             if (success)
             {
                 return Json(new { success = true });
@@ -98,7 +98,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/UndoVote")]
         public IActionResult UndoVote(string commentId)
         {
-            bool success = commentVoteRepository.Undo(HttpContext.Session.GetString("userid") ?? "Anonymous", commentId);
+            bool success = commentVoteRepository.Undo(HttpContext.Session.GetInt32("userid").Value, commentId);
             if (success)
             {
                 return Json(new { success = true });
@@ -114,7 +114,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/Reply")]
         public IActionResult Reply(string to, string body, string puzzleId)
         {
-            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetString("username") ?? "Anonymous", body, to, puzzleId, false, DateTime.UtcNow);
+            Comment comment = new Comment(Guid.NewGuid().ToString(), HttpContext.Session.GetInt32("userid").Value, body, to, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {

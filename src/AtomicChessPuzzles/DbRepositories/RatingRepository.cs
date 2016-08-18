@@ -30,10 +30,10 @@ namespace AtomicChessPuzzles.DbRepositories
             ratingCollection.InsertOne(ratingWithMetadata);
         }
 
-        public List<RatingWithMetadata> Get(string user, DateTime? from, DateTime? to, string show)
+        public List<RatingWithMetadata> Get(int user, DateTime? from, DateTime? to, string show)
         {
             FilterDefinitionBuilder<RatingWithMetadata> builder = Builders<RatingWithMetadata>.Filter;
-            FilterDefinition<RatingWithMetadata> filter = builder.Eq("owner", user.ToLower());
+            FilterDefinition<RatingWithMetadata> filter = builder.Eq("owner", user);
             if (from.HasValue && to.HasValue)
             {
                 filter &= builder.Lte("timestampUtc", to.Value) & builder.Gte("timestampUtc", from.Value);

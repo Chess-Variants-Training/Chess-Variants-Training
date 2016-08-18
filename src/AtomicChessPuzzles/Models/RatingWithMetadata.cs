@@ -15,9 +15,9 @@ namespace AtomicChessPuzzles.Models
         public DateTime TimestampUtc { get; set; }
 
         [BsonElement("owner")]
-        public string Owner { get; set; }
+        public int Owner { get; set; }
 
-        public RatingWithMetadata(Rating rating, DateTime timestampUtc, string owner)
+        public RatingWithMetadata(Rating rating, DateTime timestampUtc, int owner)
         {
             Rating = rating;
             TimestampUtc = timestampUtc;

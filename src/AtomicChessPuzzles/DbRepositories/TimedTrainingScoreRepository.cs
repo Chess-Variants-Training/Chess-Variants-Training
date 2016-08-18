@@ -36,7 +36,7 @@ namespace AtomicChessPuzzles.DbRepositories
             return true;
         }
 
-        public List<TimedTrainingScore> GetLatestScores(string owner)
+        public List<TimedTrainingScore> GetLatestScores(int owner)
         {
             return scoreCollection.Find(Builders<TimedTrainingScore>.Filter.Eq("owner", owner))
                                   .Sort(Builders<TimedTrainingScore>.Sort.Descending("dateRecorded"))

@@ -16,13 +16,15 @@ namespace AtomicChessPuzzles.Controllers
         IRatingRepository ratingRepository;
         IValidator validator;
         IPasswordHasher passwordHasher;
+        ICounterRepository counterRepository;
 
-        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher)
+        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository)
         {
             userRepository = _userRepository;
             ratingRepository = _ratingRepository;
             validator = _validator;
             passwordHasher = _passwordHasher;
+            counterRepository = _counterRepository;
         }
         [HttpGet]
         [Route("/User/Register")]
@@ -56,7 +58,8 @@ namespace AtomicChessPuzzles.Controllers
             Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
-            Models.User user = new Models.User(username.ToLowerInvariant(), username, email, hash, salt, "", 0, 0,
+            int userId = counterRepository.GetAndIncrease("userId");
+            Models.User user = new Models.User(userId, username, email, hash, salt, "", 0, 0,
                 new List<string>() { Models.UserRole.NONE }, new Models.Rating(1500, 350, 0.06), new List<string>());
             bool added = userRepository.Add(user);
             return RedirectToAction("Profile", new { name = username });
@@ -97,7 +100,7 @@ namespace AtomicChessPuzzles.Controllers
                 return RedirectToAction("Login");
             }
             HttpContext.Session.SetString("username", user.Username);
-            HttpContext.Session.SetString("userid", user.ID);
+            HttpContext.Session.SetInt32("userid", user.ID);
             return RedirectToAction("Profile", new { name = username });
         }
 
@@ -113,24 +116,24 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/Edit")]
         public IActionResult Edit()
         {
-            string username = HttpContext.Session.GetString("username");
-            if (username == null)
+            int? userId = HttpContext.Session.GetInt32("userid");
+            if (!userId.HasValue)
             {
                 return RedirectToAction("Login");
             }
-            return View(userRepository.FindByUsername(username));
+            return View(userRepository.FindById(userId.Value));
         }
 
         [HttpPost]
         [Route("/User/Edit", Name = "EditPost")]
         public IActionResult Edit(string email, string about)
         {
-            string username = HttpContext.Session.GetString("username");
-            if (username == null)
+            int? userId = HttpContext.Session.GetInt32("userid");
+            if (!userId.HasValue)
             {
                 return RedirectToAction("Login");
             }
-            Models.User user = userRepository.FindByUsername(username);
+            Models.User user = userRepository.FindById(userId.Value);
             user.Email = email;
             user.About = about;
             userRepository.Update(user);
@@ -143,6 +146,14 @@ namespace AtomicChessPuzzles.Controllers
         {
             List<RatingWithMetadata> ratings;
             DateTime utcNow = DateTime.UtcNow;
+
+            User u = userRepository.FindByUsername(user);
+            if (u == null)
+            {
+                return Json(new { success = false, error = "User not found." });
+            }
+
+            int userId = u.ID;
 
             string label;
             if (show == "each")
@@ -164,27 +175,27 @@ namespace AtomicChessPuzzles.Controllers
 
             if (range == "all")
             {
-                ratings = ratingRepository.Get(user, null, null, show);
+                ratings = ratingRepository.Get(userId, null, null, show);
             }
             else if (range == "1d")
             {
-                ratings = ratingRepository.Get(user, utcNow.Date, utcNow, show);
+                ratings = ratingRepository.Get(userId, utcNow.Date, utcNow, show);
             }
             else if (range == "7d")
             {
-                ratings = ratingRepository.Get(user, (utcNow - new TimeSpan(7, 0, 0, 0)).Date, utcNow, show);
+                ratings = ratingRepository.Get(userId, (utcNow - new TimeSpan(7, 0, 0, 0)).Date, utcNow, show);
             }
             else if (range == "30d")
             {
-                ratings = ratingRepository.Get(user, (utcNow - new TimeSpan(30, 0, 0, 0)).Date, utcNow, show);
+                ratings = ratingRepository.Get(userId, (utcNow - new TimeSpan(30, 0, 0, 0)).Date, utcNow, show);
             }
             else if (range == "1y")
             {
-                ratings = ratingRepository.Get(user, new DateTime(utcNow.Year - 1, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, utcNow.Millisecond), utcNow, show);
+                ratings = ratingRepository.Get(userId, new DateTime(utcNow.Year - 1, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, utcNow.Millisecond), utcNow, show);
             }
             else if (range == "ytd")
             {
-                ratings = ratingRepository.Get(user, new DateTime(utcNow.Year, 1, 1, 0, 0, 0, 0), utcNow, show);
+                ratings = ratingRepository.Get(userId, new DateTime(utcNow.Year, 1, 1, 0, 0, 0, 0), utcNow, show);
             }
             else
             {

@@ -19,10 +19,10 @@ namespace AtomicChessPuzzles.Services
             attemptRepository = _attemptRepository;
         }
 
-        public void AdjustRating(string userId, string puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded)
+        public void AdjustRating(int userId, string puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded)
         {
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
-            User user = userRepository.FindByUsername(userId);
+            User user = userRepository.FindById(userId);
             Puzzle puzzle = puzzleRepository.Get(puzzleId);
             if (user.SolvedPuzzles.Contains(puzzle.ID) || puzzle.InReview)
             {

@@ -76,9 +76,9 @@ namespace AtomicChessPuzzles.DbRepositories
             return puzzleCollection.DeleteOne(new BsonDocument("_id", new BsonString(id)));
         }
 
-        public DeleteResult RemoveAllBy(string author)
+        public DeleteResult RemoveAllBy(int author)
         {
-            return puzzleCollection.DeleteMany(new BsonDocument("author", new BsonString(author)));
+            return puzzleCollection.DeleteMany(new BsonDocument("author", new BsonInt32(author)));
         }
 
         public bool UpdateRating(string id, Rating newRating)

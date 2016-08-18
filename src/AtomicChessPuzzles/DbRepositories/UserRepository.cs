@@ -47,12 +47,16 @@ namespace AtomicChessPuzzles.DbRepositories
             userCollection.DeleteOne(new ExpressionFilterDefinition<User>(x => x.ID == user.ID));
         }
 
+        public User FindById(int id)
+        {
+            FilterDefinition<User> filter = Builders<User>.Filter.Eq("_id", id);
+            return userCollection.Find(filter).FirstOrDefault();
+        }
+
         public User FindByUsername(string name)
         {
-            string id = name.ToLowerInvariant();
-            var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.ID == id));
-            if (found == null) return null;
-            return found.FirstOrDefault();
+            FilterDefinition<User> filter = Builders<User>.Filter.Text(name, new TextSearchOptions() { CaseSensitive = false });
+            return userCollection.Find(filter).FirstOrDefault();
         }
     }
 }

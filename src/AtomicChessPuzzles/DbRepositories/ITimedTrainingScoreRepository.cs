@@ -7,6 +7,6 @@ namespace AtomicChessPuzzles.DbRepositories
     {
         bool Add(TimedTrainingScore score);
 
-        List<TimedTrainingScore> GetLatestScores(string owner);
+        List<TimedTrainingScore> GetLatestScores(int owner);
     }
 }

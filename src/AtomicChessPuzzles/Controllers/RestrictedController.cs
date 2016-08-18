@@ -38,14 +38,14 @@ namespace AtomicChessPuzzles.Controllers
             {
                 attr = actionAttrs[0] as RestrictedAttribute;        
             }
-            string userId = context.HttpContext.Session.GetString("userid");
-            bool loggedIn = userId != null;
+            int? userId = context.HttpContext.Session.GetInt32("userid");
+            bool loggedIn = userId.HasValue;
             if (attr.LoginRequired && !loggedIn)
             {
                 context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden("You need to be logged in."));
                 return;
             }
-            List<string> roles = loggedIn ? userRepository.FindByUsername(userId).Roles : new List<string>() { UserRole.NONE };
+            List<string> roles = loggedIn ? userRepository.FindById(userId.Value).Roles : new List<string>() { UserRole.NONE };
             if (!UserRole.HasAtLeastThePrivilegesOf(roles, attr.Roles))
             {
                 context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden("You don't have enough privileges to do this."));

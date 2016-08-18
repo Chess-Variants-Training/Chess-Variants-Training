@@ -36,7 +36,7 @@ namespace AtomicChessPuzzles.DbRepositories
             return result.IsAcknowledged && result.DeletedCount != 0;
         }
 
-        public bool Undo(string voter, string commentId)
+        public bool Undo(int voter, string commentId)
         {
             FilterDefinitionBuilder<CommentVote> builder = Builders<CommentVote>.Filter;
             FilterDefinition<CommentVote> filter = builder.Eq("voter", voter) & builder.Eq("affectedComment", commentId);
@@ -44,9 +44,9 @@ namespace AtomicChessPuzzles.DbRepositories
             return result.IsAcknowledged && result.DeletedCount != 0;
         }
 
-        public bool UndoAllByVoter(string voter)
+        public bool UndoAllByVoter(int voter)
         {
-            DeleteResult result = voteCollection.DeleteMany(new BsonDocument("voter", new BsonString(voter)));
+            DeleteResult result = voteCollection.DeleteMany(new BsonDocument("voter", new BsonInt32(voter)));
             return result.IsAcknowledged;
         }
 
@@ -72,9 +72,8 @@ namespace AtomicChessPuzzles.DbRepositories
             return score;
         }
 
-        public Dictionary<string, VoteType> VotesByUserOnThoseComments(string voter, List<string> commentIds)
+        public Dictionary<string, VoteType> VotesByUserOnThoseComments(int voter, List<string> commentIds)
         {
-            voter = voter.ToLowerInvariant();
             FilterDefinitionBuilder<CommentVote> builder = Builders<CommentVote>.Filter;
             FilterDefinition<CommentVote> filter = builder.In("affectedComment", commentIds) & builder.Eq("voter", voter);
             var found = voteCollection.Find(filter);

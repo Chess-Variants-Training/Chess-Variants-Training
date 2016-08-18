@@ -1,4 +1,5 @@
-﻿using AtomicChessPuzzles.DbRepositories;
+﻿using AtomicChessPuzzles.Attributes;
+using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.MemoryRepositories;
 using AtomicChessPuzzles.Models;
 using AtomicChessPuzzles.Services;
@@ -48,6 +49,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Puzzle/Editor/RegisterPuzzleForEditing")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult RegisterPuzzleForEditing(string fen)
         {
             AtomicChessGame game = new AtomicChessGame(fen);
@@ -65,6 +67,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpGet]
         [Route("/Puzzle/Editor/GetValidMoves/{id}")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult GetValidMoves(string id)
         {
             Puzzle puzzle = puzzlesBeingEdited.Get(id);
@@ -79,6 +82,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Puzzle/Editor/SubmitMove")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult SubmitMove(string id, string origin, string destination, string promotion = null)
         {
             Puzzle puzzle = puzzlesBeingEdited.Get(id);
@@ -105,6 +109,7 @@ namespace AtomicChessPuzzles.Controllers
 
         [HttpPost]
         [Route("/Puzzle/Editor/Submit")]
+        [Restricted(true, UserRole.NONE)]
         public IActionResult SubmitPuzzle(string id, string solution, string explanation)
         {
             Puzzle puzzle = puzzlesBeingEdited.Get(id);
@@ -113,7 +118,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
             }
             puzzle.Solutions.Add(solution);
-            puzzle.Author = HttpContext.Session.GetString("username") ?? "Anonymous";
+            puzzle.Author = HttpContext.Session.GetInt32("userid").Value;
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;
             puzzle.Rating = new Rating(1500, 350, 0.06);
@@ -143,10 +148,10 @@ namespace AtomicChessPuzzles.Controllers
         {
             List<string> toBeExcluded;
             double nearRating = 1500;
-            if (HttpContext.Session.GetString("username") != null)
+            int? userId = HttpContext.Session.GetInt32("userid");
+            if (userId.HasValue)
             {
-                string userId = HttpContext.Session.GetString("username");
-                User u = userRepository.FindByUsername(userId);
+                User u = userRepository.FindById(userId.Value);
                 toBeExcluded = u.SolvedPuzzles;
                 nearRating = u.Rating.Value;
             }
@@ -219,10 +224,10 @@ namespace AtomicChessPuzzles.Controllers
             dynamic jsonResp = new ExpandoObject();
             if (response.Correct == 1 || response.Correct == -1)
             {
-                string loggedInUser = HttpContext.Session.GetString("userid");
-                if (loggedInUser != null)
+                int? loggedInUser = HttpContext.Session.GetInt32("userid");
+                if (loggedInUser.HasValue)
                 {
-                    ratingUpdater.AdjustRating(loggedInUser, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value);
+                    ratingUpdater.AdjustRating(loggedInUser.Value, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value);
                 }
                 jsonResp.rating = (int)session.Current.Rating.Value;
             }

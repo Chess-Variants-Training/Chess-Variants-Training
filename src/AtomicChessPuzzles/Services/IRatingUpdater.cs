@@ -4,6 +4,6 @@ namespace AtomicChessPuzzles.Services
 {
     public interface IRatingUpdater
     {
-        void AdjustRating(string userId, string puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded);
+        void AdjustRating(int userId, string puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded);
     }
 }

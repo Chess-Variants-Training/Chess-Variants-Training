@@ -13,5 +13,6 @@
         public string TimedTrainingScoreCollectionName { get; set; }
         public string RatingCollectionName { get; set; }
         public string AttemptCollectionName { get; set; }
+        public string CounterCollectionName { get; set; }
     }
 }
