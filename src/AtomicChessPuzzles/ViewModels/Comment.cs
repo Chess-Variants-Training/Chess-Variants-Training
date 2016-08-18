@@ -2,7 +2,7 @@
 {
     public class Comment
     {
-        public string ID { get; set; }
+        public int ID { get; set; }
         public string BodySanitized { get; set; }
         public string Author { get; set; }
         public int Score { get; set; }

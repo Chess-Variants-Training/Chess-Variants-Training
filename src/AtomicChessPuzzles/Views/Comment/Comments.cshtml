@@ -2,7 +2,7 @@
 @{
     Layout = null;
 }
-@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<string, AtomicChessPuzzles.Models.VoteType>, bool>
+@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<int, AtomicChessPuzzles.Models.VoteType>, bool>
 @if (Model == null || Model.Item1 == null || Model.Item1.Count == 0)
 {
     @:No comments found.

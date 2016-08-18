@@ -6,7 +6,7 @@ namespace AtomicChessPuzzles.Models
     public class Comment
     {
         [BsonElement("_id")]
-        public string ID { get; set; }
+        public int ID { get; set; }
 
         [BsonElement("author")]
         public int Author { get; set; }
@@ -23,7 +23,7 @@ namespace AtomicChessPuzzles.Models
         }
 
         [BsonElement("parentId")]
-        public string ParentID { get; set; }
+        public int? ParentID { get; set; }
 
         [BsonElement("puzzleId")]
         public string PuzzleID { get; set; }
@@ -34,7 +34,7 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("datePostedUtc")]
         public DateTime DatePostedUtc { get; set; }
 
-        public Comment(string id, int author, string bodyUnsanitized, string parentId, string puzzleId, bool deleted, DateTime creationDateUtc)
+        public Comment(int id, int author, string bodyUnsanitized, int? parentId, string puzzleId, bool deleted, DateTime creationDateUtc)
         {
             ID = id;
             Author = author;

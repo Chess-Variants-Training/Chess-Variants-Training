@@ -27,7 +27,7 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public bool Add(Comment comment)
         {
-            var found = commentCollection.Find(new BsonDocument("_id", new BsonString(comment.ID)));
+            var found = commentCollection.Find(new BsonDocument("_id", new BsonInt32(comment.ID)));
             if (found != null && found.Any()) return false;
             try
             {

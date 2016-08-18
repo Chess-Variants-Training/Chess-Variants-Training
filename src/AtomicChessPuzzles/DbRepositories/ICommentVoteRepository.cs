@@ -7,10 +7,10 @@ namespace AtomicChessPuzzles.DbRepositories
     {
         bool Add(CommentVote vote);
         bool Undo(string voteId);
-        bool Undo(int voter, string commentId);
+        bool Undo(int voter, int commentId);
         bool UndoAllByVoter(int userId);
-        bool ResetCommentScore(string commentId);
-        int GetScoreForComment(string commentId);
-        Dictionary<string, VoteType> VotesByUserOnThoseComments(int voter, List<string> commentIds);
+        bool ResetCommentScore(int commentId);
+        int GetScoreForComment(int commentId);
+        Dictionary<int, VoteType> VotesByUserOnThoseComments(int voter, List<int> commentIds);
     }
 }

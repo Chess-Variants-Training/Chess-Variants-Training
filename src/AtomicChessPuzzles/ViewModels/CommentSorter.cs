@@ -23,7 +23,7 @@ namespace AtomicChessPuzzles.ViewModels
             Ordered = new ReadOnlyCollection<Comment>(OrderRecursively(list, null, 0));
         }
 
-        List<Comment> OrderRecursively(List<Models.Comment> list, string parent, int indentLevel)
+        List<Comment> OrderRecursively(List<Models.Comment> list, int? parent, int indentLevel)
         {
             List<Comment> result = new List<Comment>();
 

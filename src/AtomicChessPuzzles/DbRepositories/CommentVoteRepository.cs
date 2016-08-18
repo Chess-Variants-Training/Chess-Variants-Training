@@ -36,7 +36,7 @@ namespace AtomicChessPuzzles.DbRepositories
             return result.IsAcknowledged && result.DeletedCount != 0;
         }
 
-        public bool Undo(int voter, string commentId)
+        public bool Undo(int voter, int commentId)
         {
             FilterDefinitionBuilder<CommentVote> builder = Builders<CommentVote>.Filter;
             FilterDefinition<CommentVote> filter = builder.Eq("voter", voter) & builder.Eq("affectedComment", commentId);
@@ -50,15 +50,15 @@ namespace AtomicChessPuzzles.DbRepositories
             return result.IsAcknowledged;
         }
 
-        public bool ResetCommentScore(string commentId)
+        public bool ResetCommentScore(int commentId)
         {
-            DeleteResult result = voteCollection.DeleteMany(new BsonDocument("affectedComment", new BsonString(commentId)));
+            DeleteResult result = voteCollection.DeleteMany(new BsonDocument("affectedComment", new BsonInt32(commentId)));
             return result.IsAcknowledged;
         }
 
-        public int GetScoreForComment(string commentId)
+        public int GetScoreForComment(int commentId)
         {
-            var votes = voteCollection.Find(new BsonDocument("affectedComment", new BsonString(commentId)));
+            var votes = voteCollection.Find(new BsonDocument("affectedComment", new BsonInt32(commentId)));
             if (votes == null || !votes.Any())
             {
                 return 0;
@@ -72,12 +72,12 @@ namespace AtomicChessPuzzles.DbRepositories
             return score;
         }
 
-        public Dictionary<string, VoteType> VotesByUserOnThoseComments(int voter, List<string> commentIds)
+        public Dictionary<int, VoteType> VotesByUserOnThoseComments(int voter, List<int> commentIds)
         {
             FilterDefinitionBuilder<CommentVote> builder = Builders<CommentVote>.Filter;
             FilterDefinition<CommentVote> filter = builder.In("affectedComment", commentIds) & builder.Eq("voter", voter);
             var found = voteCollection.Find(filter);
-            Dictionary<string, VoteType> result = new Dictionary<string, VoteType>();
+            Dictionary<int, VoteType> result = new Dictionary<int, VoteType>();
             if (found == null)
             {
                 return result;
