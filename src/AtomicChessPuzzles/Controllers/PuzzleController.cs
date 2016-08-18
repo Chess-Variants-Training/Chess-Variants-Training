@@ -155,7 +155,7 @@ namespace AtomicChessPuzzles.Controllers
         }
 
         [HttpGet]
-        [Route("/p/{id:int}", Name = "TrainId")]
+        [Route("/Puzzle/{id:int}", Name = "TrainId")]
         public IActionResult TrainId(int id)
         {
             Puzzle p = puzzleRepository.Get(id);
