@@ -209,7 +209,7 @@ function loadComments() {
             modLinks[i].addEventListener("click", modLinkClicked);
         }
         if (window.location.search !== "") {
-            var matches = /[?&]c=[0-9a-zA-Z_-]+/.exec(window.location.search);
+            var matches = /[?&]comment=[0-9a-zA-Z_-]+/.exec(window.location.search);
             if (matches) {
                 var id = matches[0].slice(3);
                 var highlighted = document.getElementById(id);
