@@ -15,5 +15,9 @@ namespace AtomicChessPuzzles.Models
             ID = id;
             Next = next;
         }
+
+        public const string USER_ID = "userId";
+        public const string PUZZLE_ID = "puzzleId";
+        public const string COMMENT_ID = "commentId";
     }
 }

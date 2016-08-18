@@ -29,7 +29,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(counterRepository.GetAndIncrease("commentId"), HttpContext.Session.GetInt32("userid").Value, commentBody, null, puzzleId, false, DateTime.UtcNow);
+            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), HttpContext.Session.GetInt32("userid").Value, commentBody, null, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -140,7 +140,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "Invalid parent ID." });
             }
 
-            Comment comment = new Comment(counterRepository.GetAndIncrease("commentId"), HttpContext.Session.GetInt32("userid").Value, body, parentId, puzzleId, false, DateTime.UtcNow);
+            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), HttpContext.Session.GetInt32("userid").Value, body, parentId, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {

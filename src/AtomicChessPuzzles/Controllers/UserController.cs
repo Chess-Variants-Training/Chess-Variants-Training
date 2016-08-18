@@ -58,7 +58,7 @@ namespace AtomicChessPuzzles.Controllers
             Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
-            int userId = counterRepository.GetAndIncrease("userId");
+            int userId = counterRepository.GetAndIncrease(Counter.USER_ID);
             Models.User user = new Models.User(userId, username, email, hash, salt, "", 0, 0,
                 new List<string>() { Models.UserRole.NONE }, new Models.Rating(1500, 350, 0.06), new List<int>());
             bool added = userRepository.Add(user);

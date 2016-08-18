@@ -143,7 +143,7 @@ namespace AtomicChessPuzzles.Controllers
             puzzle.Rating = new Rating(1500, 350, 0.06);
             puzzle.InReview = true;
             puzzle.Approved = false;
-            puzzle.ID = counterRepository.GetAndIncrease("puzzleId");
+            puzzle.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
             if (puzzleRepository.Add(puzzle))
             {
                 return Json(new { success = true });
