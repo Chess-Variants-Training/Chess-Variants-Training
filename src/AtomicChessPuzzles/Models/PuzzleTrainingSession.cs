@@ -13,14 +13,14 @@ namespace AtomicChessPuzzles.Models
         public List<string> FENs { get; set; }
         public List<string> Checks { get; set; }
         public List<string> Moves { get; set; }
-        public List<string> PastPuzzleIds { get; set; }
+        public List<int> PastPuzzleIds { get; set; }
         public DateTime? CurrentPuzzleStartedUtc { get; set; }
         public DateTime? CurrentPuzzleEndedUtc { get; set; }
 
         public PuzzleTrainingSession(string sessionId)
         {
             SessionID = sessionId;
-            PastPuzzleIds = new List<string>();
+            PastPuzzleIds = new List<int>();
             FENs = new List<string>();
             Checks = new List<string>();
             Moves = new List<string>();

@@ -12,7 +12,7 @@ namespace AtomicChessPuzzles.Models
         public int User { get; set; }
 
         [BsonElement("puzzleId")]
-        public string PuzzleId { get; set; }
+        public int PuzzleId { get; set; }
 
         [BsonElement("startTimestampUtc")]
         public DateTime StartTimestampUtc { get; set; }
@@ -32,7 +32,7 @@ namespace AtomicChessPuzzles.Models
         [BsonElement("success")]
         public bool Success { get; set; }
 
-        public Attempt(int user, string puzzleId, DateTime startTimestampUtc, DateTime endTimestampUtc, double userRatingChange, double puzzleRatingChange, bool success)
+        public Attempt(int user, int puzzleId, DateTime startTimestampUtc, DateTime endTimestampUtc, double userRatingChange, double puzzleRatingChange, bool success)
         {
             User = user;
             PuzzleId = puzzleId;

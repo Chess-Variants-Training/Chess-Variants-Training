@@ -14,25 +14,26 @@ using System.Dynamic;
 
 namespace AtomicChessPuzzles.Controllers
 {
-    public class PuzzleController : Controller
+    public class PuzzleController : RestrictedController
     {
         IPuzzlesBeingEditedRepository puzzlesBeingEdited;
         IPuzzleRepository puzzleRepository;
-        IUserRepository userRepository;
         IRatingUpdater ratingUpdater;
         IMoveCollectionTransformer moveCollectionTransformer;
         IPuzzleTrainingSessionRepository puzzleTrainingSessionRepository;
+        ICounterRepository counterRepository;
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
             IUserRepository _userRepository, IRatingUpdater _ratingUpdater,
-            IMoveCollectionTransformer _movecollectionTransformer, IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository)
+            IMoveCollectionTransformer _movecollectionTransformer, IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository,
+            ICounterRepository _counterRepository) : base(_userRepository)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
-            userRepository = _userRepository;
             ratingUpdater = _ratingUpdater;
             moveCollectionTransformer = _movecollectionTransformer;
             puzzleTrainingSessionRepository = _puzzleTrainingSessionRepository;
+            counterRepository = _counterRepository;
         }
 
         [Route("/Puzzle")]
@@ -59,7 +60,7 @@ namespace AtomicChessPuzzles.Controllers
             puzzle.Solutions = new List<string>();
             do
             {
-                puzzle.ID = Guid.NewGuid().ToString();
+                puzzle.ID = Guid.NewGuid().GetHashCode();
             } while (puzzlesBeingEdited.Contains(puzzle.ID));
             puzzlesBeingEdited.Add(puzzle);
             return Json(new { success = true, id = puzzle.ID });
@@ -70,7 +71,13 @@ namespace AtomicChessPuzzles.Controllers
         [Restricted(true, UserRole.NONE)]
         public IActionResult GetValidMoves(string id)
         {
-            Puzzle puzzle = puzzlesBeingEdited.Get(id);
+            int puzzleId;
+            if (!int.TryParse(id, out puzzleId))
+            {
+                return Json(new { success = false, error = "The given ID is invalid." });
+            }
+
+            Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
             if (puzzle == null)
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
@@ -85,7 +92,13 @@ namespace AtomicChessPuzzles.Controllers
         [Restricted(true, UserRole.NONE)]
         public IActionResult SubmitMove(string id, string origin, string destination, string promotion = null)
         {
-            Puzzle puzzle = puzzlesBeingEdited.Get(id);
+            int puzzleId;
+            if (!int.TryParse(id, out puzzleId))
+            {
+                return Json(new { success = false, error = "The given ID is invalid." });
+            }
+
+            Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
             if (puzzle == null)
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
@@ -112,7 +125,13 @@ namespace AtomicChessPuzzles.Controllers
         [Restricted(true, UserRole.NONE)]
         public IActionResult SubmitPuzzle(string id, string solution, string explanation)
         {
-            Puzzle puzzle = puzzlesBeingEdited.Get(id);
+            int puzzleId;
+            if (!int.TryParse(id, out puzzleId))
+            {
+                return Json(new { success = false, error = "The given ID is invalid." });
+            }
+
+            Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
             if (puzzle == null)
             {
                 return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
@@ -124,6 +143,7 @@ namespace AtomicChessPuzzles.Controllers
             puzzle.Rating = new Rating(1500, 350, 0.06);
             puzzle.InReview = true;
             puzzle.Approved = false;
+            puzzle.ID = counterRepository.GetAndIncrease("puzzleId");
             if (puzzleRepository.Add(puzzle))
             {
                 return Json(new { success = true });
@@ -138,7 +158,16 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/p/{id}", Name = "TrainId")]
         public IActionResult TrainId(string id)
         {
-            Puzzle p = puzzleRepository.Get(id);
+            int puzzleId;
+            if (!int.TryParse(id, out puzzleId))
+            {
+                return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("The given puzzle could not be found."));
+            }
+            Puzzle p = puzzleRepository.Get(puzzleId);
+            if (p == null)
+            {
+                return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("The given puzzle could not be found."));
+            }
             return View("Train", p);
         }
 
@@ -146,7 +175,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Train/GetOneRandomly")]
         public IActionResult GetOneRandomly(string trainingSessionId = null)
         {
-            List<string> toBeExcluded;
+            List<int> toBeExcluded;
             double nearRating = 1500;
             int? userId = HttpContext.Session.GetInt32("userid");
             if (userId.HasValue)
@@ -157,11 +186,11 @@ namespace AtomicChessPuzzles.Controllers
             }
             else if (trainingSessionId != null)
             {
-                toBeExcluded = puzzleTrainingSessionRepository.Get(trainingSessionId)?.PastPuzzleIds ?? new List<string>();
+                toBeExcluded = puzzleTrainingSessionRepository.Get(trainingSessionId)?.PastPuzzleIds ?? new List<int>();
             }
             else
             {
-                toBeExcluded = new List<string>();
+                toBeExcluded = new List<int>();
             }
             Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded);
             if (puzzle != null)
@@ -178,7 +207,12 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle/Train/Setup")]
         public IActionResult SetupTraining(string id, string trainingSessionId = null)
         {
-            Puzzle puzzle = puzzleRepository.Get(id);
+            int puzzleId;
+            if (!int.TryParse(id, out puzzleId))
+            {
+                return Json(new { success = false, error = "Invalid puzzle ID." });
+            }
+            Puzzle puzzle = puzzleRepository.Get(puzzleId);
             if (puzzle == null)
             {
                 return Json(new { success = false, error = "Puzzle not found." });

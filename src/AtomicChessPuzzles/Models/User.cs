@@ -37,10 +37,10 @@ namespace AtomicChessPuzzles.Models
         public Rating Rating { get; set; }
 
         [BsonElement("solvedPuzzles")]
-        public List<string> SolvedPuzzles { get; set; }
+        public List<int> SolvedPuzzles { get; set; }
 
         public User(int id, string username, string email, string passwordHash, string salt, string about,
-            int puzzlesCorrect, int puzzlesWrong, List<string> roles, Rating rating, List<string> solvedPuzzles)
+            int puzzlesCorrect, int puzzlesWrong, List<string> roles, Rating rating, List<int> solvedPuzzles)
         {
             ID = id;
             Username = username;

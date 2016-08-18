@@ -8,15 +8,15 @@ namespace AtomicChessPuzzles.DbRepositories
     {
         bool Add(Puzzle puzzle);
 
-        Puzzle Get(string id);
+        Puzzle Get(int id);
 
-        Puzzle GetOneRandomly(List<string> excludedIds, double nearRating = 1500);
+        Puzzle GetOneRandomly(List<int> excludedIds, double nearRating = 1500);
 
-        DeleteResult Remove(string id);
+        DeleteResult Remove(int id);
 
         DeleteResult RemoveAllBy(int author);
 
-        bool UpdateRating(string id, Rating newRating);
+        bool UpdateRating(int id, Rating newRating);
 
         List<Puzzle> InReview();
 

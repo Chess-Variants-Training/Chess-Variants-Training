@@ -21,7 +21,7 @@ namespace AtomicChessPuzzles.Models
         }
 
         [BsonElement("_id")]
-        public string ID
+        public int ID
         {
             get;
             set;

@@ -6,10 +6,10 @@ namespace AtomicChessPuzzles.MemoryRepositories
     {
         void Add(Puzzle puzzle);
 
-        Puzzle Get(string id);
+        Puzzle Get(int id);
 
-        void Remove(string id);
+        void Remove(int id);
 
-        bool Contains(string id);
+        bool Contains(int id);
     }
 }

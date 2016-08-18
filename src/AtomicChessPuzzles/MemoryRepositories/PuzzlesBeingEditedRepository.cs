@@ -13,17 +13,17 @@ namespace AtomicChessPuzzles.MemoryRepositories
             puzzles.Add(puzzle);
         }
 
-        public Puzzle Get(string id)
+        public Puzzle Get(int id)
         {
             return puzzles.Where(x => x.ID == id).FirstOrDefault();
         }
 
-        public void Remove(string id)
+        public void Remove(int id)
         {
             puzzles.RemoveAll(x => x.ID == id);
         }
 
-        public bool Contains(string id)
+        public bool Contains(int id)
         {
             return puzzles.Any(x => x.ID == id);
         }

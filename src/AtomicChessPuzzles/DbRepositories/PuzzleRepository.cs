@@ -28,7 +28,7 @@ namespace AtomicChessPuzzles.DbRepositories
 
         public bool Add(Puzzle puzzle)
         {
-            var found = puzzleCollection.Find(new BsonDocument("_id", new BsonString(puzzle.ID)));
+            var found = puzzleCollection.Find(new BsonDocument("_id", new BsonInt32(puzzle.ID)));
             if (found != null && found.Any()) return false;
             try
             {
@@ -41,14 +41,14 @@ namespace AtomicChessPuzzles.DbRepositories
             return true;
         }
 
-        public Puzzle Get(string id)
+        public Puzzle Get(int id)
         {
-            var found = puzzleCollection.Find(new BsonDocument("_id", new BsonString(id)));
+            var found = puzzleCollection.Find(new BsonDocument("_id", new BsonInt32(id)));
             if (found == null) return null;
             return found.FirstOrDefault();
         }
 
-        public Puzzle GetOneRandomly(List<string> excludedIds, double nearRating = 1500)
+        public Puzzle GetOneRandomly(List<int> excludedIds, double nearRating = 1500)
         {
             FilterDefinitionBuilder<Puzzle> filterBuilder = Builders<Puzzle>.Filter;
             FilterDefinition<Puzzle> filter = filterBuilder.Nin("_id", excludedIds) & filterBuilder.Eq("inReview", false)
@@ -71,9 +71,9 @@ namespace AtomicChessPuzzles.DbRepositories
             else return RandomBoolean() ? oneGt : oneLte;
         }
 
-        public DeleteResult Remove(string id)
+        public DeleteResult Remove(int id)
         {
-            return puzzleCollection.DeleteOne(new BsonDocument("_id", new BsonString(id)));
+            return puzzleCollection.DeleteOne(new BsonDocument("_id", new BsonInt32(id)));
         }
 
         public DeleteResult RemoveAllBy(int author)
@@ -81,11 +81,11 @@ namespace AtomicChessPuzzles.DbRepositories
             return puzzleCollection.DeleteMany(new BsonDocument("author", new BsonInt32(author)));
         }
 
-        public bool UpdateRating(string id, Rating newRating)
+        public bool UpdateRating(int id, Rating newRating)
         {
             UpdateDefinitionBuilder<Puzzle> builder = new UpdateDefinitionBuilder<Puzzle>();
             UpdateDefinition<Puzzle> def = builder.Set("rating", newRating);
-            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonString(id)), def);
+            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
 
