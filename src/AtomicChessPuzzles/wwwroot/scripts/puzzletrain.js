@@ -182,7 +182,7 @@ function loadComments() {
         document.getElementById("commentContainer").innerHTML = req.responseText;
         var comments = document.getElementById("commentContainer").querySelectorAll(".comment");
         for (var i = 0; i < comments.length; i++) {
-            comments[i].style.marginLeft = comments[i].dataset.indentlevel + "vw";
+            comments[i].style.marginLeft = (parseInt(comments[i].dataset.indentlevel, 10) * 1.5) + "%";
         }
         var voteLinks = document.getElementById("commentContainer").querySelectorAll("a[data-vote]");
         for (var i = 0; i < voteLinks.length; i++) {
