@@ -6,16 +6,19 @@ using Microsoft.AspNet.Mvc.Controllers;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Http;
 using System.Collections.Generic;
+using AtomicChessPuzzles.Services;
 
 namespace AtomicChessPuzzles.Controllers
 {
     public class RestrictedController : ErrorCapableController
     {
         protected IUserRepository userRepository;
+        protected IPersistentLoginHandler loginHandler;
 
-        public RestrictedController(IUserRepository _userRepository)
+        public RestrictedController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler)
         {
             userRepository = _userRepository;
+            loginHandler = _loginHandler;
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)
@@ -38,7 +41,7 @@ namespace AtomicChessPuzzles.Controllers
             {
                 attr = actionAttrs[0] as RestrictedAttribute;        
             }
-            int? userId = context.HttpContext.Session.GetInt32("userid");
+            int? userId = loginHandler.LoggedInUserId(context.HttpContext);
             bool loggedIn = userId.HasValue;
             if (attr.LoginRequired && !loggedIn)
             {

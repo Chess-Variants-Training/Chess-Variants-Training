@@ -1,6 +1,7 @@
 using AtomicChessPuzzles.Attributes;
 using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.Models;
+using AtomicChessPuzzles.Services;
 using Microsoft.AspNet.Mvc;
 using System.Collections.Generic;
 
@@ -11,7 +12,7 @@ namespace AtomicChessPuzzles.Controllers
     {
         IPuzzleRepository puzzleRepository;
 
-        public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository) : base(_userRepository)
+        public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler)
         {
             puzzleRepository = _puzzleRepository;
         }

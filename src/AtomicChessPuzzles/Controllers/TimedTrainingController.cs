@@ -16,15 +16,17 @@ namespace AtomicChessPuzzles.Controllers
         ITimedTrainingSessionRepository timedTrainingSessionRepository;
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
+        IPersistentLoginHandler loginHandler;
 
         public TimedTrainingController(ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository,
-                                       ITimedTrainingScoreRepository _timedTrainingScoreRepository, IMoveCollectionTransformer _moveCollectionTransformer)
+                                       ITimedTrainingScoreRepository _timedTrainingScoreRepository, IMoveCollectionTransformer _moveCollectionTransformer, IPersistentLoginHandler _loginHandler)
         {
             timedTrainingRepository = _timedTrainingRepository;
             positionRepository = _positionRepository;
             timedTrainingSessionRepository = _timedTrainingSessionRepository;
             timedTrainingScoreRepository = _timedTrainingScoreRepository;
             moveCollectionTransformer = _moveCollectionTransformer;
+            loginHandler = _loginHandler;
         }
         [HttpGet]
         [Route("/Timed-Training/Mate-In-One")]
@@ -32,7 +34,7 @@ namespace AtomicChessPuzzles.Controllers
         {
             List<TimedTrainingScore> latestScores = null;
             int? userId;
-            if((userId = HttpContext.Session.GetInt32("userid")).HasValue)
+            if((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
             {
                 latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
             }
@@ -47,7 +49,7 @@ namespace AtomicChessPuzzles.Controllers
             DateTime startTime = DateTime.UtcNow;
             DateTime endTime = startTime + new TimeSpan(0, 1, 0);
             TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
-                                        HttpContext.Session.GetInt32("userid"), "mateInOne");
+                                        loginHandler.LoggedInUserId(HttpContext), "mateInOne");
             timedTrainingSessionRepository.Add(session);
             TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
             session.SetPosition(randomPosition);

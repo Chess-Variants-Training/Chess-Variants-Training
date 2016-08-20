@@ -27,7 +27,7 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
 @section Description{Improve your tactics by solving atomic chess puzzles!}
-@{ bool loggedIn = Context.Session.GetInt32("userid").HasValue; }
+@{ bool loggedIn = ViewBag.LoggedIn; }
 <div id="ground-container">
     <div>
         <div id="chessground" class="brown"></div>

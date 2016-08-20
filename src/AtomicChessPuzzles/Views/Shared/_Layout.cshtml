@@ -1,4 +1,6 @@
-﻿@using Microsoft.AspNet.Http;
+﻿@using AtomicChessPuzzles.Models;
+@inject AtomicChessPuzzles.Services.IPersistentLoginHandler LoginHandler
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -32,23 +34,24 @@
         <ul id="topbar-menu">
             <li>@Html.ActionLink("Home", "Index", "Home", null, null)</li>
             <li>@Html.ActionLink("Train", "Train", "Puzzle", null, null)</li>
-            @if (Context.Session.GetInt32("userid").HasValue)
+            @{ User loggedIn = LoginHandler.LoggedInUser(Context); }
+            @if (loggedIn != null)
             {
                 <li>@Html.ActionLink("Contribute", "Editor", "Puzzle", null, null)</li>
             }
             <li class="right">
-                @{  string u = null;
-                    if (string.IsNullOrEmpty((u = Context.Session.GetString("username"))))
+                @{ 
+                    if (loggedIn == null)
                     {
                         @:@Html.ActionLink("Log in", "Login", "User", null, null)
                     }
                     else
                     {
-                        @:<a id="username" href="#">@u</a><ul id="user-nav-content" class="invisible"><li>@Html.ActionLink("Profile", "Profile", "User", new { name = u }, null)</li><li>@Html.ActionLink("Log out", "Logout", "User")</li></ul>
+                        @:<a id="username" href="#">@loggedIn.Username</a><ul id="user-nav-content" class="invisible"><li>@Html.ActionLink("Profile", "Profile", "User", new { name = loggedIn.Username }, null)</li><li>@Html.ActionLink("Log out", "Logout", "User")</li></ul>
                     }
                 }
             </li>
-            @if (Context.Session.GetString("reportLink") == "true")
+            @if (loggedIn != null && UserRole.HasAtLeastThePrivilegesOf(loggedIn.Roles, new string[] { UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR }))
             {
                 <li class="right">@Html.ActionLink("Reports", "ListAll", "Report")</li>
             }

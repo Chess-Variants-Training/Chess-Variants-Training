@@ -11,7 +11,8 @@
     "timedTrainingScoreCollectionName": "timedtrainingscores",
     "ratingCollectionName": "ratings",
     "attemptCollectionName": "attempts",
-    "counterCollectionName": "counters"
+    "counterCollectionName": "counters",
+    "savedLoginCollectionName": "savedlogins"
   },
   "timedTrainingSessionAutoAcknowledgerDelay": 10
 }

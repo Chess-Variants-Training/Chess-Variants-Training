@@ -1,6 +1,7 @@
 using AtomicChessPuzzles.Attributes;
 using AtomicChessPuzzles.DbRepositories;
 using AtomicChessPuzzles.Models;
+using AtomicChessPuzzles.Services;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using System;
@@ -17,7 +18,7 @@ namespace AtomicChessPuzzles.Controllers
         ICounterRepository counterRepository;
 
         public CommentController(ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository,
-                                 IUserRepository _userRepository, ICounterRepository _counterRepository) : base(_userRepository)
+                                 IUserRepository _userRepository, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler)
         {
             commentRepository = _commentRepository;
             commentVoteRepository = _commentVoteRepository;
@@ -29,7 +30,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), HttpContext.Session.GetInt32("userid").Value, commentBody, null, puzzleId, false, DateTime.UtcNow);
+            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, commentBody, null, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -53,13 +54,13 @@ namespace AtomicChessPuzzles.Controllers
             ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository, userRepository).Ordered;
             Dictionary<int, VoteType> votesByCurrentUser = new Dictionary<int, VoteType>();
             bool hasCommentModerationPrivilege = false;
-            int? userId = HttpContext.Session.GetInt32("userid");
+            int? userId = loginHandler.LoggedInUserId(HttpContext);
             if (userId.HasValue)
             {
                 votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(userId.Value, comments.Select(x => x.ID).ToList());
                 hasCommentModerationPrivilege = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindById(userId.Value).Roles, UserRole.COMMENT_MODERATOR);
             }
-            Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool>(roComments, votesByCurrentUser, hasCommentModerationPrivilege);
+            Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool, bool> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool, bool>(roComments, votesByCurrentUser, hasCommentModerationPrivilege, loginHandler.LoggedInUserId(HttpContext).HasValue);
             return View("Comments", model);
         }
 
@@ -74,7 +75,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, HttpContext.Session.GetInt32("userid").Value, commentIdI));
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, loginHandler.LoggedInUserId(HttpContext).Value, commentIdI));
             if (success)
             {
                 return Json(new { success = true });
@@ -96,7 +97,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, HttpContext.Session.GetInt32("userid").Value, commentIdI));
+            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, loginHandler.LoggedInUserId(HttpContext).Value, commentIdI));
             if (success)
             {
                 return Json(new { success = true });
@@ -118,7 +119,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
-            bool success = commentVoteRepository.Undo(HttpContext.Session.GetInt32("userid").Value, commentIdI);
+            bool success = commentVoteRepository.Undo(loginHandler.LoggedInUserId(HttpContext).Value, commentIdI);
             if (success)
             {
                 return Json(new { success = true });
@@ -140,7 +141,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = "Invalid parent ID." });
             }
 
-            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), HttpContext.Session.GetInt32("userid").Value, body, parentId, puzzleId, false, DateTime.UtcNow);
+            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, body, parentId, puzzleId, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {

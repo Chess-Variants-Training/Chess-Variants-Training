@@ -17,14 +17,16 @@ namespace AtomicChessPuzzles.Controllers
         IValidator validator;
         IPasswordHasher passwordHasher;
         ICounterRepository counterRepository;
+        IPersistentLoginHandler loginHandler;
 
-        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository)
+        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler)
         {
             userRepository = _userRepository;
             ratingRepository = _ratingRepository;
             validator = _validator;
             passwordHasher = _passwordHasher;
             counterRepository = _counterRepository;
+            loginHandler = _loginHandler;
         }
         [HttpGet]
         [Route("/User/Register")]
@@ -99,24 +101,14 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return RedirectToAction("Login");
             }
-            HttpContext.Session.SetString("username", user.Username);
-            HttpContext.Session.SetInt32("userid", user.ID);
-            if (UserRole.HasAtLeastThePrivilegesOf(user.Roles, new string[] { UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR }))
-            {
-                HttpContext.Session.SetString("reportLink", "true");
-            }
+            loginHandler.RegisterLogin(user.ID, HttpContext);
             return RedirectToAction("Profile", new { name = username });
         }
 
         [Route("/User/Logout")]
         public IActionResult Logout()
         {
-            HttpContext.Session.Remove("username");
-            HttpContext.Session.Remove("userid");
-            if (HttpContext.Session.Keys.Contains("reportLink"))
-            {
-                HttpContext.Session.Remove("reportLink");
-            }
+            loginHandler.Logout(HttpContext);
             return RedirectToAction("Index", "Home");
         }
 
@@ -124,7 +116,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/Edit")]
         public IActionResult Edit()
         {
-            int? userId = HttpContext.Session.GetInt32("userid");
+            int? userId = loginHandler.LoggedInUserId(HttpContext);
             if (!userId.HasValue)
             {
                 return RedirectToAction("Login");
@@ -136,7 +128,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/User/Edit", Name = "EditPost")]
         public IActionResult Edit(string email, string about)
         {
-            int? userId = HttpContext.Session.GetInt32("userid");
+            int? userId = loginHandler.LoggedInUserId(HttpContext);
             if (!userId.HasValue)
             {
                 return RedirectToAction("Login");

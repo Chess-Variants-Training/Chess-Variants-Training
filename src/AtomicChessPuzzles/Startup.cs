@@ -26,6 +26,7 @@ namespace AtomicChessPuzzles
             services.AddSingleton<IPuzzleRepository, PuzzleRepository>();
             services.AddSingleton<IRatingRepository, RatingRepository>();
             services.AddSingleton<IReportRepository, ReportRepository>();
+            services.AddSingleton<ISavedLoginRepository, SavedLoginRepository>();
             services.AddSingleton<ITimedTrainingScoreRepository, TimedTrainingScoreRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
 
@@ -38,6 +39,7 @@ namespace AtomicChessPuzzles
             // Miscellaneous services
             services.AddSingleton<IMoveCollectionTransformer, MoveCollectionTransformer>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
+            services.AddSingleton<IPersistentLoginHandler, PersistentLoginHandler>();
             services.AddSingleton<IRatingUpdater, RatingUpdater>();
             services.AddSingleton<IValidator, Validator>();
 

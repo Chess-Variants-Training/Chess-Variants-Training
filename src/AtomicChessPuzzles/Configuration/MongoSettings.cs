@@ -14,5 +14,6 @@
         public string RatingCollectionName { get; set; }
         public string AttemptCollectionName { get; set; }
         public string CounterCollectionName { get; set; }
+        public string SavedLoginCollectionName { get; set; }
     }
 }

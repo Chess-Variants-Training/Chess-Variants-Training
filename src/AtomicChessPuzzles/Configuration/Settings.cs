@@ -33,6 +33,7 @@ namespace AtomicChessPuzzles.Configuration
             Mongo.RatingCollectionName = config.Get<string>("mongo:ratingCollectionName");
             Mongo.AttemptCollectionName = config.Get<string>("mongo:attemptCollectionName");
             Mongo.CounterCollectionName = config.Get<string>("mongo:counterCollectionName");
+            Mongo.SavedLoginCollectionName = config.Get<string>("mongo:savedLoginCollectionName");
 
             TimedTrainingSessionAutoAcknowledgerDelay = config.Get<int>("timedTrainingSessionAutoAcknowledgerDelay");
         }

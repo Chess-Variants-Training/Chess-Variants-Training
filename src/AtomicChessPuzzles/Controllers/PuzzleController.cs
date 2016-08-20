@@ -26,7 +26,7 @@ namespace AtomicChessPuzzles.Controllers
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
             IUserRepository _userRepository, IRatingUpdater _ratingUpdater,
             IMoveCollectionTransformer _movecollectionTransformer, IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository,
-            ICounterRepository _counterRepository) : base(_userRepository)
+            ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
@@ -39,6 +39,7 @@ namespace AtomicChessPuzzles.Controllers
         [Route("/Puzzle")]
         public IActionResult Train()
         {
+            ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
             return View("Train");
         }
 
@@ -138,7 +139,7 @@ namespace AtomicChessPuzzles.Controllers
                 return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
             }
             puzzle.Solutions.Add(solution);
-            puzzle.Author = HttpContext.Session.GetInt32("userid").Value;
+            puzzle.Author = loginHandler.LoggedInUserId(HttpContext).Value;
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;
             puzzle.Rating = new Rating(1500, 350, 0.06);
@@ -164,6 +165,7 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("The given puzzle could not be found."));
             }
+            ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
             return View("Train", p);
         }
 
@@ -173,7 +175,7 @@ namespace AtomicChessPuzzles.Controllers
         {
             List<int> toBeExcluded;
             double nearRating = 1500;
-            int? userId = HttpContext.Session.GetInt32("userid");
+            int? userId = loginHandler.LoggedInUserId(HttpContext);
             if (userId.HasValue)
             {
                 User u = userRepository.FindById(userId.Value);
@@ -254,7 +256,7 @@ namespace AtomicChessPuzzles.Controllers
             dynamic jsonResp = new ExpandoObject();
             if (response.Correct == 1 || response.Correct == -1)
             {
-                int? loggedInUser = HttpContext.Session.GetInt32("userid");
+                int? loggedInUser = loginHandler.LoggedInUserId(HttpContext);
                 if (loggedInUser.HasValue)
                 {
                     ratingUpdater.AdjustRating(loggedInUser.Value, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value);

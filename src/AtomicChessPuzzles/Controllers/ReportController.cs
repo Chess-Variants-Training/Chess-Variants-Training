@@ -6,6 +6,7 @@ using AtomicChessPuzzles.DbRepositories;
 using Microsoft.AspNet.Http;
 using AtomicChessPuzzles.Attributes;
 using AtomicChessPuzzles.Models;
+using AtomicChessPuzzles.Services;
 
 namespace AtomicChessPuzzles.Controllers
 {
@@ -22,7 +23,7 @@ namespace AtomicChessPuzzles.Controllers
             { "Puzzle", ValidPuzzleReportReasons }
         };
 
-        public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository) : base(_userRepository)
+        public ReportController(IReportRepository _reportRepository, IUserRepository _userRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler)
         {
             reportRepository = _reportRepository;
         }
@@ -31,7 +32,7 @@ namespace AtomicChessPuzzles.Controllers
         [Restricted(true, UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR)]
         public IActionResult ListAll()
         {
-            User user = userRepository.FindById(HttpContext.Session.GetInt32("userid").Value);
+            User user = userRepository.FindById(loginHandler.LoggedInUserId(HttpContext).Value);
             List<string> roles = user.Roles;
             List<string> types = new List<string>();
             if (UserRole.HasAtLeastThePrivilegesOf(roles, UserRole.COMMENT_MODERATOR))
@@ -73,7 +74,7 @@ namespace AtomicChessPuzzles.Controllers
             {
                 return Json(new { success = false, error = "Invalid reason" });
             }
-            Report report = new Report(Guid.NewGuid().ToString(), type, HttpContext.Session.GetInt32("userid").Value, item, reason, reasonExplanation, false, null);
+            Report report = new Report(Guid.NewGuid().ToString(), type, loginHandler.LoggedInUserId(HttpContext).Value, item, reason, reasonExplanation, false, null);
             if (reportRepository.Add(report))
             {
                 return Json(new { success = true });

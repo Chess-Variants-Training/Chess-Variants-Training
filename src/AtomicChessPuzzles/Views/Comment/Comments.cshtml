@@ -2,7 +2,7 @@
 @{
     Layout = null;
 }
-@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<int, AtomicChessPuzzles.Models.VoteType>, bool>
+@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<int, AtomicChessPuzzles.Models.VoteType>, bool, bool>
 @if (Model == null || Model.Item1 == null || Model.Item1.Count == 0)
 {
     @:No comments found.
@@ -16,7 +16,7 @@ else
         <div id="@comment.ID" class="comment" data-indentlevel="@comment.IndentLevel">
             <div class="vote-arrows">
                 @{
-                    bool loggedIn = Context.Session.GetInt32("userid").HasValue;
+                    bool loggedIn = Model.Item4;
                 }
                 @if (loggedIn)
                 {
