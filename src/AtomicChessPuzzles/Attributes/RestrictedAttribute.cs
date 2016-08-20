@@ -1,6 +1,6 @@
 using System;
 
-namespace AtomicChessPuzzles.Attributes
+namespace ChessVariantsTraining.Attributes
 {
     public class RestrictedAttribute : Attribute
     {

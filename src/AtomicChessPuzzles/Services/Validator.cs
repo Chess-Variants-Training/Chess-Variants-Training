@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public class Validator : IValidator
     {

@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNet.Builder;
 using Microsoft.AspNet.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using AtomicChessPuzzles.Configuration;
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.MemoryRepositories;
-using AtomicChessPuzzles.Services;
+using ChessVariantsTraining.Configuration;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.MemoryRepositories;
+using ChessVariantsTraining.Services;
 
-namespace AtomicChessPuzzles
+namespace ChessVariantsTraining
 {
     public class Startup
     {

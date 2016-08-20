@@ -1,7 +1,7 @@
 using ChessDotNet;
 using ChessDotNet.Pieces;
 
-namespace AtomicChessPuzzles
+namespace ChessVariantsTraining
 {
     public static class Utilities
     {

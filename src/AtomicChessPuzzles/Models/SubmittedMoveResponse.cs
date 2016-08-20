@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace AtomicChessPuzzles.Models
+namespace ChessVariantsTraining.Models
 {
     public class SubmittedMoveResponse
     {

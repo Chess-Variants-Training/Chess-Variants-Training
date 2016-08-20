@@ -1,7 +1,7 @@
-﻿using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.Models;
 using Microsoft.AspNet.Http;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public interface IPersistentLoginHandler
     {

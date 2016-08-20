@@ -1,11 +1,11 @@
-using AtomicChessPuzzles.Configuration;
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.Models;
+using ChessVariantsTraining.Configuration;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
-namespace AtomicChessPuzzles.MemoryRepositories
+namespace ChessVariantsTraining.MemoryRepositories
 {
     public class TimedTrainingSessionRepository : ITimedTrainingSessionRepository
     {

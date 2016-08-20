@@ -1,12 +1,12 @@
-﻿using AtomicChessPuzzles.Configuration;
-using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.Configuration;
+using ChessVariantsTraining.Models;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AtomicChessPuzzles.DbRepositories
+namespace ChessVariantsTraining.DbRepositories
 {
     public class RatingRepository : IRatingRepository
     {

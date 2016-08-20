@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using AtomicChessPuzzles.DbRepositories;
+using ChessVariantsTraining.DbRepositories;
 
-namespace AtomicChessPuzzles.ViewModels
+namespace ChessVariantsTraining.ViewModels
 {
     public class CommentSorter
     {

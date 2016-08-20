@@ -1,8 +1,8 @@
-﻿using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.Models;
 using System;
 using System.Collections.Generic;
 
-namespace AtomicChessPuzzles.DbRepositories
+namespace ChessVariantsTraining.DbRepositories
 {
     public interface IRatingRepository
     {

@@ -1,9 +1,9 @@
-﻿using AtomicChessPuzzles.Configuration;
-using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.Configuration;
+using ChessVariantsTraining.Models;
 using MongoDB.Driver;
 using System;
 
-namespace AtomicChessPuzzles.DbRepositories
+namespace ChessVariantsTraining.DbRepositories
 {
     public class UserRepository : IUserRepository
     {

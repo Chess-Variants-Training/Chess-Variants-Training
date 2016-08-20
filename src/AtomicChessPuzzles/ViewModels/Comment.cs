@@ -1,4 +1,4 @@
-﻿namespace AtomicChessPuzzles.ViewModels
+﻿namespace ChessVariantsTraining.ViewModels
 {
     public class Comment
     {

@@ -2,7 +2,7 @@ using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
 using System;
 
-namespace AtomicChessPuzzles.Models
+namespace ChessVariantsTraining.Models
 {
     public class TimedTrainingSession
     {

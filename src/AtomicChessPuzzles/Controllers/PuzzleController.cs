@@ -1,8 +1,8 @@
-﻿using AtomicChessPuzzles.Attributes;
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.MemoryRepositories;
-using AtomicChessPuzzles.Models;
-using AtomicChessPuzzles.Services;
+﻿using ChessVariantsTraining.Attributes;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.MemoryRepositories;
+using ChessVariantsTraining.Models;
+using ChessVariantsTraining.Services;
 using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNet.Http;
@@ -12,7 +12,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     public class PuzzleController : RestrictedController
     {

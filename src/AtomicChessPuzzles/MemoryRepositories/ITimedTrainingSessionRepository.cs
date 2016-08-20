@@ -1,6 +1,6 @@
-using AtomicChessPuzzles.Models;
+using ChessVariantsTraining.Models;
 
-namespace AtomicChessPuzzles.MemoryRepositories
+namespace ChessVariantsTraining.MemoryRepositories
 {
     public interface ITimedTrainingSessionRepository
     {

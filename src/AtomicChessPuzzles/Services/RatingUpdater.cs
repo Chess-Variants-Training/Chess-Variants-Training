@@ -1,8 +1,8 @@
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.Models;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Models;
 using System;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public class RatingUpdater : IRatingUpdater
     {

@@ -1,4 +1,4 @@
-﻿namespace AtomicChessPuzzles.Configuration
+﻿namespace ChessVariantsTraining.Configuration
 {
     public class MongoSettings
     {

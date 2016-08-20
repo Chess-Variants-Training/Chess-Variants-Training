@@ -1,7 +1,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public class PasswordHasher : IPasswordHasher
     {

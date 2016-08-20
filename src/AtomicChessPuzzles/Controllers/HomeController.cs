@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNet.Mvc;
 
-namespace AtomicChessPuzzles
+namespace ChessVariantsTraining
 {
     public class HomeController : Controller
     {

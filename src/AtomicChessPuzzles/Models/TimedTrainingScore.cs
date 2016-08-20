@@ -2,7 +2,7 @@ using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 
-namespace AtomicChessPuzzles.Models
+namespace ChessVariantsTraining.Models
 {
     public class TimedTrainingScore
     {

@@ -1,11 +1,11 @@
-using AtomicChessPuzzles.Attributes;
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.Models;
-using AtomicChessPuzzles.Services;
+using ChessVariantsTraining.Attributes;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Models;
+using ChessVariantsTraining.Services;
 using Microsoft.AspNet.Mvc;
 using System.Collections.Generic;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     [Restricted(true, UserRole.PUZZLE_REVIEWER)]
     public class ReviewController : RestrictedController

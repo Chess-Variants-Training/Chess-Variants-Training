@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace AtomicChessPuzzles.Configuration
+namespace ChessVariantsTraining.Configuration
 {
     public class Settings : ISettings
     {

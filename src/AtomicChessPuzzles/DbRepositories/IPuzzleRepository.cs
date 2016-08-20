@@ -1,8 +1,8 @@
-﻿using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.Models;
 using MongoDB.Driver;
 using System.Collections.Generic;
 
-namespace AtomicChessPuzzles.DbRepositories
+namespace ChessVariantsTraining.DbRepositories
 {
     public interface IPuzzleRepository
     {

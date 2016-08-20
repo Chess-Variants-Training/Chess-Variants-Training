@@ -1,6 +1,6 @@
-﻿using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.Models;
 
-namespace AtomicChessPuzzles.DbRepositories
+namespace ChessVariantsTraining.DbRepositories
 {
     public interface IAttemptRepository
     {

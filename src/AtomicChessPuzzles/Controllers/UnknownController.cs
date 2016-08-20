@@ -1,7 +1,7 @@
-using AtomicChessPuzzles.HttpErrors;
+using ChessVariantsTraining.HttpErrors;
 using Microsoft.AspNet.Mvc;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     public class UnknownController : ErrorCapableController
     {

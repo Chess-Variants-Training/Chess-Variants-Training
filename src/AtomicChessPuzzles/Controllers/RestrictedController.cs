@@ -1,14 +1,14 @@
-using AtomicChessPuzzles.Attributes;
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.HttpErrors;
-using AtomicChessPuzzles.Models;
+using ChessVariantsTraining.Attributes;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.HttpErrors;
+using ChessVariantsTraining.Models;
 using Microsoft.AspNet.Mvc.Controllers;
 using Microsoft.AspNet.Mvc.Filters;
 using Microsoft.AspNet.Http;
 using System.Collections.Generic;
-using AtomicChessPuzzles.Services;
+using ChessVariantsTraining.Services;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     public class RestrictedController : ErrorCapableController
     {

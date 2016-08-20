@@ -1,7 +1,7 @@
-using AtomicChessPuzzles.Attributes;
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.Models;
-using AtomicChessPuzzles.Services;
+using ChessVariantsTraining.Attributes;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Models;
+using ChessVariantsTraining.Services;
 using Microsoft.AspNet.Http;
 using Microsoft.AspNet.Mvc;
 using System;
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     public class CommentController : RestrictedController
     {

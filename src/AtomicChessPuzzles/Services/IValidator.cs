@@ -1,4 +1,4 @@
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public interface IValidator
     {

@@ -1,13 +1,13 @@
-using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.MemoryRepositories;
-using AtomicChessPuzzles.Models;
-using AtomicChessPuzzles.Services;
+using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.MemoryRepositories;
+using ChessVariantsTraining.Models;
+using ChessVariantsTraining.Services;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System;
 using System.Collections.Generic;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     public class TimedTrainingController : Controller
     {

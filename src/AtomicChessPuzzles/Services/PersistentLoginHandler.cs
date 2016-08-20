@@ -1,11 +1,11 @@
-﻿using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Models;
 using Microsoft.AspNet.Http;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public class PersistentLoginHandler : IPersistentLoginHandler
     {

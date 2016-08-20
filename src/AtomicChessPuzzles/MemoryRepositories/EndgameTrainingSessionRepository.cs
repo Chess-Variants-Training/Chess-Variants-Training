@@ -1,8 +1,8 @@
-﻿using AtomicChessPuzzles.Models;
+﻿using ChessVariantsTraining.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace AtomicChessPuzzles.MemoryRepositories
+namespace ChessVariantsTraining.MemoryRepositories
 {
     public class EndgameTrainingSessionRepository : IEndgameTrainingSessionRepository
     {

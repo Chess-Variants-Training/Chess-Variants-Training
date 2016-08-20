@@ -1,6 +1,6 @@
 using System;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public interface IPasswordHasher
     {

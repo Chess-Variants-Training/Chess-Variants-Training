@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AtomicChessPuzzles.Models;
+using ChessVariantsTraining.Models;
 
-namespace AtomicChessPuzzles.MemoryRepositories
+namespace ChessVariantsTraining.MemoryRepositories
 {
     public class PuzzlesBeingEditedRepository : IPuzzlesBeingEditedRepository
     {

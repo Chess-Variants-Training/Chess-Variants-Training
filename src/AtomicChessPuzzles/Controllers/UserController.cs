@@ -1,14 +1,14 @@
-﻿using AtomicChessPuzzles.DbRepositories;
-using AtomicChessPuzzles.HttpErrors;
-using AtomicChessPuzzles.Services;
+﻿using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.HttpErrors;
+using ChessVariantsTraining.Services;
 using Microsoft.AspNet.Mvc;
 using Microsoft.AspNet.Http;
 using System;
 using System.Collections.Generic;
-using AtomicChessPuzzles.Models;
+using ChessVariantsTraining.Models;
 using System.Linq;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     public class UserController : ErrorCapableController
     {

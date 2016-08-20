@@ -2,7 +2,7 @@ using ChessDotNet;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public class MoveCollectionTransformer : IMoveCollectionTransformer
     {

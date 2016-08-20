@@ -1,4 +1,4 @@
-namespace AtomicChessPuzzles.HttpErrors
+namespace ChessVariantsTraining.HttpErrors
 {
     public class Forbidden : HttpError
     {

@@ -1,4 +1,4 @@
-﻿namespace AtomicChessPuzzles.Models
+﻿namespace ChessVariantsTraining.Models
 {
     public enum VoteType
     {

@@ -2,7 +2,7 @@
 using System;
 using System.Security.Cryptography;
 
-namespace AtomicChessPuzzles.Models
+namespace ChessVariantsTraining.Models
 {
     public class SavedLogin
     {

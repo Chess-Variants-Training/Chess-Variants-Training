@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNet.Mvc;
-using AtomicChessPuzzles.DbRepositories;
+using ChessVariantsTraining.DbRepositories;
 using Microsoft.AspNet.Http;
-using AtomicChessPuzzles.Attributes;
-using AtomicChessPuzzles.Models;
-using AtomicChessPuzzles.Services;
+using ChessVariantsTraining.Attributes;
+using ChessVariantsTraining.Models;
+using ChessVariantsTraining.Services;
 
-namespace AtomicChessPuzzles.Controllers
+namespace ChessVariantsTraining.Controllers
 {
     public class ReportController : RestrictedController
     {

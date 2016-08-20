@@ -3,7 +3,7 @@ using ChessDotNet.Pieces;
 using System;
 using System.Collections.Generic;
 
-namespace AtomicChessPuzzles.Services
+namespace ChessVariantsTraining.Services
 {
     public static class BoardExtensions
     {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AtomicChessPuzzles.ViewModels
+namespace ChessVariantsTraining.ViewModels
 {
     public class User
     {

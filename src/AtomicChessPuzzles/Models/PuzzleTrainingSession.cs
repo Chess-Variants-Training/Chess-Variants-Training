@@ -3,7 +3,7 @@ using ChessDotNet.Variants.Atomic;
 using System;
 using System.Collections.Generic;
 
-namespace AtomicChessPuzzles.Models
+namespace ChessVariantsTraining.Models
 {
     public class PuzzleTrainingSession
     {

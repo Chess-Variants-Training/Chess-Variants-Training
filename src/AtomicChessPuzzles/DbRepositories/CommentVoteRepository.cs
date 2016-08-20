@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using AtomicChessPuzzles.Configuration;
-using AtomicChessPuzzles.Models;
+using ChessVariantsTraining.Configuration;
+using ChessVariantsTraining.Models;
 using MongoDB.Driver;
 using MongoDB.Bson;
 
-namespace AtomicChessPuzzles.DbRepositories
+namespace ChessVariantsTraining.DbRepositories
 {
     public class CommentVoteRepository : ICommentVoteRepository
     {
