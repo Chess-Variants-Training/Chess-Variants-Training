@@ -2,17 +2,17 @@
 @{
     Layout = null;
 }
-@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<AtomicChessPuzzles.ViewModels.Comment>, Dictionary<int, AtomicChessPuzzles.Models.VoteType>, bool, bool>
+@model Tuple<System.Collections.ObjectModel.ReadOnlyCollection<ChessVariantsTraining.ViewModels.Comment>, Dictionary<int, ChessVariantsTraining.Models.VoteType>, bool, bool>
 @if (Model == null || Model.Item1 == null || Model.Item1.Count == 0)
 {
     @:No comments found.
 }
 else
 {
-    foreach (AtomicChessPuzzles.ViewModels.Comment comment in Model.Item1)
+    foreach (ChessVariantsTraining.ViewModels.Comment comment in Model.Item1)
     {
-        string upvoteButtonClass = Model.Item2.ContainsKey(comment.ID) && Model.Item2[comment.ID] == AtomicChessPuzzles.Models.VoteType.Upvote ? "upvote-highlighted" : null;
-        string downvoteButtonClass = Model.Item2.ContainsKey(comment.ID) && Model.Item2[comment.ID] == AtomicChessPuzzles.Models.VoteType.Downvote ? "downvote-highlighted" : null;
+        string upvoteButtonClass = Model.Item2.ContainsKey(comment.ID) && Model.Item2[comment.ID] == ChessVariantsTraining.Models.VoteType.Upvote ? "upvote-highlighted" : null;
+        string downvoteButtonClass = Model.Item2.ContainsKey(comment.ID) && Model.Item2[comment.ID] == ChessVariantsTraining.Models.VoteType.Downvote ? "downvote-highlighted" : null;
         <div id="@comment.ID" class="comment" data-indentlevel="@comment.IndentLevel">
             <div class="vote-arrows">
                 @{

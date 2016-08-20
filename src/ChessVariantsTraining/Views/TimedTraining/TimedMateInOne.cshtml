@@ -1,5 +1,5 @@
 @section Title{Timed practice: mate in one}
-@model List<AtomicChessPuzzles.Models.TimedTrainingScore>
+@model List<ChessVariantsTraining.Models.TimedTrainingScore>
 @section AddToHead {
     <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
@@ -24,7 +24,7 @@
                     <th>Date</th>
                     <th>Score (latest 15)</th>
                 </tr>
-                @foreach (AtomicChessPuzzles.Models.TimedTrainingScore score in Model)
+                @foreach (ChessVariantsTraining.Models.TimedTrainingScore score in Model)
                 {
                     <tr>
                         <td>@score.DateRecordedUtc.ToString("yyyy-MM-dd HH:mm")</td>

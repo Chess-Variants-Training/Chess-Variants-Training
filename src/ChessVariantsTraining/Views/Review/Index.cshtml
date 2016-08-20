@@ -1,4 +1,4 @@
-@model System.Collections.Generic.List<AtomicChessPuzzles.Models.Puzzle>
+@model System.Collections.Generic.List<ChessVariantsTraining.Models.Puzzle>
 @section Title{Review submitted puzzles}
 @Model.Count puzzles in review.
 <table>
@@ -8,7 +8,7 @@
         <th>Review</th>
     </thead>
     <tbody>
-    @foreach (AtomicChessPuzzles.Models.Puzzle p in Model)
+    @foreach (ChessVariantsTraining.Models.Puzzle p in Model)
     {
         <tr>
             <td>@p.ID</td>

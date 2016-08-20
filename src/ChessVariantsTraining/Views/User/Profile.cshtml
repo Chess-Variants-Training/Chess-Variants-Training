@@ -1,4 +1,4 @@
-﻿@model AtomicChessPuzzles.ViewModels.User
+﻿@model ChessVariantsTraining.ViewModels.User
 @section Title {Profile page of @Model.Username}
 @section AddToHead {
     <link rel="stylesheet" href="@Url.Content("~/styles/profile.css")">
@@ -16,7 +16,7 @@ About:
     Percentage correct: @Model.PercentageCorrect %
 </p>
 <p>
-    Role: @AtomicChessPuzzles.Models.UserRole.UserRolesToString(Model.Roles)
+    Role: @ChessVariantsTraining.Models.UserRole.UserRolesToString(Model.Roles)
 </p>
 <p>
     Rating: @Model.Rating
