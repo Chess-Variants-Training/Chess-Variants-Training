@@ -1,7 +1,7 @@
 ﻿{
   "mongo": {
     "mongoConnectionString": "mongodb://localhost:27017",
-    "database": "atomicchesspuzzles-dev",
+    "database": "chessvariantstraining-dev",
     "userCollectionName": "users",
     "puzzleCollectionName": "puzzles",
     "commentCollectionName": "comments",
