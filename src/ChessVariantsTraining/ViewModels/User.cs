@@ -40,7 +40,7 @@ namespace ChessVariantsTraining.ViewModels
             PuzzlesCorrect = user.PuzzlesCorrect;
             PuzzlesWrong = user.PuzzlesWrong;
             Roles = user.Roles;
-            Rating = (int)user.Rating.Value;
+            Rating = (int)user.Ratings["Atomic"].Value;
         }
     }
 }

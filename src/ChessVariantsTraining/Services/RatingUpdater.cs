@@ -19,7 +19,7 @@ namespace ChessVariantsTraining.Services
             attemptRepository = _attemptRepository;
         }
 
-        public void AdjustRating(int userId, int puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded)
+        public void AdjustRating(int userId, int puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded, string variant)
         {
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
             User user = userRepository.FindById(userId);
@@ -29,15 +29,15 @@ namespace ChessVariantsTraining.Services
                 return;
             }
             Glicko2.RatingCalculator calculator = new Glicko2.RatingCalculator();
-            double oldUserRating = user.Rating.Value;
+            double oldUserRating = user.Ratings[variant].Value;
             double oldPuzzleRating = puzzle.Rating.Value;
-            Glicko2.Rating userRating = new Glicko2.Rating(calculator, oldUserRating, user.Rating.RatingDeviation, user.Rating.Volatility);
+            Glicko2.Rating userRating = new Glicko2.Rating(calculator, oldUserRating, user.Ratings[variant].RatingDeviation, user.Ratings[variant].Volatility);
             Glicko2.Rating puzzleRating = new Glicko2.Rating(calculator, oldPuzzleRating, puzzle.Rating.RatingDeviation, puzzle.Rating.Volatility);
             Glicko2.RatingPeriodResults results = new Glicko2.RatingPeriodResults();
             results.AddResult(correct ? userRating : puzzleRating, correct ? puzzleRating : userRating);
             calculator.UpdateRatings(results);
             double newUserRating = userRating.GetRating();
-            user.Rating = new Rating(newUserRating, userRating.GetRatingDeviation(), userRating.GetVolatility());
+            user.Ratings[variant] = new Rating(newUserRating, userRating.GetRatingDeviation(), userRating.GetVolatility());
             user.SolvedPuzzles.Add(puzzle.ID);
             if (correct)
             {
@@ -55,7 +55,7 @@ namespace ChessVariantsTraining.Services
             Attempt attempt = new Attempt(userId, puzzleId, attemptStarted, attemptEnded, newUserRating - oldUserRating, newPuzzleRating - oldPuzzleRating, correct);
             attemptRepository.Add(attempt);
 
-            RatingWithMetadata rwm = new RatingWithMetadata(user.Rating, attemptEnded, user.ID);
+            RatingWithMetadata rwm = new RatingWithMetadata(user.Ratings[variant], attemptEnded, user.ID, variant);
             ratingRepository.Add(rwm);
         }
     }

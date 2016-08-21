@@ -62,7 +62,7 @@ namespace ChessVariantsTraining.Controllers
             string salt = hashAndSalt.Item2;
             int userId = counterRepository.GetAndIncrease(Counter.USER_ID);
             Models.User user = new Models.User(userId, username, email, hash, salt, "", 0, 0,
-                new List<string>() { Models.UserRole.NONE }, new Models.Rating(1500, 350, 0.06), new List<int>());
+                new List<string>() { Models.UserRole.NONE }, new Dictionary<string, Models.Rating>() { { "Atomic", new Models.Rating(1500, 350, 0.06) } }, new List<int>());
             bool added = userRepository.Add(user);
             return RedirectToAction("Profile", new { name = username });
         }

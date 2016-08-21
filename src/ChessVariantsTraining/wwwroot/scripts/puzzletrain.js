@@ -1,5 +1,5 @@
 ﻿function startWithRandomPuzzle() {
-    jsonXhr("/Puzzle/Train/GetOneRandomly" + (window.trainingSessionId ? "?trainingSessionId=" + window.trainingSessionId : ""), "GET", null, function (req, jsonResponse) {
+    jsonXhr("/Puzzle/Train/GetOneRandomly/" + window.variant + (window.trainingSessionId ? "?trainingSessionId=" + window.trainingSessionId : ""), "GET", null, function (req, jsonResponse) {
         setup(jsonResponse.id);
     }, function (req, err) {
         alert(err);
@@ -32,6 +32,7 @@ function setup(puzzleId) {
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse.author;
+        document.getElementById("variantName").textContent = jsonResponse.variant;
         document.getElementById("controls").classList.add("nodisplay");
         window.trainingSessionId = jsonResponse.trainingSessionId;
     }, function (req, err) {

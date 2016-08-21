@@ -20,6 +20,7 @@
     {
         <script type="text/javascript" src="/scripts/puzzlereview.js"></script>
     }
+    <script type="text/javascript">window.variant = "@ViewBag.Variant";</script>
     <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/puzzletrain.js")"></script>
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
@@ -42,6 +43,7 @@
         <div id="next-to-ground-inner">
             <div id="result"></div>
             <p>Created by <span id="author"></span></p>
+            <p>Variant: <span id="variantName"></span></p>
             <p id="puzzleRating"></p>
             <p id="explanation" class="nodisplay">Explanation: <a href="#" id="toggleExplanationLink">[show]</a> <span id="explanationInner" class="nodisplay"></span></p>
             <p id="puzzleLinkContainer" class="nodisplay">

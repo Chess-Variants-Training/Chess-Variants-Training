@@ -48,11 +48,15 @@ namespace ChessVariantsTraining.DbRepositories
             return found.FirstOrDefault();
         }
 
-        public Puzzle GetOneRandomly(List<int> excludedIds, double nearRating = 1500)
+        public Puzzle GetOneRandomly(List<int> excludedIds, string variant, double nearRating = 1500)
         {
             FilterDefinitionBuilder<Puzzle> filterBuilder = Builders<Puzzle>.Filter;
             FilterDefinition<Puzzle> filter = filterBuilder.Nin("_id", excludedIds) & filterBuilder.Eq("inReview", false)
                                               & filterBuilder.Eq("approved", true);
+            if (variant != "Mixed")
+            {
+                filter &= filterBuilder.Eq("variant", variant);
+            }
             FilterDefinition<Puzzle> lteFilter = filter;
             FilterDefinition<Puzzle> gtFilter = filter;
             bool higherRated = RandomBoolean();

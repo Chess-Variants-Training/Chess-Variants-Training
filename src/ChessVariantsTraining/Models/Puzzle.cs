@@ -77,5 +77,12 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        [BsonElement("variant")]
+        public string Variant
+        {
+            get;
+            set;
+        }
     }
 }

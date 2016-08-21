@@ -17,11 +17,15 @@ namespace ChessVariantsTraining.Models
         [BsonElement("owner")]
         public int Owner { get; set; }
 
-        public RatingWithMetadata(Rating rating, DateTime timestampUtc, int owner)
+        [BsonElement("variant")]
+        public string Variant { get; set; }
+
+        public RatingWithMetadata(Rating rating, DateTime timestampUtc, int owner, string variant)
         {
             Rating = rating;
             TimestampUtc = timestampUtc;
             Owner = owner;
+            Variant = variant;
         }
     }
 }

@@ -33,14 +33,14 @@ namespace ChessVariantsTraining.Models
         [BsonElement("roles")]
         public List<string> Roles { get; set; }
 
-        [BsonElement("rating")]
-        public Rating Rating { get; set; }
+        [BsonElement("ratings")]
+        public Dictionary<string, Rating> Ratings { get; set; }
 
         [BsonElement("solvedPuzzles")]
         public List<int> SolvedPuzzles { get; set; }
 
         public User(int id, string username, string email, string passwordHash, string salt, string about,
-            int puzzlesCorrect, int puzzlesWrong, List<string> roles, Rating rating, List<int> solvedPuzzles)
+            int puzzlesCorrect, int puzzlesWrong, List<string> roles, Dictionary<string, Rating> ratings, List<int> solvedPuzzles)
         {
             ID = id;
             Username = username;
@@ -51,7 +51,7 @@ namespace ChessVariantsTraining.Models
             PuzzlesCorrect = puzzlesCorrect;
             PuzzlesWrong = puzzlesWrong;
             Roles = roles;
-            Rating = rating;
+            Ratings = ratings;
             SolvedPuzzles = solvedPuzzles;
         }
     }

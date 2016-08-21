@@ -36,10 +36,11 @@ namespace ChessVariantsTraining.Controllers
             counterRepository = _counterRepository;
         }
 
-        [Route("/Puzzle")]
-        public IActionResult Train()
+        [Route("/Puzzle/{variant:regex(Atomic)}")]
+        public IActionResult Train(string variant)
         {
             ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
+            ViewBag.Variant = variant;
             return View("Train");
         }
 
@@ -166,12 +167,13 @@ namespace ChessVariantsTraining.Controllers
                 return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("The given puzzle could not be found."));
             }
             ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
+            ViewBag.Variant = p.Variant;
             return View("Train", p);
         }
 
         [HttpGet]
-        [Route("/Puzzle/Train/GetOneRandomly")]
-        public IActionResult GetOneRandomly(string trainingSessionId = null)
+        [Route("/Puzzle/Train/GetOneRandomly/{variant:regex(Atomic)}")]
+        public IActionResult GetOneRandomly(string variant, string trainingSessionId = null)
         {
             List<int> toBeExcluded;
             double nearRating = 1500;
@@ -180,7 +182,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 User u = userRepository.FindById(userId.Value);
                 toBeExcluded = u.SolvedPuzzles;
-                nearRating = u.Rating.Value;
+                nearRating = u.Ratings[variant].Value;
             }
             else if (trainingSessionId != null)
             {
@@ -190,7 +192,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 toBeExcluded = new List<int>();
             }
-            Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded);
+            Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded, variant);
             if (puzzle != null)
             {
                 return Json(new { success = true, id = puzzle.ID });
@@ -243,7 +245,8 @@ namespace ChessVariantsTraining.Controllers
                 author = session.Current.Author,
                 fen = session.Current.InitialFen,
                 dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.Current.Game.GetValidMoves(session.Current.Game.WhoseTurn)),
-                whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant()
+                whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant(),
+                variant = puzzle.Variant
             });
         }
 
@@ -259,7 +262,7 @@ namespace ChessVariantsTraining.Controllers
                 int? loggedInUser = loginHandler.LoggedInUserId(HttpContext);
                 if (loggedInUser.HasValue)
                 {
-                    ratingUpdater.AdjustRating(loggedInUser.Value, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value);
+                    ratingUpdater.AdjustRating(loggedInUser.Value, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value, session.Current.Variant);
                 }
                 jsonResp.rating = (int)session.Current.Rating.Value;
             }
