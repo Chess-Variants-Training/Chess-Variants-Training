@@ -1,0 +1,23 @@
+﻿@section Title {Report list}
+@using ChessVariantsTraining.Models
+@model List<Report>
+<h1>Report list</h1>
+<table width="100%">
+    <thead>
+        <tr>
+            <th align="left">Reporter</th>
+            <th align="left">Reported</th>
+            <th align="left">Reason</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Report report in Model)
+        {
+            <tr>
+                <td>@report.Reporter</td>
+                <td>@report.Reported</td>
+                <td>@report.Reason: @report.ReasonExplanation</td>
+            </tr>
+        }
+    </tbody>
+</table>

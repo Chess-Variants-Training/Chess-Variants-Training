@@ -1,0 +1,44 @@
+﻿@model ChessVariantsTraining.ViewModels.User
+@section Title {Profile page of @Model.Username}
+@section AddToHead {
+    <link rel="stylesheet" href="@Url.Content("~/styles/profile.css")">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/profile-page.js")"></script>
+}
+
+<h1>@Model.Username</h1>
+About:
+<p>
+    @Model.About
+</p>
+<p>
+    Puzzles made: @Model.PuzzlesMade<br />
+    Percentage correct: @Model.PercentageCorrect %
+</p>
+<p>
+    Role: @ChessVariantsTraining.Models.UserRole.UserRolesToString(Model.Roles)
+</p>
+<p>
+    Rating: @Model.Rating
+</p>
+<div id="ratingChartWithOptions">
+    Range:
+    <select id="ratingChartDateRangeSelector" autocomplete="off">
+        <option value="all" selected>All</option>
+        <option value="1d">Today (UTC)</option>
+        <option value="7d">Last 7 days</option>
+        <option value="30d">Last 30 days</option>
+        <option value="1y">1 year</option>
+        <option value="ytd">Year-to-date</option>
+    </select>
+    <br>
+    Show:
+    <select id="ratingChartShownSelector" autocomplete="off">
+        <option value="each" selected>Rating after each puzzle</option>
+        <option value="endDay">Rating at the end of the day</option>
+        <option value="bestDay">Best rating of the day</option>
+    </select>
+    <div>
+        <canvas id="ratingChart"></canvas>
+    </div>
+</div>

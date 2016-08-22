@@ -1,0 +1,42 @@
+@section Title{Timed practice: mate in one}
+@model List<ChessVariantsTraining.Models.TimedTrainingScore>
+@section AddToHead {
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/mate-in-one-train.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/styles/mate-in-one-train.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
+}
+
+<span href="#" id="start-training" class="start-link above-ground">Start!</span>
+<div id="ground-container">
+    <div id="chessground" class="brown"></div>
+    <div id="next-to-ground">
+        @if (Model == null)
+        {
+            @:Want to keep your scores? @Html.ActionLink("Log in", "Login", "User") or @Html.ActionLink("sign up", "Register", "User")!
+        }
+        else if (Model.Count > 0)
+        {
+            <table id="latest-scores">
+                <tr>
+                    <th>Date</th>
+                    <th>Score (latest 15)</th>
+                </tr>
+                @foreach (ChessVariantsTraining.Models.TimedTrainingScore score in Model)
+                {
+                    <tr>
+                        <td>@score.DateRecordedUtc.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@score.Score</td>
+                    </tr>
+                }
+            </table>
+        }
+        else
+        {
+            @:Your latest scores will appear here!
+        }
+    </div>
+</div>
+<span id="score">Score: 0</span>

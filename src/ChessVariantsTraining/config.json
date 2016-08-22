@@ -1,0 +1,18 @@
+﻿{
+  "mongo": {
+    "mongoConnectionString": "mongodb://localhost:27017",
+    "database": "chessvariantstraining-dev",
+    "userCollectionName": "users",
+    "puzzleCollectionName": "puzzles",
+    "commentCollectionName": "comments",
+    "commentVoteCollectionName": "commentvotes",
+    "reportCollectionName": "reports",
+    "positionCollectionName": "positions",
+    "timedTrainingScoreCollectionName": "timedtrainingscores",
+    "ratingCollectionName": "ratings",
+    "attemptCollectionName": "attempts",
+    "counterCollectionName": "counters",
+    "savedLoginCollectionName": "savedlogins"
+  },
+  "timedTrainingSessionAutoAcknowledgerDelay": 10
+}

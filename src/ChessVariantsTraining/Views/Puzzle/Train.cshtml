@@ -1,0 +1,91 @@
+﻿@using Microsoft.AspNet.Http;
+@model ChessVariantsTraining.Models.Puzzle
+@section Title {
+    @if (Model != null && Model.InReview)
+    {
+        @:Puzzle review
+    }
+    else
+    {
+        @:Puzzle training
+    }
+}
+@section AddToHead {
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
+    @if (Model != null)
+    {
+        <script type="text/javascript">window.selectedPuzzle = "@Model.ID";</script>
+    }
+    @if (Model != null && Model.InReview)
+    {
+        <script type="text/javascript" src="/scripts/puzzlereview.js"></script>
+    }
+    <script type="text/javascript">window.variant = "@ViewBag.Variant";</script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/puzzletrain.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
+}
+@section Description{Improve your tactics by solving chess variant puzzles!}
+@{ bool loggedIn = ViewBag.LoggedIn; }
+<div id="ground-container">
+    <div>
+        <div id="chessground" class="brown"></div>
+        <div id="controls" class="nodisplay">
+            <div id="controls-begin">|&lt;&lt;</div>
+            <div id="controls-prev">|&lt;</div>
+            <div id="controls-next">&gt;|</div>
+            <div id="controls-end">&gt;&gt;|</div>
+        </div>
+    </div>
+    <div id="next-to-ground">
+        <div id="next-to-ground-inner">
+            <div id="result"></div>
+            <p>Created by <span id="author"></span></p>
+            <p>Variant: <span id="variantName"></span></p>
+            <p id="puzzleRating"></p>
+            <p id="explanation" class="nodisplay">Explanation: <a href="#" id="toggleExplanationLink">[show]</a> <span id="explanationInner" class="nodisplay"></span></p>
+            <p id="puzzleLinkContainer" class="nodisplay">
+                @if (Model == null)
+                {
+                    <a href="#" id="nextPuzzleLink">Next puzzle</a>
+                }
+                else
+                {
+                    @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
+                }
+                | <a href="#" id="retryPuzzleLink">Retry puzzle</a>
+            </p>
+            @if (loggedIn)
+            {
+                <p id="reportLinkContainer" class="nodisplay">
+                    <a href="#" id="reportPuzzleLink">Report puzzle</a>
+                </p>
+            }
+        </div>
+        @if (loggedIn)
+        {
+            <div id="reportDialogContainer">
+            </div>
+        }
+    </div>
+</div>
+@if (Model != null && Model.InReview)
+{
+    <p data-object="@Model.ID">
+        <a href="#" id="approve-puzzle">Approve</a> | <a href="#" id="reject-puzzle">Reject</a>
+    </p>
+}
+@if (loggedIn)
+{
+    @:Leave a comment:<br>
+    <textarea name="commentBody" id="commentBody"></textarea>
+    <a href="#" id="submitCommentLink">Submit</a>
+}
+else
+{
+    @:You need to be logged in to submit a comment.
+}
+<p>Comments:</p>
+<div id="commentContainer"></div>
