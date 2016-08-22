@@ -56,7 +56,7 @@ namespace ChessVariantsTraining.Controllers
             TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
             session.SetPosition(randomPosition);
             return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
-                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)) });
+                              dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)), lastMove = session.CurrentLastMoveToDisplay });
         }
 
         [HttpPost]
@@ -89,7 +89,7 @@ namespace ChessVariantsTraining.Controllers
             }
             return Json(new { success = true, fen = session.CurrentFen, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
                               dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)),
-                              currentScore = session.Score.Score });
+                              currentScore = session.Score.Score, lastMove = session.CurrentLastMoveToDisplay });
         }
 
         [HttpPost]
