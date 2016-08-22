@@ -45,11 +45,16 @@ namespace ChessVariantsTraining.DbRepositories
             }
             else
             {
-                var groups = found.GroupBy(x => x.TimestampUtc.Date);
+                var groups = found.GroupBy(x => new { timestamp = x.TimestampUtc.Date, variant = x.Variant });
                 Func<RatingWithMetadata, RatingWithMetadata, RatingWithMetadata> bestOfADayAggregator = (agg, next) => next.Rating.Value > agg.Rating.Value ? next : agg;
                 Func<RatingWithMetadata, RatingWithMetadata, RatingWithMetadata> endOfTheDayAggregator = (agg, next) => next.TimestampUtc > agg.TimestampUtc? next : agg;
                 Func<RatingWithMetadata, RatingWithMetadata, RatingWithMetadata> aggregator = show == "bestDay" ? bestOfADayAggregator : endOfTheDayAggregator;
-                return groups.Select(x => x.Aggregate(aggregator)).ToList();
+                List<RatingWithMetadata> result = groups.Select(x => x.Aggregate(aggregator)).ToList();
+                for (int i = 0; i < result.Count; i++)
+                {
+                    result[i].TimestampUtc = result[i].TimestampUtc.Date;
+                }
+                return result;
             }
         }
     }

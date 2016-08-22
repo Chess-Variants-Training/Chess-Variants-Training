@@ -144,6 +144,11 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/RatingChartData/{user}")]
         public IActionResult RatingChartData(string user, string range, string show)
         {
+            if (!new string[] { "each", "bestDay", "endDay" }.Contains(show))
+            {
+                return Json(new { success = false, error = "Invalid 'show' parameter." });
+            }
+
             List<RatingWithMetadata> ratings;
             DateTime utcNow = DateTime.UtcNow;
 
@@ -154,24 +159,6 @@ namespace ChessVariantsTraining.Controllers
             }
 
             int userId = u.ID;
-
-            string label;
-            if (show == "each")
-            {
-                label = "Rating";
-            }
-            else if (show == "bestDay")
-            {
-                label = "Best rating of the day";
-            }
-            else if (show == "endDay")
-            {
-                label = "Rating at end of day";
-            }
-            else
-            {
-                return Json(new { success = false, error = "Invalid 'show' parameter." });
-            }
 
             if (range == "all")
             {
@@ -201,21 +188,8 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "Invalid date range." });
             }
-            List<string> labels = new List<string>();
-            List<int> values = new List<int>();
-            for (int i = 0; i < ratings.Count; i++)
-            {
-                if (show == "each")
-                {
-                    labels.Add(ratings[i].TimestampUtc.ToString());
-                }
-                else
-                {
-                    labels.Add(ratings[i].TimestampUtc.ToShortDateString());
-                }
-                values.Add((int)ratings[i].Rating.Value);
-            }
-            return Json(new { success = true, label = label, labels = labels, ratings = values });
+            RatingChartData chart = new RatingChartData(ratings, show == "each");
+            return Json(new { success = true, labels = chart.Labels, ratings = chart.Ratings });
         }
     }
 }
