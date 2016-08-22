@@ -40,7 +40,13 @@ namespace ChessVariantsTraining.Controllers
             gameConstructor = _gameConstructor;
         }
 
-        [Route("/Puzzle/{variant:supportedVariant}")]
+        [Route("/Puzzle")]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Route("/Puzzle/{variant:supportedVariantOrMixed}")]
         public IActionResult Train(string variant)
         {
             ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
@@ -181,9 +187,13 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpGet]
-        [Route("/Puzzle/Train/GetOneRandomly/{variant:supportedVariant}")]
+        [Route("/Puzzle/Train/GetOneRandomly/{variant:supportedVariantOrMixed}")]
         public IActionResult GetOneRandomly(string variant, string trainingSessionId = null)
         {
+            if (variant == "Mixed")
+            {
+                variant = supportedVariants[new Random().Next(0, supportedVariants.Length)];
+            }
             List<int> toBeExcluded;
             double nearRating = 1500;
             int? userId = loginHandler.LoggedInUserId(HttpContext);

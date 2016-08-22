@@ -1,2 +1,8 @@
 ﻿@section Title {Puzzles start page}
-This is the start page for puzzles.
+Choose one of the variants!
+<ul>
+    <li>@Html.ActionLink("Atomic", "Train", "Puzzle", new { variant = "Atomic" }, null)</li>
+    <li>@Html.ActionLink("King of the Hill", "Train", "Puzzle", new { variant = "KingOfTheHill" }, null)</li>
+    <li>@Html.ActionLink("Three-check", "Train", "Puzzle", new { variant = "ThreeCheck" }, null)</li>
+    <li>@Html.ActionLink("Mixed (puzzles of all variants)", "Train", "Puzzle", new { variant = "Mixed" }, null)</li>
+</ul>

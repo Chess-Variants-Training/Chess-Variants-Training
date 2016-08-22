@@ -33,7 +33,7 @@
     <div id="topbar">
         <ul id="topbar-menu">
             <li>@Html.ActionLink("Home", "Index", "Home", null, null)</li>
-            <li>@Html.ActionLink("Train", "Train", "Puzzle", new { variant = "Atomic" }, null)</li>
+            <li>@Html.ActionLink("Train", "Index", "Puzzle", null, null)</li>
             @{ User loggedIn = LoginHandler.LoggedInUser(Context); }
             @if (loggedIn != null)
             {
