@@ -22,11 +22,14 @@ namespace ChessVariantsTraining.Controllers
         IMoveCollectionTransformer moveCollectionTransformer;
         IPuzzleTrainingSessionRepository puzzleTrainingSessionRepository;
         ICounterRepository counterRepository;
+        IGameConstructor gameConstructor;
+
+        static readonly string[] supportedVariants = new string[] { "Atomic" };
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
             IUserRepository _userRepository, IRatingUpdater _ratingUpdater,
             IMoveCollectionTransformer _movecollectionTransformer, IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository,
-            ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler)
+            ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, IGameConstructor _gameConstructor) : base(_userRepository, _loginHandler)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
@@ -34,9 +37,10 @@ namespace ChessVariantsTraining.Controllers
             moveCollectionTransformer = _movecollectionTransformer;
             puzzleTrainingSessionRepository = _puzzleTrainingSessionRepository;
             counterRepository = _counterRepository;
+            gameConstructor = _gameConstructor;
         }
 
-        [Route("/Puzzle/{variant:regex(Atomic)}")]
+        [Route("/Puzzle/{variant:supportedVariant}")]
         public IActionResult Train(string variant)
         {
             ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
@@ -54,12 +58,17 @@ namespace ChessVariantsTraining.Controllers
         [HttpPost]
         [Route("/Puzzle/Editor/RegisterPuzzleForEditing")]
         [Restricted(true, UserRole.NONE)]
-        public IActionResult RegisterPuzzleForEditing(string fen)
+        public IActionResult RegisterPuzzleForEditing(string fen, string variant)
         {
-            AtomicChessGame game = new AtomicChessGame(fen);
+            if (!Array.Exists(supportedVariants, x => x == variant))
+            {
+                return Json(new { success = false, error = "Unsupported variant." });
+            }
+            ChessGame game = gameConstructor.Construct(variant, fen);
             Puzzle puzzle = new Puzzle();
             puzzle.Game = game;
             puzzle.InitialFen = fen;
+            puzzle.Variant = variant;
             puzzle.Solutions = new List<string>();
             do
             {
@@ -172,7 +181,7 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpGet]
-        [Route("/Puzzle/Train/GetOneRandomly/{variant:regex(Atomic)}")]
+        [Route("/Puzzle/Train/GetOneRandomly/{variant:supportedVariant}")]
         public IActionResult GetOneRandomly(string variant, string trainingSessionId = null)
         {
             List<int> toBeExcluded;
@@ -217,7 +226,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "Puzzle not found." });
             }
-            puzzle.Game = new AtomicChessGame(puzzle.InitialFen);
+            puzzle.Game = gameConstructor.Construct(puzzle.Variant, puzzle.InitialFen);
             PuzzleTrainingSession session;
             if (trainingSessionId == null)
             {
@@ -226,7 +235,7 @@ namespace ChessVariantsTraining.Controllers
                 {
                     g = Guid.NewGuid().ToString();
                 } while (puzzleTrainingSessionRepository.ContainsTrainingSessionId(g));
-                session = new PuzzleTrainingSession(g);
+                session = new PuzzleTrainingSession(g, gameConstructor);
                 puzzleTrainingSessionRepository.Add(session);
             }
             else

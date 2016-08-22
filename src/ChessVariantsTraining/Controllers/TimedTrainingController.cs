@@ -17,9 +17,10 @@ namespace ChessVariantsTraining.Controllers
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
         IPersistentLoginHandler loginHandler;
+        IGameConstructor gameConstructor;
 
         public TimedTrainingController(ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository,
-                                       ITimedTrainingScoreRepository _timedTrainingScoreRepository, IMoveCollectionTransformer _moveCollectionTransformer, IPersistentLoginHandler _loginHandler)
+                                       ITimedTrainingScoreRepository _timedTrainingScoreRepository, IMoveCollectionTransformer _moveCollectionTransformer, IPersistentLoginHandler _loginHandler, IGameConstructor _gameConstructor)
         {
             timedTrainingRepository = _timedTrainingRepository;
             positionRepository = _positionRepository;
@@ -27,6 +28,7 @@ namespace ChessVariantsTraining.Controllers
             timedTrainingScoreRepository = _timedTrainingScoreRepository;
             moveCollectionTransformer = _moveCollectionTransformer;
             loginHandler = _loginHandler;
+            gameConstructor = _gameConstructor;
         }
         [HttpGet]
         [Route("/Timed-Training/Mate-In-One")]
@@ -49,7 +51,7 @@ namespace ChessVariantsTraining.Controllers
             DateTime startTime = DateTime.UtcNow;
             DateTime endTime = startTime + new TimeSpan(0, 1, 0);
             TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
-                                        loginHandler.LoggedInUserId(HttpContext), "mateInOne");
+                                        loginHandler.LoggedInUserId(HttpContext), "mateInOne", "Atomic", gameConstructor);
             timedTrainingSessionRepository.Add(session);
             TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
             session.SetPosition(randomPosition);

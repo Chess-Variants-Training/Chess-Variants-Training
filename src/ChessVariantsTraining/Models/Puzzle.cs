@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ChessDotNet.Variants.Atomic;
+using ChessDotNet;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace ChessVariantsTraining.Models
@@ -7,7 +7,7 @@ namespace ChessVariantsTraining.Models
     public class Puzzle
     {
         [BsonIgnore]
-        public AtomicChessGame Game
+        public ChessGame Game
         {
             get;
             set;

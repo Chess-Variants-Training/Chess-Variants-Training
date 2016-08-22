@@ -5,6 +5,7 @@ using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.Services;
+using Microsoft.AspNet.Routing;
 
 namespace ChessVariantsTraining
 {
@@ -37,11 +38,14 @@ namespace ChessVariantsTraining
             services.AddSingleton<ITimedTrainingSessionRepository, TimedTrainingSessionRepository>();
 
             // Miscellaneous services
+            services.AddSingleton<IGameConstructor, GameConstructor>();
             services.AddSingleton<IMoveCollectionTransformer, MoveCollectionTransformer>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<IPersistentLoginHandler, PersistentLoginHandler>();
             services.AddSingleton<IRatingUpdater, RatingUpdater>();
             services.AddSingleton<IValidator, Validator>();
+
+            services.Configure<RouteOptions>(options => options.ConstraintMap.Add("supportedVariant", typeof(SupportedVariantRouteConstraint)));
 
             services.AddCaching();
             services.AddSession();

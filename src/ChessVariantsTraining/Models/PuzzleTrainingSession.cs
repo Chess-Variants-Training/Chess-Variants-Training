@@ -1,5 +1,6 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Atomic;
+using ChessVariantsTraining.Services;
 using System;
 using System.Collections.Generic;
 
@@ -17,13 +18,17 @@ namespace ChessVariantsTraining.Models
         public DateTime? CurrentPuzzleStartedUtc { get; set; }
         public DateTime? CurrentPuzzleEndedUtc { get; set; }
 
-        public PuzzleTrainingSession(string sessionId)
+        IGameConstructor gameConstructor;
+
+        public PuzzleTrainingSession(string sessionId, IGameConstructor _gameConstructor)
         {
             SessionID = sessionId;
             PastPuzzleIds = new List<int>();
             FENs = new List<string>();
             Checks = new List<string>();
             Moves = new List<string>();
+
+            gameConstructor = _gameConstructor;
         }
 
         public void Setup(Puzzle puzzle)
@@ -75,7 +80,7 @@ namespace ChessVariantsTraining.Models
             FENs.Add(fen);
             Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotionPiece == null ? "" : "=" + char.ToUpper(promotionPiece.GetFenCharacter()).ToString()));
 
-            if (Current.Game.IsCheckmated(Current.Game.WhoseTurn) || Current.Game.KingIsGone(Current.Game.WhoseTurn))
+            if (Current.Game.IsWinner(ChessUtilities.GetOpponentOf(Current.Game.WhoseTurn)))
             {
                 PuzzleFinished(response, true);
                 return response;
@@ -132,7 +137,7 @@ namespace ChessVariantsTraining.Models
 
                 response.FEN = FENs[FENs.Count - 1];
 
-                AtomicChessGame correctGame = new AtomicChessGame(response.FEN);
+                ChessGame correctGame = gameConstructor.Construct(Current.Variant, response.FEN);
                 foreach (string move in SolutionMovesToDo)
                 {
                     string[] p = move.Split('-', '=');

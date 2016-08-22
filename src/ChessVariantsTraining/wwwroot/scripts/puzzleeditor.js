@@ -56,7 +56,7 @@ function goToStep2(e) {
         step2Elements[i].setAttribute("class", "step2");
     }
     jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
-        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1"), function (req, jsonResponse) {
+        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1") + "&variant=" + document.getElementById("variantSelector").value, function (req, jsonResponse) {
             window.puzzleId = jsonResponse["id"];
             var whoseTurn = document.getElementById("fen").innerHTML.split(" ")[1] === "w" ? "white" : "black";
             window.ground.set({
