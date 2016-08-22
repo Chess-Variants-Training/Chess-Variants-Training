@@ -57,7 +57,7 @@ namespace ChessVariantsTraining.Controllers
             return View("Train", new Tuple<string, string>(fen, sessionId));
         }
 
-        [Route("/Endgames/KRR-K-Adjacent-Kings", Name = "KRRvsKWithAdjacentKings")]
+        [Route("/Endgames/Atomic/KRR-K-Adjacent-Kings", Name = "KRRvsKWithAdjacentKings")]
         public IActionResult KRRvsKWithAdjacentKings()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
@@ -67,7 +67,7 @@ namespace ChessVariantsTraining.Controllers
             return StartNewSession(board);
         }
 
-        [Route("/Endgames/KQQ-K-Adjacent-Kings", Name = "KQQvsKWithAdjacentKings")]
+        [Route("/Endgames/Atomic/KQQ-K-Adjacent-Kings", Name = "KQQvsKWithAdjacentKings")]
         public IActionResult KQQvsKWithAdjacentKings()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
@@ -77,7 +77,7 @@ namespace ChessVariantsTraining.Controllers
             return StartNewSession(board);
         }
 
-        [Route("/Endgames/KQ-K-Adjacent-Kings-Blocked-Pawn", Name = "KQvsKWithAdjacentKingsAndBlockedPawn")]
+        [Route("/Endgames/Atomic/KQ-K-Adjacent-Kings-Blocked-Pawn", Name = "KQvsKWithAdjacentKingsAndBlockedPawn")]
         public IActionResult KQvsKWithAdjacentKingsAndBlockedPawn()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
@@ -88,7 +88,7 @@ namespace ChessVariantsTraining.Controllers
         }
 
 
-        [Route("/Endgames/KRN-K-Separated-Kings", Name = "KRNvsKWithSeparatedKings")]
+        [Route("/Endgames/Atomic/KRN-K-Separated-Kings", Name = "KRNvsKWithSeparatedKings")]
         public IActionResult KRNvsKWithSeparatedKings()
         {
             IActionResult result;
@@ -103,7 +103,7 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
-        [Route("/Endgames/KRN-K-Adjacent-Kings", Name = "KRNvsKWithAdjacentKings")]
+        [Route("/Endgames/Atomic/KRN-K-Adjacent-Kings", Name = "KRNvsKWithAdjacentKings")]
         public IActionResult KRNvsKWithAdjacentKings()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
