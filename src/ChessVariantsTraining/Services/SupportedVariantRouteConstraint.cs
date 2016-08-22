@@ -4,6 +4,6 @@ namespace ChessVariantsTraining.Services
 {
     public class SupportedVariantRouteConstraint : RegexRouteConstraint
     {
-        public SupportedVariantRouteConstraint() : base("Atomic") { }
+        public SupportedVariantRouteConstraint() : base("Atomic|KingOfTheHill|ThreeCheck") { }
     }
 }
