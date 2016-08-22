@@ -30,6 +30,7 @@ namespace ChessVariantsTraining.Models
             }
         }
         public string Variant { get; set; }
+        public string[] CurrentLastMoveToDisplay { get; set; }
 
         IGameConstructor gameConstructor;
 
@@ -74,6 +75,7 @@ namespace ChessVariantsTraining.Models
             currentPosition = position;
             AssociatedGame = gameConstructor.Construct(Variant, position.FEN);
             CurrentFen = position.FEN;
+            CurrentLastMoveToDisplay = position.LastMove;
         }
 
         public void RetryCurrentPosition()

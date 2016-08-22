@@ -14,7 +14,7 @@ function start() {
                 end();
             }
         }, 1000);
-        showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"]);
+        showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"], jsonResponse["lastMove"]);
     }, function (req, err) {
         alert(err);
     });
@@ -36,12 +36,12 @@ function end() {
     });
 }
 
-function showPosition(fen, color, dests) {
+function showPosition(fen, color, dests, lastMove) {
     window.ground.set({
         fen: fen,
         orientation: color,
         turnColor: color,
-        lastMove: null,
+        lastMove: lastMove,
         selected: null,
         movable: {
             dests: dests
@@ -66,7 +66,7 @@ function verifyAndGetNext(origin, destination, promotion) {
                 return;
             }
             document.getElementById("score").textContent = "Score: " + jsonResponse["currentScore"];
-            showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"]);
+            showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"], jsonResponse["lastMove"]);
         }, function (req, err) {
             alert(err);
         })
