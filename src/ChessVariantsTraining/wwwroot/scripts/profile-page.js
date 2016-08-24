@@ -4,7 +4,7 @@
     document.getElementById("ratingChartShownSelector").addEventListener("change", updateChartData);
 });
 
-window.borderColors = { "Atomic": "red", "King of the Hill": "orange", "Three-check": "orangered" };
+window.borderColors = { "Atomic": "red", "King of the Hill": "orange", "Three-check": "orangered", "Antichess": "pink" };
 
 function updateChartData() {
     if (window.ratingLineChart) {

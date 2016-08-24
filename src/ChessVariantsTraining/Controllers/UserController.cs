@@ -66,7 +66,8 @@ namespace ChessVariantsTraining.Controllers
                 {
                     { "Atomic", new Models.Rating(1500, 350, 0.06) },
                     { "ThreeCheck", new Models.Rating(1500, 350, 0.06) },
-                    { "KingOfTheHill", new Models.Rating(1500, 350, 0.06) }
+                    { "KingOfTheHill", new Models.Rating(1500, 350, 0.06) },
+                    { "Antichess", new Models.Rating(1500, 350, 0.06) }
                 }, new List<int>());
             bool added = userRepository.Add(user);
             return RedirectToAction("Profile", new { name = username });

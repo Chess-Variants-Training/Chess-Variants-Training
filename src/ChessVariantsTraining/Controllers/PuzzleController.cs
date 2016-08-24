@@ -24,7 +24,7 @@ namespace ChessVariantsTraining.Controllers
         ICounterRepository counterRepository;
         IGameConstructor gameConstructor;
 
-        static readonly string[] supportedVariants = new string[] { "Atomic", "KingOfTheHill", "ThreeCheck" };
+        static readonly string[] supportedVariants = new string[] { "Atomic", "KingOfTheHill", "ThreeCheck", "Antichess" };
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
             IUserRepository _userRepository, IRatingUpdater _ratingUpdater,

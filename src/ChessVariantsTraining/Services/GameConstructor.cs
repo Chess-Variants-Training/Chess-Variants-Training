@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Variants.Antichess;
 using ChessDotNet.Variants.Atomic;
 using ChessDotNet.Variants.KingOfTheHill;
 using ChessDotNet.Variants.ThreeCheck;
@@ -12,6 +13,8 @@ namespace ChessVariantsTraining.Services
         {
             switch (variant)
             {
+                case "Antichess":
+                    return new AntichessGame();
                 case "Atomic":
                     return new AtomicChessGame();
                 case "KingOfTheHill":
@@ -27,6 +30,8 @@ namespace ChessVariantsTraining.Services
         {
             switch (variant)
             {
+                case "Antichess":
+                    return new AntichessGame(fen);
                 case "Atomic":
                     return new AtomicChessGame(fen);
                 case "KingOfTheHill":
