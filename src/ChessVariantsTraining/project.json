@@ -28,7 +28,7 @@
         "ChessDotNet": "0.9.0-*",
         "ChessDotNet.Variants": "1.0.0-*",
         "Glicko2": "1.0.0-*",
-        "MongoDB.Driver": "2.2.0"
+        "MongoDB.Driver": "2.2.4"
       }
     }
   },
