@@ -1,7 +1,9 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Antichess;
 using ChessDotNet.Variants.Atomic;
+using ChessDotNet.Variants.Horde;
 using ChessDotNet.Variants.KingOfTheHill;
+using ChessDotNet.Variants.RacingKings;
 using ChessDotNet.Variants.ThreeCheck;
 using System;
 
@@ -17,8 +19,12 @@ namespace ChessVariantsTraining.Services
                     return new AntichessGame();
                 case "Atomic":
                     return new AtomicChessGame();
+                case "Horde":
+                    return new HordeChessGame();
                 case "KingOfTheHill":
                     return new KingOfTheHillChessGame();
+                case "RacingKings":
+                    return new RacingKingsChessGame();
                 case "ThreeCheck":
                     return new ThreeCheckChessGame();
                 default:
@@ -34,8 +40,12 @@ namespace ChessVariantsTraining.Services
                     return new AntichessGame(fen);
                 case "Atomic":
                     return new AtomicChessGame(fen);
+                case "Horde":
+                    return new HordeChessGame(fen);
                 case "KingOfTheHill":
                     return new KingOfTheHillChessGame(fen);
+                case "RacingKings":
+                    return new RacingKingsChessGame(fen);
                 case "ThreeCheck":
                     return new ThreeCheckChessGame(fen);
                 default:
