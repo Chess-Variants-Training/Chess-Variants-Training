@@ -269,7 +269,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 success = true,
                 trainingSessionId = session.SessionID,
-                author = session.Current.Author,
+                author = userRepository.FindById(session.Current.Author).Username,
                 fen = session.Current.InitialFen,
                 dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.Current.Game.GetValidMoves(session.Current.Game.WhoseTurn)),
                 whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant(),
