@@ -100,7 +100,15 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
-            ReadOnlyCollection<Move> validMoves = puzzle.Game.GetValidMoves(puzzle.Game.WhoseTurn);
+            ReadOnlyCollection<Move> validMoves;
+            if (puzzle.Game.IsWinner(Player.White) || puzzle.Game.IsWinner(Player.Black))
+            {
+                validMoves = new ReadOnlyCollection<Move>(new List<Move>()); 
+            }
+            else
+            {
+                validMoves = puzzle.Game.GetValidMoves(puzzle.Game.WhoseTurn);
+            }
             Dictionary<string, List<string>> dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(validMoves);
             return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() });
         }
