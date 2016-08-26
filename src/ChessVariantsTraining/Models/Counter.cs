@@ -10,6 +10,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("next")]
         public int Next { get; set; }
 
+        public Counter() { }
+
         public Counter(string id, int next)
         {
             ID = id;

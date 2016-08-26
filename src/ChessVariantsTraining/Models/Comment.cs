@@ -34,6 +34,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("datePostedUtc")]
         public DateTime DatePostedUtc { get; set; }
 
+        public Comment() { }
+
         public Comment(int id, int author, string bodyUnsanitized, int? parentId, string puzzleId, bool deleted, DateTime creationDateUtc)
         {
             ID = id;

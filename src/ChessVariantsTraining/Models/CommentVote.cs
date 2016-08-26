@@ -16,6 +16,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("affectedComment")]
         public int AffectedComment { get; set; }
 
+        public CommentVote() { }
+
         public CommentVote(VoteType type, int voter, int affectedComment)
         {
             ID = voter + ":" + affectedComment;

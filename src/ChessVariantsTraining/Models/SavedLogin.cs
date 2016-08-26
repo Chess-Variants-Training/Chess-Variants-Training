@@ -18,6 +18,8 @@ namespace ChessVariantsTraining.Models
         [BsonIgnore]
         public string UnhashedToken { get; set; }
 
+        public SavedLogin() { }
+
         public SavedLogin(int user)
         {
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())

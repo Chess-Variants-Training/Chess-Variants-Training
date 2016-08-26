@@ -13,6 +13,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("volatility")]
         public double Volatility { get; set; }
 
+        public Rating() { }
+
         public Rating(double value, double rd, double volatility)
         {
             Value = value;

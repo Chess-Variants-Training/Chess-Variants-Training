@@ -20,6 +20,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("variant")]
         public string Variant { get; set; }
 
+        public RatingWithMetadata() { }
+
         public RatingWithMetadata(Rating rating, DateTime timestampUtc, int owner, string variant)
         {
             Rating = rating;

@@ -32,6 +32,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("success")]
         public bool Success { get; set; }
 
+        public Attempt() { }
+
         public Attempt(int user, int puzzleId, DateTime startTimestampUtc, DateTime endTimestampUtc, double userRatingChange, double puzzleRatingChange, bool success)
         {
             User = user;

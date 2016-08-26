@@ -39,6 +39,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("solvedPuzzles")]
         public List<int> SolvedPuzzles { get; set; }
 
+        public User() { }
+
         public User(int id, string username, string email, string passwordHash, string salt, string about,
             int puzzlesCorrect, int puzzlesWrong, List<string> roles, Dictionary<string, Rating> ratings, List<int> solvedPuzzles)
         {
