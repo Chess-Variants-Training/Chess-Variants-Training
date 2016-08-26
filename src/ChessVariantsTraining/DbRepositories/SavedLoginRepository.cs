@@ -1,5 +1,6 @@
 ﻿using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.Models;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Linq;
 
@@ -10,9 +11,9 @@ namespace ChessVariantsTraining.DbRepositories
         MongoSettings settings;
         IMongoCollection<SavedLogin> savedLoginCollection;
 
-        public SavedLoginRepository(ISettings appSettings)
+        public SavedLoginRepository(IOptions<Settings> appSettings)
         {
-            settings = appSettings.Mongo;
+            settings = appSettings.Value.Mongo;
             GetCollection();
         }
 

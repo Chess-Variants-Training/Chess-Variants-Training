@@ -1,23 +1,36 @@
-﻿using Microsoft.AspNet.Builder;
-using Microsoft.AspNet.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using ChessVariantsTraining.Configuration;
+﻿using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.Services;
-using Microsoft.AspNet.Routing;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace ChessVariantsTraining
 {
     public class Startup
     {
+        public Startup(IHostingEnvironment env)
+        {
+            IConfigurationBuilder builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("config.json");
+
+            Configuration = builder.Build();
+        }
+
+        IConfigurationRoot Configuration { get; set; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
 
             // Configuration
-            services.AddSingleton<ISettings, Settings>();
-
+            services.AddOptions();
+            services.Configure<Settings>(Configuration);
             // Database repositories
             services.AddSingleton<IAttemptRepository, AttemptRepository>();
             services.AddSingleton<ICommentRepository, CommentRepository>();
@@ -46,14 +59,11 @@ namespace ChessVariantsTraining
             services.AddSingleton<IValidator, Validator>();
 
             services.Configure<RouteOptions>(options => options.ConstraintMap.Add("supportedVariantOrMixed", typeof(SupportedVariantOrMixedRouteConstraint)));
-
-            services.AddCaching();
             services.AddSession();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory)
         {
-            app.UseIISPlatformHandler();
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -62,7 +72,5 @@ namespace ChessVariantsTraining
             app.UseStaticFiles();
             app.UseMvc();
         }
-
-        public static void Main(string[] args) => WebApplication.Run<Startup>(args);
     }
 }

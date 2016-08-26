@@ -4,6 +4,7 @@ using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.Models;
 using MongoDB.Driver;
 using MongoDB.Bson;
+using Microsoft.Extensions.Options;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -12,9 +13,9 @@ namespace ChessVariantsTraining.DbRepositories
         MongoSettings settings;
         IMongoCollection<CommentVote> voteCollection;
 
-        public CommentVoteRepository(ISettings appSettings)
+        public CommentVoteRepository(IOptions<Settings> appSettings)
         {
-            settings = appSettings.Mongo;
+            settings = appSettings.Value.Mongo;
             GetCollection();
         }
 

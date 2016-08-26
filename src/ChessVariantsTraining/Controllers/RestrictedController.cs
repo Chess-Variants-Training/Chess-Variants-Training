@@ -2,11 +2,10 @@ using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.HttpErrors;
 using ChessVariantsTraining.Models;
-using Microsoft.AspNet.Mvc.Controllers;
-using Microsoft.AspNet.Mvc.Filters;
-using Microsoft.AspNet.Http;
-using System.Collections.Generic;
 using ChessVariantsTraining.Services;
+using Microsoft.AspNetCore.Mvc.Controllers;
+using Microsoft.AspNetCore.Mvc.Filters;
+using System.Collections.Generic;
 
 namespace ChessVariantsTraining.Controllers
 {

@@ -1,6 +1,7 @@
 using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Models;
+using Microsoft.Extensions.Options;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,11 +14,11 @@ namespace ChessVariantsTraining.MemoryRepositories
         ITimedTrainingScoreRepository scoreRepository;
         bool shouldAutoAcknowledge = true;
 
-        public TimedTrainingSessionRepository(ITimedTrainingScoreRepository _scoreRepository, ISettings appSettings)
+        public TimedTrainingSessionRepository(ITimedTrainingScoreRepository _scoreRepository, IOptions<Settings> appSettings)
         {
             scoreRepository = _scoreRepository;
             Thread cleanUpThread = new Thread(AutoAcknowledgeOldSessions);
-            cleanUpThread.Start(appSettings.TimedTrainingSessionAutoAcknowledgerDelay);
+            cleanUpThread.Start(appSettings.Value.TimedTrainingSessionAutoAcknowledgerDelay);
         }
 
         public void Add(TimedTrainingSession session)

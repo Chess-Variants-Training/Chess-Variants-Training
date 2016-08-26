@@ -1,6 +1,6 @@
 ﻿using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Models;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Linq;
 using System.Security.Cryptography;
@@ -33,13 +33,13 @@ namespace ChessVariantsTraining.Services
                 return idFromSession;
             }
 
-            IReadableStringCollection requestCookies = context.Request.Cookies;
+            IRequestCookieCollection requestCookies = context.Request.Cookies;
             if (!requestCookies.ContainsKey("login"))
             {
                 return null;
             }
 
-            string[] cookieParts = requestCookies["login"].First().Split(':');
+            string[] cookieParts = requestCookies["login"].Split(':');
             long identifier;
             if (!long.TryParse(cookieParts[0], out identifier))
             {
@@ -80,13 +80,13 @@ namespace ChessVariantsTraining.Services
 
         public void Logout(HttpContext context)
         {
-            IReadableStringCollection requestCookies = context.Request.Cookies;
+            IRequestCookieCollection requestCookies = context.Request.Cookies;
             if (!requestCookies.ContainsKey("login"))
             {
                 return;
             }
 
-            string[] cookieParts = requestCookies["login"].First().Split(':');
+            string[] cookieParts = requestCookies["login"].Split(':');
 
             long identifier;
             if (!long.TryParse(cookieParts[0], out identifier))

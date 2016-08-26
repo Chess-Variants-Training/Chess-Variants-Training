@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using Microsoft.Extensions.Options;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -13,9 +14,9 @@ namespace ChessVariantsTraining.DbRepositories
         MongoSettings settings;
         IMongoCollection<Report> reportCollection;
 
-        public ReportRepository(ISettings appSettings)
+        public ReportRepository(IOptions<Settings> appSettings)
         {
-            settings = appSettings.Mongo;
+            settings = appSettings.Value.Mongo;
             GetCollection();
         }
 

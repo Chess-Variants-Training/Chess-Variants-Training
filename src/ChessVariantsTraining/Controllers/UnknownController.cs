@@ -1,5 +1,5 @@
 using ChessVariantsTraining.HttpErrors;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ChessVariantsTraining.Controllers
 {
