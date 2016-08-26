@@ -20,14 +20,14 @@ namespace ChessVariantsTraining.Models
 
         public SavedLogin(int user)
         {
-            using (RNGCryptoServiceProvider rng = new RNGCryptoServiceProvider())
+            using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
                 byte[] bytes = new byte[8 + 64];
                 rng.GetBytes(bytes);
                 ID = BitConverter.ToInt64(bytes, 0);
 
                 UnhashedToken = BitConverter.ToString(bytes, 8).Replace("-", "");
-                using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
+                using (SHA256 sha256 = SHA256.Create())
                 {
                     HashedToken = sha256.ComputeHash(bytes, 8, 64);
                 }

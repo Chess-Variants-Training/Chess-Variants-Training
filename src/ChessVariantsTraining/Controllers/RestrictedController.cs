@@ -6,6 +6,8 @@ using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -23,12 +25,12 @@ namespace ChessVariantsTraining.Controllers
         public override void OnActionExecuting(ActionExecutingContext context)
         {
             ControllerActionDescriptor descriptor = context.ActionDescriptor as ControllerActionDescriptor;
-            object[] actionAttrs = descriptor.MethodInfo.GetCustomAttributes(typeof(RestrictedAttribute), false);
+            RestrictedAttribute[] actionAttrs = descriptor.MethodInfo.GetCustomAttributes<RestrictedAttribute>(false)?.ToArray();
             RestrictedAttribute attr = null;
             // 'Restricted' on an action overrides 'Restricted' on their controller
             if (actionAttrs == null || actionAttrs.Length == 0)
             {
-                object[] controllerAttrs = descriptor.ControllerTypeInfo.GetCustomAttributes(typeof(RestrictedAttribute), true);
+                RestrictedAttribute[] controllerAttrs = descriptor.ControllerTypeInfo.GetCustomAttributes<RestrictedAttribute>(true)?.ToArray();
                 if (controllerAttrs == null || controllerAttrs.Length == 0)
                 {
                     base.OnActionExecuting(context);

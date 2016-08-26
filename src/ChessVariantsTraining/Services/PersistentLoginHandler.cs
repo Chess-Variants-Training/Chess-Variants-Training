@@ -57,7 +57,7 @@ namespace ChessVariantsTraining.Services
                                              .ToArray();
 
             byte[] hashedToken;
-            using (SHA256CryptoServiceProvider sha256 = new SHA256CryptoServiceProvider())
+            using (SHA256 sha256 = SHA256.Create())
             {
                 hashedToken = sha256.ComputeHash(unhashedToken);
             }
