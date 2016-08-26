@@ -26,5 +26,14 @@
 
   "frameworks": {
     "net452": {}
+  },
+
+  "publishOptions": {
+    "include": [
+      "wwwroot",
+      "Views",
+      "config.json",
+      "web.config"
+    ]
   }
 }
