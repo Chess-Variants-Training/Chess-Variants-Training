@@ -1,6 +1,6 @@
 using ChessVariantsTraining.HttpErrors;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace ChessVariantsTraining.Controllers
 {

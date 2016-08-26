@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNet.Routing.Constraints;
+﻿using Microsoft.AspNetCore.Routing.Constraints;
 
 namespace ChessVariantsTraining.Services
 {

@@ -1,5 +1,6 @@
 using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.Models;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
@@ -11,9 +12,9 @@ namespace ChessVariantsTraining.DbRepositories
         MongoSettings settings;
         IMongoCollection<TimedTrainingScore> scoreCollection;
 
-        public TimedTrainingScoreRepository(ISettings appSettings)
+        public TimedTrainingScoreRepository(IOptions<Settings> appSettings)
         {
-            settings = appSettings.Mongo;
+            settings = appSettings.Value.Mongo;
             GetCollection();
         }
 

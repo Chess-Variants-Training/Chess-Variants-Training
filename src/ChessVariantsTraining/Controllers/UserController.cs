@@ -1,8 +1,8 @@
 ﻿using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.HttpErrors;
 using ChessVariantsTraining.Services;
-using Microsoft.AspNet.Mvc;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using ChessVariantsTraining.Models;

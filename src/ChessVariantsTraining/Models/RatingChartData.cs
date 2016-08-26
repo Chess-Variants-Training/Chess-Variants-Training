@@ -55,7 +55,7 @@ namespace ChessVariantsTraining.Models
                     }
                 }
                 DateTime timestamp = group.Key;
-                string label = fullDateTimeOnLabel ? timestamp.ToString() : timestamp.ToLongDateString();
+                string label = fullDateTimeOnLabel ? timestamp.ToString() : timestamp.ToString("D");
                 elements.Add(new Element(timestamp, label, atomicRating, kothRating, threeCheckRating, antichessRating, hordeRating, racingKingsRating));
             }
 

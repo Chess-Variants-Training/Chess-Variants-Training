@@ -1,5 +1,7 @@
 .vs/
 artifacts/
+bin/
+obj/
 *.xproj.user
 src/ChessVariantsTraining/wwwroot/scripts/chessground.min.js
 src/ChessVariantsTraining/wwwroot/styles/chessground-base.css

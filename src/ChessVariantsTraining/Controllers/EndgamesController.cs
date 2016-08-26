@@ -4,7 +4,7 @@ using ChessVariantsTraining.Services;
 using ChessDotNet;
 using ChessDotNet.Pieces;
 using ChessDotNet.Variants.Atomic;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
 

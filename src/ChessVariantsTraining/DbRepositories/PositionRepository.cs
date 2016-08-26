@@ -1,5 +1,6 @@
 using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.Models;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Linq;
@@ -12,9 +13,9 @@ namespace ChessVariantsTraining.DbRepositories
         IMongoCollection<TrainingPosition> positionCollection;
         Random rnd = new Random();
 
-        public PositionRepository(ISettings appSettings)
+        public PositionRepository(IOptions<Settings> appSettings)
         {
-            settings = appSettings.Mongo;
+            settings = appSettings.Value.Mongo;
             GetCollection();
         }
 

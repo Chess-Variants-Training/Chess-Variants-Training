@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using ChessVariantsTraining.DbRepositories;
-using Microsoft.AspNet.Http;
+using Microsoft.AspNetCore.Http;
 using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;

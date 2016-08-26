@@ -28,6 +28,8 @@ namespace ChessVariantsTraining.Models
         [BsonElement("judgementAfterHandling")]
         public string JudgementAfterHandling { get; set; }
 
+        public Report() { }
+
         public Report(string id, string type, int reporter, string reported, string reason, string reasonExplanation, bool handled, string judgementAfterHandling)
         {
             ID = id;

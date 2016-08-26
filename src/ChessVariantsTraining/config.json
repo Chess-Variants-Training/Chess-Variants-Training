@@ -1,18 +1,18 @@
 ﻿{
-  "mongo": {
-    "mongoConnectionString": "mongodb://localhost:27017",
-    "database": "chessvariantstraining-dev",
-    "userCollectionName": "users",
-    "puzzleCollectionName": "puzzles",
-    "commentCollectionName": "comments",
-    "commentVoteCollectionName": "commentvotes",
-    "reportCollectionName": "reports",
-    "positionCollectionName": "positions",
-    "timedTrainingScoreCollectionName": "timedtrainingscores",
-    "ratingCollectionName": "ratings",
-    "attemptCollectionName": "attempts",
-    "counterCollectionName": "counters",
-    "savedLoginCollectionName": "savedlogins"
+  "Mongo": {
+    "MongoConnectionString": "mongodb://localhost:27017",
+    "Database": "chessvariantstraining-dev",
+    "UserCollectionName": "users",
+    "PuzzleCollectionName": "puzzles",
+    "CommentCollectionName": "comments",
+    "CommentVoteCollectionName": "commentvotes",
+    "ReportCollectionName": "reports",
+    "PositionCollectionName": "positions",
+    "TimedTrainingScoreCollectionName": "timedtrainingscores",
+    "RatingCollectionName": "ratings",
+    "AttemptCollectionName": "attempts",
+    "CounterCollectionName": "counters",
+    "SavedLoginCollectionName": "savedlogins"
   },
-  "timedTrainingSessionAutoAcknowledgerDelay": 10
+  "TimedTrainingSessionAutoAcknowledgerDelay": 10
 }

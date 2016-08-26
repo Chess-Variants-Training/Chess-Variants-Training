@@ -2,7 +2,7 @@ using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
-using Microsoft.AspNet.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
 namespace ChessVariantsTraining.Controllers

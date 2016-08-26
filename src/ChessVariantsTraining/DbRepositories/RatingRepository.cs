@@ -1,5 +1,6 @@
 ﻿using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.Models;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using System;
@@ -13,9 +14,9 @@ namespace ChessVariantsTraining.DbRepositories
         MongoSettings settings;
         IMongoCollection<RatingWithMetadata> ratingCollection;
 
-        public RatingRepository(ISettings appSettings)
+        public RatingRepository(IOptions<Settings> appSettings)
         {
-            settings = appSettings.Mongo;
+            settings = appSettings.Value.Mongo;
             GetCollection();
         }
 
