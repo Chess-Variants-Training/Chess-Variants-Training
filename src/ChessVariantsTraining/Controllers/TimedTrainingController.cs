@@ -29,38 +29,76 @@ namespace ChessVariantsTraining.Controllers
             loginHandler = _loginHandler;
             gameConstructor = _gameConstructor;
         }
-        [HttpGet]
-        [Route("/Timed-Training/Mate-In-One")]
-        public IActionResult TimedMateInOne()
-        {
-            List<TimedTrainingScore> latestScores = null;
-            int? userId;
-            if((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
-            {
-                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
-            }
-            return View(latestScores);
-        }
 
-        [HttpPost]
-        [Route("/Timed-Training/Mate-In-One/Start")]
-        public IActionResult StartMateInOneTraining()
+        IActionResult StartTimedTraining(string type, string variant)
         {
             string sessionId = Guid.NewGuid().ToString();
             DateTime startTime = DateTime.UtcNow;
             DateTime endTime = startTime + new TimeSpan(0, 1, 0);
             TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
-                                        loginHandler.LoggedInUserId(HttpContext), "mateInOne", "Atomic", gameConstructor);
+                                        loginHandler.LoggedInUserId(HttpContext), type, variant, gameConstructor);
             timedTrainingSessionRepository.Add(session);
-            TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
+            TrainingPosition randomPosition = positionRepository.GetRandom(type);
             session.SetPosition(randomPosition);
             return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
                               dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)), lastMove = session.CurrentLastMoveToDisplay });
+        
+        }
+
+        [Route("/Timed-Training")]
+        public IActionResult Index()
+        {
+            return View();
+        }
+
+        [Route("/Timed-Training/{variant:regex(Atomic|Horde|KingOfTheHill|ThreeCheck)}/Mate-In-One")]
+        public IActionResult MateInOneTrainingPage(string variant)
+        {
+            List<TimedTrainingScore> latestScores = null;
+            int? userId;
+            if ((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
+            {
+                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
+            }
+            ViewBag.Description = "Win the game in one move!";
+            ViewBag.Variant = variant;
+            ViewBag.Type = "Mate-In-One";
+            return View("TimedTraining", latestScores);
+        }
+
+        [Route("/Timed-Training/Antichess/Forced-Capture")]
+        public IActionResult ForcedCaptureTrainingPage()
+        {
+            List<TimedTrainingScore> latestScores = null;
+            int? userId;
+            if ((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
+            {
+                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
+            }
+            ViewBag.Description = "Find the forced capture!";
+            ViewBag.Type = "Forced-Capture";
+            ViewBag.Variant = "Antichess";
+            return View("TimedTraining", latestScores);
+        }
+
+
+        [HttpPost]
+        [Route("/Timed-Training/{variant:regex(Atomic|Horde|KingOfTheHill|ThreeCheck)}/Mate-In-One/Start")]
+        public IActionResult StartMateInOneTraining(string variant)
+        {
+            return StartTimedTraining("mateInOne" + variant, variant);
         }
 
         [HttpPost]
-        [Route("/Timed-Training/Mate-In-One/VerifyAndGetNext")]
-        public IActionResult MateInOneVerifyAndGetNext(string sessionId, string origin, string destination, string promotion = null)
+        [Route("/Timed-Training/Antichess/Forced-Capture/Start")]
+        public IActionResult StartForcedCaptureTraining()
+        {
+            return StartTimedTraining("forcedCaptureAntichess", "Antichess");
+        }
+
+        [HttpPost]
+        [Route("/Timed-Training/VerifyAndGetNext")]
+        public IActionResult VerifyAndGetNext(string sessionId, string origin, string destination, string promotion = null)
         {
             TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
             if (session == null)
@@ -79,7 +117,7 @@ namespace ChessVariantsTraining.Controllers
             bool correctMove = session.VerifyMove(origin, destination, promotion);
             if (correctMove)
             {
-                TrainingPosition randomPosition = positionRepository.GetRandomMateInOne();
+                TrainingPosition randomPosition = positionRepository.GetRandom(session.Type);
                 session.SetPosition(randomPosition);
             }
             else
@@ -92,7 +130,7 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpPost]
-        [Route("/Timed-Training/Mate-In-One/AcknowledgeEnd")]
+        [Route("/Timed-Training/AcknowledgeEnd")]
         public IActionResult AcknowledgeEnd(string sessionId)
         {
             TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);

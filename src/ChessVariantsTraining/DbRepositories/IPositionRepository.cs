@@ -4,6 +4,6 @@ namespace ChessVariantsTraining.DbRepositories
 {
     public interface IPositionRepository
     {
-        TrainingPosition GetRandomMateInOne();
+        TrainingPosition GetRandom(string type);
     }
 }

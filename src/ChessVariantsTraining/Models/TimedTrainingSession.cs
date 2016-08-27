@@ -30,6 +30,7 @@ namespace ChessVariantsTraining.Models
         }
         public string Variant { get; set; }
         public string[] CurrentLastMoveToDisplay { get; set; }
+        public string Type { get; set; }
 
         IGameConstructor gameConstructor;
 
@@ -39,8 +40,9 @@ namespace ChessVariantsTraining.Models
             StartedAt = startedAt;
             EndsAt = endsAt;
             RecordedInDb = false;
-            Score = new TimedTrainingScore(0, type, owner, DateTime.UtcNow);
+            Score = new TimedTrainingScore(0, type, owner, DateTime.UtcNow, Variant);
             Variant = variant;
+            Type = type;
 
             gameConstructor = _gameConstructor;
         }
@@ -55,7 +57,14 @@ namespace ChessVariantsTraining.Models
             MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn, promotion?[0]), false);
             if (moveType != MoveType.Invalid)
             {
-                correctMove = AssociatedGame.IsWinner(ChessUtilities.GetOpponentOf(AssociatedGame.WhoseTurn));
+                if (Type == "forcedCaptureAntichess")
+                {
+                    correctMove = true;
+                }
+                else
+                {
+                    correctMove = AssociatedGame.IsWinner(ChessUtilities.GetOpponentOf(AssociatedGame.WhoseTurn));
+                }
             }
             else
             {

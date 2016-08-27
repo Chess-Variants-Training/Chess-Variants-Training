@@ -25,12 +25,12 @@ namespace ChessVariantsTraining.DbRepositories
             positionCollection = client.GetDatabase(settings.Database).GetCollection<TrainingPosition>(settings.PositionCollectionName);
         }
 
-        public TrainingPosition GetRandomMateInOne()
+        public TrainingPosition GetRandom(string type)
         {
             double x = rnd.NextDouble();
             double y = rnd.NextDouble();
             FilterDefinitionBuilder<TrainingPosition> filterBuilder = Builders<TrainingPosition>.Filter;
-            FilterDefinition<TrainingPosition> filter = filterBuilder.Eq("type", "mateInOne") & filterBuilder.Near("location", x, y);
+            FilterDefinition<TrainingPosition> filter = filterBuilder.Eq("type", type) & filterBuilder.Near("location", x, y);
             var found = positionCollection.Find(filter);
             if (found == null) return null;
             else return found.Limit(1).First();

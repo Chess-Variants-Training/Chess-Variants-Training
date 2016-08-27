@@ -19,5 +19,8 @@ namespace ChessVariantsTraining.Models
 
         [BsonElement("lastMove")]
         public string[] LastMove { get; set; }
+
+        [BsonElement("variant")]
+        public string Variant { get; set; }
     }
 }

@@ -1,0 +1,9 @@
+﻿@section Title{Timed training: directory}
+<p>Choose a type of timed training to do:</p>
+<ul>
+    <li>@Html.ActionLink("Antichess: forced capture", "ForcedCaptureTrainingPage")</li>
+    <li>@Html.ActionLink("Atomic: mate in one / explosion in one", "MateInOneTrainingPage", new { variant = "Atomic" })</li>
+    <li>@Html.ActionLink("Horde: mate in one / horde destruction in one", "MateInOneTrainingPage", new { variant = "Horde" })</li>
+    <li>@Html.ActionLink("King of the Hill: mate in one / king to center in one", "MateInOneTrainingPage", new { variant = "KingOfTheHill" })</li>
+    <li>@Html.ActionLink("Three-check: mate in one / third check", "MateInOneTrainingPage", new { variant = "ThreeCheck" })</li>
+</ul>

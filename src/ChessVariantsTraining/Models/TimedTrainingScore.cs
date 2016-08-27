@@ -25,12 +25,13 @@ namespace ChessVariantsTraining.Models
 
         public TimedTrainingScore() { }
 
-        public TimedTrainingScore(double score, string type, int? owner, DateTime dateRecordedUtc)
+        public TimedTrainingScore(double score, string type, int? owner, DateTime dateRecordedUtc, string variant)
         {
             Score = score;
             Type = type;
             Owner = owner;
             DateRecordedUtc = dateRecordedUtc;
+            Variant = variant;
         }
     }
 }
