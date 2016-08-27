@@ -1,5 +1,4 @@
 ﻿using ChessDotNet;
-using ChessDotNet.Variants.Atomic;
 using ChessVariantsTraining.Services;
 using System;
 using System.Collections.Generic;

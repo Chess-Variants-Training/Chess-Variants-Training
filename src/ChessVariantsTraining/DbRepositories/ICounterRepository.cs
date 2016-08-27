@@ -1,6 +1,4 @@
-﻿using ChessVariantsTraining.Models;
-
-namespace ChessVariantsTraining.DbRepositories
+﻿namespace ChessVariantsTraining.DbRepositories
 {
     public interface ICounterRepository
     {

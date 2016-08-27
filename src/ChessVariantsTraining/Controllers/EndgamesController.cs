@@ -2,7 +2,6 @@
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
 using ChessDotNet;
-using ChessDotNet.Pieces;
 using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNetCore.Mvc;
 using System;

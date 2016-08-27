@@ -1,6 +1,3 @@
-using ChessDotNet;
-using ChessDotNet.Pieces;
-
 namespace ChessVariantsTraining
 {
     public static class Utilities

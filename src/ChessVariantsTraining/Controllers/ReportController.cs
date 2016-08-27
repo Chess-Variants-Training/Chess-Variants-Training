@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using ChessVariantsTraining.DbRepositories;
-using Microsoft.AspNetCore.Http;
 using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;

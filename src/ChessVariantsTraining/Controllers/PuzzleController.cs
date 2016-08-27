@@ -1,10 +1,9 @@
-﻿using ChessVariantsTraining.Attributes;
+﻿using ChessDotNet;
+using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
-using ChessDotNet;
-using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
