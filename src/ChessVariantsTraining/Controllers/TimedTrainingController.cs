@@ -54,13 +54,28 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Timed-Training/{variant:regex(Atomic|Horde|KingOfTheHill|ThreeCheck)}/Mate-In-One")]
         public IActionResult MateInOneTrainingPage(string variant)
         {
+            variant = Utilities.NormalizeVariantNameCapitalization(variant);
             List<TimedTrainingScore> latestScores = null;
             int? userId;
             if ((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
             {
                 latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
             }
-            ViewBag.Description = "Win the game in one move!";
+            switch (variant)
+            {
+                case "Atomic":
+                    ViewBag.Description = "Checkmate or explode the opponent's king!";
+                    break;
+                case "Horde":
+                    ViewBag.Description = "If you're the white player, checkmate the black king! If you're the black player, destroy the horde!";
+                    break;
+                case "KingOfTheHill":
+                    ViewBag.Description = "Checkmate the opponent's king or bring your king to the center!";
+                    break;
+                case "ThreeCheck":
+                    ViewBag.Description = "Apply the third check to win the game!";
+                    break;
+            }
             ViewBag.Variant = variant;
             ViewBag.Type = "Mate-In-One";
             return View("TimedTraining", latestScores);
@@ -86,6 +101,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Timed-Training/{variant:regex(Atomic|Horde|KingOfTheHill|ThreeCheck)}/Mate-In-One/Start")]
         public IActionResult StartMateInOneTraining(string variant)
         {
+            variant = Utilities.NormalizeVariantNameCapitalization(variant);
             return StartTimedTraining("mateInOne" + variant, variant);
         }
 

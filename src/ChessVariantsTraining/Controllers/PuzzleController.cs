@@ -47,6 +47,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Puzzle/{variant:supportedVariantOrMixed}")]
         public IActionResult Train(string variant)
         {
+            variant = Utilities.NormalizeVariantNameCapitalization(variant);
             ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
             ViewBag.Variant = variant;
             return View("Train");
@@ -64,6 +65,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         public IActionResult RegisterPuzzleForEditing(string fen, string variant)
         {
+            variant = Utilities.NormalizeVariantNameCapitalization(variant);
             if (!Array.Exists(supportedVariants, x => x == variant))
             {
                 return Json(new { success = false, error = "Unsupported variant." });
@@ -191,6 +193,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Puzzle/Train/GetOneRandomly/{variant:supportedVariantOrMixed}")]
         public IActionResult GetOneRandomly(string variant, string trainingSessionId = null)
         {
+            variant = Utilities.NormalizeVariantNameCapitalization(variant);
             if (variant == "Mixed")
             {
                 variant = supportedVariants[new Random().Next(0, supportedVariants.Length)];
