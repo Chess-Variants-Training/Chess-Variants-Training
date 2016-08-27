@@ -47,25 +47,20 @@ namespace ChessVariantsTraining.Models
 
         public SubmittedMoveResponse ApplyMove(string origin, string destination, string promotion)
         {
-            Piece promotionPiece = null;
             SubmittedMoveResponse response = new SubmittedMoveResponse()
             {
                 Success = true,
                 Error = null
             };
-            if (promotion != null)
+            if (promotion != null && promotion.Length != 1)
             {
-                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, Current.Game.WhoseTurn);
-                if (promotionPiece == null)
-                {
-                    response.Success = false;
-                    response.Error = "Invalid promotion piece.";
-                    response.Correct = SubmittedMoveResponse.INVALID_MOVE;
-                    return response;
-                }
+                response.Success = false;
+                response.Error = "Invalid promotion.";
+                response.Correct = SubmittedMoveResponse.INVALID_MOVE;
+                return response;
             }
 
-            MoveType type = Current.Game.ApplyMove(new Move(origin, destination, Current.Game.WhoseTurn, promotionPiece), false);
+            MoveType type = Current.Game.ApplyMove(new Move(origin, destination, Current.Game.WhoseTurn, promotion?[0]), false);
             if (type == MoveType.Invalid)
             {
                 response.Success = false;
@@ -78,7 +73,9 @@ namespace ChessVariantsTraining.Models
             string fen = Current.Game.GetFen();
             response.FEN = fen;
             FENs.Add(fen);
-            Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotionPiece == null ? "" : "=" + char.ToUpper(promotionPiece.GetFenCharacter()).ToString()));
+
+            string promotionUpper = promotion.ToUpperInvariant();
+            Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotion == null ? "" : "=" + promotionUpper));
 
             if (Current.Game.IsWinner(ChessUtilities.GetOpponentOf(Current.Game.WhoseTurn)))
             {
@@ -86,7 +83,7 @@ namespace ChessVariantsTraining.Models
                 return response;
             }
 
-            if (string.Compare(SolutionMovesToDo[0], origin + "-" + destination + (promotion != null ? "=" + char.ToUpperInvariant(promotionPiece.GetFenCharacter()) : ""), true) != 0)
+            if (string.Compare(SolutionMovesToDo[0], origin + "-" + destination + (promotion != null ? "=" + promotionUpper : ""), true) != 0)
             {
                 PuzzleFinished(response, false);
                 return response;
@@ -103,7 +100,7 @@ namespace ChessVariantsTraining.Models
 
             string moveToPlay = SolutionMovesToDo[0];
             string[] parts = moveToPlay.Split('-', '=');
-            Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(parts[2][0], Current.Game.WhoseTurn)), true);
+            Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : new char?(parts[2][0])), true);
             response.Play = moveToPlay;
             Moves.Add(moveToPlay);
             response.FenAfterPlay = Current.Game.GetFen();
@@ -141,7 +138,7 @@ namespace ChessVariantsTraining.Models
                 foreach (string move in SolutionMovesToDo)
                 {
                     string[] p = move.Split('-', '=');
-                    correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : Utilities.GetPromotionPieceFromChar(p[2][0], correctGame.WhoseTurn)), true);
+                    correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : new char?(p[2][0])), true);
                     FENs.Add(correctGame.GetFen());
                     Checks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
                     Moves.Add(move);

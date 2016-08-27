@@ -49,12 +49,11 @@ namespace ChessVariantsTraining.Models
         public bool VerifyMove(string origin, string destination, string promotion)
         {
             bool correctMove = false;
-            Piece promotionPiece = null;
-            if (promotion != null)
+            if (promotion != null && promotion.Length != 1)
             {
-                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, AssociatedGame.WhoseTurn);
+                return false;
             }
-            MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn, promotionPiece), false);
+            MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn, promotion?[0]), false);
             if (moveType != MoveType.Invalid)
             {
                 correctMove = AssociatedGame.IsWinner(ChessUtilities.GetOpponentOf(AssociatedGame.WhoseTurn));

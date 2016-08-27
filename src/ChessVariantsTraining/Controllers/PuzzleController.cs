@@ -122,22 +122,17 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "The given ID is invalid." });
             }
+            if (promotion != null && promotion.Length != 1)
+            {
+                return Json(new { success = false, error = "Invalid 'promotion' parameter." });
+            }
 
             Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
             if (puzzle == null)
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
-            Piece promotionPiece = null;
-            if (promotion != null)
-            {
-                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, puzzle.Game.WhoseTurn);
-                if (promotionPiece == null)
-                {
-                    return Json(new { success = false, error = "Invalid promotion piece." });
-                }
-            }
-            MoveType type = puzzle.Game.ApplyMove(new Move(origin, destination, puzzle.Game.WhoseTurn, promotionPiece), false);
+            MoveType type = puzzle.Game.ApplyMove(new Move(origin, destination, puzzle.Game.WhoseTurn, promotion?[0]), false);
             if (type.HasFlag(MoveType.Invalid))
             {
                 return Json(new { success = false, error = "The given move is invalid." });

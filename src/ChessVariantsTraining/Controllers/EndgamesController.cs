@@ -129,18 +129,18 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Endgames/SubmitMove")]
         public IActionResult SubmitMove(string trainingSessionId, string origin, string destination, string promotion = null)
         {
+            if (promotion != null && promotion.Length != 1)
+            {
+                return Json(new { success = false, error = "Invalid promotion parameter." });
+            }
+
             EndgameTrainingSession session = endgameTrainingSessionRepository.Get(trainingSessionId);
             if (session == null)
             {
                 return Json(new { success = false, error = "Training session ID not found." });
             }
 
-            Piece promotionPiece = null;
-            if (promotion != null)
-            {
-                promotionPiece = Utilities.GetPromotionPieceFromName(promotion, session.Game.WhoseTurn);
-            }
-            Move move = new Move(origin, destination, session.Game.WhoseTurn, promotionPiece);
+            Move move = new Move(origin, destination, session.Game.WhoseTurn, promotion?[0]);
             SubmittedMoveResponse response = session.SubmitMove(move);
             dynamic jsonResp = new ExpandoObject();
             jsonResp.success = response.Success;

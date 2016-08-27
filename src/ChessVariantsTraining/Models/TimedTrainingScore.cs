@@ -20,6 +20,9 @@ namespace ChessVariantsTraining.Models
         [BsonElement("dateRecorded")]
         public DateTime DateRecordedUtc { get; set; }
 
+        [BsonElement("variant")]
+        public string Variant { get; set; }
+
         public TimedTrainingScore() { }
 
         public TimedTrainingScore(double score, string type, int? owner, DateTime dateRecordedUtc)

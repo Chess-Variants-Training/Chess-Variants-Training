@@ -20,8 +20,8 @@
     "MongoDB.Driver": "2.3.0-beta1",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.NETCore.App": "1.0.0",
-    "ChessDotNet": "0.9.1",
-    "ChessDotNet.Variants": "0.9.1",
+    "ChessDotNet": "0.9.2",
+    "ChessDotNet.Variants": "0.9.2",
     "glicko2-csharp": "1.0.0"
   },
 

@@ -40,7 +40,7 @@
             piece.addEventListener("click", function (e) {
                 e.stopPropagation();
                 ChessgroundExtensions.removePromotionDialog(element);
-                pieceSelected(origin, destination, e.target.dataset.role);
+                pieceSelected(origin, destination, ChessgroundExtensions.pieceNameToPieceChar(e.target.dataset.role));
             });
             square.appendChild(piece);
             promotionChoiceElement.appendChild(square);
@@ -48,5 +48,19 @@
     },
     removePromotionDialog: function (element) {
         element.removeChild(document.getElementById("promotion-choice"));
+    },
+    pieceNameToPieceChar: function (name) {
+        switch (name) {
+            case "queen":
+                return "Q";
+            case "rook":
+                return "R";
+            case "bishop":
+                return "B";
+            case "knight":
+                return "N";
+            case "king":
+                return "K";
+        }
     }
 };
