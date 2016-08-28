@@ -55,11 +55,12 @@ li.right {
     background: red;
     padding: 10px;
     text-decoration: none;
-    color: white;
-    background-color: #4A9470;
+    color: #AA5639;
+    background-color: white;
     white-space: nowrap;
 }
 
     #user-nav-content > li > a:hover {
-        background-color: #0F5935;
+        background-color: #803015;
+        color: white;
     }
