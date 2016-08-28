@@ -17,8 +17,9 @@ namespace ChessVariantsTraining.Controllers
         IPasswordHasher passwordHasher;
         ICounterRepository counterRepository;
         IPersistentLoginHandler loginHandler;
+        ITimedTrainingScoreRepository timedTrainingScoreRepository;
 
-        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler)
+        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, ITimedTrainingScoreRepository _timedTrainingScoreRepository)
         {
             userRepository = _userRepository;
             ratingRepository = _ratingRepository;
@@ -26,6 +27,7 @@ namespace ChessVariantsTraining.Controllers
             passwordHasher = _passwordHasher;
             counterRepository = _counterRepository;
             loginHandler = _loginHandler;
+            timedTrainingScoreRepository = _timedTrainingScoreRepository;
         }
         [HttpGet]
         [Route("/User/Register")]
@@ -148,16 +150,22 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpGet]
-        [Route("/User/RatingChartData/{user}")]
-        public IActionResult RatingChartData(string user, string range, string show)
+        [Route("/User/ChartData/{type}/{user}/{range}/{show}")]
+        public IActionResult ChartData(string type, string user, string range, string show)
         {
-            if (!new string[] { "each", "bestDay", "endDay" }.Contains(show))
+            if (!new string[] { "Rating", "TimedTraining" }.Contains(type))
+            {
+                return Json(new { success = false, error = "Invalid chart type." });
+            }
+
+            if (!new string[] { "each", "bestDay", type == "Rating" ? "endDay" : "avgDay" }.Contains(show))
             {
                 return Json(new { success = false, error = "Invalid 'show' parameter." });
             }
 
-            List<RatingWithMetadata> ratings;
             DateTime utcNow = DateTime.UtcNow;
+            DateTime? from;
+            DateTime? to;
 
             User u = userRepository.FindByUsername(user);
             if (u == null)
@@ -169,34 +177,50 @@ namespace ChessVariantsTraining.Controllers
 
             if (range == "all")
             {
-                ratings = ratingRepository.Get(userId, null, null, show);
+                from = to = null;
             }
             else if (range == "1d")
             {
-                ratings = ratingRepository.Get(userId, utcNow.Date, utcNow, show);
+                from = utcNow.Date;
+                to = utcNow;
             }
             else if (range == "7d")
             {
-                ratings = ratingRepository.Get(userId, (utcNow - new TimeSpan(7, 0, 0, 0)).Date, utcNow, show);
+                from = (utcNow - new TimeSpan(7, 0, 0, 0)).Date;
+                to = utcNow;
             }
             else if (range == "30d")
             {
-                ratings = ratingRepository.Get(userId, (utcNow - new TimeSpan(30, 0, 0, 0)).Date, utcNow, show);
+                from = (utcNow - new TimeSpan(30, 0, 0, 0)).Date;
+                to = utcNow;
             }
             else if (range == "1y")
             {
-                ratings = ratingRepository.Get(userId, new DateTime(utcNow.Year - 1, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, utcNow.Millisecond), utcNow, show);
+                from = new DateTime(utcNow.Year - 1, utcNow.Month, utcNow.Day, utcNow.Hour, utcNow.Minute, utcNow.Second, utcNow.Millisecond);
+                to = utcNow;
             }
             else if (range == "ytd")
             {
-                ratings = ratingRepository.Get(userId, new DateTime(utcNow.Year, 1, 1, 0, 0, 0, 0), utcNow, show);
+                from = new DateTime(utcNow.Year, 1, 1, 0, 0, 0, 0);
+                to = utcNow;
             }
             else
             {
                 return Json(new { success = false, error = "Invalid date range." });
             }
-            RatingChartData chart = new RatingChartData(ratings, show == "each");
-            return Json(new { success = true, labels = chart.Labels, ratings = chart.Ratings });
+
+            if (type == "Rating")
+            {
+                List<RatingWithMetadata> ratings = ratingRepository.Get(userId, from, to, show);
+                RatingChartData chart = new RatingChartData(ratings, show == "each");
+                return Json(new { success = true, labels = chart.Labels, ratings = chart.Ratings });
+            }
+            else // type == "TimedTraining"
+            {
+                List<TimedTrainingScore> scores = timedTrainingScoreRepository.Get(userId, from, to, show);
+                TimedTrainingChartData chart = new TimedTrainingChartData(scores, show == "each");
+                return Json(new { success = true, labels = chart.Labels, scores = chart.Scores });
+            }
         }
     }
 }

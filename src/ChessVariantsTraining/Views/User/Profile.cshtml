@@ -21,7 +21,7 @@ About:
 <p>
     Rating: @Model.Rating
 </p>
-<div id="ratingChartWithOptions">
+<div class="chartWithOptions">
     Range:
     <select id="ratingChartDateRangeSelector" autocomplete="off">
         <option value="all" selected>All</option>
@@ -40,5 +40,24 @@ About:
     </select>
     <div>
         <canvas id="ratingChart"></canvas>
+    </div>
+</div>
+<div class="chartWithOptions">
+    <select id="ttsChartDateRangeSelector" autocomplete="off">
+        <option value="all" selected>All</option>
+        <option value="1d">Today (UTC)</option>
+        <option value="7d">Last 7 days</option>
+        <option value="30d">Last 30 days</option>
+        <option value="1y">1 year</option>
+        <option value="ytd">Year-to-date</option>
+    </select>
+    Show:
+    <select id="ttsChartShownSelector" autocomplete="off">
+        <option value="each" selected>Score for each timed training session</option>
+        <option value="avgDay">Average score of the day</option>
+        <option value="bestDay">Best score of the day</option>
+    </select>
+    <div>
+        <canvas id="ttsChart"></canvas>
     </div>
 </div>

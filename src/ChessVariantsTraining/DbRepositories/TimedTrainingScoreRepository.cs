@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -43,6 +44,39 @@ namespace ChessVariantsTraining.DbRepositories
                                   .Sort(Builders<TimedTrainingScore>.Sort.Descending("dateRecorded"))
                                   .Limit(15)
                                   .ToList();
+        }
+
+        public List<TimedTrainingScore> Get(int user, DateTime? from, DateTime? to, string show)
+        {
+            FilterDefinitionBuilder<TimedTrainingScore> builder = Builders<TimedTrainingScore>.Filter;
+            FilterDefinition<TimedTrainingScore> filter = builder.Eq("owner", user);
+            if (from.HasValue && to.HasValue)
+            {
+                filter &= builder.Lte("dateRecorded", to.Value) & builder.Gte("dateRecorded", from.Value);
+            }
+            var found = scoreCollection.Find(filter).ToList();
+            if (show == "each")
+            {
+                return found;
+            }
+            else
+            {
+                var groups = found.GroupBy(x => new { x.DateRecordedUtc.Date, x.Type, x.Variant });
+                if (show == "bestDay")
+                {
+                    Func<TimedTrainingScore, TimedTrainingScore, TimedTrainingScore> bestOfADayAggregator = (agg, next) => next.Score > agg.Score ? next : agg;
+                    List<TimedTrainingScore> result = groups.Select(x => x.Aggregate(bestOfADayAggregator)).ToList();
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        result[i].DateRecordedUtc = result[i].DateRecordedUtc.Date;
+                    }
+                    return result;
+                }
+                else // show == "avgDay"
+                {
+                    return groups.Select(x => new TimedTrainingScore(x.Average(y => y.Score), x.Key.Type, user, x.Key.Date, x.Key.Variant)).ToList();
+                }
+            }
         }
     }
 }
