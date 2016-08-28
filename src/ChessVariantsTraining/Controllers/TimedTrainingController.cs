@@ -59,7 +59,7 @@ namespace ChessVariantsTraining.Controllers
             int? userId;
             if ((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
             {
-                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
+                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value, "mateInOne" + variant);
             }
             switch (variant)
             {
@@ -88,7 +88,7 @@ namespace ChessVariantsTraining.Controllers
             int? userId;
             if ((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
             {
-                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value);
+                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value, "forcedCaptureAntichess");
             }
             ViewBag.Description = "Find the forced capture!";
             ViewBag.Type = "Forced-Capture";

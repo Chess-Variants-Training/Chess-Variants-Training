@@ -38,9 +38,9 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        public List<TimedTrainingScore> GetLatestScores(int owner)
+        public List<TimedTrainingScore> GetLatestScores(int owner, string type)
         {
-            return scoreCollection.Find(Builders<TimedTrainingScore>.Filter.Eq("owner", owner))
+            return scoreCollection.Find(Builders<TimedTrainingScore>.Filter.Eq("owner", owner) & Builders<TimedTrainingScore>.Filter.Eq("type", type))
                                   .Sort(Builders<TimedTrainingScore>.Sort.Descending("dateRecorded"))
                                   .Limit(15)
                                   .ToList();

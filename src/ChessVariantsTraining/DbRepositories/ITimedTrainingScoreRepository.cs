@@ -8,7 +8,7 @@ namespace ChessVariantsTraining.DbRepositories
     {
         bool Add(TimedTrainingScore score);
 
-        List<TimedTrainingScore> GetLatestScores(int owner);
+        List<TimedTrainingScore> GetLatestScores(int owner, string type);
 
         List<TimedTrainingScore> Get(int userId, DateTime? from, DateTime? to, string show);
     }
