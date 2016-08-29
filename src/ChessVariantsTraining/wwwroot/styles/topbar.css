@@ -35,14 +35,14 @@ li.right {
     float: right;
 }
 
-#user-nav-content.invisible {
+#user-nav-content.invisible, .dropdown:not(:hover) ul {
     display: none;
 }
 
-#user-nav-content.visible {
+#user-nav-content.visible, .dropdown:hover ul {
+    margin-top: 7px;
+    min-width: 100%;
     position: absolute;
-    right: 0;
-    left: auto;
     list-style: none;
     -webkit-box-shadow: 5px 5px 11px 0px rgba(0,0,0,0.6);
     -moz-box-shadow: 5px 5px 11px 0px rgba(0,0,0,0.6);
@@ -50,7 +50,17 @@ li.right {
     padding: 0;
 }
 
-#user-nav-content > li > a {
+#user-nav-content.visible {
+    right: 0;
+    left: auto;
+}
+
+.dropdown:hover ul {
+    left: 0;
+    right: auto;
+}
+
+#user-nav-content > li > a, .dropdown > ul > li > a {
     display: block;
     background: red;
     padding: 10px;
@@ -60,7 +70,8 @@ li.right {
     white-space: nowrap;
 }
 
-    #user-nav-content > li > a:hover {
+    #user-nav-content > li > a:hover, .dropdown > ul > li > a:hover {
         background-color: #803015;
         color: white;
     }
+

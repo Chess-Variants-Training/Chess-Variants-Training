@@ -33,21 +33,28 @@
     <div id="topbar">
         <ul id="topbar-menu">
             <li>@Html.ActionLink("Home", "Index", "Home", null, null)</li>
-            <li>@Html.ActionLink("Train", "Index", "Puzzle", null, null)</li>
-            @{ User loggedIn = LoginHandler.LoggedInUser(Context); }
-            @if (loggedIn != null)
+            <li class="dropdown">@Html.ActionLink("Train", "Index", "Puzzle", null, null)
+            <ul>
+                <li>@Html.ActionLink("Puzzles", "Index", "Puzzle", null, null)</li>
+                <li>@Html.ActionLink("Timed training", "Index", "TimedTraining", null, null)</li>
+                <li>@Html.ActionLink("Endgames", "Index", "Endgames", null, null)</li>
+            </ul>
+            </li>
+            @{ User loggedIn = LoginHandler.LoggedInUser(Context);
+                    }
+                    @if(loggedIn != null)
             {
-                <li>@Html.ActionLink("Contribute", "Editor", "Puzzle", null, null)</li>
+                <li> @Html.ActionLink("Contribute", "Editor", "Puzzle", null, null) </li>
             }
             <li class="right">
-                @{ 
+                @{
                     if (loggedIn == null)
                     {
-                        @:@Html.ActionLink("Log in", "Login", "User", null, null)
-                    }
+                    @:@Html.ActionLink("Log in", "Login", "User", null, null)
+                                        }
                     else
                     {
-                        @:<a id="username" href="#">@loggedIn.Username</a><ul id="user-nav-content" class="invisible"><li>@Html.ActionLink("Profile", "Profile", "User", new { name = loggedIn.Username }, null)</li><li>@Html.ActionLink("Log out", "Logout", "User")</li></ul>
+                    @:<a id="username" href="#">@loggedIn.Username</a><ul id="user-nav-content" class="invisible"><li>@Html.ActionLink("Profile", "Profile", "User", new { name = loggedIn.Username }, null)</li><li>@Html.ActionLink("Log out", "Logout", "User")</li></ul>
                     }
                 }
             </li>
