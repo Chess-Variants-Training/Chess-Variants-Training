@@ -12,14 +12,14 @@
         position: relative;
     }
 
-        #topbar-menu > li > a, #username {
+        #topbar-menu > li > a {
             font-weight: bold;
             text-decoration: none;
             color: white;
             padding: 7px;
         }
 
-            #topbar-menu > li > a:hover, #username:hover {
+            #topbar-menu > li > a:hover {
                 background-color: #803015;
             }
 
@@ -35,11 +35,11 @@ li.right {
     float: right;
 }
 
-#user-nav-content.invisible, .dropdown:not(:hover) ul {
+.dropdown:not(:hover) ul {
     display: none;
 }
 
-#user-nav-content.visible, .dropdown:hover ul {
+.dropdown:hover ul {
     margin-top: 7px;
     min-width: 100%;
     position: absolute;
@@ -50,17 +50,17 @@ li.right {
     padding: 0;
 }
 
-#user-nav-content.visible {
+.dropdown.right:hover ul {
     right: 0;
     left: auto;
 }
 
-.dropdown:hover ul {
+.dropdown:not(.right):hover ul {
     left: 0;
     right: auto;
 }
 
-#user-nav-content > li > a, .dropdown > ul > li > a {
+.dropdown > ul > li > a {
     display: block;
     background: red;
     padding: 10px;
@@ -70,7 +70,7 @@ li.right {
     white-space: nowrap;
 }
 
-    #user-nav-content > li > a:hover, .dropdown > ul > li > a:hover {
+    .dropdown > ul > li > a:hover {
         background-color: #803015;
         color: white;
     }
