@@ -3,22 +3,20 @@
 @Model.Count puzzles in review.
 <table width="100%">
     <thead>
-        <th align="left">ID</th>
-        <th align="left">Author</th>
-        <th align="left">Review</th>
+        <tr>
+            <th align="left">ID</th>
+            <th align="left">Author</th>
+            <th align="left">Review</th>
+        </tr>
     </thead>
     <tbody>
-    @foreach (ChessVariantsTraining.Models.Puzzle p in Model)
-    {
-        <tr>
-            <td>@p.ID</td>
-            <td>@p.Author</td>
-            <td>@Html.ActionLink("Review", "TrainId", "Puzzle", new { id = p.ID }, null)</td>
-        </tr>
-    }
+        @foreach (ChessVariantsTraining.Models.Puzzle p in Model)
+        {
+            <tr>
+                <td>@p.ID</td>
+                <td>@p.Author</td>
+                <td>@Html.ActionLink("Review", "TrainId", "Puzzle", new { id = p.ID }, null)</td>
+            </tr>
+        }
     </tbody>
 </table>
-
-
-
-
