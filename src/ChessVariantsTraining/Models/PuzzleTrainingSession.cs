@@ -73,7 +73,7 @@ namespace ChessVariantsTraining.Models
             response.FEN = fen;
             FENs.Add(fen);
 
-            string promotionUpper = promotion.ToUpperInvariant();
+            string promotionUpper = promotion?.ToUpperInvariant();
             Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotion == null ? "" : "=" + promotionUpper));
 
             if (Current.Game.IsWinner(ChessUtilities.GetOpponentOf(Current.Game.WhoseTurn)))
