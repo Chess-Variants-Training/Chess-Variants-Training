@@ -68,6 +68,10 @@
             {
                 <li class="right">@Html.ActionLink("Reports", "ListAll", "Report")</li>
             }
+            @if (loggedIn != null && UserRole.HasAtLeastThePrivilegesOf(loggedIn.Roles, new string[] {  UserRole.PUZZLE_REVIEWER }))
+            {
+                <li class="right">@Html.ActionLink("Review", "Index", "Review")</li>
+            }
         </ul>
     </div>
     <div id="bodycontainer">
