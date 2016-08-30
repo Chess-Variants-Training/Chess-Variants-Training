@@ -9,8 +9,8 @@
 });
 
 window.borderColors = {
-    "Atomic": "red", "King of the Hill": "orange", "Three-check": "orangered", "Antichess": "pink", "Horde": "purple", "Racing Kings": "green",
-    "Atomic (mate in one)": "red", "King of the Hill (mate in one)": "orange", "Three-check (third check)": "orangered", "Antichess (forced capture)": "pink", "Horde (mate in one)": "purple"
+    "Atomic": "red", "King of the Hill": "orange", "Three-check": "blue", "Antichess": "pink", "Horde": "purple", "Racing Kings": "green",
+    "Atomic (mate in one)": "red", "King of the Hill (mate in one)": "orange", "Three-check (third check)": "blue", "Antichess (forced capture)": "pink", "Horde (mate in one)": "purple"
 };
 
 function updateRatingChartData() {
