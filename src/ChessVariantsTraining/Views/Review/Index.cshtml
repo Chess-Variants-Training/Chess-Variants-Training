@@ -1,11 +1,11 @@
 @model System.Collections.Generic.List<ChessVariantsTraining.Models.Puzzle>
 @section Title{Review submitted puzzles}
 @Model.Count puzzles in review.
-<table>
+<table width="100%">
     <thead>
-        <th>ID</th>
-        <th>Author</th>
-        <th>Review</th>
+        <th align="left">ID</th>
+        <th align="left">Author</th>
+        <th align="left">Review</th>
     </thead>
     <tbody>
     @foreach (ChessVariantsTraining.Models.Puzzle p in Model)
