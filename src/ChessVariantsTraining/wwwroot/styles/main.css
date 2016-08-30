@@ -21,3 +21,15 @@ a {
     a:hover {
         color: red;
     }
+
+.full-width {
+    width: 100%;
+}
+
+    table.full-width td, table.full-width th {
+        width: 33%;
+    }
+
+table.align-left th {
+    text-align: left;
+}
