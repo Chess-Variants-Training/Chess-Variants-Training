@@ -47,6 +47,7 @@ function clearSelection(e) {
 function goToStep2(e) {
     e = e || window.event;
     clearSelection(e);
+    window.currentVariation = 0;
     var step1Elements = document.getElementsByClassName("step1");
     for (var i = 0; i < step1Elements.length; i++) {
         step1Elements[i].setAttribute("class", "step1 hidden");
@@ -84,9 +85,9 @@ function submitMove(orig, dest, metadata) {
 }
 
 function doSubmitMoveRequest(orig, dest, promotion) {
-    document.getElementById("movelist").innerHTML += " " + orig + "-" + dest;
+    document.getElementById("movelist-" + window.currentVariation).innerHTML += " " + orig + "-" + dest;
     if (promotion) {
-        document.getElementById("movelist").innerHTML += "=" + (promotion !== "knight" ? promotion.charAt(0).toUpperCase() : "N");
+        document.getElementById("movelist-" + window.currentVariation).innerHTML += "=" + (promotion !== "knight" ? promotion.charAt(0).toUpperCase() : "N");
     }
     jsonXhr("/Puzzle/Editor/SubmitMove", "POST", "id=" + window.puzzleId + "&origin=" + orig + "&destination=" + dest + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
         window.ground.set({
@@ -115,13 +116,37 @@ function updateChessGroundValidMoves() {
 function submitPuzzle(e) {
     e = e || window.event;
     e.preventDefault();
-    var solution = document.getElementById("movelist").innerHTML;
+    var solutions = [];
+    for (var i = 0; i <= window.currentVariation; i++) {
+        solutions.push(document.getElementById("movelist-" + i).textContent.trim());
+    }
+    var solution = solutions.join(';');
     jsonXhr("/Puzzle/Editor/Submit", "POST", "id=" + window.puzzleId + "&solution=" + encodeURIComponent(solution.trim()) +
         "&explanation=" + encodeURIComponent(document.getElementById("puzzleExplanation").value), function (req, jsonResponse) {
             alert("Success!");
         }, function (req, err) {
             alert(err);
         });
+}
+
+function addAnotherVariation(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    jsonXhr("/Puzzle/Editor/NewVariation", "POST", "id=" + window.puzzleId, function (req, jsonResponse) {
+        window.currentVariation++;
+        var li = document.createElement("li");
+        var code = document.createElement("code");
+        code.id = "movelist-" + window.currentVariation;
+        li.appendChild(code);
+        document.getElementById("variations").appendChild(li);
+        window.ground.set({
+            fen: jsonResponse["fen"]
+        });
+        updateChessGroundValidMoves();
+    }, function (req, err) {
+        alert(err);
+    });
 }
 
 window.addEventListener("load", function () {
@@ -169,4 +194,5 @@ window.addEventListener("load", function () {
 
     document.getElementById("gotostep2").addEventListener("click", goToStep2);
     document.getElementById("submitpuzzle").addEventListener("click", submitPuzzle);
+    document.getElementById("addVariation").addEventListener("click", addAnotherVariation);
 });

@@ -141,6 +141,26 @@ namespace ChessVariantsTraining.Controllers
             return Json(new { success = true, fen = puzzle.Game.GetFen() });
         }
 
+        [HttpPost("/Puzzle/Editor/NewVariation")]
+        [Restricted(true, UserRole.NONE)]
+        public IActionResult NewVariation(string id)
+        {
+            int puzzleId;
+            if (!int.TryParse(id, out puzzleId))
+            {
+                return Json(new { success = false, error = "The given ID is invalid." });
+            }
+
+            Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
+            if (puzzle == null)
+            {
+                return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
+            }
+
+            puzzle.Game = gameConstructor.Construct(puzzle.Variant, puzzle.InitialFen);
+            return Json(new { success = true, fen = puzzle.InitialFen });
+        }
+
         [HttpPost]
         [Route("/Puzzle/Editor/Submit")]
         [Restricted(true, UserRole.NONE)]
@@ -157,7 +177,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
             }
-            puzzle.Solutions.Add(solution);
+            puzzle.Solutions = new List<string>(solution.Split(';'));
             puzzle.Author = loginHandler.LoggedInUserId(HttpContext).Value;
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;

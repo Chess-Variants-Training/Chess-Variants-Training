@@ -2,6 +2,7 @@
 using ChessVariantsTraining.Services;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessVariantsTraining.Models
 {
@@ -9,13 +10,14 @@ namespace ChessVariantsTraining.Models
     {
         public string SessionID { get; private set; }
         public Puzzle Current { get; set; }
-        public List<string> SolutionMovesToDo { get; set; }
         public List<string> FENs { get; set; }
         public List<string> Checks { get; set; }
         public List<string> Moves { get; set; }
         public List<int> PastPuzzleIds { get; set; }
         public DateTime? CurrentPuzzleStartedUtc { get; set; }
         public DateTime? CurrentPuzzleEndedUtc { get; set; }
+
+        IEnumerable<IEnumerable<string>> PossibleVariations = null;
 
         IGameConstructor gameConstructor;
 
@@ -35,7 +37,7 @@ namespace ChessVariantsTraining.Models
             Current = puzzle;
             CurrentPuzzleStartedUtc = DateTime.UtcNow;
             CurrentPuzzleEndedUtc = null;
-            SolutionMovesToDo = new List<string>(puzzle.Solutions[0].Split(' '));
+            PossibleVariations = puzzle.Solutions.Select(x => x.Split(' '));
             FENs.Clear();
             FENs.Add(puzzle.InitialFen);
             Checks.Clear();
@@ -82,14 +84,16 @@ namespace ChessVariantsTraining.Models
                 return response;
             }
 
-            if (string.Compare(SolutionMovesToDo[0], origin + "-" + destination + (promotion != null ? "=" + promotionUpper : ""), true) != 0)
+            string moveStr = origin + "-" + destination + (promotion != null ? "=" + promotionUpper : "");
+            if (!PossibleVariations.Any(x => string.Compare(x.First(), moveStr, true) == 0))
             {
                 PuzzleFinished(response, false);
                 return response;
             }
 
-            SolutionMovesToDo.RemoveAt(0);
-            if (SolutionMovesToDo.Count == 0)
+            PossibleVariations = PossibleVariations.Where(x => string.Compare(x.First(), moveStr, true) == 0).Select(x => x.Skip(1));
+
+            if (PossibleVariations.Any(x => x.Count() == 0))
             {
                 PuzzleFinished(response, true);
                 return response;
@@ -97,7 +101,7 @@ namespace ChessVariantsTraining.Models
 
             response.FEN = fen;
 
-            string moveToPlay = SolutionMovesToDo[0];
+            string moveToPlay = PossibleVariations.First().First();
             string[] parts = moveToPlay.Split('-', '=');
             Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : new char?(parts[2][0])), true);
             response.Play = moveToPlay;
@@ -108,8 +112,8 @@ namespace ChessVariantsTraining.Models
             Checks.Add(response.CheckAfterAutoMove);
             response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
             response.Correct = 0;
-            SolutionMovesToDo.RemoveAt(0);
-            if (SolutionMovesToDo.Count == 0)
+            PossibleVariations = PossibleVariations.Select(x => x.Skip(1));
+            if (PossibleVariations.Any(x => !x.Any()))
             {
                 PuzzleFinished(response, true);
             }
@@ -134,7 +138,7 @@ namespace ChessVariantsTraining.Models
                 response.FEN = FENs[FENs.Count - 1];
 
                 ChessGame correctGame = gameConstructor.Construct(Current.Variant, response.FEN);
-                foreach (string move in SolutionMovesToDo)
+                foreach (string move in PossibleVariations.First())
                 {
                     string[] p = move.Split('-', '=');
                     correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : new char?(p[2][0])), true);
