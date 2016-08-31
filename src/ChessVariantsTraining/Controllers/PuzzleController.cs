@@ -76,6 +76,7 @@ namespace ChessVariantsTraining.Controllers
             puzzle.Game = game;
             puzzle.InitialFen = fen;
             puzzle.Variant = variant;
+            puzzle.Author = loginHandler.LoggedInUserId(HttpContext).Value;
             puzzle.Solutions = new List<string>();
             do
             {
@@ -101,6 +102,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
+            if (puzzle.Author != loginHandler.LoggedInUserId(HttpContext).Value)
+            {
+                return Json(new { success = false, error = "Only the puzzle author can access this right now." });
+            }
+
             ReadOnlyCollection<Move> validMoves;
             if (puzzle.Game.IsWinner(Player.White) || puzzle.Game.IsWinner(Player.Black))
             {
@@ -134,6 +140,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
+            if (puzzle.Author != loginHandler.LoggedInUserId(HttpContext).Value)
+            {
+                return Json(new { success = false, error = "Only the puzzle author can access this right now." });
+            }
+
             MoveType type = puzzle.Game.ApplyMove(new Move(origin, destination, puzzle.Game.WhoseTurn, promotion?[0]), false);
             if (type.HasFlag(MoveType.Invalid))
             {
@@ -156,6 +167,10 @@ namespace ChessVariantsTraining.Controllers
             if (puzzle == null)
             {
                 return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
+            }
+            if (puzzle.Author != loginHandler.LoggedInUserId(HttpContext).Value)
+            {
+                return Json(new { success = false, error = "Only the puzzle author can access this right now." });
             }
 
             puzzle.Game = gameConstructor.Construct(puzzle.Variant, puzzle.InitialFen);
@@ -183,12 +198,16 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
             }
+            if (puzzle.Author != loginHandler.LoggedInUserId(HttpContext).Value)
+            {
+                return Json(new { success = false, error = "Only the puzzle author can access this right now." });
+            }
+
             puzzle.Solutions = new List<string>(solution.Split(';').Where(x => !string.IsNullOrWhiteSpace(x)));
             if (puzzle.Solutions.Count == 0)
             {
                 return Json(new { success = false, error = "There are no accepted variations." });
             }
-            puzzle.Author = loginHandler.LoggedInUserId(HttpContext).Value;
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;
             puzzle.Rating = new Rating(1500, 350, 0.06);
