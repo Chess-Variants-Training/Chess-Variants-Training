@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
+using System.Linq;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -172,12 +173,21 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "The given ID is invalid." });
             }
 
+            if (string.IsNullOrWhiteSpace(solution))
+            {
+                return Json(new { success = false, error = "There are no accepted variations." });
+            }
+
             Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
             if (puzzle == null)
             {
                 return Json(new { success = false, error = string.Format("The given puzzle (ID: {0}) cannot be published because it isn't being created.", id) });
             }
-            puzzle.Solutions = new List<string>(solution.Split(';'));
+            puzzle.Solutions = new List<string>(solution.Split(';').Where(x => !string.IsNullOrWhiteSpace(x)));
+            if (puzzle.Solutions.Count == 0)
+            {
+                return Json(new { success = false, error = "There are no accepted variations." });
+            }
             puzzle.Author = loginHandler.LoggedInUserId(HttpContext).Value;
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;

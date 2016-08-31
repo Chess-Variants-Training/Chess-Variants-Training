@@ -85,9 +85,9 @@ function submitMove(orig, dest, metadata) {
 }
 
 function doSubmitMoveRequest(orig, dest, promotion) {
-    document.getElementById("movelist-" + window.currentVariation).innerHTML += " " + orig + "-" + dest;
+    document.getElementById("variations").children[window.currentVariation].innerHTML += " " + orig + "-" + dest;
     if (promotion) {
-        document.getElementById("movelist-" + window.currentVariation).innerHTML += "=" + (promotion !== "knight" ? promotion.charAt(0).toUpperCase() : "N");
+        document.getElementById("variations").children[window.currentVariation].innerHTML += "=" + (promotion !== "knight" ? promotion.charAt(0).toUpperCase() : "N");
     }
     jsonXhr("/Puzzle/Editor/SubmitMove", "POST", "id=" + window.puzzleId + "&origin=" + orig + "&destination=" + dest + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
         window.ground.set({
@@ -118,7 +118,7 @@ function submitPuzzle(e) {
     e.preventDefault();
     var solutions = [];
     for (var i = 0; i <= window.currentVariation; i++) {
-        solutions.push(document.getElementById("movelist-" + i).textContent.trim());
+        solutions.push(document.getElementById("variations").children[i].textContent.trim());
     }
     var solution = solutions.join(';');
     jsonXhr("/Puzzle/Editor/Submit", "POST", "id=" + window.puzzleId + "&solution=" + encodeURIComponent(solution.trim()) +
@@ -136,9 +136,6 @@ function addAnotherVariation(e) {
     jsonXhr("/Puzzle/Editor/NewVariation", "POST", "id=" + window.puzzleId, function (req, jsonResponse) {
         window.currentVariation++;
         var li = document.createElement("li");
-        var code = document.createElement("code");
-        code.id = "movelist-" + window.currentVariation;
-        li.appendChild(code);
         document.getElementById("variations").appendChild(li);
         window.ground.set({
             fen: jsonResponse["fen"]
@@ -147,6 +144,26 @@ function addAnotherVariation(e) {
     }, function (req, err) {
         alert(err);
     });
+}
+
+function deleteVariation(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    var num = parseInt(document.getElementById("variationToDelete").value, 10);
+    if (isNaN(num)) {
+        return;
+    }
+
+    var id = num - 1;
+    document.getElementById("variations").children[id].remove();
+
+    if (window.currentVariation === id) {
+        window.currentVariation--;
+        addAnotherVariation({ preventDefault: function () { } });
+    } else {
+        window.currentVariation--;
+    }
 }
 
 window.addEventListener("load", function () {
@@ -195,4 +212,5 @@ window.addEventListener("load", function () {
     document.getElementById("gotostep2").addEventListener("click", goToStep2);
     document.getElementById("submitpuzzle").addEventListener("click", submitPuzzle);
     document.getElementById("addVariation").addEventListener("click", addAnotherVariation);
+    document.getElementById("deleteVariation").addEventListener("click", deleteVariation);
 });
