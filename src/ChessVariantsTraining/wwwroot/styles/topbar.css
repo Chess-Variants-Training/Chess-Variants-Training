@@ -48,6 +48,7 @@ li.right {
     -moz-box-shadow: 5px 5px 11px 0px rgba(0,0,0,0.6);
     box-shadow: 5px 5px 11px 0px rgba(0,0,0,0.6);
     padding: 0;
+    z-index: 3;
 }
 
 .dropdown.right:hover ul {
