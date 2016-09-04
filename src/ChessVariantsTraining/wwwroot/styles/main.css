@@ -37,3 +37,7 @@ table.align-left th {
 .error {
     color: red;
 }
+
+.ws-pre-line {
+    white-space: pre-line;
+}
