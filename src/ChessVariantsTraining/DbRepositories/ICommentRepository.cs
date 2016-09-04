@@ -7,12 +7,12 @@ namespace ChessVariantsTraining.DbRepositories
     {
         bool Add(Comment comment);
 
-        Comment GetById(string id);
+        Comment GetById(int id);
 
-        List<Comment> GetByPuzzle(string puzzleId);
+        List<Comment> GetByPuzzle(int puzzleId);
 
-        bool Edit(string id, string newBodyUnsanitized);
+        bool Edit(int id, string newBodyUnsanitized);
 
-        bool SoftDelete(string id);
+        bool SoftDelete(int id);
     }
 }

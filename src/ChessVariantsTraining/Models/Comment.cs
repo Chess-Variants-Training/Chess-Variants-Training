@@ -26,7 +26,7 @@ namespace ChessVariantsTraining.Models
         public int? ParentID { get; set; }
 
         [BsonElement("puzzleId")]
-        public string PuzzleID { get; set; }
+        public int PuzzleID { get; set; }
 
         [BsonElement("deleted")]
         public bool Deleted { get; set; }
@@ -36,7 +36,7 @@ namespace ChessVariantsTraining.Models
 
         public Comment() { }
 
-        public Comment(int id, int author, string bodyUnsanitized, int? parentId, string puzzleId, bool deleted, DateTime creationDateUtc)
+        public Comment(int id, int author, string bodyUnsanitized, int? parentId, int puzzleId, bool deleted, DateTime creationDateUtc)
         {
             ID = id;
             Author = author;

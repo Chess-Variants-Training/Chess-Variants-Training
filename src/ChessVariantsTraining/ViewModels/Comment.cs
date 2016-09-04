@@ -8,7 +8,7 @@
         public int Score { get; set; }
         public int IndentLevel { get; set; }
         public bool Deleted { get; set; }
-        public string PuzzleID { get; set; }
+        public int PuzzleID { get; set; }
         public string DatePosted { get; set; }
 
         public Comment(Models.Comment orig, int indentLevel, int score, bool deleted, string authorUsername)

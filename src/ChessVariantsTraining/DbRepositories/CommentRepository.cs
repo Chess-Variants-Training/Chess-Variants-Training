@@ -41,19 +41,19 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        public Comment GetById(string id)
+        public Comment GetById(int id)
         {
-            var found = commentCollection.Find(new BsonDocument("_id", new BsonString(id)));
+            var found = commentCollection.Find(new BsonDocument("_id", new BsonInt32(id)));
             if (found == null) return null;
             return found.FirstOrDefault();
         }
 
-        public List<Comment> GetByPuzzle(string puzzleId)
+        public List<Comment> GetByPuzzle(int puzzleId)
         {
-            return commentCollection.Find(new BsonDocument("puzzleId", new BsonString(puzzleId))).ToList();
+            return commentCollection.Find(new BsonDocument("puzzleId", new BsonInt32(puzzleId))).ToList();
         }
 
-        public bool Edit(string id, string newBodyUnsanitized)
+        public bool Edit(int id, string newBodyUnsanitized)
         {
             FilterDefinition<Comment> filter = Builders<Comment>.Filter.Eq("_id", id);
             UpdateDefinition<Comment> update = Builders<Comment>.Update.Set("bodyUnsanitized", newBodyUnsanitized);
@@ -61,7 +61,7 @@ namespace ChessVariantsTraining.DbRepositories
             return res.IsAcknowledged && res.MatchedCount != 0;
         }
 
-        public bool SoftDelete(string id)
+        public bool SoftDelete(int id)
         {
             FilterDefinition<Comment> filter = Builders<Comment>.Filter.Eq("_id", id);
             UpdateDefinition<Comment> update = Builders<Comment>.Update.Set("deleted", true);

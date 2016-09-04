@@ -179,7 +179,7 @@ function clearComments() {
 }
 
 function loadComments() {
-    xhr("/Comment/ViewComments?puzzleId=" + window.puzzleId, "GET", null, function (req) {
+    xhr("/Comment/ViewComments/" + window.puzzleId, "GET", null, function (req) {
         document.getElementById("commentContainer").innerHTML = req.responseText;
         var comments = document.getElementById("commentContainer").querySelectorAll(".comment");
         for (var i = 0; i < comments.length; i++) {

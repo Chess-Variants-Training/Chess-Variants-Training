@@ -29,7 +29,12 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/PostComment", Name = "PostComment")]
         public IActionResult PostComment(string commentBody, string puzzleId)
         {
-            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, commentBody, null, puzzleId, false, DateTime.UtcNow);
+            int puzzleIdI;
+            if (!int.TryParse(puzzleId, out puzzleIdI))
+            {
+                return Json(new { success = false, error = "Invalid puzzle ID." });
+            }
+            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, commentBody, null, puzzleIdI, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -42,13 +47,9 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpGet]
-        [Route("/Comment/ViewComments", Name = "ViewComments")]
-        public IActionResult ViewComments(string puzzleId)
+        [Route("/Comment/ViewComments/{puzzleId:int}", Name = "ViewComments")]
+        public IActionResult ViewComments(int puzzleId)
         {
-            if (puzzleId == null)
-            {
-                return View("Comments", null);
-            }
             List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
             ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository, userRepository).Ordered;
             Dictionary<int, VoteType> votesByCurrentUser = new Dictionary<int, VoteType>();
@@ -140,7 +141,13 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid parent ID." });
             }
 
-            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, body, parentId, puzzleId, false, DateTime.UtcNow);
+            int puzzleIdI;
+            if (!int.TryParse(puzzleId, out puzzleIdI))
+            {
+                return Json(new { success = false, error = "Invalid puzzle ID." });
+            }
+
+            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, body, parentId, puzzleIdI, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {
@@ -157,7 +164,13 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/Mod/Delete")]
         public IActionResult DeleteComment(string commentId)
         {
-            bool deleteSuccess = commentRepository.SoftDelete(commentId);
+            int commentIdI;
+            if (!int.TryParse(commentId, out commentIdI))
+            {
+                return Json(new { success = false, error = "Invalid comment ID." });
+            }
+
+            bool deleteSuccess = commentRepository.SoftDelete(commentIdI);
             if (deleteSuccess)
             {
                 return Json(new { success = true });
