@@ -33,3 +33,7 @@ a {
 table.align-left th {
     text-align: left;
 }
+
+.error {
+    color: red;
+}

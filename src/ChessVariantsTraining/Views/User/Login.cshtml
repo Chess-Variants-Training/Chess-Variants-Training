@@ -1,7 +1,11 @@
 ﻿@section Title {Log in}
 @{ Html.BeginForm("LoginPost", "User", FormMethod.Post); }
-<input type="text" placeholder="Username" name="username">
-<input type="password" name="password">
-<input type="submit" value="Submit">
+Username: <input type="text" placeholder="Username" name="username"><br><br>
+Password: <input type="password" name="password"><br><br>
+<input type="submit" value="Log in">
 @{ Html.EndForm(); }
+@if (ViewBag.Error != null)
+{
+    <p class="error">@ViewBag.Error</p>
+}
 <p>Note: logins are persistent. If you are on a public computer, don't forget to log out when you leave.</p>

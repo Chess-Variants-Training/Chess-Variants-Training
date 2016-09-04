@@ -92,22 +92,32 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Login", Name = "Login")]
         public IActionResult Login()
         {
+            if (TempData.ContainsKey("Error"))
+            {
+                ViewBag.Error = TempData["Error"];
+            }
+            else
+            {
+                ViewBag.Error = null;
+            }
             return View();
         }
 
         [HttpPost]
         [Route("/User/Login", Name = "LoginPost")]
-        public IActionResult Login(string username, string password)
+        public IActionResult LoginPost(string username, string password)
         {
             Models.User user = userRepository.FindByUsername(username);
             if (user == null)
             {
+                TempData["Error"] = "Invalid username or password.";
                 return RedirectToAction("Login");
             }
             string salt = user.Salt;
             string hash = passwordHasher.HashPassword(password, salt);
             if (hash != user.PasswordHash)
             {
+                TempData["Error"] = "Invalid username or password.";
                 return RedirectToAction("Login");
             }
             loginHandler.RegisterLogin(user.ID, HttpContext);
