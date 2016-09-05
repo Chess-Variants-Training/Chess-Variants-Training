@@ -75,6 +75,16 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
+            Comment cmt = commentRepository.GetById(commentIdI);
+            if (cmt == null)
+            {
+                return Json(new { success = false, error = "Comment not found." });
+            }
+            if (cmt.Author == loginHandler.LoggedInUserId(HttpContext).Value)
+            {
+                return Json(new { success = false, error = "You can't vote for your own comments." });
+            }
+
             bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, loginHandler.LoggedInUserId(HttpContext).Value, commentIdI));
             if (success)
             {
@@ -95,6 +105,16 @@ namespace ChessVariantsTraining.Controllers
             if (!int.TryParse(commentId, out commentIdI))
             {
                 return Json(new { success = false, error = "Invalid comment ID." });
+            }
+
+            Comment cmt = commentRepository.GetById(commentIdI);
+            if (cmt == null)
+            {
+                return Json(new { success = false, error = "Comment not found." });
+            }
+            if (cmt.Author == loginHandler.LoggedInUserId(HttpContext).Value)
+            {
+                return Json(new { success = false, error = "You can't vote for your own comments." });
             }
 
             bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, loginHandler.LoggedInUserId(HttpContext).Value, commentIdI));
