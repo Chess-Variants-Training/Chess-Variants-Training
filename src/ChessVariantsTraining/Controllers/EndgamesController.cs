@@ -6,6 +6,7 @@ using ChessDotNet.Variants.Atomic;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
+using ChessDotNet.Variants.Antichess;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -26,7 +27,7 @@ namespace ChessVariantsTraining.Controllers
             return View();
         }
 
-        IActionResult StartNewSession(Piece[][] board)
+        IActionResult StartNewSession(Piece[][] board, string variant)
         {
             GameCreationData gcd = new GameCreationData();
             gcd.Board = board;
@@ -36,7 +37,7 @@ namespace ChessVariantsTraining.Controllers
             gcd.WhoseTurn = Player.White;
             gcd.CanBlackCastleKingSide = gcd.CanBlackCastleQueenSide = gcd.CanWhiteCastleKingSide = gcd.CanWhiteCastleQueenSide = false;
 
-            AtomicChessGame game = new AtomicChessGame(gcd);
+            ChessGame game = variant == "Atomic" ? (ChessGame)new AtomicChessGame(gcd) : new AntichessGame(gcd);
 
 
             string sessionId;
@@ -46,7 +47,7 @@ namespace ChessVariantsTraining.Controllers
             } while (endgameTrainingSessionRepository.Exists(sessionId));
 
             EndgameTrainingSession session = new EndgameTrainingSession(sessionId, game);
-            if (session.WasAlreadyCheckmate)
+            if (session.WasAlreadyLost)
             {
                 return null;
             }
@@ -63,7 +64,7 @@ namespace ChessVariantsTraining.Controllers
                                              .AddAdjacentKings()
                                              .AddWhiteRook()
                                              .AddWhiteRook();
-            return StartNewSession(board);
+            return StartNewSession(board, "Atomic");
         }
 
         [Route("/Endgames/Atomic/KQQ-K-Adjacent-Kings", Name = "KQQvsKWithAdjacentKings")]
@@ -73,7 +74,7 @@ namespace ChessVariantsTraining.Controllers
                                              .AddAdjacentKings()
                                              .AddWhiteQueen()
                                              .AddWhiteQueen();
-            return StartNewSession(board);
+            return StartNewSession(board, "Atomic");
         }
 
         [Route("/Endgames/Atomic/KQ-K-Adjacent-Kings-Blocked-Pawn", Name = "KQvsKWithAdjacentKingsAndBlockedPawn")]
@@ -83,7 +84,7 @@ namespace ChessVariantsTraining.Controllers
                                              .AddAdjacentKings()
                                              .AddBlockedPawns()
                                              .AddWhiteQueen();
-            return StartNewSession(board);
+            return StartNewSession(board, "Atomic");
         }
 
 
@@ -97,7 +98,7 @@ namespace ChessVariantsTraining.Controllers
                                                  .AddSeparatedKings()
                                                  .AddWhiteRook()
                                                  .AddWhiteKnight();
-                result = StartNewSession(board);
+                result = StartNewSession(board, "Atomic");
             } while (result == null);
             return result;
         }
@@ -109,7 +110,16 @@ namespace ChessVariantsTraining.Controllers
                                              .AddAdjacentKings()
                                              .AddWhiteRook()
                                              .AddWhiteKnight();
-            return StartNewSession(board);
+            return StartNewSession(board, "Atomic");
+        }
+
+        [Route("/Endgames/Antichess/R-vs-K")]
+        public IActionResult AntichessRvsK()
+        {
+            Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                             .AddWhiteRook()
+                                             .AddBlackKing();
+            return StartNewSession(board, "Antichess");
         }
 
         [Route("/Endgames/GetValidMoves/{trainingSessionId}")]
@@ -155,6 +165,7 @@ namespace ChessVariantsTraining.Controllers
             if (response.Moves != null) jsonResp.dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(response.Moves);
             if (response.LastMove != null) jsonResp.lastMove = response.LastMove;
             jsonResp.drawAfterAutoMove = response.DrawAfterAutoMove;
+            jsonResp.winAfterAutoMove = response.WinAfterAutoMove;
             return Json(jsonResp);
         }
     }

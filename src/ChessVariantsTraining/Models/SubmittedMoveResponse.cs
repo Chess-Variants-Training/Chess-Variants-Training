@@ -99,5 +99,11 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        public bool WinAfterAutoMove
+        {
+            get;
+            set;
+        }
     }
 }

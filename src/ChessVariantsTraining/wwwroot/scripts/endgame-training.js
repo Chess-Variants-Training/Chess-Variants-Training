@@ -32,6 +32,9 @@ function submitMove(origin, destination, promotion) {
                     document.getElementById("result").setAttribute("class", "red");
                     document.getElementById("result").innerHTML = "It's a stalemate!";
                     break;
+                case -3:
+                    document.getElementById("result").setAttribute("class", "red");
+                    document.getElementById("result").innerHTML = "You lost!";
                 case 0:
                     window.ground.set({
                         fen: jsonResponse.fenAfterPlay
@@ -44,6 +47,10 @@ function submitMove(origin, destination, promotion) {
                     if (jsonResponse.drawAfterAutoMove) {
                         document.getElementById("result").setAttribute("class", "red");
                         document.getElementById("result").innerHTML = "50-move rule: it's a draw!";
+                    }
+                    if (jsonResponse.winAfterAutoMove) {
+                        document.getElementById("result").setAttribute("class", "green");
+                        document.getElementById("result").innerHTML = "You won!";
                     }
                     break;
             }
