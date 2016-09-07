@@ -116,10 +116,15 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Endgames/Antichess/R-vs-K")]
         public IActionResult AntichessRvsK()
         {
-            Piece[][] board = BoardExtensions.GenerateEmptyBoard()
-                                             .AddWhiteRook()
-                                             .AddBlackKing();
-            return StartNewSession(board, "Antichess");
+            IActionResult result;
+            do
+            {
+                Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                                 .AddWhiteRook()
+                                                 .AddBlackKing();
+                result = StartNewSession(board, "Antichess");
+            } while (result == null);
+            return result;
         }
 
         [Route("/Endgames/GetValidMoves/{trainingSessionId}")]
