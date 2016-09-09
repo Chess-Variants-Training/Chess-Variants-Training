@@ -183,6 +183,20 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
+        [Route("/Endgames/Antichess/Q-vs-K")]
+        public IActionResult AntichessQvsK()
+        {
+            IActionResult result;
+            do
+            {
+                Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                                 .AddWhiteQueen()
+                                                 .AddBlackKing();
+                result = StartNewSession(board, "Antichess");
+            } while (result == null);
+            return result;
+        }
+
         [Route("/Endgames/GetValidMoves/{trainingSessionId}")]
         public IActionResult GetValidMoves(string trainingSessionId)
         {
