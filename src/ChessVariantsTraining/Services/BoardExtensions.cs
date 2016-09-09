@@ -161,5 +161,10 @@ namespace ChessVariantsTraining.Services
         {
             return board.AddPiece(new Knight(Player.Black));
         }
+
+        public static Piece[][] AddWhiteBishop(this Piece[][] board)
+        {
+            return board.AddPiece(new Bishop(Player.White));
+        }
     }
 }
