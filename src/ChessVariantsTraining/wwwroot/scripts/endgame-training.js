@@ -1,4 +1,18 @@
-﻿function processMove(origin, destination, metadata) {
+﻿function startEndgameTraining(e) {
+    e = e || window.event;
+    e.preventDefault();
+    jsonXhr(window.location.href.trimRight("/") + "/Start", "POST", null, function (req, jsonResponse) {
+        window.ground.set({ fen: jsonResponse["fen"] });
+        window.trainingSessionId = jsonResponse["sessionId"];
+        jsonXhr("/Endgames/GetValidMoves/" + window.trainingSessionId, "GET", null, function (req, jsonResponse) {
+            window.ground.set({ movable: { dests: jsonResponse.dests } });
+        }, function (req, err) {
+            alert(err);
+        });
+    }, function (req, err) { alert(err); });
+}
+
+function processMove(origin, destination, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, destination)) {
         ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitMove, window.ground);
     } else {
@@ -71,7 +85,6 @@ function submitMove(origin, destination, promotion) {
 
 window.addEventListener('load', function () {
     window.ground = Chessground(document.getElementById("chessground"), {
-        fen: window.initialFen,
         coordinates: false,
         movable: {
             free: false,
@@ -85,9 +98,5 @@ window.addEventListener('load', function () {
             enabled: true
         }
     });
-    jsonXhr("/Endgames/GetValidMoves/" + window.trainingSessionId, "GET", null, function (req, jsonResponse) {
-        window.ground.set({ movable: { dests: jsonResponse.dests } });
-    }, function (req, err) {
-        alert(err);
-    });
+    document.getElementById("start-link").addEventListener("click", startEndgameTraining);
 });

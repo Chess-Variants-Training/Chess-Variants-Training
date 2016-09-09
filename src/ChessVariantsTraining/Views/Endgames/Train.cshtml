@@ -3,15 +3,12 @@
 @section AddToHead {
     <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
-    <script type="text/javascript">
-        window.initialFen = "@Model.Item1";
-        window.trainingSessionId = "@Model.Item2";
-    </script>
     <script type="text/javascript" src="@Url.Content("~/scripts/endgame-training.js")"></script>
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
+<a href="#" id="start-link">Start!</a>
 <div id="ground-container">
     <div id="chessground" class="brown"></div>
     <div id="next-to-ground">

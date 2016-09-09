@@ -54,11 +54,26 @@ namespace ChessVariantsTraining.Controllers
 
             endgameTrainingSessionRepository.Add(session);
             string fen = session.InitialFEN;
-            return View("Train", new Tuple<string, string>(fen, sessionId));
+            return Json(new { success = true, fen = fen, sessionId = sessionId });
         }
 
-        [Route("/Endgames/Atomic/KRR-K-Adjacent-Kings", Name = "KRRvsKWithAdjacentKings")]
-        public IActionResult KRRvsKWithAdjacentKings()
+        [HttpGet]
+        [Route("/Endgames/Atomic/{type:regex(KRR-K-Adjacent-Kings|KQQ-K-Adjacent-Kings|KQ-K-Adjacent-Kings-Blocked-Pawn|KRN-K-Separated-Kings|KRN-K-Adjacent-Kings)}")]
+        public IActionResult AtomicEndgame(string type)
+        {
+            return View("Train");
+        }
+
+        [HttpGet]
+        [Route("/Endgames/Antichess/{type:regex(R-vs-K|R-vs-N|B-vs-N|Q-vs-N|K-vs-N|Q-vs-K)}")]
+        public IActionResult AntichessEndgame(string type)
+        {
+            return View("Train");
+        }
+
+        [HttpPost]
+        [Route("/Endgames/Atomic/KRR-K-Adjacent-Kings/Start")]
+        public IActionResult KRRvsKWithAdjacentKingsStart()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
                                              .AddAdjacentKings()
@@ -67,8 +82,9 @@ namespace ChessVariantsTraining.Controllers
             return StartNewSession(board, "Atomic");
         }
 
-        [Route("/Endgames/Atomic/KQQ-K-Adjacent-Kings", Name = "KQQvsKWithAdjacentKings")]
-        public IActionResult KQQvsKWithAdjacentKings()
+        [HttpPost]
+        [Route("/Endgames/Atomic/KQQ-K-Adjacent-Kings/Start")]
+        public IActionResult KQQvsKWithAdjacentKingsStart()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
                                              .AddAdjacentKings()
@@ -77,8 +93,9 @@ namespace ChessVariantsTraining.Controllers
             return StartNewSession(board, "Atomic");
         }
 
-        [Route("/Endgames/Atomic/KQ-K-Adjacent-Kings-Blocked-Pawn", Name = "KQvsKWithAdjacentKingsAndBlockedPawn")]
-        public IActionResult KQvsKWithAdjacentKingsAndBlockedPawn()
+        [HttpPost]
+        [Route("/Endgames/Atomic/KQ-K-Adjacent-Kings-Blocked-Pawn/Start")]
+        public IActionResult KQvsKWithAdjacentKingsAndBlockedPawnStart()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
                                              .AddAdjacentKings()
@@ -87,9 +104,9 @@ namespace ChessVariantsTraining.Controllers
             return StartNewSession(board, "Atomic");
         }
 
-
-        [Route("/Endgames/Atomic/KRN-K-Separated-Kings", Name = "KRNvsKWithSeparatedKings")]
-        public IActionResult KRNvsKWithSeparatedKings()
+        [HttpPost]
+        [Route("/Endgames/Atomic/KRN-K-Separated-Kings/Start")]
+        public IActionResult KRNvsKWithSeparatedKingsStart()
         {
             IActionResult result;
             do
@@ -103,8 +120,9 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
-        [Route("/Endgames/Atomic/KRN-K-Adjacent-Kings", Name = "KRNvsKWithAdjacentKings")]
-        public IActionResult KRNvsKWithAdjacentKings()
+        [HttpPost]
+        [Route("/Endgames/Atomic/KRN-K-Adjacent-Kings/Start")]
+        public IActionResult KRNvsKWithAdjacentKingsStart()
         {
             Piece[][] board = BoardExtensions.GenerateEmptyBoard()
                                              .AddAdjacentKings()
@@ -113,8 +131,9 @@ namespace ChessVariantsTraining.Controllers
             return StartNewSession(board, "Atomic");
         }
 
-        [Route("/Endgames/Antichess/R-vs-K")]
-        public IActionResult AntichessRvsK()
+        [HttpPost]
+        [Route("/Endgames/Antichess/R-vs-K/Start")]
+        public IActionResult AntichessRvsKStart()
         {
             IActionResult result;
             do
@@ -127,8 +146,9 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
-        [Route("/Endgames/Antichess/R-vs-N")]
-        public IActionResult AntichessRvsN()
+        [HttpPost]
+        [Route("/Endgames/Antichess/R-vs-N/Start")]
+        public IActionResult AntichessRvsNStart()
         {
             IActionResult result;
             do
@@ -141,8 +161,9 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
-        [Route("/Endgames/Antichess/B-vs-N")]
-        public IActionResult AntichessBvsN()
+        [HttpPost]
+        [Route("/Endgames/Antichess/B-vs-N/Start")]
+        public IActionResult AntichessBvsNStart()
         {
             IActionResult result;
             do
@@ -155,8 +176,9 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
-        [Route("/Endgames/Antichess/Q-vs-N")]
-        public IActionResult AntichessQvsN()
+        [HttpPost]
+        [Route("/Endgames/Antichess/Q-vs-N/Start")]
+        public IActionResult AntichessQvsNStart()
         {
             IActionResult result;
             do
@@ -169,8 +191,9 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
-        [Route("/Endgames/Antichess/K-vs-N")]
-        public IActionResult AntichessKvsN()
+        [HttpPost]
+        [Route("/Endgames/Antichess/K-vs-N/Start")]
+        public IActionResult AntichessKvsNStart()
         {
             IActionResult result;
             do
@@ -183,8 +206,9 @@ namespace ChessVariantsTraining.Controllers
             return result;
         }
 
-        [Route("/Endgames/Antichess/Q-vs-K")]
-        public IActionResult AntichessQvsK()
+        [HttpPost]
+        [Route("/Endgames/Antichess/Q-vs-K/Start")]
+        public IActionResult AntichessQvsKStart()
         {
             IActionResult result;
             do

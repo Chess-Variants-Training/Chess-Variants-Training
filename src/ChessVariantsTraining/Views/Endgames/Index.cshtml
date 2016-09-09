@@ -5,22 +5,22 @@ Here you can train endgames! Below is a list with won endgame positions. By choo
     <li>
         Atomic
         <ul>
-            <li>@Html.ActionLink("KQQ vs K with adjacent kings", "KQQvsKWithAdjacentKings")</li>
-            <li>@Html.ActionLink("KRR vs K with adjacent kings", "KRRvsKWithAdjacentKings")</li>
-            <li>@Html.ActionLink("KQ vs K with adjacent kings and a blocked pawn", "KQvsKWithAdjacentKingsAndBlockedPawn")</li>
-            <li>@Html.ActionLink("KRN vs K with separated kings", "KRNvsKWithSeparatedKings")</li>
-            <li>@Html.ActionLink("KRN vs K with adjacent kings", "KRNvsKWithAdjacentKings")</li>
+            <li>@Html.ActionLink("KQQ vs K with adjacent kings", "AtomicEndgame", new { type = "KQQ-K-Adjacent-Kings" })</li>
+            <li>@Html.ActionLink("KRR vs K with adjacent kings", "AtomicEndgame", new { type = "KRR-K-Adjacent-Kings" })</li>
+            <li>@Html.ActionLink("KQ vs K with adjacent kings and a blocked pawn", "AtomicEndgame", new { type = "KQ-K-Adjacent-Kings-Blocked-Pawn" })</li>
+            <li>@Html.ActionLink("KRN vs K with separated kings", "AtomicEndgame", new { type = "KRN-K-Separated-Kings" })</li>
+            <li>@Html.ActionLink("KRN vs K with adjacent kings", "AtomicEndgame", new { type = "KRN-K-Adjacent-Kings" })</li>
         </ul>
     </li>
     <li>
         Antichess
         <ul>
-            <li>@Html.ActionLink("R vs K", "AntichessRvsK")</li>
-            <li>@Html.ActionLink("Q vs K", "AntichessQvsK")</li>
-            <li>@Html.ActionLink("R vs N", "AntichessRvsN")</li>
-            <li>@Html.ActionLink("B vs N", "AntichessBvsN")</li>
-            <li>@Html.ActionLink("Q vs N", "AntichessQvsN")</li>
-            <li>@Html.ActionLink("K vs N", "AntichessKvsN")</li>
+            <li>@Html.ActionLink("R vs K", "AntichessEndgame", new { type = "R-vs-K" })</li>
+            <li>@Html.ActionLink("Q vs K", "AntichessEndgame", new { type = "Q-vs-K" })</li>
+            <li>@Html.ActionLink("R vs N", "AntichessEndgame", new { type = "R-vs-N" })</li>
+            <li>@Html.ActionLink("B vs N", "AntichessEndgame", new { type = "B-vs-N" })</li>
+            <li>@Html.ActionLink("Q vs N", "AntichessEndgame", new { type = "Q-vs-N" })</li>
+            <li>@Html.ActionLink("K vs N", "AntichessEndgame", new { type = "K-vs-N" })</li>
         </ul>
     </li>
 </ul>
