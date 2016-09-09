@@ -2,10 +2,18 @@
     e = e || window.event;
     e.preventDefault();
     jsonXhr(window.location.href.trimRight("/") + "/Start", "POST", null, function (req, jsonResponse) {
-        window.ground.set({ fen: jsonResponse["fen"] });
+        window.ground.set({
+            lastMove: null,
+            fen: jsonResponse["fen"]
+        });
+        document.getElementById("result").setAttribute("class", "blue");
+        document.getElementById("result").innerHTML = "Win the game!";
         window.trainingSessionId = jsonResponse["sessionId"];
+        document.getElementById("start-link").classList.add("nodisplay");
         jsonXhr("/Endgames/GetValidMoves/" + window.trainingSessionId, "GET", null, function (req, jsonResponse) {
-            window.ground.set({ movable: { dests: jsonResponse.dests } });
+            window.ground.set({
+                movable: { dests: jsonResponse.dests }
+            });
         }, function (req, err) {
             alert(err);
         });
@@ -67,6 +75,10 @@ function submitMove(origin, destination, promotion) {
                         document.getElementById("result").innerHTML = "You won!";
                     }
                     break;
+            }
+            if (jsonResponse.correct !== 0 || jsonResponse.drawAfterAutoMove || jsonResponse.winAfterAutoMove) {
+                document.getElementById("start-link").classList.remove("nodisplay");
+                document.getElementById("start-link").childNodes[0].textContent = "Train again";
             }
             if (jsonResponse.dests) {
                 window.ground.set({

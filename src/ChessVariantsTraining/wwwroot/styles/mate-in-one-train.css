@@ -3,15 +3,6 @@
     display: inline-block;
 }
 
-.start-link {
-    color: blue;
-    cursor: pointer;
-}
-
-    .start-link:hover {
-        color: red;
-    }
-
 #latest-scores {
     border-collapse: collapse;
     height: 100%;

@@ -41,3 +41,13 @@ table.align-left th {
 .ws-pre-line {
     white-space: pre-line;
 }
+
+.start-link {
+    color: blue;
+    cursor: pointer;
+}
+
+    .start-link:hover {
+        color: red;
+    }
+
