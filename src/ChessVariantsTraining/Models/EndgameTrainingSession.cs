@@ -159,22 +159,23 @@ namespace ChessVariantsTraining.Models
                         chosen = validMove;
                         break;
                     }
-                    bool thisOne = true;
-                    foreach (Move vmWhite in validMovesWhite)
+                    if (chosen == null)
                     {
-                        AntichessGame copy2 = new AntichessGame(copy.GetFen());
-                        copy2.ApplyMove(vmWhite, true);
-                        ReadOnlyCollection<Move> validMovesBlackStep2 = copy2.GetValidMoves(Player.Black);
-                        if (validMovesBlackStep2.Any(x => copy2.GetPieceAt(x.NewPosition) != null))
+                        bool thisOne = true;
+                        foreach (Move vmWhite in validMovesWhite)
                         {
-                            thisOne = false;
-                            break;
+                            AntichessGame copy2 = new AntichessGame(copy.GetFen());
+                            copy2.ApplyMove(vmWhite, true);
+                            ReadOnlyCollection<Move> validMovesBlackStep2 = copy2.GetValidMoves(Player.Black);
+                            if (validMovesBlackStep2.Any(x => copy2.GetPieceAt(x.NewPosition) != null))
+                            {
+                                thisOne = false;
+                            }
                         }
-                    }
-                    if (thisOne)
-                    {
-                        chosen = validMove;
-                        break;
+                        if (thisOne)
+                        {
+                            chosen = validMove;
+                        }
                     }
                 }
                 if (chosen == null)
