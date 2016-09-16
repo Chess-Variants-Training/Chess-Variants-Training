@@ -26,7 +26,7 @@ a {
     width: 100%;
 }
 
-    table.full-width td, table.full-width th {
+    table.three-columns.full-width td, table.three-columns.full-width th {
         width: 33%;
     }
 
@@ -50,4 +50,8 @@ table.align-left th {
     .start-link:hover {
         color: red;
     }
+
+.unread-notifications {
+    background-color: red;
+}
 

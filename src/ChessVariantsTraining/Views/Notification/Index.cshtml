@@ -1,0 +1,28 @@
+﻿@section Title{Notifications}
+@model List<ChessVariantsTraining.Models.Notification>
+<h1>Notifications</h1>
+<table class="full-width align-left">
+    <thead>
+        <tr>
+            <th>Date/time (UTC)</th>
+            <th>Notification text</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+        @foreach (ChessVariantsTraining.Models.Notification notification in Model)
+        {
+            @if (notification.Read)
+            {
+                <td>@notification.TimestampUtc.ToString("yyyy/MM/dd HH:mm")</td>
+                <td><a href="@notification.URL">@notification.Content</a></td>
+            }
+            else
+            {
+                <td><strong>@notification.TimestampUtc.ToString("yyyy/MM/dd HH:mm")</strong></td>
+                <td><a href="@notification.URL"><strong>@notification.Content</strong></a></td>
+            }
+        }
+        </tr>
+    </tbody>
+</table>

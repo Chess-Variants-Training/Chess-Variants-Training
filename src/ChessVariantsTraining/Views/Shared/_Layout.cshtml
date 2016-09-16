@@ -1,5 +1,6 @@
 ﻿@using ChessVariantsTraining.Models;
 @inject ChessVariantsTraining.Services.IPersistentLoginHandler LoginHandler
+@inject ChessVariantsTraining.DbRepositories.INotificationRepository NotificationRepository
 
 <!DOCTYPE html>
 <html lang="en">
@@ -59,6 +60,7 @@
                         <ul>
                             <li>@Html.ActionLink("Profile", "Profile", "User", new { name = loggedIn.Username }, null)</li>
                             <li>@Html.ActionLink("Edit", "Edit", "User")</li>
+                            <li>@Html.ActionLink("Notifications", "Index", "Notification")</li>
                             <li>@Html.ActionLink("Log out", "Logout", "User")</li>
                         </ul>
                     }
@@ -68,9 +70,14 @@
             {
                 <li class="right">@Html.ActionLink("Reports", "ListAll", "Report")</li>
             }
-            @if (loggedIn != null && UserRole.HasAtLeastThePrivilegesOf(loggedIn.Roles, new string[] {  UserRole.PUZZLE_REVIEWER }))
+            @if (loggedIn != null && UserRole.HasAtLeastThePrivilegesOf(loggedIn.Roles, new string[] { UserRole.PUZZLE_REVIEWER }))
             {
                 <li class="right">@Html.ActionLink("Review", "Index", "Review")</li>
+            }
+            @{ long unread = loggedIn == null ? 0 : NotificationRepository.UnreadCount(loggedIn.ID); }
+            @if (unread != 0)
+            {
+              <li class="right">@Html.ActionLink(unread.ToString(), "Index", "Notification", null, new { @class = "unread-notifications" })</li>
             }
         </ul>
     </div>

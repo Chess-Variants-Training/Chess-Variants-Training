@@ -15,5 +15,6 @@
         public string AttemptCollectionName { get; set; }
         public string CounterCollectionName { get; set; }
         public string SavedLoginCollectionName { get; set; }
+        public string NotificationCollectionName { get; set; }
     }
 }

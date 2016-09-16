@@ -12,7 +12,8 @@
     "RatingCollectionName": "ratings",
     "AttemptCollectionName": "attempts",
     "CounterCollectionName": "counters",
-    "SavedLoginCollectionName": "savedlogins"
+    "SavedLoginCollectionName": "savedlogins",
+    "NotificationCollectionName":  "notifications"
   },
   "TimedTrainingSessionAutoAcknowledgerDelay": 10
 }

@@ -31,11 +31,13 @@ namespace ChessVariantsTraining
             // Configuration
             services.AddOptions();
             services.Configure<Settings>(Configuration);
+
             // Database repositories
             services.AddSingleton<IAttemptRepository, AttemptRepository>();
             services.AddSingleton<ICommentRepository, CommentRepository>();
             services.AddSingleton<ICommentVoteRepository, CommentVoteRepository>();
             services.AddSingleton<ICounterRepository, CounterRepository>();
+            services.AddSingleton<INotificationRepository, NotificationRepository>();
             services.AddSingleton<IPositionRepository, PositionRepository>();
             services.AddSingleton<IPuzzleRepository, PuzzleRepository>();
             services.AddSingleton<IRatingRepository, RatingRepository>();
