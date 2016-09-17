@@ -2,7 +2,7 @@
     font-family: 'Roboto', sans-serif;
 }
 
-div#bodycontainer {
+#bodycontainer {
     width: 70%;
     max-width: 1100px;
     margin: auto;
