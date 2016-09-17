@@ -53,7 +53,7 @@ function goToStep2(e) {
         step1Elements[i].setAttribute("class", "step1 hidden");
     }
     var step2Elements = document.getElementsByClassName("step2");
-    for (var i = 0; i < step2Elements.length; i++) {
+    for (i = 0; i < step2Elements.length; i++) {
         step2Elements[i].setAttribute("class", "step2");
     }
     jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
@@ -200,12 +200,12 @@ window.addEventListener("load", function () {
     document.getElementById("clearselection").addEventListener("click", clearSelection);
 
     var whoseTurnRadioButtons = document.querySelectorAll("[name=whoseturn]");
-    for (var i = 0; i < whoseTurnRadioButtons.length; i++) {
+    for (i = 0; i < whoseTurnRadioButtons.length; i++) {
         whoseTurnRadioButtons[i].addEventListener("click", updateFen);
     }
 
     var castlingCheckboxes = document.querySelectorAll("[name=castling]");
-    for (var i = 0; i < castlingCheckboxes.length; i++) {
+    for (i = 0; i < castlingCheckboxes.length; i++) {
         castlingCheckboxes[i].addEventListener("click", updateFen);
     }
 
