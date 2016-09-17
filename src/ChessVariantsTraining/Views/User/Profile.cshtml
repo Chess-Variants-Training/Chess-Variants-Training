@@ -13,15 +13,12 @@ About:
 </p>
 <hr>
 <p>
-    Puzzles made: @Model.PuzzlesMade<br />
-    Percentage correct: @Model.PercentageCorrect %
+    Puzzles made: @Model.PuzzlesMade
 </p>
 <p>
     Role: @ChessVariantsTraining.Models.UserRole.UserRolesToString(Model.Roles)
 </p>
-<p>
-    Rating: @Model.Rating
-</p>
+Rating chart:
 <div class="chartWithOptions">
     Range:
     <select id="ratingChartDateRangeSelector" autocomplete="off">
@@ -43,6 +40,8 @@ About:
         <canvas id="ratingChart"></canvas>
     </div>
 </div>
+<br>
+Timed training chart:
 <div class="chartWithOptions">
     <select id="ttsChartDateRangeSelector" autocomplete="off">
         <option value="all" selected>All</option>
