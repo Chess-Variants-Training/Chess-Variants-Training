@@ -105,7 +105,7 @@ function updateChessGroundValidMoves() {
             turnColor: jsonResponse["whoseturn"],
             movable: {
                 dests: jsonResponse["dests"],
-                color: jsonResponse["whoseturn"],
+                color: jsonResponse["whoseturn"]
             }
         });
     }, function (req, err) {
