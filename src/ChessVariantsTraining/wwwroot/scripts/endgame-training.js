@@ -57,6 +57,7 @@ function submitMove(origin, destination, promotion) {
                 case -3:
                     document.getElementById("result").setAttribute("class", "red");
                     document.getElementById("result").innerHTML = "You lost!";
+                    break;
                 case 0:
                     window.ground.set({
                         fen: jsonResponse.fenAfterPlay
