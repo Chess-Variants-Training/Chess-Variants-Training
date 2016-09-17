@@ -59,7 +59,7 @@ namespace ChessVariantsTraining.DbRepositories
 
         public List<Notification> GetNotificationsFor(int user)
         {
-            return notificationCollection.Find(Builders<Notification>.Filter.Eq("user", user)).ToList();
+            return notificationCollection.Find(Builders<Notification>.Filter.Eq("user", user)).Sort(Builders<Notification>.Sort.Descending("timestampUtc")).ToList();
         }
     }
 }

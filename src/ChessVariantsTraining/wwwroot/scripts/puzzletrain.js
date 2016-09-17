@@ -212,8 +212,8 @@ function loadComments() {
         if (window.location.search !== "") {
             var matches = /[?&]comment=[0-9a-zA-Z_-]+/.exec(window.location.search);
             if (matches) {
-                var id = matches[0].slice(3);
-                var highlighted = document.getElementById(id);
+                var id = matches[0].slice(9);
+                var highlighted = document.getElementById("cmt-" + id);
                 if (highlighted) {
                     highlighted.scrollIntoView(true);
                     highlighted.style.backgroundColor = "#feb15a";
@@ -303,7 +303,7 @@ function cancelLinkClicked(e) {
 function reportCommentLinkClicked(e) {
     e = e || window.event;
     e.preventDefault();
-    var itemToReport = e.target.dataset.item;
+    var itemToReport = "cmt-" + e.target.dataset.item;
     if (!window.reportCommentDialogHtml) {
         xhr("/Report/Dialog/Comment", "GET", null, function (req) {
             window.reportCommentDialogHtml = req.responseText;
@@ -334,7 +334,7 @@ function reportLinkInDialogClicked(e) {
     e = e || window.event;
     e.preventDefault();
     var parent = e.target.parentElement;
-    jsonXhr("/Report/Submit/Comment", "POST", "item=" + parent.parentElement.id + "&reason=" + parent.getElementsByTagName("select")[0].value + "&reasonExplanation=" + encodeURIComponent(parent.getElementsByTagName("textarea")[0].value),
+    jsonXhr("/Report/Submit/Comment", "POST", "item=" + parent.parentElement.dataset.commentid + "&reason=" + parent.getElementsByTagName("select")[0].value + "&reasonExplanation=" + encodeURIComponent(parent.getElementsByTagName("textarea")[0].value),
         function (req, jsonResponse) {
             removeReportDialog(parent.parentElement.id);
         },

@@ -15,13 +15,16 @@ namespace ChessVariantsTraining.Controllers
         ICommentRepository commentRepository;
         ICommentVoteRepository commentVoteRepository;
         ICounterRepository counterRepository;
+        INotificationRepository notificationRepository;
 
         public CommentController(ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository,
-                                 IUserRepository _userRepository, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler)
+                                 IUserRepository _userRepository, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler,
+                                 INotificationRepository _notificationRepository) : base(_userRepository, _loginHandler)
         {
             commentRepository = _commentRepository;
             commentVoteRepository = _commentVoteRepository;
             counterRepository = _counterRepository;
+            notificationRepository = _notificationRepository;
         }
 
         [Restricted(true, UserRole.NONE)]
@@ -167,10 +170,19 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid puzzle ID." });
             }
 
+            Comment parent = commentRepository.GetById(parentId);
+            if (parent == null)
+            {
+                return Json(new { success = false, error = "Invalid parent ID." });
+            }
+
             Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, body, parentId, puzzleIdI, false, DateTime.UtcNow);
             bool success = commentRepository.Add(comment);
             if (success)
             {
+                Notification notificationForParentAuthor = new Notification(Guid.NewGuid().ToString(), parent.Author, "You received a reply to your comment.", false,
+                    string.Format("/Puzzle/{0}?comment={1}", comment.PuzzleID, comment.ID), DateTime.UtcNow);
+                notificationRepository.Add(notificationForParentAuthor);
                 return Json(new { success = true, bodySanitized = comment.BodySanitized });
             }
             else

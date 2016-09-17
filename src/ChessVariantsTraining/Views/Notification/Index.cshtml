@@ -9,9 +9,9 @@
         </tr>
     </thead>
     <tbody>
-        <tr>
         @foreach (ChessVariantsTraining.Models.Notification notification in Model)
         {
+            <tr>
             @if (notification.Read)
             {
                 <td>@notification.TimestampUtc.ToString("yyyy/MM/dd HH:mm")</td>
@@ -22,7 +22,7 @@
                 <td><strong>@notification.TimestampUtc.ToString("yyyy/MM/dd HH:mm")</strong></td>
                 <td><a href="@notification.URL"><strong>@notification.Content</strong></a></td>
             }
+            </tr>
         }
-        </tr>
     </tbody>
 </table>

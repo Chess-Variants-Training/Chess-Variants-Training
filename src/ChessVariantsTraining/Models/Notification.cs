@@ -25,12 +25,14 @@ namespace ChessVariantsTraining.Models
 
         public Notification() { }
 
-        public Notification(string id, int user, string content, bool read)
+        public Notification(string id, int user, string content, bool read, string url, DateTime timestampUtc)
         {
             ID = id;
             User = user;
             Content = content;
             Read = read;
+            URL = url;
+            TimestampUtc = timestampUtc;
         }
     }
 }
