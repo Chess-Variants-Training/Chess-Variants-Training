@@ -10,7 +10,7 @@ using System.Linq;
 
 namespace ChessVariantsTraining.Controllers
 {
-    public class CommentController : RestrictedController
+    public class CommentController : CVTController
     {
         ICommentRepository commentRepository;
         ICommentVoteRepository commentVoteRepository;

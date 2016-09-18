@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace ChessVariantsTraining
+namespace ChessVariantsTraining.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : CVTController
     {
+        public HomeController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler) { }
+
         [Route("/")]
         public IActionResult Index()
         {

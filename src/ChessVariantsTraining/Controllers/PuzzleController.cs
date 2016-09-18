@@ -13,7 +13,7 @@ using System.Linq;
 
 namespace ChessVariantsTraining.Controllers
 {
-    public class PuzzleController : RestrictedController
+    public class PuzzleController : CVTController
     {
         IPuzzlesBeingEditedRepository puzzlesBeingEdited;
         IPuzzleRepository puzzleRepository;

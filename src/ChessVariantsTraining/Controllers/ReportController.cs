@@ -9,7 +9,7 @@ using ChessVariantsTraining.Services;
 
 namespace ChessVariantsTraining.Controllers
 {
-    public class ReportController : RestrictedController
+    public class ReportController : CVTController
     {
         IReportRepository reportRepository;
 

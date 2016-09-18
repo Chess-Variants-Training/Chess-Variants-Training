@@ -7,15 +7,17 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Dynamic;
 using ChessDotNet.Variants.Antichess;
+using ChessVariantsTraining.DbRepositories;
 
 namespace ChessVariantsTraining.Controllers
 {
-    public class EndgamesController : Controller
+    public class EndgamesController : CVTController
     {
         IEndgameTrainingSessionRepository endgameTrainingSessionRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
 
-        public EndgamesController(IEndgameTrainingSessionRepository _endgameTrainingSessionRepository, IMoveCollectionTransformer _moveCollectionTransformer)
+        public EndgamesController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, 
+            IEndgameTrainingSessionRepository _endgameTrainingSessionRepository, IMoveCollectionTransformer _moveCollectionTransformer) : base(_userRepository, _loginHandler)
         {
             endgameTrainingSessionRepository = _endgameTrainingSessionRepository;
             moveCollectionTransformer = _moveCollectionTransformer;

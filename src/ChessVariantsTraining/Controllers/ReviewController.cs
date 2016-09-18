@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace ChessVariantsTraining.Controllers
 {
     [Restricted(true, UserRole.PUZZLE_REVIEWER)]
-    public class ReviewController : RestrictedController
+    public class ReviewController : CVTController
     {
         IPuzzleRepository puzzleRepository;
 

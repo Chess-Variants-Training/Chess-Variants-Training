@@ -8,18 +8,18 @@ using System.Collections.Generic;
 
 namespace ChessVariantsTraining.Controllers
 {
-    public class TimedTrainingController : Controller
+    public class TimedTrainingController : CVTController
     {
         ITimedTrainingScoreRepository timedTrainingRepository;
         IPositionRepository positionRepository;
         ITimedTrainingSessionRepository timedTrainingSessionRepository;
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
-        IPersistentLoginHandler loginHandler;
         IGameConstructor gameConstructor;
 
-        public TimedTrainingController(ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository,
+        public TimedTrainingController(IUserRepository _userRepository, ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository,
                                        ITimedTrainingScoreRepository _timedTrainingScoreRepository, IMoveCollectionTransformer _moveCollectionTransformer, IPersistentLoginHandler _loginHandler, IGameConstructor _gameConstructor)
+            : base(_userRepository, _loginHandler)
         {
             timedTrainingRepository = _timedTrainingRepository;
             positionRepository = _positionRepository;

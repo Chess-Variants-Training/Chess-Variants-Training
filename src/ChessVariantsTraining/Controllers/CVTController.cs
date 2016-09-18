@@ -3,6 +3,8 @@ using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.HttpErrors;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
 using System.Collections.Generic;
@@ -11,15 +13,21 @@ using System.Reflection;
 
 namespace ChessVariantsTraining.Controllers
 {
-    public class RestrictedController : ErrorCapableController
+    public class CVTController : Controller
     {
         protected IUserRepository userRepository;
         protected IPersistentLoginHandler loginHandler;
 
-        public RestrictedController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler)
+        public CVTController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler)
         {
             userRepository = _userRepository;
             loginHandler = _loginHandler;
+        }
+
+        public ViewResult ViewResultForHttpError(HttpContext context, HttpError err)
+        {
+            context.Response.StatusCode = err.StatusCode;
+            return View("Error", err);
         }
 
         public override void OnActionExecuting(ActionExecutingContext context)

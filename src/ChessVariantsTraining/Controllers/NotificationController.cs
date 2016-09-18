@@ -8,7 +8,7 @@ using System.Collections.Generic;
 namespace ChessVariantsTraining.Controllers
 {
     [Restricted(true, UserRole.NONE)]
-    public class NotificationController : RestrictedController
+    public class NotificationController : CVTController
     {
         INotificationRepository notificationRepository;
 

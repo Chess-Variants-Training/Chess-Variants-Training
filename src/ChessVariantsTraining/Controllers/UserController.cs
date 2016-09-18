@@ -9,17 +9,16 @@ using System.Linq;
 
 namespace ChessVariantsTraining.Controllers
 {
-    public class UserController : ErrorCapableController
+    public class UserController : CVTController
     {
-        IUserRepository userRepository;
         IRatingRepository ratingRepository;
         IValidator validator;
         IPasswordHasher passwordHasher;
         ICounterRepository counterRepository;
-        IPersistentLoginHandler loginHandler;
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
 
         public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, ITimedTrainingScoreRepository _timedTrainingScoreRepository)
+            : base(_userRepository, _loginHandler)
         {
             userRepository = _userRepository;
             ratingRepository = _ratingRepository;
