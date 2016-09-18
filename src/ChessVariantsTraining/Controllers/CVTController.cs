@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.Filters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -32,6 +33,28 @@ namespace ChessVariantsTraining.Controllers
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+            // Same-origin check for non-GET requests:
+            if (context.HttpContext.Request.Method.ToUpperInvariant() != "GET")
+            {
+                string originHost = null;
+                if (context.HttpContext.Request.Headers.ContainsKey("Origin"))
+                {
+                    originHost = new Uri(context.HttpContext.Request.Headers["Origin"]).Host;
+                }
+                else if (context.HttpContext.Request.Headers.ContainsKey("Referer"))
+                {
+                    originHost = new Uri(context.HttpContext.Request.Headers["Referer"]).Host;
+                }
+
+                string expectedOriginHost = context.HttpContext.Request.Host.Host;
+                if (originHost != expectedOriginHost)
+                {
+                    context.Result = ViewResultForHttpError(context.HttpContext, new BadRequest("This request was not trusted."));
+                    return;
+                }
+            }
+
+            // Role check:
             ControllerActionDescriptor descriptor = context.ActionDescriptor as ControllerActionDescriptor;
             RestrictedAttribute[] actionAttrs = descriptor.MethodInfo.GetCustomAttributes<RestrictedAttribute>(false)?.ToArray();
             RestrictedAttribute attr = null;
