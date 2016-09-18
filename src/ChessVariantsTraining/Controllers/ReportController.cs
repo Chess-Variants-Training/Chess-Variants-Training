@@ -42,21 +42,27 @@ namespace ChessVariantsTraining.Controllers
             {
                 types.Add("Puzzle");
             }
-            return View("List", reportRepository.GetByTypes(types));
+            List<Report> reports = reportRepository.GetByTypes(types);
+            Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
+            return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
 
         [Route("/Report/List/Comments")]
         [Restricted(true, UserRole.COMMENT_MODERATOR)]
         public IActionResult ListCommentReports()
         {
-            return View("List", reportRepository.GetByType("Comment"));
+            List<Report> reports = reportRepository.GetByType("Comment");
+            Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
+            return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
 
         [Route("/Report/List/Puzzles")]
         [Restricted(true, UserRole.PUZZLE_EDITOR)]
         public IActionResult ListPuzzleReports()
         {
-            return View("List", reportRepository.GetByType("Puzzle"));
+            List<Report> reports = reportRepository.GetByType("Comment");
+            Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
+            return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
 
         [HttpPost]

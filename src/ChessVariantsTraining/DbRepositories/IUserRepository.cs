@@ -1,4 +1,5 @@
 ﻿using ChessVariantsTraining.Models;
+using System.Collections.Generic;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -13,5 +14,7 @@ namespace ChessVariantsTraining.DbRepositories
         User FindById(int id);
 
         User FindByUsername(string name);
+
+        Dictionary<int, User> FindByIds(IEnumerable<int> ids);
     }
 }

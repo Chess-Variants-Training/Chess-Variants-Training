@@ -3,6 +3,8 @@ using ChessVariantsTraining.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -58,6 +60,12 @@ namespace ChessVariantsTraining.DbRepositories
         {
             FilterDefinition<User> filter = Builders<User>.Filter.Text(name, new TextSearchOptions() { CaseSensitive = false });
             return userCollection.Find(filter).FirstOrDefault();
+        }
+
+        public Dictionary<int, User> FindByIds(IEnumerable<int> ids)
+        {
+            FilterDefinition<User> filter = Builders<User>.Filter.In("_id", ids);
+            return userCollection.Find(filter).ToEnumerable().ToDictionary(x => x.ID);
         }
     }
 }

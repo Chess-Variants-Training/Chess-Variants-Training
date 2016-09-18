@@ -1,6 +1,6 @@
 ﻿@section Title {Report list}
 @using ChessVariantsTraining.Models
-@model List<Report>
+@model Tuple<List<Report>, Dictionary<int, User>>
 <h1>Report list</h1>
 <table class="full-width align-left three-columns">
     <thead>
@@ -11,10 +11,10 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (Report report in Model)
+        @foreach (Report report in Model.Item1)
         {
             <tr>
-                <td>@report.Reporter</td>
+                <td>@Model.Item2[report.Reporter].Username</td>
                 <td>@report.Reported</td>
                 <td>@report.Reason: @report.ReasonExplanation</td>
             </tr>
