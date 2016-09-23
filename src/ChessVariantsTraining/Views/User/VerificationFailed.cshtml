@@ -1,0 +1,6 @@
+﻿@section Title{Verification failed}
+Email verification failed, you entered a wrong code. Please try again:
+@{ Html.BeginForm("Verify", "User", FormMethod.Post); }
+<input type="text" name="verificationCode">
+<input type="submit" value="Submit">
+@{ Html.EndForm(); }

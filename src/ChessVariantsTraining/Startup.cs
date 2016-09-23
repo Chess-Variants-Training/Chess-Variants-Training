@@ -17,7 +17,8 @@ namespace ChessVariantsTraining
         {
             IConfigurationBuilder builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("config.json");
+                .AddJsonFile("config.json")
+                .AddJsonFile("config-secret.json");
 
             Configuration = builder.Build();
         }
@@ -53,11 +54,13 @@ namespace ChessVariantsTraining
             services.AddSingleton<ITimedTrainingSessionRepository, TimedTrainingSessionRepository>();
 
             // Miscellaneous services
+            services.AddSingleton<IEmailSender, EmailSender>();
             services.AddSingleton<IGameConstructor, GameConstructor>();
             services.AddSingleton<IMoveCollectionTransformer, MoveCollectionTransformer>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<IPersistentLoginHandler, PersistentLoginHandler>();
             services.AddSingleton<IRatingUpdater, RatingUpdater>();
+            services.AddSingleton<IUserVerifier, UserVerifier>();
             services.AddSingleton<IValidator, Validator>();
 
             services.Configure<RouteOptions>(options => options.ConstraintMap.Add("supportedVariantOrMixed", typeof(SupportedVariantOrMixedRouteConstraint)));

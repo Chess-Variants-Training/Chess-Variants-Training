@@ -54,8 +54,17 @@ namespace ChessVariantsTraining.Controllers
                 }
             }
 
-            // Role check:
+            // Verified user account check:
+            User user = loginHandler.LoggedInUser(context.HttpContext);
             ControllerActionDescriptor descriptor = context.ActionDescriptor as ControllerActionDescriptor;
+            NoVerificationNeededAttribute[] nvnAttrsOnAction = descriptor.MethodInfo.GetCustomAttributes<NoVerificationNeededAttribute>(false)?.ToArray();
+            if (user != null && !user.Verified && (nvnAttrsOnAction == null || nvnAttrsOnAction.Length == 0))
+            {
+                context.Result = View("VerifyAccount");
+                return;
+            }
+
+            // Role check:
             RestrictedAttribute[] actionAttrs = descriptor.MethodInfo.GetCustomAttributes<RestrictedAttribute>(false)?.ToArray();
             RestrictedAttribute attr = null;
             // 'Restricted' on an action overrides 'Restricted' on their controller
@@ -73,14 +82,13 @@ namespace ChessVariantsTraining.Controllers
             {
                 attr = actionAttrs[0] as RestrictedAttribute;        
             }
-            int? userId = loginHandler.LoggedInUserId(context.HttpContext);
-            bool loggedIn = userId.HasValue;
+            bool loggedIn = user != null;
             if (attr.LoginRequired && !loggedIn)
             {
                 context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden("You need to be logged in."));
                 return;
             }
-            List<string> roles = loggedIn ? userRepository.FindById(userId.Value).Roles : new List<string>() { UserRole.NONE };
+            List<string> roles = loggedIn ? userRepository.FindById(user.ID).Roles : new List<string>() { UserRole.NONE };
             if (!UserRole.HasAtLeastThePrivilegesOf(roles, attr.Roles))
             {
                 context.Result = ViewResultForHttpError(context.HttpContext, new Forbidden("You don't have enough privileges to do this."));

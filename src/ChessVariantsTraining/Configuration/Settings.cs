@@ -13,5 +13,11 @@
             get;
             set;
         }
+
+        public EmailSettings Email
+        {
+            get;
+            set;
+        }
     }
 }

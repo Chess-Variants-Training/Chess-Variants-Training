@@ -9,3 +9,4 @@ src/ChessVariantsTraining/wwwroot/images/pieces/cburnett/
 data/
 deps/
 project.lock.json
+config-secret.json

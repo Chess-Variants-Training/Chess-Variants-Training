@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using ChessVariantsTraining.Models;
 using System.Linq;
+using ChessVariantsTraining.Attributes;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -16,8 +17,9 @@ namespace ChessVariantsTraining.Controllers
         IPasswordHasher passwordHasher;
         ICounterRepository counterRepository;
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
+        IUserVerifier userVerifier;
 
-        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, ITimedTrainingScoreRepository _timedTrainingScoreRepository)
+        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, ITimedTrainingScoreRepository _timedTrainingScoreRepository, IUserVerifier _userVerifier)
             : base(_userRepository, _loginHandler)
         {
             userRepository = _userRepository;
@@ -27,7 +29,9 @@ namespace ChessVariantsTraining.Controllers
             counterRepository = _counterRepository;
             loginHandler = _loginHandler;
             timedTrainingScoreRepository = _timedTrainingScoreRepository;
+            userVerifier = _userVerifier;
         }
+
         [HttpGet]
         [Route("/User/Register")]
         public IActionResult Register()
@@ -72,6 +76,7 @@ namespace ChessVariantsTraining.Controllers
                     { "RacingKings", new Models.Rating(1500, 350, 0.06) }
                 }, new List<int>());
             bool added = userRepository.Add(user);
+            userVerifier.SendVerificationEmailTo(user.ID);
             return RedirectToAction("Profile", new { name = username });
         }
 
@@ -124,6 +129,7 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/User/Logout")]
+        [NoVerificationNeeded]
         public IActionResult Logout()
         {
             loginHandler.Logout(HttpContext);
@@ -132,6 +138,7 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpGet]
         [Route("/User/Edit")]
+        [NoVerificationNeeded]
         public IActionResult Edit()
         {
             int? userId = loginHandler.LoggedInUserId(HttpContext);
@@ -144,6 +151,7 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/User/Edit", Name = "EditPost")]
+        [NoVerificationNeeded]
         public IActionResult Edit(string email, string about)
         {
             int? userId = loginHandler.LoggedInUserId(HttpContext);
@@ -229,6 +237,28 @@ namespace ChessVariantsTraining.Controllers
                 List<TimedTrainingScore> scores = timedTrainingScoreRepository.Get(userId, from, to, show);
                 TimedTrainingChartData chart = new TimedTrainingChartData(scores, show == "each");
                 return Json(new { success = true, labels = chart.Labels, scores = chart.Scores });
+            }
+        }
+
+        [HttpPost]
+        [NoVerificationNeeded]
+        [Restricted(true, UserRole.NONE)]
+        [Route("/User/Verify")]
+        public IActionResult Verify(string verificationCode)
+        {
+            int verificationCodeI;
+            if (!int.TryParse(verificationCode, out verificationCodeI))
+            {
+                return View("VerificationFailed");
+            }
+
+            if (userVerifier.Verify(loginHandler.LoggedInUserId(HttpContext).Value, verificationCodeI))
+            {
+                return View("Verified");
+            }
+            else
+            {
+                return View("VerificationFailed");
             }
         }
     }

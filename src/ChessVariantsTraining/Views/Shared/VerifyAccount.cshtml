@@ -1,0 +1,6 @@
+﻿@section Title{Please verify your account}
+Please check your email and verify your email address by entering the code here:
+@{ Html.BeginForm("Verify", "User", FormMethod.Post); }
+<input type="text" name="verificationCode">
+<input type="submit" value="Submit">
+@{ Html.EndForm(); }
