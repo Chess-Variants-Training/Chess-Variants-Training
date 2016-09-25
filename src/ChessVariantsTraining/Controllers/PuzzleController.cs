@@ -25,10 +25,15 @@ namespace ChessVariantsTraining.Controllers
 
         static readonly string[] supportedVariants = new string[] { "Atomic", "KingOfTheHill", "ThreeCheck", "Antichess", "Horde", "RacingKings" };
 
-        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited, IPuzzleRepository _puzzleRepository,
-            IUserRepository _userRepository, IRatingUpdater _ratingUpdater,
-            IMoveCollectionTransformer _movecollectionTransformer, IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository,
-            ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, IGameConstructor _gameConstructor) : base(_userRepository, _loginHandler)
+        public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited,
+            IPuzzleRepository _puzzleRepository,
+            IUserRepository _userRepository,
+            IRatingUpdater _ratingUpdater,
+            IMoveCollectionTransformer _movecollectionTransformer,
+            IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository,
+            ICounterRepository _counterRepository,
+            IPersistentLoginHandler _loginHandler,
+            IGameConstructor _gameConstructor) : base(_userRepository, _loginHandler)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;

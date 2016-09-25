@@ -16,8 +16,10 @@ namespace ChessVariantsTraining.Controllers
         IEndgameTrainingSessionRepository endgameTrainingSessionRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
 
-        public EndgamesController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, 
-            IEndgameTrainingSessionRepository _endgameTrainingSessionRepository, IMoveCollectionTransformer _moveCollectionTransformer) : base(_userRepository, _loginHandler)
+        public EndgamesController(IUserRepository _userRepository,
+            IPersistentLoginHandler _loginHandler, 
+            IEndgameTrainingSessionRepository _endgameTrainingSessionRepository,
+            IMoveCollectionTransformer _moveCollectionTransformer) : base(_userRepository, _loginHandler)
         {
             endgameTrainingSessionRepository = _endgameTrainingSessionRepository;
             moveCollectionTransformer = _moveCollectionTransformer;

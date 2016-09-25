@@ -20,7 +20,15 @@ namespace ChessVariantsTraining.Controllers
         IUserVerifier userVerifier;
         IEmailSender emailSender;
 
-        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, ITimedTrainingScoreRepository _timedTrainingScoreRepository, IUserVerifier _userVerifier, IEmailSender _emailSender)
+        public UserController(IUserRepository _userRepository,
+            IRatingRepository _ratingRepository,
+            IValidator _validator,
+            IPasswordHasher _passwordHasher,
+            ICounterRepository _counterRepository,
+            IPersistentLoginHandler _loginHandler,
+            ITimedTrainingScoreRepository _timedTrainingScoreRepository,
+            IUserVerifier _userVerifier,
+            IEmailSender _emailSender)
             : base(_userRepository, _loginHandler)
         {
             userRepository = _userRepository;
@@ -284,7 +292,7 @@ namespace ChessVariantsTraining.Controllers
             user.PasswordRecoveryToken = token;
             userRepository.Update(user);
             emailSender.Send(user.Email, user.Username, "Chess Variants Training: Password Reset",
-                string.Format("A password reset for your account was requested. Copy this link and paste it in your browser window to reset your password: {0}", 
+                string.Format("A password reset for your account was requested. Copy this link and paste it in your browser window to reset your password: {0}",
                 Url.Action("ResetPassword", "User", new { token = token.TokenUnhashed }, Request.Scheme)));
             return View("ResetLinkSent");
         }

@@ -17,8 +17,14 @@ namespace ChessVariantsTraining.Controllers
         IMoveCollectionTransformer moveCollectionTransformer;
         IGameConstructor gameConstructor;
 
-        public TimedTrainingController(IUserRepository _userRepository, ITimedTrainingScoreRepository _timedTrainingRepository, IPositionRepository _positionRepository, ITimedTrainingSessionRepository _timedTrainingSessionRepository,
-                                       ITimedTrainingScoreRepository _timedTrainingScoreRepository, IMoveCollectionTransformer _moveCollectionTransformer, IPersistentLoginHandler _loginHandler, IGameConstructor _gameConstructor)
+        public TimedTrainingController(IUserRepository _userRepository,
+            ITimedTrainingScoreRepository _timedTrainingRepository,
+            IPositionRepository _positionRepository,
+            ITimedTrainingSessionRepository _timedTrainingSessionRepository,
+            ITimedTrainingScoreRepository _timedTrainingScoreRepository, 
+            IMoveCollectionTransformer _moveCollectionTransformer,
+            IPersistentLoginHandler _loginHandler,
+            IGameConstructor _gameConstructor)
             : base(_userRepository, _loginHandler)
         {
             timedTrainingRepository = _timedTrainingRepository;

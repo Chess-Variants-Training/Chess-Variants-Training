@@ -17,9 +17,12 @@ namespace ChessVariantsTraining.Controllers
         ICounterRepository counterRepository;
         INotificationRepository notificationRepository;
 
-        public CommentController(ICommentRepository _commentRepository, ICommentVoteRepository _commentVoteRepository,
-                                 IUserRepository _userRepository, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler,
-                                 INotificationRepository _notificationRepository) : base(_userRepository, _loginHandler)
+        public CommentController(ICommentRepository _commentRepository,
+            ICommentVoteRepository _commentVoteRepository,
+            IUserRepository _userRepository,
+            ICounterRepository _counterRepository,
+            IPersistentLoginHandler _loginHandler,
+            INotificationRepository _notificationRepository) : base(_userRepository, _loginHandler)
         {
             commentRepository = _commentRepository;
             commentVoteRepository = _commentVoteRepository;
