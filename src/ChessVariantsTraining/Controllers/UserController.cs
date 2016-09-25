@@ -18,8 +18,9 @@ namespace ChessVariantsTraining.Controllers
         ICounterRepository counterRepository;
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
         IUserVerifier userVerifier;
+        IEmailSender emailSender;
 
-        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, ITimedTrainingScoreRepository _timedTrainingScoreRepository, IUserVerifier _userVerifier)
+        public UserController(IUserRepository _userRepository, IRatingRepository _ratingRepository, IValidator _validator, IPasswordHasher _passwordHasher, ICounterRepository _counterRepository, IPersistentLoginHandler _loginHandler, ITimedTrainingScoreRepository _timedTrainingScoreRepository, IUserVerifier _userVerifier, IEmailSender _emailSender)
             : base(_userRepository, _loginHandler)
         {
             userRepository = _userRepository;
@@ -30,6 +31,7 @@ namespace ChessVariantsTraining.Controllers
             loginHandler = _loginHandler;
             timedTrainingScoreRepository = _timedTrainingScoreRepository;
             userVerifier = _userVerifier;
+            emailSender = _emailSender;
         }
 
         [HttpGet]
@@ -260,6 +262,65 @@ namespace ChessVariantsTraining.Controllers
             {
                 return View("VerificationFailed");
             }
+        }
+
+        [Route("/User/ForgotPassword")]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/User/SendPasswordReset")]
+        public IActionResult SendPasswordReset(string email)
+        {
+            User user = userRepository.FindByEmail(email);
+            if (user == null)
+            {
+                return View("NoResetLinkSent");
+            }
+
+            PasswordRecoveryToken token = new PasswordRecoveryToken();
+            user.PasswordRecoveryToken = token;
+            userRepository.Update(user);
+            emailSender.Send(user.Email, user.Username, "Chess Variants Training: Password Reset",
+                string.Format("A password reset for your account was requested. Copy this link and paste it in your browser window to reset your password: {0}", 
+                Url.Action("ResetPassword", "User", new { token = token.TokenUnhashed }, Request.Scheme)));
+            return View("ResetLinkSent");
+        }
+
+        [HttpGet]
+        [Route("/User/ResetPassword")]
+        public IActionResult ResetPassword([FromQuery] string token)
+        {
+            User associated = userRepository.FindByPasswordResetToken(token);
+            if (associated == null)
+            {
+                return View("PasswordResetFailed");
+            }
+            ViewBag.Error = null;
+            return View("ResetPassword", token);
+        }
+
+        [HttpPost]
+        [Route("/User/ResetPassword")]
+        public IActionResult ResetPasswordPost(string password, string confirm, string token)
+        {
+            User associated = userRepository.FindByPasswordResetToken(token);
+            if (associated == null)
+            {
+                return View("PasswordResetFailed");
+            }
+            if (password != confirm)
+            {
+                ViewBag.Error = "The password and the password confirmation aren't equal. Please try again.";
+                return View("ResetPassword", token);
+            }
+            Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(password);
+            associated.PasswordHash = hashAndSalt.Item1;
+            associated.Salt = hashAndSalt.Item2;
+            userRepository.Update(associated);
+            return View("PasswordUpdated");
         }
     }
 }

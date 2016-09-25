@@ -47,6 +47,9 @@ namespace ChessVariantsTraining.Models
         [BsonElement("verificationCode")]
         public int VerificationCode { get; set; }
 
+        [BsonElement("passwordRecoveryToken")]
+        public PasswordRecoveryToken PasswordRecoveryToken { get; set; }
+
         public User() { }
 
         public User(int id, string username, string email, string passwordHash, string salt, string about,

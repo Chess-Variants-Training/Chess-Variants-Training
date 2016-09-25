@@ -67,5 +67,18 @@ namespace ChessVariantsTraining.DbRepositories
             FilterDefinition<User> filter = Builders<User>.Filter.In("_id", ids);
             return userCollection.Find(filter).ToEnumerable().ToDictionary(x => x.ID);
         }
+
+        public User FindByPasswordResetToken(string token)
+        {
+            string hashed = PasswordRecoveryToken.GetHashedFor(token);
+            FilterDefinition<User> filter = Builders<User>.Filter.Eq("passwordRecoveryToken.tokenHashed", hashed) & Builders<User>.Filter.Gte("passwordRecoveryToken.expiry", DateTime.UtcNow);
+            return userCollection.Find(filter).FirstOrDefault();
+        }
+
+        public User FindByEmail(string email)
+        {
+            FilterDefinition<User> filter = Builders<User>.Filter.Eq("email", email);
+            return userCollection.Find(filter).FirstOrDefault();
+        }
     }
 }
