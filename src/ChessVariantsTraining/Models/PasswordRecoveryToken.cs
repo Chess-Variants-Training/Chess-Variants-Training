@@ -6,8 +6,6 @@ namespace ChessVariantsTraining.Models
 {
     public class PasswordRecoveryToken
     {
-        const int HASH_ITERATIONS = 10000;
-
         [BsonElement("tokenHashed")]
         public string TokenHashed { get; set; }
 
