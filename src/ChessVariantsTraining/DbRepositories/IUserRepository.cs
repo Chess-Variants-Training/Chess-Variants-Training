@@ -13,12 +13,10 @@ namespace ChessVariantsTraining.DbRepositories
 
         User FindById(int id);
 
-        User FindByUsername(string name);
+        User FindByUsernameOrEmail(string name);
 
         Dictionary<int, User> FindByIds(IEnumerable<int> ids);
 
         User FindByPasswordResetToken(string token);
-
-        User FindByEmail(string email);
     }
 }

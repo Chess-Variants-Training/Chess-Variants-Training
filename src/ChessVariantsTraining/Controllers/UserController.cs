@@ -63,6 +63,14 @@ namespace ChessVariantsTraining.Controllers
             {
                 ViewBag.Error.Add("Invalid email address.");
             }
+            if (userRepository.FindByUsernameOrEmail(username) != null)
+            {
+                ViewBag.Error.Add("The username is already taken.");
+            }
+            if (userRepository.FindByUsernameOrEmail(email) != null)
+            {
+                ViewBag.Error.Add("The email address is already taken.");
+            }
             if (ViewBag.Error.Count > 0)
             {
                 return View("Register");
@@ -93,7 +101,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Profile/{name}", Name = "Profile")]
         public IActionResult Profile(string name)
         {
-            Models.User user = userRepository.FindByUsername(name);
+            Models.User user = userRepository.FindByUsernameOrEmail(name);
             if (user == null)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user '{0}' could not be found.", name)));
@@ -121,7 +129,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Login", Name = "LoginPost")]
         public IActionResult LoginPost(string username, string password)
         {
-            Models.User user = userRepository.FindByUsername(username);
+            Models.User user = userRepository.FindByUsernameOrEmail(username);
             if (user == null)
             {
                 TempData["Error"] = "Invalid username or password.";
@@ -194,7 +202,7 @@ namespace ChessVariantsTraining.Controllers
             DateTime? from;
             DateTime? to;
 
-            User u = userRepository.FindByUsername(user);
+            User u = userRepository.FindByUsernameOrEmail(user);
             if (u == null)
             {
                 return Json(new { success = false, error = "User not found." });
@@ -282,7 +290,12 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/SendPasswordReset")]
         public IActionResult SendPasswordReset(string email)
         {
-            User user = userRepository.FindByEmail(email);
+            if (!validator.IsValidEmail(email))
+            {
+                return View("NoResetLinkSent");
+            }
+
+            User user = userRepository.FindByUsernameOrEmail(email);
             if (user == null)
             {
                 return View("NoResetLinkSent");

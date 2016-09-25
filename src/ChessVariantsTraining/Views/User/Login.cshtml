@@ -9,3 +9,5 @@ Password: <input type="password" name="password"><br><br>
     <p class="error">@ViewBag.Error</p>
 }
 <p>Note: logins are persistent. If you are on a public computer, don't forget to log out when you leave.</p>
+<p>Don't have an account? @Html.ActionLink("Register!", "Register", "User")</p>
+<p>@Html.ActionLink("Forgot your password?", "ForgotPassword", "User")</p>

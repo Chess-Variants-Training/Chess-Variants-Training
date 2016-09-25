@@ -56,7 +56,7 @@ namespace ChessVariantsTraining.DbRepositories
             return userCollection.Find(filter).FirstOrDefault();
         }
 
-        public User FindByUsername(string name)
+        public User FindByUsernameOrEmail(string name)
         {
             FilterDefinition<User> filter = Builders<User>.Filter.Text(name, new TextSearchOptions() { CaseSensitive = false });
             return userCollection.Find(filter).FirstOrDefault();
