@@ -327,6 +327,7 @@ namespace ChessVariantsTraining.Controllers
             Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(password);
             associated.PasswordHash = hashAndSalt.Item1;
             associated.Salt = hashAndSalt.Item2;
+            associated.PasswordRecoveryToken = null;
             userRepository.Update(associated);
             return View("PasswordUpdated");
         }
