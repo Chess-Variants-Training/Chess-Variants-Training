@@ -1,4 +1,5 @@
 ﻿window.addEventListener("load", function () {
+    if (window.accountClosed) return;
     updateRatingChartData();
     document.getElementById("ratingChartDateRangeSelector").addEventListener("change", updateRatingChartData);
     document.getElementById("ratingChartShownSelector").addEventListener("change", updateRatingChartData);

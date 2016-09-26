@@ -17,6 +17,7 @@ namespace ChessVariantsTraining.ViewModels
                 return PuzzlesCorrect + PuzzlesWrong;
             }
         }
+        public bool Closed { get; private set; }
 
         public User(string username)
         {
@@ -31,6 +32,7 @@ namespace ChessVariantsTraining.ViewModels
             PuzzlesWrong = user.PuzzlesWrong;
             Roles = user.Roles;
             ID = user.ID;
+            Closed = user.Closed;
         }
     }
 }

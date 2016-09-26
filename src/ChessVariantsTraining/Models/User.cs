@@ -50,6 +50,9 @@ namespace ChessVariantsTraining.Models
         [BsonElement("passwordRecoveryToken")]
         public PasswordRecoveryToken PasswordRecoveryToken { get; set; }
 
+        [BsonElement("closed")]
+        public bool Closed { get; set; }
+
         public User() { }
 
         public User(int id, string username, string email, string passwordHash, string salt, string about,
@@ -74,6 +77,7 @@ namespace ChessVariantsTraining.Models
                 rng.GetBytes(buffer);
                 VerificationCode = Math.Abs(BitConverter.ToInt32(buffer, 0));
             }
+            Closed = false;
         }
     }
 }
