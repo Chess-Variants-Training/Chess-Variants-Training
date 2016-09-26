@@ -17,7 +17,7 @@ function updateRatingChartData() {
     if (window.ratingLineChart) {
         window.ratingLineChart.destroy();
     }
-    var user = document.getElementsByTagName("h1")[0].textContent;
+    var user = window.userId;
     var range = document.getElementById("ratingChartDateRangeSelector").value;
     var show = document.getElementById("ratingChartShownSelector").value;
     jsonXhr("/User/ChartData/Rating/" + user + "/" + range + "/" + show, "GET", null, function (req, jsonResponse) {
@@ -32,7 +32,7 @@ function updateTtsChartData() {
     if (window.ttsLineChart) {
         window.ttsLineChart.destroy();
     }
-    var user = document.getElementsByTagName("h1")[0].textContent;
+    var user = window.userId;
     var range = document.getElementById("ttsChartDateRangeSelector").value;
     var show = document.getElementById("ttsChartShownSelector").value;
     jsonXhr("/User/ChartData/TimedTraining/" + user + "/" + range + "/" + show, "GET", null, function (req, jsonResponse) {

@@ -9,6 +9,7 @@ namespace ChessVariantsTraining.ViewModels
         public int PuzzlesCorrect { get; private set; }
         public int PuzzlesWrong { get; private set; }
         public List<string> Roles { get; private set; }
+        public int ID { get; private set; }
         public int PuzzlesMade
         {
             get
@@ -29,6 +30,7 @@ namespace ChessVariantsTraining.ViewModels
             PuzzlesCorrect = user.PuzzlesCorrect;
             PuzzlesWrong = user.PuzzlesWrong;
             Roles = user.Roles;
+            ID = user.ID;
         }
     }
 }

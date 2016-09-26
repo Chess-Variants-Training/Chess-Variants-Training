@@ -98,13 +98,13 @@ namespace ChessVariantsTraining.Controllers
             return RedirectToAction("Profile", new { name = username });
         }
 
-        [Route("/User/Profile/{name}", Name = "Profile")]
-        public IActionResult Profile(string name)
+        [Route("/User/Profile/{id:int}")]
+        public IActionResult Profile(int id)
         {
-            Models.User user = userRepository.FindByUsernameOrEmail(name);
+            Models.User user = userRepository.FindById(id);
             if (user == null)
             {
-                return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user '{0}' could not be found.", name)));
+                return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user with ID '{0}' could not be found.", id)));
             }
             ViewModels.User userViewModel = new ViewModels.User(user);
             return View(userViewModel);
@@ -185,8 +185,8 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpGet]
-        [Route("/User/ChartData/{type}/{user}/{range}/{show}")]
-        public IActionResult ChartData(string type, string user, string range, string show)
+        [Route("/User/ChartData/{type}/{user:int}/{range}/{show}")]
+        public IActionResult ChartData(string type, int user, string range, string show)
         {
             if (!new string[] { "Rating", "TimedTraining" }.Contains(type))
             {
@@ -202,7 +202,7 @@ namespace ChessVariantsTraining.Controllers
             DateTime? from;
             DateTime? to;
 
-            User u = userRepository.FindByUsernameOrEmail(user);
+            User u = userRepository.FindById(user);
             if (u == null)
             {
                 return Json(new { success = false, error = "User not found." });
