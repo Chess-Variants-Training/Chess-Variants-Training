@@ -135,6 +135,11 @@ namespace ChessVariantsTraining.Controllers
                 TempData["Error"] = "Invalid username or password.";
                 return RedirectToAction("Login");
             }
+            if (user.Closed)
+            {
+                TempData["Error"] = "This account is closed.";
+                return RedirectToAction("Login");
+            }
             string salt = user.Salt;
             string hash = passwordHasher.HashPassword(password, salt);
             if (hash != user.PasswordHash)
