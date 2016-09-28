@@ -56,9 +56,9 @@
                     }
                     else
                     {
-                        @Html.ActionLink(loggedIn.Username, "Profile", "User", new { name = loggedIn.Username }, null)
+                        @Html.ActionLink(loggedIn.Username, "Profile", "User", new { id = loggedIn.ID }, null)
                         <ul>
-                            <li>@Html.ActionLink("Profile", "Profile", "User", new { name = loggedIn.Username }, null)</li>
+                            <li>@Html.ActionLink("Profile", "Profile", "User", new { id = loggedIn.ID }, null)</li>
                             <li>@Html.ActionLink("Edit", "Edit", "User")</li>
                             <li>@Html.ActionLink("Notifications", "Index", "Notification")</li>
                             <li>@Html.ActionLink("Log out", "Logout", "User")</li>

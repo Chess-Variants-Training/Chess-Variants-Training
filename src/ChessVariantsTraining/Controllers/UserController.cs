@@ -95,7 +95,7 @@ namespace ChessVariantsTraining.Controllers
                 }, new List<int>());
             bool added = userRepository.Add(user);
             userVerifier.SendVerificationEmailTo(user.ID);
-            return RedirectToAction("Profile", new { name = username });
+            return RedirectToAction("Profile", new { id = user.ID });
         }
 
         [Route("/User/Profile/{id:int}")]
@@ -148,7 +148,7 @@ namespace ChessVariantsTraining.Controllers
                 return RedirectToAction("Login");
             }
             loginHandler.RegisterLogin(user.ID, HttpContext);
-            return RedirectToAction("Profile", new { name = username });
+            return RedirectToAction("Profile", new { id = user.ID });
         }
 
         [Route("/User/Logout")]
