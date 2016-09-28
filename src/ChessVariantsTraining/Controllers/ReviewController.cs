@@ -3,7 +3,9 @@ using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -21,7 +23,8 @@ namespace ChessVariantsTraining.Controllers
         public IActionResult Index()
         {
             List<Puzzle> inReview = puzzleRepository.InReview();
-            return View(inReview);
+            Dictionary<int, User> users = userRepository.FindByIds(inReview.Select(x => x.Author));
+            return View(new Tuple<List<Puzzle>, Dictionary<int, User>>(inReview, users));
         }
 
         [HttpPost]

@@ -1,6 +1,7 @@
-@model System.Collections.Generic.List<ChessVariantsTraining.Models.Puzzle>
+@using ChessVariantsTraining.Models
+@model Tuple<List<Puzzle>, Dictionary<int, User>>
 @section Title{Review submitted puzzles}
-@Model.Count puzzles in review.
+@Model.Item1.Count puzzles in review.
 <table class="full-width align-left three-columns">
     <thead>
         <tr>
@@ -10,11 +11,11 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (ChessVariantsTraining.Models.Puzzle p in Model)
+        @foreach (Puzzle p in Model.Item1)
         {
             <tr>
                 <td>@p.ID</td>
-                <td>@p.Author</td>
+                <td>@Html.ActionLink(Model.Item2[p.Author].Username, "Profile", "User", new { id = p.Author }, null)</td>
                 <td>@Html.ActionLink("Review", "TrainId", "Puzzle", new { id = p.ID }, null)</td>
             </tr>
         }
