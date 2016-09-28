@@ -238,7 +238,6 @@ namespace ChessVariantsTraining.Controllers
             {
                 return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("The given puzzle could not be found."));
             }
-            ViewBag.LoggedIn = loginHandler.LoggedInUserId(HttpContext).HasValue;
             ViewBag.Variant = p.Variant;
             return View("Train", p);
         }

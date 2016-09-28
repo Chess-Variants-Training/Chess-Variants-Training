@@ -1,4 +1,6 @@
-﻿@model ChessVariantsTraining.Models.Puzzle
+﻿@using ChessVariantsTraining.Models
+@model Puzzle
+@inject ChessVariantsTraining.Services.IPersistentLoginHandler loginHandler
 @section Title {
     @if (Model != null && Model.InReview)
     {
@@ -9,13 +11,30 @@
         @:Puzzle training
     }
 }
+@section Description{Improve your tactics by solving chess variant puzzles!}
+@{ User loggedInUser = loginHandler.LoggedInUser(Context);
+    bool loggedIn = loggedInUser != null;
+    bool isReviewer = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_REVIEWER);
+    bool isAuthor = loggedIn && Model.Author == loggedInUser.ID;
+    bool isReviewerOrAuthor = isReviewer || isAuthor;
+}
+@if (Model != null && Model.InReview && !isReviewerOrAuthor)
+{
+    @:This puzzle is still in review.
+    return;
+}
+@if (Model != null && !Model.Approved && !isReviewerOrAuthor)
+{
+    @:This puzzle has been rejected.
+    return;
+}
 @section AddToHead {
     <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
     @if (Model != null)
     {
         <script type="text/javascript">window.selectedPuzzle = "@Model.ID";</script>
     }
-    @if (Model != null && Model.InReview)
+    @if (Model != null && Model.InReview && isReviewer)
     {
         <script type="text/javascript" src="/scripts/puzzlereview.js"></script>
     }
@@ -26,8 +45,6 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
-@section Description{Improve your tactics by solving chess variant puzzles!}
-@{ bool loggedIn = ViewBag.LoggedIn; }
 <div id="ground-container">
     <div>
         <div id="chessground" class="brown"></div>
@@ -70,7 +87,7 @@
         }
     </div>
 </div>
-@if (Model != null && Model.InReview)
+@if (Model != null && Model.InReview && isReviewer)
 {
     <p data-object="@Model.ID">
         <a href="#" id="approve-puzzle">Approve</a> | <a href="#" id="reject-puzzle">Reject</a>
