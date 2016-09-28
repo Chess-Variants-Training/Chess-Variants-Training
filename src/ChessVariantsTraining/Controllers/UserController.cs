@@ -83,15 +83,15 @@ namespace ChessVariantsTraining.Controllers
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
             int userId = counterRepository.GetAndIncrease(Counter.USER_ID);
-            Models.User user = new Models.User(userId, username, email, hash, salt, "", 0, 0,
-                new List<string>() { Models.UserRole.NONE }, new Dictionary<string, Models.Rating>()
+            User user = new User(userId, username, email, hash, salt, "", 0, 0,
+                new List<string>() { UserRole.NONE }, new Dictionary<string, Rating>()
                 {
-                    { "Atomic", new Models.Rating(1500, 350, 0.06) },
-                    { "ThreeCheck", new Models.Rating(1500, 350, 0.06) },
-                    { "KingOfTheHill", new Models.Rating(1500, 350, 0.06) },
-                    { "Antichess", new Models.Rating(1500, 350, 0.06) },
-                    { "Horde", new Models.Rating(1500, 350, 0.06) },
-                    { "RacingKings", new Models.Rating(1500, 350, 0.06) }
+                    { "Atomic", new Rating(1500, 350, 0.06) },
+                    { "ThreeCheck", new Rating(1500, 350, 0.06) },
+                    { "KingOfTheHill", new Rating(1500, 350, 0.06) },
+                    { "Antichess", new Rating(1500, 350, 0.06) },
+                    { "Horde", new Rating(1500, 350, 0.06) },
+                    { "RacingKings", new Rating(1500, 350, 0.06) }
                 }, new List<int>());
             bool added = userRepository.Add(user);
             userVerifier.SendVerificationEmailTo(user.ID);
@@ -101,7 +101,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Profile/{id:int}")]
         public IActionResult Profile(int id)
         {
-            Models.User user = userRepository.FindById(id);
+            User user = userRepository.FindById(id);
             if (user == null)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user with ID '{0}' could not be found.", id)));
@@ -129,7 +129,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Login", Name = "LoginPost")]
         public IActionResult LoginPost(string username, string password)
         {
-            Models.User user = userRepository.FindByUsernameOrEmail(username);
+            User user = userRepository.FindByUsernameOrEmail(username);
             if (user == null)
             {
                 TempData["Error"] = "Invalid username or password.";
@@ -182,7 +182,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 return RedirectToAction("Login");
             }
-            Models.User user = userRepository.FindById(userId.Value);
+            User user = userRepository.FindById(userId.Value);
             user.Email = email;
             user.About = about;
             userRepository.Update(user);
