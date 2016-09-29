@@ -29,6 +29,8 @@ namespace ChessVariantsTraining
                     return "RacingKings";
                 case "THREECHECK":
                     return "ThreeCheck";
+                case "MIXED":
+                    return "Mixed";
                 default:
                     throw new NotImplementedException(variant + " is not implemented.");
             }
