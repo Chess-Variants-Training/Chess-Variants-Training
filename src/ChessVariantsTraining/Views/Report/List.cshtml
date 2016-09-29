@@ -1,13 +1,18 @@
 ﻿@section Title {Report list}
 @using ChessVariantsTraining.Models
 @model Tuple<List<Report>, Dictionary<int, User>>
+@section AddToHead {
+    <script type="text/javascript" src="@Url.Content("~/scripts/reports.js")"></script>
+}
 <h1>Report list</h1>
-<table class="full-width align-left three-columns">
+<table class="full-width align-left five-columns">
     <thead>
         <tr>
             <th>Reporter</th>
             <th>Reported</th>
             <th>Reason</th>
+            <th>Helpful</th>
+            <th>Decline</th>
         </tr>
     </thead>
     <tbody>
@@ -17,6 +22,8 @@
                 <td>@Model.Item2[report.Reporter].Username</td>
                 <td>@report.Reported</td>
                 <td>@report.Reason: @report.ReasonExplanation</td>
+                <td><a href="#" data-reportid="@report.ID" data-judgement="helpful">Helpful</a></td>
+                <td><a href="#" data-reportid="@report.ID" data-judgement="declined">Decline</a></td>
             </tr>
         }
     </tbody>

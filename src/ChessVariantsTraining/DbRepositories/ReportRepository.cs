@@ -41,27 +41,17 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        private bool Handle(string reportId, string judgement)
+        public bool Handle(string reportId, string judgement)
         {
             UpdateDefinition<Report> updateDef = Builders<Report>.Update.Set("handled", true).Set("judgementAfterHandling", judgement);
-            FilterDefinition<Report> filter = Builders<Report>.Filter.Eq("id", reportId);
+            FilterDefinition<Report> filter = Builders<Report>.Filter.Eq("_id", reportId);
             UpdateResult updateResult = reportCollection.UpdateOne(filter, updateDef);
             return updateResult.IsAcknowledged && updateResult.MatchedCount != 0;
         }
 
-        public bool MarkHelpful(string reportId)
+        public List<Report> GetUnhandledByType(string type)
         {
-            return Handle(reportId, "helpful");
-        }
-
-        public bool MarkDeclined(string reportId)
-        {
-            return Handle(reportId, "declined");
-        }
-
-        public List<Report> GetByType(string type)
-        {
-            FilterDefinition<Report> filter = Builders<Report>.Filter.Eq("type", type);
+            FilterDefinition<Report> filter = Builders<Report>.Filter.Eq("type", type) & Builders<Report>.Filter.Eq("handled", false);
             var found = reportCollection.Find(filter);
             if (found == null)
             {
@@ -70,10 +60,15 @@ namespace ChessVariantsTraining.DbRepositories
             return found.ToList();
         }
 
-        public List<Report> GetByTypes(IEnumerable<string> types)
+        public List<Report> GetUnhandledByTypes(IEnumerable<string> types)
         {
-            FilterDefinition<Report> filter = Builders<Report>.Filter.In("type", types);
+            FilterDefinition<Report> filter = Builders<Report>.Filter.In("type", types) & Builders<Report>.Filter.Eq("handled", false);
             return reportCollection.Find(filter).ToList();
+        }
+
+        public Report GetById(string id)
+        {
+            return reportCollection.Find(Builders<Report>.Filter.Eq("_id", id)).FirstOrDefault();
         }
     }
 }

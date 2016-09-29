@@ -26,9 +26,13 @@ a {
     width: 100%;
 }
 
-    table.three-columns.full-width td, table.three-columns.full-width th {
-        width: 33%;
-    }
+table.three-columns.full-width td, table.three-columns.full-width th {
+    width: 33%;
+}
+
+table.five-columns.full-width td, table.five-columns.full-width th {
+    width: 20%;
+}
 
 table.align-left th {
     text-align: left;
@@ -54,4 +58,3 @@ table.align-left th {
 .unread-notifications {
     background-color: red;
 }
-

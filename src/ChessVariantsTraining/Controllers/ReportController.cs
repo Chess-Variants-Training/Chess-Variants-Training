@@ -15,6 +15,7 @@ namespace ChessVariantsTraining.Controllers
 
         public static readonly string[] ValidCommentReportReasons = new string[] { "Offensive", "Spam", "Off-topic", "Other" };
         public static readonly string[] ValidPuzzleReportReasons = new string[] { "Inaccurate", "Too many options", "Missing answer" };
+        public static readonly string[] ValidReportJudgements = new string[] { "helpful", "declined" };
 
         static readonly Dictionary<string, string[]> validReasonsForType = new Dictionary<string, string[]>()
         {
@@ -42,7 +43,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 types.Add("Puzzle");
             }
-            List<Report> reports = reportRepository.GetByTypes(types);
+            List<Report> reports = reportRepository.GetUnhandledByTypes(types);
             Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
             return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
@@ -51,7 +52,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.COMMENT_MODERATOR)]
         public IActionResult ListCommentReports()
         {
-            List<Report> reports = reportRepository.GetByType("Comment");
+            List<Report> reports = reportRepository.GetUnhandledByType("Comment");
             Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
             return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
@@ -60,7 +61,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.PUZZLE_EDITOR)]
         public IActionResult ListPuzzleReports()
         {
-            List<Report> reports = reportRepository.GetByType("Comment");
+            List<Report> reports = reportRepository.GetUnhandledByType("Comment");
             Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
             return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
@@ -104,6 +105,37 @@ namespace ChessVariantsTraining.Controllers
         public IActionResult PuzzleReportDialog()
         {
             return View();
+        }
+
+        [HttpPost]
+        [Route("/Report/Handle")]
+        [Restricted(true, UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR)]
+        public IActionResult HandleReport(string id, string judgement)
+        {
+            if (!ValidReportJudgements.Contains(judgement))
+            {
+                return Json(new { success = false, error = "Invalid report judgement." });
+            }
+            Report report = reportRepository.GetById(id);
+            if (report == null)
+            {
+                return Json(new { success = false, error = "Report not found." });
+            }
+            if (report.Handled)
+            {
+                return Json(new { success = false, error = "That report got handled already." });
+            }
+            User handler = loginHandler.LoggedInUser(HttpContext);
+            if ((report.Type == "Comment" && !UserRole.HasAtLeastThePrivilegesOf(handler.Roles, UserRole.COMMENT_MODERATOR))
+                || (report.Type == "Puzzle" && !UserRole.HasAtLeastThePrivilegesOf(handler.Roles, UserRole.PUZZLE_EDITOR)))
+            {
+                return Json(new { success = false, error = "You can't handle that type of reports." });
+            }
+            if (!reportRepository.Handle(report.ID, judgement))
+            {
+                return Json(new { success = false, error = "An unexpected error happened while acknowledging the approval/rejection of the report." });
+            }
+            return Json(new { success = true });
         }
     }
 }

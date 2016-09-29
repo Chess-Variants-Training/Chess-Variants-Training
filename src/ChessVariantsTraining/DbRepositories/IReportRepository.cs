@@ -7,12 +7,12 @@ namespace ChessVariantsTraining.DbRepositories
     {
         bool Add(Report report);
 
-        bool MarkHelpful(string reportId);
+        List<Report> GetUnhandledByType(string type);
 
-        bool MarkDeclined(string reportId);
+        List<Report> GetUnhandledByTypes(IEnumerable<string> types);
 
-        List<Report> GetByType(string type);
+        Report GetById(string id);
 
-        List<Report> GetByTypes(IEnumerable<string> types);
+        bool Handle(string reportId, string judgement);
     }
 }
