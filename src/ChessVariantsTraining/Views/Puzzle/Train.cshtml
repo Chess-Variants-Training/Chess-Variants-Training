@@ -15,7 +15,7 @@
 @{ User loggedInUser = loginHandler.LoggedInUser(Context);
     bool loggedIn = loggedInUser != null;
     bool isReviewer = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_REVIEWER);
-    bool isAuthor = loggedIn && Model.Author == loggedInUser.ID;
+    bool isAuthor = loggedIn && Model != null && Model.Author == loggedInUser.ID;
     bool isReviewerOrAuthor = isReviewer || isAuthor;
 }
 @if (Model != null && Model.InReview && !isReviewerOrAuthor)
