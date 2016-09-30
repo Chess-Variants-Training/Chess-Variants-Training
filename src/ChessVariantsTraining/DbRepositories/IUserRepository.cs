@@ -13,7 +13,9 @@ namespace ChessVariantsTraining.DbRepositories
 
         User FindById(int id);
 
-        User FindByUsernameOrEmail(string name);
+        User FindByUsername(string username);
+
+        User FindByEmail(string email);
 
         Dictionary<int, User> FindByIds(IEnumerable<int> ids);
 

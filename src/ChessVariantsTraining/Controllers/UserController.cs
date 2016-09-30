@@ -63,11 +63,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 ViewBag.Error.Add("Invalid email address.");
             }
-            if (userRepository.FindByUsernameOrEmail(username) != null)
+            if (userRepository.FindByUsername(username) != null)
             {
                 ViewBag.Error.Add("The username is already taken.");
             }
-            if (userRepository.FindByUsernameOrEmail(email) != null)
+            if (userRepository.FindByEmail(email) != null)
             {
                 ViewBag.Error.Add("The email address is already taken.");
             }
@@ -130,7 +130,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Login", Name = "LoginPost")]
         public IActionResult LoginPost(string username, string password)
         {
-            User user = userRepository.FindByUsernameOrEmail(username);
+            User user = userRepository.FindByUsername(username);
             if (user == null)
             {
                 TempData["Error"] = "Invalid username or password.";
@@ -301,7 +301,7 @@ namespace ChessVariantsTraining.Controllers
                 return View("NoResetLinkSent");
             }
 
-            User user = userRepository.FindByUsernameOrEmail(email);
+            User user = userRepository.FindByEmail(email);
             if (user == null)
             {
                 return View("NoResetLinkSent");

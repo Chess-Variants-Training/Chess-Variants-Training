@@ -56,9 +56,15 @@ namespace ChessVariantsTraining.DbRepositories
             return userCollection.Find(filter).FirstOrDefault();
         }
 
-        public User FindByUsernameOrEmail(string name)
+        public User FindByUsername(string username)
         {
-            FilterDefinition<User> filter = Builders<User>.Filter.Text(name, new TextSearchOptions() { CaseSensitive = false });
+            FilterDefinition<User> filter = Builders<User>.Filter.Regex("username", new MongoDB.Bson.BsonRegularExpression("^" + username + "$", "i"));
+            return userCollection.Find(filter).FirstOrDefault();
+        }
+
+        public User FindByEmail(string email)
+        {
+            FilterDefinition<User> filter = Builders<User>.Filter.Regex("email", new MongoDB.Bson.BsonRegularExpression("^" + email + "$", "i"));
             return userCollection.Find(filter).FirstOrDefault();
         }
 
@@ -72,12 +78,6 @@ namespace ChessVariantsTraining.DbRepositories
         {
             string hashed = PasswordRecoveryToken.GetHashedFor(token);
             FilterDefinition<User> filter = Builders<User>.Filter.Eq("passwordRecoveryToken.tokenHashed", hashed) & Builders<User>.Filter.Gte("passwordRecoveryToken.expiry", DateTime.UtcNow);
-            return userCollection.Find(filter).FirstOrDefault();
-        }
-
-        public User FindByEmail(string email)
-        {
-            FilterDefinition<User> filter = Builders<User>.Filter.Eq("email", email);
             return userCollection.Find(filter).FirstOrDefault();
         }
     }
