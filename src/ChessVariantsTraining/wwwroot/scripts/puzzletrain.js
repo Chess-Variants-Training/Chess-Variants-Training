@@ -298,6 +298,7 @@ function sendLinkClicked(e) {
 function cancelLinkClicked(e) {
     e = e || window.event;
     e.preventDefault();
+    e.target.parentElement.style.display = "none";
 }
 
 function reportCommentLinkClicked(e) {
