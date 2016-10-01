@@ -52,5 +52,11 @@ namespace ChessVariantsTraining.DbRepositories
             FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Ne("_id", excludedId) & Builders<SavedLogin>.Filter.Eq("user", userId);
             savedLoginCollection.DeleteMany(filter);
         }
+
+        public void DeleteAllOf(int userId)
+        {
+            FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Eq("user", userId);
+            savedLoginCollection.DeleteMany(filter);
+        }
     }
 }

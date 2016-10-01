@@ -102,5 +102,10 @@ namespace ChessVariantsTraining.Services
 
             savedLoginRepository.DeleteAllOfExcept(loggedInUserId.Value, long.Parse(context.Request.Cookies["login"].Split(':')[0]));
         }
+
+        public void LogoutEverywhere(int userId)
+        {
+            savedLoginRepository.DeleteAllOf(userId);
+        }
     }
 }

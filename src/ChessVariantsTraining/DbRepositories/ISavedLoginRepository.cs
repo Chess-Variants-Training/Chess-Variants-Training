@@ -13,5 +13,7 @@ namespace ChessVariantsTraining.DbRepositories
         void Delete(long id);
 
         void DeleteAllOfExcept(int userId, long excludedId);
+
+        void DeleteAllOf(int userId);
     }
 }

@@ -356,6 +356,7 @@ namespace ChessVariantsTraining.Controllers
             associated.Salt = hashAndSalt.Item2;
             associated.PasswordRecoveryToken = null;
             userRepository.Update(associated);
+            loginHandler.LogoutEverywhere(associated.ID);
             return View("PasswordUpdated");
         }
     }
