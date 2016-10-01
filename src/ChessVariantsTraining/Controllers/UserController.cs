@@ -160,6 +160,14 @@ namespace ChessVariantsTraining.Controllers
             return RedirectToAction("Index", "Home");
         }
 
+        [Route("/User/LogoutEverywhereElse")]
+        [NoVerificationNeeded]
+        public IActionResult LogoutEverywhereElse()
+        {
+            loginHandler.LogoutEverywhereExceptHere(HttpContext);
+            return RedirectToAction("Index", "Home");
+        }
+
         [HttpGet]
         [Route("/User/Edit")]
         [NoVerificationNeeded]

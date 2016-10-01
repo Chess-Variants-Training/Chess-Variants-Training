@@ -11,5 +11,7 @@ namespace ChessVariantsTraining.DbRepositories
         int? AuthenticatedUser(long loginId, byte[] hashedToken);
 
         void Delete(long id);
+
+        void DeleteAllOfExcept(int userId, long excludedId);
     }
 }

@@ -100,5 +100,16 @@ namespace ChessVariantsTraining.Services
             context.Session.Remove("userId");
             context.Session.Remove("abc");
         }
+
+        public void LogoutEverywhereExceptHere(HttpContext context)
+        {
+            int? loggedInUserId = LoggedInUserId(context);
+            if (!loggedInUserId.HasValue)
+            {
+                return;
+            }
+
+            savedLoginRepository.DeleteAllOfExcept(loggedInUserId.Value, long.Parse(context.Request.Cookies["login"].Split(':')[0]));
+        }
     }
 }

@@ -12,5 +12,7 @@ namespace ChessVariantsTraining.Services
         void RegisterLogin(int user, HttpContext context);
 
         void Logout(HttpContext context);
+
+        void LogoutEverywhereExceptHere(HttpContext context);
     }
 }
