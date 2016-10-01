@@ -27,20 +27,16 @@ namespace ChessVariantsTraining.Services
 
         public int? LoggedInUserId(HttpContext context)
         {
-            int? idFromSession = context.Session.GetInt32("userId");
-            if (idFromSession.HasValue)
-            {
-                return idFromSession;
-            }
-
             IRequestCookieCollection requestCookies = context.Request.Cookies;
+
             if (!requestCookies.ContainsKey("login"))
             {
                 return null;
             }
 
-            string[] cookieParts = requestCookies["login"].Split(':');
             long identifier;
+            string[] cookieParts = requestCookies["login"].Split(':');
+
             if (!long.TryParse(cookieParts[0], out identifier))
             {
                 return null;
@@ -74,8 +70,6 @@ namespace ChessVariantsTraining.Services
             } while (savedLoginRepository.ContainsID(login.ID));
             savedLoginRepository.Add(login);
             context.Response.Cookies.Append("login", login.ID + ":" + login.UnhashedToken);
-
-            context.Session.SetInt32("userId", user);
         }
 
         public void Logout(HttpContext context)
@@ -96,9 +90,6 @@ namespace ChessVariantsTraining.Services
 
             savedLoginRepository.Delete(identifier);
             context.Response.Cookies.Delete("login", new CookieOptions() { HttpOnly = true });
-
-            context.Session.Remove("userId");
-            context.Session.Remove("abc");
         }
 
         public void LogoutEverywhereExceptHere(HttpContext context)
