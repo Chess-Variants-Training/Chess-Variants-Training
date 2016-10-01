@@ -275,7 +275,7 @@ namespace ChessVariantsTraining.Controllers
             }
             else
             {
-                return Json(new { success = false, error = "There are no more puzzles for you." });
+                return Json(new { success = true, allDone = true });
             }
         }
 

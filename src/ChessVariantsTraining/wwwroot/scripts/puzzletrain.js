@@ -1,6 +1,10 @@
 ﻿function startWithRandomPuzzle() {
     jsonXhr("/Puzzle/Train/GetOneRandomly/" + window.variant + (window.trainingSessionId ? "?trainingSessionId=" + window.trainingSessionId : ""), "GET", null, function (req, jsonResponse) {
-        setup(jsonResponse.id);
+        if (!jsonResponse["allDone"]) {
+            setup(jsonResponse.id);
+        } else {
+            document.getElementById("bodycontainer").innerHTML = "There are no more puzzles for you in this variant. But don't worry! Registered users can submit puzzles, so if you come back here later, there might be new puzzles!";
+        }
     }, function (req, err) {
         alert(err);
     });
