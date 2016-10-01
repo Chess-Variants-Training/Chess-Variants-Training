@@ -2,8 +2,8 @@
     width: 70%;
     max-width: 1100px;
     margin: auto;
-    padding-top: 7px;
-    padding-bottom: 7px;
+    padding-top: 15px;
+    padding-bottom: 15px;
     padding-left: 0;
 }
 
@@ -16,7 +16,7 @@
             font-weight: bold;
             text-decoration: none;
             color: white;
-            padding: 7px;
+            padding: 15px;
         }
 
             #topbar-menu > li > a:hover {
@@ -40,7 +40,7 @@ li.right {
 }
 
 .dropdown:hover ul {
-    margin-top: 7px;
+    margin-top: 15px;
     min-width: 100%;
     position: absolute;
     list-style: none;
@@ -76,3 +76,12 @@ li.right {
         color: white;
     }
 
+#topbar-icon {
+    height: calc(1em + 7.5px);
+}
+
+#topbar-icon-container {
+    float: left;
+    padding-left: 7px;
+    padding-right: 5px;
+}
