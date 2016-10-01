@@ -72,7 +72,7 @@ function goToStep2(e) {
             });
             updateChessGroundValidMoves();
         }, function (req, err) {
-            alert(err);
+            displayError(err);
         });
 }
 
@@ -95,7 +95,7 @@ function doSubmitMoveRequest(orig, dest, promotion) {
         });
         updateChessGroundValidMoves();
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -109,7 +109,7 @@ function updateChessGroundValidMoves() {
             }
         });
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -125,7 +125,7 @@ function submitPuzzle(e) {
         "&explanation=" + encodeURIComponent(document.getElementById("puzzleExplanation").value), function (req, jsonResponse) {
             alert("Success!");
         }, function (req, err) {
-            alert(err);
+            displayError(err);
         });
 }
 
@@ -142,7 +142,7 @@ function addAnotherVariation(e) {
         });
         updateChessGroundValidMoves();
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 

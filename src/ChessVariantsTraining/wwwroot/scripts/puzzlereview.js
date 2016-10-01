@@ -7,7 +7,7 @@ function approvePuzzle(e) {
     jsonXhr("/Review/Approve/" + puzzleId, "POST", null, function(req, jsonResponse) {
         alert("Approved.");
     }, function(req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -18,7 +18,7 @@ function rejectPuzzle(e) {
     jsonXhr("/Review/Reject/" + puzzleId, "POST", null, function(req, jsonResponse) {
         alert("Rejected.");
     }, function(req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 

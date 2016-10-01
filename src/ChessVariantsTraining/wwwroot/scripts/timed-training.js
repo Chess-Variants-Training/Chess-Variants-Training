@@ -16,7 +16,7 @@ function start() {
         }, 1000);
         showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"], jsonResponse["lastMove"]);
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -32,7 +32,7 @@ function end() {
     jsonXhr("/Timed-Training/AcknowledgeEnd", "POST", "sessionId=" + window.sessionId, function (req, jsonResponse) {
         document.getElementById("score").textContent = "Score: " + jsonResponse["score"];
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -68,7 +68,7 @@ function verifyAndGetNext(origin, destination, promotion) {
             document.getElementById("score").textContent = "Score: " + jsonResponse["currentScore"];
             showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"], jsonResponse["lastMove"]);
         }, function (req, err) {
-            alert(err);
+            displayError(err);
         })
 }
 

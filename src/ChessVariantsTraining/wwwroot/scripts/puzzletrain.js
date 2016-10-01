@@ -6,7 +6,7 @@
             document.getElementById("bodycontainer").innerHTML = "There are no more puzzles for you in this variant. But don't worry! Registered users can submit puzzles, so if you come back here later, there might be new puzzles!";
         }
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -40,7 +40,7 @@ function setup(puzzleId) {
         document.getElementById("controls").classList.add("nodisplay");
         window.trainingSessionId = jsonResponse.trainingSessionId;
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -158,7 +158,7 @@ function submitPuzzleMove(origin, destination, promotion) {
             document.getElementById("controls").classList.remove("nodisplay");
         }
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -171,7 +171,7 @@ function submitComment(e) {
         loadComments();
     },
     function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -225,7 +225,7 @@ function loadComments() {
             }
         }
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -234,7 +234,7 @@ function upvoteComment(commentId) {
         clearComments();
         loadComments();
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -243,7 +243,7 @@ function downvoteComment(commentId) {
         clearComments();
         loadComments();
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -252,7 +252,7 @@ function undoVote(commentId) {
         clearComments();
         loadComments();
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -262,7 +262,7 @@ function sendReply(to, body) {
         loadComments();
     },
     function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -314,7 +314,7 @@ function reportCommentLinkClicked(e) {
             window.reportCommentDialogHtml = req.responseText;
             showReportDialog(itemToReport);
         }, function (req, err) {
-            alert(err);
+            displayError(err);
         });
     }
     else {
@@ -344,7 +344,7 @@ function reportLinkInDialogClicked(e) {
             removeReportDialog(parent.parentElement.id);
         },
         function (req, err) {
-            alert(err);
+            displayError(err);
         });
 }
 
@@ -357,7 +357,7 @@ function modLinkClicked(e) {
         clearComments();
         loadComments();
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -382,7 +382,7 @@ function reportPuzzleLinkClicked(e) {
             document.getElementById("submitPuzzleReportLink").addEventListener("click", submitPuzzleReport);
             showPuzzleReportDialog();
         }, function(req, err) {
-            alert(err);
+            displayError(err);
         });
     } else {
         showPuzzleReportDialog();
@@ -398,7 +398,7 @@ function submitPuzzleReport(e) {
             function(req, jsonResponse) {
                 document.getElementById("puzzleReportExplanation").value = "";
                 hidePuzzleReportDialog();
-            }, function(req, err) { alert(err); });
+            }, function(req, err) { displayError(err); });
 }
 
 function showPuzzleReportDialog() {

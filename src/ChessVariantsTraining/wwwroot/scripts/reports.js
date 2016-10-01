@@ -14,6 +14,6 @@ function handle(e) {
         function (req, jsonResponse) {
             e.target.parentElement.parentElement.remove();
         },
-        function (req, err) { alert(err); }
+        function (req, err) { displayError(err); }
     );
 }

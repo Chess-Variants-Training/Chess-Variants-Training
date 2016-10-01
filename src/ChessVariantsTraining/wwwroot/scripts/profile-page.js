@@ -25,7 +25,7 @@ function updateRatingChartData() {
         var ctx = document.getElementById("ratingChart").getContext("2d");
         updateChartData(ctx, jsonResponse["labels"], jsonResponse["ratings"], "ratingLineChart");
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 
@@ -39,7 +39,7 @@ function updateTtsChartData() {
     jsonXhr("/User/ChartData/TimedTraining/" + user + "/" + range + "/" + show, "GET", null, function (req, jsonResponse) {
         updateChartData(document.getElementById("ttsChart").getContext("2d"), jsonResponse["labels"], jsonResponse["scores"], "ttsLineChart");
     }, function (req, err) {
-        alert(err);
+        displayError(err);
     });
 }
 

@@ -15,9 +15,9 @@
                 movable: { dests: jsonResponse.dests }
             });
         }, function (req, err) {
-            alert(err);
+            displayError(err);
         });
-    }, function (req, err) { alert(err); });
+    }, function (req, err) { displayError(err); });
 }
 
 function processMove(origin, destination, metadata) {
@@ -93,7 +93,7 @@ function submitMove(origin, destination, promotion) {
                     lastMove: jsonResponse.lastMove
                 });
             }
-        }, function (req, err) { alert(err); });
+        }, function (req, err) { displayError(err); });
 }
 
 window.addEventListener('load', function () {
