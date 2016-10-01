@@ -29,3 +29,19 @@ function jsonXhr(url, method, data, success, error) {
         error(req, err);
     });
 }
+
+function displayError(err) {
+    document.getElementById("error-overlay-inner").textContent = err;
+    document.getElementById("error-overlay").classList.remove("nodisplay");
+}
+
+function hideError(e) {
+    e = e || window.event;
+    e.preventDefault();
+    document.getElementById("error-overlay-inner").textContent = "";
+    document.getElementById("error-overlay").classList.add("nodisplay");
+}
+
+window.addEventListener("load", function () {
+    document.getElementById("error-overlay").addEventListener("click", hideError);
+});

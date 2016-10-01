@@ -58,3 +58,21 @@ table.align-left th {
 .unread-notifications {
     background-color: red;
 }
+
+#error-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px;
+    font-size: 1.5em;
+    background-color: darkred;
+    color: white;
+    z-index: 4;
+    text-align: center;
+    cursor: pointer;
+}
+
+#error-overlay-close {
+    font-size: 0.5em;
+}
