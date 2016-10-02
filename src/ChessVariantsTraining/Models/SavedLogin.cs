@@ -15,12 +15,15 @@ namespace ChessVariantsTraining.Models
         [BsonElement("user")]
         public int User { get; set; }
 
+        [BsonElement("ip")]
+        public string IP { get; set; }
+
         [BsonIgnore]
         public string UnhashedToken { get; set; }
 
         public SavedLogin() { }
 
-        public SavedLogin(int user)
+        public SavedLogin(int user, string ip)
         {
             using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
             {
@@ -35,6 +38,7 @@ namespace ChessVariantsTraining.Models
                 }
             }
             User = user;
+            IP = ip;
         }
     }
 }

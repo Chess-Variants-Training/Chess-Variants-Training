@@ -66,7 +66,7 @@ namespace ChessVariantsTraining.Services
             SavedLogin login;
             do
             {
-                login = new SavedLogin(user);
+                login = new SavedLogin(user, context.Connection.RemoteIpAddress.ToString());
             } while (savedLoginRepository.ContainsID(login.ID));
             savedLoginRepository.Add(login);
             context.Response.Cookies.Append("login", login.ID + ":" + login.UnhashedToken);
