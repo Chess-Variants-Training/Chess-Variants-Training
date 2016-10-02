@@ -45,6 +45,14 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
 }
+@if (Model != null && Model.InReview)
+{
+    <p><strong>This puzzle is in review.</strong></p>
+}
+@if (Model != null && !Model.InReview && !Model.Approved)
+{
+    <p><strong>This puzzle has been rejected.</strong></p>
+}
 <div id="ground-container">
     <div>
         <div id="chessground" class="brown"></div>

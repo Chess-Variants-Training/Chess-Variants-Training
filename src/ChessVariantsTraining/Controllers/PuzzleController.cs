@@ -222,7 +222,7 @@ namespace ChessVariantsTraining.Controllers
             puzzle.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
             if (puzzleRepository.Add(puzzle))
             {
-                return Json(new { success = true });
+                return Json(new { success = true, link = Url.Action("TrainId", "Puzzle", new { id = puzzle.ID }) });
             }
             else
             {

@@ -123,7 +123,7 @@ function submitPuzzle(e) {
     var solution = solutions.join(';');
     jsonXhr("/Puzzle/Editor/Submit", "POST", "id=" + window.puzzleId + "&solution=" + encodeURIComponent(solution.trim()) +
         "&explanation=" + encodeURIComponent(document.getElementById("puzzleExplanation").value), function (req, jsonResponse) {
-            alert("Success!");
+            window.location.href = jsonResponse["link"];
         }, function (req, err) {
             displayError(err);
         });
