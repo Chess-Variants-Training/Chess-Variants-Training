@@ -218,6 +218,7 @@ namespace ChessVariantsTraining.Controllers
             puzzle.Rating = new Rating(1500, 350, 0.06);
             puzzle.InReview = true;
             puzzle.Approved = false;
+            puzzle.DateSubmittedUtc = DateTime.UtcNow;
             puzzle.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
             if (puzzleRepository.Add(puzzle))
             {

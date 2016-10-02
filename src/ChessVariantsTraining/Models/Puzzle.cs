@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using ChessDotNet;
 using MongoDB.Bson.Serialization.Attributes;
+using System;
 
 namespace ChessVariantsTraining.Models
 {
@@ -80,6 +81,13 @@ namespace ChessVariantsTraining.Models
 
         [BsonElement("variant")]
         public string Variant
+        {
+            get;
+            set;
+        }
+
+        [BsonElement("dateSubmittedUtc")]
+        public DateTime DateSubmittedUtc
         {
             get;
             set;
