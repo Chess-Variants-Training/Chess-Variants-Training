@@ -359,5 +359,45 @@ namespace ChessVariantsTraining.Controllers
             loginHandler.LogoutEverywhere(associated.ID);
             return View("PasswordUpdated");
         }
+
+        [HttpGet]
+        [Route("/User/ChangePassword")]
+        [Restricted(true, UserRole.NONE)]
+        public IActionResult ChangePassword()
+        {
+            ViewBag.Error = TempData["Error"];
+            return View();
+        }
+
+        [HttpPost]
+        [Route("/User/ChangePassword")]
+        [Restricted(true, UserRole.NONE)]
+        public IActionResult ChangePasswordPost(string currentPassword, string newPassword, string newPasswordConfirm)
+        {
+            User loggedIn = loginHandler.LoggedInUser(HttpContext);
+            string salt = loggedIn.Salt;
+            string hash = loggedIn.PasswordHash;
+            if (string.IsNullOrEmpty(currentPassword) || hash != passwordHasher.HashPassword(currentPassword, salt))
+            {
+                TempData["Error"] = "Invalid current password.";
+                return RedirectToAction("ChangePassword", "User");
+            }
+            if (newPassword != newPasswordConfirm)
+            {
+                TempData["Error"] = "The password and its confirmation don't match.";
+                return RedirectToAction("ChangePassword", "User");
+            }
+            if (string.IsNullOrEmpty(newPassword))
+            {
+                TempData["Error"] = "Your new password cannot be empty.";
+                return RedirectToAction("ChangePassword", "User");
+            }
+            Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(newPassword);
+            loggedIn.PasswordHash = hashAndSalt.Item1;
+            loggedIn.Salt = hashAndSalt.Item2;
+            userRepository.Update(loggedIn);
+            loginHandler.LogoutEverywhereExceptHere(HttpContext);
+            return View("PasswordUpdated");
+        }
     }
 }
