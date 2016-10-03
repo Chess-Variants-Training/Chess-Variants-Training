@@ -49,7 +49,7 @@ namespace ChessVariantsTraining.DbRepositories
             return found.FirstOrDefault();
         }
 
-        public Puzzle GetOneRandomly(List<int> excludedIds, string variant, double nearRating = 1500)
+        public Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating = 1500)
         {
             FilterDefinitionBuilder<Puzzle> filterBuilder = Builders<Puzzle>.Filter;
             FilterDefinition<Puzzle> filter = filterBuilder.Nin("_id", excludedIds) & filterBuilder.Eq("inReview", false)
@@ -57,6 +57,10 @@ namespace ChessVariantsTraining.DbRepositories
             if (variant != "Mixed")
             {
                 filter &= filterBuilder.Eq("variant", variant);
+            }
+            if (userId.HasValue)
+            {
+                filter &= filterBuilder.Ne("author", userId.Value) & filterBuilder.Nin("reviewers", new int[] { userId.Value });
             }
             FilterDefinition<Puzzle> lteFilter = filter;
             FilterDefinition<Puzzle> gtFilter = filter;
@@ -105,18 +109,18 @@ namespace ChessVariantsTraining.DbRepositories
             return puzzleCollection.Find(filter).ToList();
         }
 
-        public bool Approve(int id)
+        public bool Approve(int id, int reviewer)
         {
             UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
-            UpdateDefinition<Puzzle> def = builder.Set("approved", true).Set("inReview", false);
+            UpdateDefinition<Puzzle> def = builder.Set("approved", true).Set("inReview", false).Push("reviewers", reviewer);
             UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
 
-        public bool Reject(int id)
+        public bool Reject(int id, int reviewer)
         {
             UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
-            UpdateDefinition<Puzzle> def = builder.Set("approved", false).Set("inReview", false);
+            UpdateDefinition<Puzzle> def = builder.Set("approved", false).Set("inReview", false).Push("reviewers", reviewer);
             UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }

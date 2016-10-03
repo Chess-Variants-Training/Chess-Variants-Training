@@ -10,7 +10,7 @@ namespace ChessVariantsTraining.DbRepositories
 
         Puzzle Get(int id);
 
-        Puzzle GetOneRandomly(List<int> excludedIds, string variant, double nearRating = 1500);
+        Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating = 1500);
 
         DeleteResult Remove(int id);
 
@@ -20,8 +20,8 @@ namespace ChessVariantsTraining.DbRepositories
 
         List<Puzzle> InReview();
 
-        bool Approve(int id);
+        bool Approve(int id, int reviewer);
 
-        bool Reject(int id);
+        bool Reject(int id, int reviewer);
     }
 }

@@ -24,7 +24,7 @@ namespace ChessVariantsTraining.Services
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
             User user = userRepository.FindById(userId);
             Puzzle puzzle = puzzleRepository.Get(puzzleId);
-            if (user.SolvedPuzzles.Contains(puzzle.ID) || puzzle.InReview)
+            if (user.SolvedPuzzles.Contains(puzzle.ID) || puzzle.InReview || puzzle.Author == user.ID || puzzle.Reviewers.Contains(user.ID))
             {
                 return;
             }

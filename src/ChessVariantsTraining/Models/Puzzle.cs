@@ -92,5 +92,12 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        [BsonElement("reviewers")]
+        public List<int> Reviewers
+        {
+            get;
+            set;
+        }
     }
 }

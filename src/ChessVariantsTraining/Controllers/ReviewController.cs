@@ -31,7 +31,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Review/Approve/{id:int}")]
         public IActionResult Approve(int id)
         {
-            if (puzzleRepository.Approve(id))
+            if (puzzleRepository.Approve(id, loginHandler.LoggedInUserId(HttpContext).Value))
             {
                 return Json(new { success = true });
             }
@@ -45,7 +45,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Review/Reject/{id:int}")]
         public IActionResult Reject(int id)
         {
-            if (puzzleRepository.Reject(id))
+            if (puzzleRepository.Reject(id, loginHandler.LoggedInUserId(HttpContext).Value))
             {
                 return Json(new { success = true });
             }

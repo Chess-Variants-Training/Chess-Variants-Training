@@ -219,6 +219,7 @@ namespace ChessVariantsTraining.Controllers
             puzzle.InReview = true;
             puzzle.Approved = false;
             puzzle.DateSubmittedUtc = DateTime.UtcNow;
+            puzzle.Reviewers = new List<int>();
             puzzle.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
             if (puzzleRepository.Add(puzzle))
             {
@@ -269,7 +270,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 toBeExcluded = new List<int>();
             }
-            Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded, variant);
+            Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded, variant, loginHandler.LoggedInUserId(HttpContext));
             if (puzzle != null)
             {
                 return Json(new { success = true, id = puzzle.ID });
