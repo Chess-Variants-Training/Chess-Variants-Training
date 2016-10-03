@@ -39,6 +39,7 @@ function setup(puzzleId) {
         document.getElementById("variantName").textContent = jsonResponse.variant;
         document.getElementById("controls").classList.add("nodisplay");
         window.trainingSessionId = jsonResponse.trainingSessionId;
+        window.currentVariant = jsonResponse.variant;
     }, function (req, err) {
         displayError(err);
     });
@@ -85,7 +86,7 @@ function clearExplanation() {
 
 function processPuzzleMove(origin, destination, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, destination)) {
-        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitPuzzleMove, window.ground);
+        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitPuzzleMove, window.ground, window.currentVariant == "Antichess");
     } else {
         submitPuzzleMove(origin, destination, null);
     }

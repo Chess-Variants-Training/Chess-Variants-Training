@@ -56,8 +56,9 @@ function goToStep2(e) {
     for (i = 0; i < step2Elements.length; i++) {
         step2Elements[i].setAttribute("class", "step2");
     }
+    window.variant = document.getElementById("variantSelector").value;
     jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
-        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1") + "&variant=" + document.getElementById("variantSelector").value, function (req, jsonResponse) {
+        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1") + "&variant=" + window.variant, function (req, jsonResponse) {
             window.puzzleId = jsonResponse["id"];
             var whoseTurn = document.getElementById("fen").innerHTML.split(" ")[1] === "w" ? "white" : "black";
             window.ground.set({
@@ -78,7 +79,7 @@ function goToStep2(e) {
 
 function submitMove(orig, dest, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, dest)) {
-        ChessgroundExtensions.drawPromotionDialog(orig, dest, document.getElementById("chessground"), doSubmitMoveRequest, window.ground);
+        ChessgroundExtensions.drawPromotionDialog(orig, dest, document.getElementById("chessground"), doSubmitMoveRequest, window.ground, window.variant === "Antichess");
     } else {
         doSubmitMoveRequest(orig, dest, null);
     }

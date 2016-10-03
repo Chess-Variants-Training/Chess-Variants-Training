@@ -22,7 +22,7 @@
 
 function processMove(origin, destination, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, destination)) {
-        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitMove, window.ground);
+        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitMove, window.ground, false);
     } else {
         submitMove(origin, destination, null);
     }

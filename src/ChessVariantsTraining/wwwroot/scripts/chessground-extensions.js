@@ -2,14 +2,14 @@
     needsPromotion: function (ground, dest) {
         return (dest[1] === "8" || dest[1] === "1") && ground.getPieces()[dest]["role"] === "pawn";
     },
-    drawPromotionDialog: function (origin, destination, element, pieceSelected, ground) {
+    drawPromotionDialog: function (origin, destination, element, pieceSelected, ground, addKing) {
         var promotionChoiceElement = document.createElement("div");
         promotionChoiceElement.id = "promotion-choice";
         element.appendChild(promotionChoiceElement);
         var file = destination.charAt(0);
         var rank = parseInt(destination.charAt(1), 10);
         var color = rank === 1 ? "black" : "white";
-        for (var i = 0; i < 4; i++) {
+        for (var i = 0; i < 4 + (addKing ? 1 : 0); i++) {
             switch (i) {
                 case 0:
                     var promotionPiece = { role: "queen" };
@@ -22,6 +22,9 @@
                     break;
                 case 3:
                     promotionPiece = { role: "bishop" };
+                    break;
+                case 4:
+                    promotionPiece = { role: "king" };
                     break;
             }
             promotionPiece["color"] = color;

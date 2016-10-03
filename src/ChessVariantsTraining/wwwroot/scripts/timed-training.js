@@ -51,7 +51,7 @@ function showPosition(fen, color, dests, lastMove) {
 
 function processMove(origin, destination, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, destination)) {
-        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), verifyAndGetNext, window.ground);
+        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), verifyAndGetNext, window.ground, window.variant === "Antichess");
     } else {
         verifyAndGetNext(origin, destination, null);
     }
