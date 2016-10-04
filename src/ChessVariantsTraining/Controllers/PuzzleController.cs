@@ -216,10 +216,19 @@ namespace ChessVariantsTraining.Controllers
             puzzle.Game = null;
             puzzle.ExplanationUnsafe = explanation;
             puzzle.Rating = new Rating(1500, 350, 0.06);
-            puzzle.InReview = true;
-            puzzle.Approved = false;
-            puzzle.DateSubmittedUtc = DateTime.UtcNow;
             puzzle.Reviewers = new List<int>();
+            if (UserRole.HasAtLeastThePrivilegesOf(loginHandler.LoggedInUser(HttpContext).Roles, UserRole.PUZZLE_REVIEWER))
+            {
+                puzzle.InReview = false;
+                puzzle.Approved = true;
+                puzzle.Reviewers.Add(loginHandler.LoggedInUserId(HttpContext).Value);
+            }
+            else
+            {
+                puzzle.InReview = true;
+                puzzle.Approved = false;
+            }
+            puzzle.DateSubmittedUtc = DateTime.UtcNow;
             puzzle.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
             if (puzzleRepository.Add(puzzle))
             {
