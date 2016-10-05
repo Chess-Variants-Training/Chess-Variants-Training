@@ -46,6 +46,10 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Register")]
         public IActionResult Register()
         {
+            if (loginHandler.LoggedInUserId(HttpContext).HasValue)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             ViewBag.Error = null;
             return View();
         }
@@ -115,6 +119,10 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Login", Name = "Login")]
         public IActionResult Login()
         {
+            if (loginHandler.LoggedInUserId(HttpContext).HasValue)
+            {
+                return RedirectToAction("Index", "Home");
+            }
             if (TempData.ContainsKey("Error"))
             {
                 ViewBag.Error = TempData["Error"];
