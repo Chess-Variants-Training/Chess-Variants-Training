@@ -26,6 +26,9 @@ function dropPiece(dest) {
 function pieceSelected(e) {
     e = e || window.event;
     var selected = e.target;
+    if (selected.classList.contains("selected")) {
+        return;
+    }
     selected.setAttribute("class", "selectable selected");
     if (window.selectedPieceElement) {
         window.selectedPieceElement.setAttribute("class", "selectable");
