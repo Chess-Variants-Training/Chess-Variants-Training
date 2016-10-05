@@ -61,8 +61,9 @@ function goToStep2(e) {
         "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1") + "&variant=" + window.variant, function (req, jsonResponse) {
             window.puzzleId = jsonResponse["id"];
             var whoseTurn = document.getElementById("fen").innerHTML.split(" ")[1] === "w" ? "white" : "black";
+            var orientation = whoseTurn === "white" || window.variant === "RacingKings" ? "white" : "black";
             window.ground.set({
-                orientation: whoseTurn,
+                orientation: orientation,
                 movable: {
                     free: false,
                     showDests: false,

@@ -14,9 +14,10 @@ function setup(puzzleId) {
     jsonXhr("/Puzzle/Train/Setup", "POST", "id=" + puzzleId + (window.trainingSessionId ? "&trainingSessionId=" + window.trainingSessionId : ""), function (req, jsonResponse) {
         window.puzzleId = puzzleId;
         window.replay = null;
+        window.currentVariant = jsonResponse.variant;
         window.ground.set({
             fen: jsonResponse.fen,
-            orientation: jsonResponse.whoseTurn,
+            orientation: jsonResponse.whoseTurn == "white" || window.currentVariant == "RacingKings" ? "white" : "black",
             turnColor: jsonResponse.whoseTurn,
             lastMove: null,
             selected: null,
@@ -39,7 +40,6 @@ function setup(puzzleId) {
         document.getElementById("variantName").textContent = jsonResponse.variant;
         document.getElementById("controls").classList.add("nodisplay");
         window.trainingSessionId = jsonResponse.trainingSessionId;
-        window.currentVariant = jsonResponse.variant;
     }, function (req, err) {
         displayError(err);
     });
