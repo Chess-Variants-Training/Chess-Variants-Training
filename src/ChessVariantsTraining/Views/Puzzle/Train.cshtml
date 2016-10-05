@@ -77,7 +77,7 @@
                 }
                 else
                 {
-                    @Html.ActionLink("Next puzzle", "Train", "Puzzle", null, new { id = "nextPuzzleLink" })
+                    @Html.ActionLink("Next puzzle", "Train", "Puzzle", new { variant = ViewBag.Variant }, new { id = "nextPuzzleLink" })
                 }
                 | <a href="#" id="retryPuzzleLink">Retry puzzle</a>
             </p>
