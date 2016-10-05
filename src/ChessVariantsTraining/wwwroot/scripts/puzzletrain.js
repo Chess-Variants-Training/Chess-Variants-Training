@@ -39,6 +39,7 @@ function setup(puzzleId) {
         document.getElementById("author").textContent = jsonResponse.author;
         document.getElementById("variantName").textContent = jsonResponse.variant;
         document.getElementById("controls").classList.add("nodisplay");
+        document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;
         window.trainingSessionId = jsonResponse.trainingSessionId;
     }, function (req, err) {
         displayError(err);
