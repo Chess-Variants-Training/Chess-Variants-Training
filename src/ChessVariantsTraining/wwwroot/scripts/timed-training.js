@@ -69,7 +69,7 @@ function verifyAndGetNext(origin, destination, promotion) {
             showPosition(jsonResponse["fen"], jsonResponse["color"], jsonResponse["dests"], jsonResponse["lastMove"]);
         }, function (req, err) {
             displayError(err);
-        })
+        });
 }
 
 window.addEventListener("load", function () {
