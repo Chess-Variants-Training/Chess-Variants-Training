@@ -203,7 +203,7 @@ namespace ChessVariantsTraining.Controllers
             user.Email = email;
             user.About = about;
             userRepository.Update(user);
-            return RedirectToAction("Profile", new { name = user.Username });
+            return RedirectToAction("Profile", new { id = user.ID });
         }
 
         [HttpGet]
