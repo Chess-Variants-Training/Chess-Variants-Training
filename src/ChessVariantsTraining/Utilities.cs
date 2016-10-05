@@ -32,7 +32,7 @@ namespace ChessVariantsTraining
                 case "MIXED":
                     return "Mixed";
                 default:
-                    throw new NotImplementedException(variant + " is not implemented.");
+                    return variant;
             }
         }
     }

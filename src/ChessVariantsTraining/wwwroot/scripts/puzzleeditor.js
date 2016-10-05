@@ -49,6 +49,12 @@ function clearSelection(e) {
 
 function goToStep2(e) {
     e = e || window.event;
+    e.preventDefault();
+    window.variant = document.getElementById("variantSelector").value;
+    if (variant === "none") {
+        alert("Please select a variant.");
+        return;
+    }
     clearSelection(e);
     window.currentVariation = 0;
     var step1Elements = document.getElementsByClassName("step1");
@@ -59,7 +65,7 @@ function goToStep2(e) {
     for (i = 0; i < step2Elements.length; i++) {
         step2Elements[i].setAttribute("class", "step2");
     }
-    window.variant = document.getElementById("variantSelector").value;
+
     jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
         "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1") + "&variant=" + window.variant, function (req, jsonResponse) {
             window.puzzleId = jsonResponse["id"];
