@@ -89,7 +89,7 @@ namespace ChessVariantsTraining.Services
             }
 
             savedLoginRepository.Delete(identifier);
-            context.Response.Cookies.Delete("login", new CookieOptions() { HttpOnly = true });
+            context.Response.Cookies.Delete("login", new CookieOptions() { HttpOnly = true, Secure = true });
         }
 
         public void LogoutEverywhereExceptHere(HttpContext context)
