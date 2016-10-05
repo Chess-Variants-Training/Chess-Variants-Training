@@ -121,10 +121,8 @@ function submitPuzzleMove(origin, destination, promotion) {
                 if (document.getElementById("reportLinkContainer")) {
                     document.getElementById("reportLinkContainer").classList.remove("nodisplay");
                 }
-                with (document.getElementById("result")) {
-                    textContent = "Success!";
-                    setAttribute("class", "green");
-                };
+                document.getElementById("result").textContent = "Success!";
+                document.getElementById("result").setAttribute("class", "green");
                 break;
             case -1:
                 document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
@@ -132,10 +130,8 @@ function submitPuzzleMove(origin, destination, promotion) {
                     document.getElementById("reportLinkContainer").classList.remove("nodisplay");
                 }
                 window.ground.set({ lastMove: null });
-                with (document.getElementById("result")) {
-                    textContent = "Puzzle failed.";
-                    setAttribute("class", "red");
-                }
+                document.getElementById("result").textContent = "Puzzle failed.";
+                document.getElementById("result").setAttribute("class", "red");
         }
         if (jsonResponse.dests) {
             window.ground.set({
