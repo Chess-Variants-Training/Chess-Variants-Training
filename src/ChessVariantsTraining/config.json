@@ -1,7 +1,7 @@
 ﻿{
   "Mongo": {
-    "MongoConnectionString": "mongodb://localhost:27017",
-    "Database": "chessvariantstraining-dev",
+    "MongoConnectionString": "mongodb://127.0.0.1:27017",
+    "Database": "chessvariantstraining",
     "UserCollectionName": "users",
     "PuzzleCollectionName": "puzzles",
     "CommentCollectionName": "comments",
