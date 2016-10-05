@@ -40,6 +40,7 @@ function setup(puzzleId) {
         document.getElementById("variantName").textContent = jsonResponse.variant;
         document.getElementById("controls").classList.add("nodisplay");
         document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;
+        document.getElementById("permalink").setAttribute("href", "/Puzzle/" + window.puzzleId);
         window.trainingSessionId = jsonResponse.trainingSessionId;
     }, function (req, err) {
         displayError(err);
