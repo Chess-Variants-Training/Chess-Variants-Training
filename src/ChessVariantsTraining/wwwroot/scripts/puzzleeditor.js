@@ -69,7 +69,8 @@ function goToStep2(e) {
                     showDests: false,
                     events: {
                         after: submitMove
-                    }
+                    },
+                    dropOff: "revert"
                 }
             });
             updateChessGroundValidMoves();
