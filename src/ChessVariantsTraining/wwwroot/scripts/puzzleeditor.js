@@ -178,6 +178,12 @@ function deleteVariation(e) {
     }
 }
 
+function clearBoard(e) {
+    e = e || window.event;
+    e.preventDefault();
+    window.ground.set({ fen: "8/8/8/8/8/8/8/8 w - -" });
+}
+
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: false,
@@ -210,6 +216,7 @@ window.addEventListener("load", function () {
         selectable[i].addEventListener("click", pieceSelected);
     }
     document.getElementById("clearselection").addEventListener("click", clearSelection);
+    document.getElementById("clearboard").addEventListener("click", clearBoard);
 
     var whoseTurnRadioButtons = document.querySelectorAll("[name=whoseturn]");
     for (i = 0; i < whoseTurnRadioButtons.length; i++) {
