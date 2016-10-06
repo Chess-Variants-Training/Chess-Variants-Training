@@ -13,10 +13,13 @@ namespace ChessVariantsTraining.Controllers
     public class ReviewController : CVTController
     {
         IPuzzleRepository puzzleRepository;
+        INotificationRepository notificationRepository;
 
-        public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler)
+        public ReviewController(IPuzzleRepository _puzzleRepository, IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, INotificationRepository _notificationRepository)
+            : base(_userRepository, _loginHandler)
         {
             puzzleRepository = _puzzleRepository;
+            notificationRepository = _notificationRepository;
         }
 
         [Route("/Review")]
@@ -33,6 +36,9 @@ namespace ChessVariantsTraining.Controllers
         {
             if (puzzleRepository.Approve(id, loginHandler.LoggedInUserId(HttpContext).Value))
             {
+                Puzzle approved = puzzleRepository.Get(id);
+                Notification notif = new Notification(Guid.NewGuid().ToString(), approved.Author, "Your puzzle has been approved!", false, Url.Action("TrainId", "Puzzle", new { id = id }), DateTime.UtcNow);
+                notificationRepository.Add(notif);
                 return Json(new { success = true });
             }
             else
