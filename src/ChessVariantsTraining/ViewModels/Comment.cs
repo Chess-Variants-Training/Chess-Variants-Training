@@ -3,7 +3,7 @@
     public class Comment
     {
         public int ID { get; set; }
-        public string BodySanitized { get; set; }
+        public string Body { get; set; }
         public string Author { get; set; }
         public int Score { get; set; }
         public int IndentLevel { get; set; }
@@ -14,7 +14,7 @@
         public Comment(Models.Comment orig, int indentLevel, int score, bool deleted, string authorUsername)
         {
             ID = orig.ID;
-            BodySanitized = orig.BodySanitized;
+            Body = orig.Body;
             Author = authorUsername;
             Score = score;
             IndentLevel = indentLevel;

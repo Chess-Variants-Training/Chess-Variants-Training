@@ -41,7 +41,7 @@ else
                     <em>@comment.Author</em> on @comment.DatePosted:
                 </div>
                 <div class="comment-content-row">
-                    @(!comment.Deleted ? comment.BodySanitized : "[deleted]")
+                    @(!comment.Deleted ? comment.Body : "[deleted]")
                 </div>
                 <div class="comment-content-row controls-row">
                     @if (loggedIn)

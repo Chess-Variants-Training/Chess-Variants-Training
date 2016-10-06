@@ -56,7 +56,7 @@ namespace ChessVariantsTraining.Controllers
                 Notification notificationForParentAuthor = new Notification(Guid.NewGuid().ToString(), puzzle.Author, "You received a comment on your puzzle.", false,
                     string.Format("/Puzzle/{0}?comment={1}", comment.PuzzleID, comment.ID), DateTime.UtcNow);
                 notificationRepository.Add(notificationForParentAuthor);
-                return Json(new { success = true, bodySanitized = comment.BodySanitized });
+                return Json(new { success = true, bodySanitized = Utilities.SanitizeHtml(comment.Body) });
             }
             else
             {
@@ -198,7 +198,7 @@ namespace ChessVariantsTraining.Controllers
                 Notification notificationForParentAuthor = new Notification(Guid.NewGuid().ToString(), parent.Author, "You received a reply to your comment.", false,
                     string.Format("/Puzzle/{0}?comment={1}", comment.PuzzleID, comment.ID), DateTime.UtcNow);
                 notificationRepository.Add(notificationForParentAuthor);
-                return Json(new { success = true, bodySanitized = comment.BodySanitized });
+                return Json(new { success = true, bodySanitized = Utilities.SanitizeHtml(comment.Body) });
             }
             else
             {

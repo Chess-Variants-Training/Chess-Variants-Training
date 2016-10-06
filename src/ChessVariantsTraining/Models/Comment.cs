@@ -12,15 +12,7 @@ namespace ChessVariantsTraining.Models
         public int Author { get; set; }
 
         [BsonElement("bodyUnsanitized")]
-        public string BodyUnsanitized { get; set; }
-
-        public string BodySanitized
-        {
-            get
-            {
-                return Utilities.SanitizeHtml(BodyUnsanitized);
-            }
-        }
+        public string Body { get; set; }
 
         [BsonElement("parentId")]
         public int? ParentID { get; set; }
@@ -40,7 +32,7 @@ namespace ChessVariantsTraining.Models
         {
             ID = id;
             Author = author;
-            BodyUnsanitized = bodyUnsanitized;
+            Body = bodyUnsanitized;
             ParentID = parentId;
             PuzzleID = puzzleId;
             Deleted = deleted;
