@@ -69,7 +69,8 @@ namespace ChessVariantsTraining.Services
                 login = new SavedLogin(user, context.Connection.RemoteIpAddress.ToString());
             } while (savedLoginRepository.ContainsID(login.ID));
             savedLoginRepository.Add(login);
-            context.Response.Cookies.Append("login", login.ID + ":" + login.UnhashedToken);
+            context.Response.Cookies.Append("login", login.ID + ":" + login.UnhashedToken, new CookieOptions() { HttpOnly = true, Secure = true,
+                Expires = new DateTimeOffset(DateTime.UtcNow.AddDays(30), new TimeSpan(0)) });
         }
 
         public void Logout(HttpContext context)
@@ -89,7 +90,7 @@ namespace ChessVariantsTraining.Services
             }
 
             savedLoginRepository.Delete(identifier);
-            context.Response.Cookies.Delete("login", new CookieOptions() { HttpOnly = true, Secure = true });
+            context.Response.Cookies.Delete("login");
         }
 
         public void LogoutEverywhereExceptHere(HttpContext context)
