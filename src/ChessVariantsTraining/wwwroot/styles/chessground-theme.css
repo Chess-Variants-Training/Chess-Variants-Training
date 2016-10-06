@@ -71,6 +71,10 @@ piece.king.black, div.selectable[data-color="black"][data-role="king"] {
     background-image: url('/images/pieces/cburnett/bK.svg');
 }
 
+.cg-board square.move-dest {
+    background: none;
+}
+
 .cg-board-wrap svg {
     opacity: 0.8;
     overflow: hidden;
