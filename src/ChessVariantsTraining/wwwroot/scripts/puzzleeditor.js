@@ -56,18 +56,19 @@ function goToStep2(e) {
         return;
     }
     clearSelection(e);
-    window.currentVariation = 0;
-    var step1Elements = document.getElementsByClassName("step1");
-    for (var i = 0; i < step1Elements.length; i++) {
-        step1Elements[i].setAttribute("class", "step1 hidden");
-    }
-    var step2Elements = document.getElementsByClassName("step2");
-    for (i = 0; i < step2Elements.length; i++) {
-        step2Elements[i].setAttribute("class", "step2");
-    }
 
     jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
         "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1") + "&variant=" + window.variant, function (req, jsonResponse) {
+            window.currentVariation = 0;
+            var step1Elements = document.getElementsByClassName("step1");
+            for (var i = 0; i < step1Elements.length; i++) {
+                step1Elements[i].setAttribute("class", "step1 hidden");
+            }
+            var step2Elements = document.getElementsByClassName("step2");
+            for (i = 0; i < step2Elements.length; i++) {
+                step2Elements[i].setAttribute("class", "step2");
+            }
+
             window.puzzleId = jsonResponse["id"];
             var whoseTurn = document.getElementById("fen").innerHTML.split(" ")[1] === "w" ? "white" : "black";
             var orientation = whoseTurn === "white" || window.variant === "RacingKings" ? "white" : "black";
