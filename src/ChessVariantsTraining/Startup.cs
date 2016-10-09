@@ -74,7 +74,13 @@ namespace ChessVariantsTraining
                 app.UseDeveloperExceptionPage();
             }
             app.UseSession();
-            app.UseStaticFiles();
+            app.UseStaticFiles(new StaticFileOptions()
+            {
+                OnPrepareResponse = (context) =>
+                {
+                    context.Context.Response.Headers["Cache-Control"] = "max-age=86400";
+                }
+            });
             app.UseMvc();
         }
     }
