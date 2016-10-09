@@ -76,6 +76,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "Unsupported variant." });
             }
+            Puzzle possibleDuplicate = puzzleRepository.FindByFenAndVariant(fen, variant);
+            if (possibleDuplicate != null && possibleDuplicate.Approved)
+            {
+                return Json(new { success = false, error = "Duplicate; same FEN and variant: " + Url.Action("TrainId", "Puzzle", new { id = possibleDuplicate.ID }) });
+            }
             ChessGame game = gameConstructor.Construct(variant, fen);
             Puzzle puzzle = new Puzzle();
             puzzle.Game = game;
@@ -115,7 +120,7 @@ namespace ChessVariantsTraining.Controllers
             ReadOnlyCollection<Move> validMoves;
             if (puzzle.Game.IsWinner(Player.White) || puzzle.Game.IsWinner(Player.Black))
             {
-                validMoves = new ReadOnlyCollection<Move>(new List<Move>()); 
+                validMoves = new ReadOnlyCollection<Move>(new List<Move>());
             }
             else
             {

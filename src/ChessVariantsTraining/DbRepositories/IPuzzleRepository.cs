@@ -23,5 +23,7 @@ namespace ChessVariantsTraining.DbRepositories
         bool Approve(int id, int reviewer);
 
         bool Reject(int id, int reviewer);
+
+        Puzzle FindByFenAndVariant(string fen, string variant);
     }
 }

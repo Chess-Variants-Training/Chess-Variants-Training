@@ -124,5 +124,11 @@ namespace ChessVariantsTraining.DbRepositories
             UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
+
+        public Puzzle FindByFenAndVariant(string fen, string variant)
+        {
+            FilterDefinition<Puzzle> filter = Builders<Puzzle>.Filter.Eq("initialfen", fen) & Builders<Puzzle>.Filter.Eq("variant", variant);
+            return puzzleCollection.Find(filter).FirstOrDefault();
+        }
     }
 }
