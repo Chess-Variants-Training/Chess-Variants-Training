@@ -47,6 +47,29 @@ function clearSelection(e) {
     delete window.selectedPiece;
 }
 
+function applyFen(e) {
+    e = e || window.event;
+    e.preventDefault();
+
+    var fen = document.getElementById("fenInput").value;
+    var parts = fen.trim().split(" ");
+    var position = parts[0];
+    var whoseTurn = parts.length >= 2 ? parts[1] : null;
+    var castlingRights = parts.length >= 3 ? parts[2] : null;
+    window.ground.set({ fen: position });
+    if (whoseTurn) {
+        document.getElementById(whoseTurn === "w" ? "whitetomove" : "blacktomove").checked = true;
+        document.getElementById(whoseTurn === "b" ? "whitetomove" : "blacktomove").checked = false;
+    }
+    if (castlingRights) {
+        document.getElementById("whitecastlekingside").checked = castlingRights.indexOf("K") !== -1;
+        document.getElementById("whitecastlequeenside").checked = castlingRights.indexOf("Q") !== -1;
+        document.getElementById("blackcastlekingside").checked = castlingRights.indexOf("k") !== -1;
+        document.getElementById("blackcastlequeenside").checked = castlingRights.indexOf("q") !== -1;
+    }
+    updateFen();
+}
+
 function goToStep2(e) {
     e = e || window.event;
     e.preventDefault();
@@ -228,6 +251,8 @@ window.addEventListener("load", function () {
     for (i = 0; i < castlingCheckboxes.length; i++) {
         castlingCheckboxes[i].addEventListener("click", updateFen);
     }
+
+    document.getElementById("applyFenInput").addEventListener("click", applyFen);
 
     document.getElementById("gotostep2").addEventListener("click", goToStep2);
     document.getElementById("submitpuzzle").addEventListener("click", submitPuzzle);

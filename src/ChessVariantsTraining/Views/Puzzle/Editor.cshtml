@@ -27,7 +27,7 @@
 </div>
 <p class="step1">
     <input type="radio" name="whoseturn" value="white" id="whitetomove" checked>White to move
-    <input type="radio" name="whoseturn" value="black">Black to move
+    <input type="radio" name="whoseturn" value="black" id="blacktomove">Black to move
 </p>
 <p class="step1">
     <input type="checkbox" id="whitecastlekingside" name="castling" checked>White O-O
@@ -48,6 +48,7 @@
     </select>
 </p>
 <p class="step1"><a id="clearboard" href="#">Clear board</a></p>
+<p>... or input FEN: <input type="text" id="fenInput" size="80">&nbsp;<a href="#" id="applyFenInput">Apply</a></p>
 <p class="step1">FEN: <code id="fen"></code></p>
 <p class="step2 hidden">
     Accepted variations:
