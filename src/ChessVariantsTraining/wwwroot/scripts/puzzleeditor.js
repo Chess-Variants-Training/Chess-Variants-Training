@@ -58,7 +58,7 @@ function goToStep2(e) {
     clearSelection(e);
 
     jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
-        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML + " - 0 1") + "&variant=" + window.variant, function (req, jsonResponse) {
+        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML) + "&variant=" + window.variant, function (req, jsonResponse) {
             window.currentVariation = 0;
             var step1Elements = document.getElementsByClassName("step1");
             for (var i = 0; i < step1Elements.length; i++) {

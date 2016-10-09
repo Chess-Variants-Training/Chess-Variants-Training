@@ -71,6 +71,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         public IActionResult RegisterPuzzleForEditing(string fen, string variant)
         {
+            fen += " - 0 1";
             variant = Utilities.NormalizeVariantNameCapitalization(variant);
             if (!Array.Exists(supportedVariants, x => x == variant))
             {
