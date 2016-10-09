@@ -212,6 +212,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "Only the puzzle author can access this right now." });
             }
+            Puzzle possibleDuplicate = puzzleRepository.FindByFenAndVariant(puzzle.InitialFen, puzzle.Variant);
+            if (possibleDuplicate != null && possibleDuplicate.Approved)
+            {
+                return Json(new { success = false, error = "Duplicate; same FEN and variant: " + Url.Action("TrainId", "Puzzle", new { id = possibleDuplicate.ID }) });
+            }
 
             puzzle.Solutions = new List<string>(solution.Split(';').Where(x => !string.IsNullOrWhiteSpace(x)));
             if (puzzle.Solutions.Count == 0)
