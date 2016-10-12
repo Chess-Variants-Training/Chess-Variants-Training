@@ -41,6 +41,9 @@ function setup(puzzleId) {
         document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;
         document.getElementById("permalink").setAttribute("href", "/Puzzle/" + window.puzzleId);
         window.trainingSessionId = jsonResponse.trainingSessionId;
+        if (window.immediatelyShowComments) {
+            loadComments();
+        }
     }, function (req, err) {
         displayError(err);
     });

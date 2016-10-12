@@ -17,6 +17,7 @@
     bool isReviewer = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_REVIEWER);
     bool isAuthor = loggedIn && Model != null && Model.Author == loggedInUser.ID;
     bool isReviewerOrAuthor = isReviewer || isAuthor;
+    bool immediatelyShowComments = Model != null && (isAuthor || isReviewer || Context.Request.Query.ContainsKey("comment"));
 }
 @if (Model != null && Model.InReview && !isReviewerOrAuthor)
 {
@@ -38,6 +39,7 @@
     {
         <script type="text/javascript" src="/scripts/puzzlereview.js"></script>
     }
+    <script type="text/javascript">window.immediatelyShowComments = @immediatelyShowComments.ToString().ToLowerInvariant();</script>
     <script type="text/javascript">window.variant = "@ViewBag.Variant";</script>
     <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
     <script type="text/javascript" src="@Url.Content("~/scripts/puzzletrain.js")"></script>
@@ -113,5 +115,5 @@ else
 {
     @:You need to be logged in to submit a comment.
 }
-<p>Comments (shown after your puzzle attempt):</p>
+<p>@(immediatelyShowComments ? "Comments:" : "Comments (shown after your puzzle attempt):")</p>
 <div id="commentContainer"></div>
