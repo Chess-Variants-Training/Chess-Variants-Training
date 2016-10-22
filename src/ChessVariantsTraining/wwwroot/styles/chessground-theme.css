@@ -2,8 +2,7 @@
 
 #ground-container {
     display: flex;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 #chessground {
@@ -15,7 +14,7 @@
 }
 
 #next-to-ground {
-    margin-left: 10px;
+    margin-left: 20px;
     flex: 1;
 }
 
@@ -69,6 +68,27 @@ piece.queen.black, div.selectable[data-color="black"][data-role="queen"] {
 
 piece.king.black, div.selectable[data-color="black"][data-role="king"] {
     background-image: url('/images/pieces/cburnett/bK.svg');
+}
+
+square[data-coord-x]::after {
+  position: absolute;
+  left: 50%;
+  bottom: -15px;
+  font-size: 10px;
+  line-height: 10px;
+  content: attr(data-coord-x);
+  color: #000;
+  opacity: 1;
+}
+square[data-coord-y]::before {
+  position: absolute;
+  right: -7px;
+  top: calc(50% - 5px);
+  font-size: 10px;
+  line-height: 10px;
+  content: attr(data-coord-y);
+  color: #000;
+  opacity: 1;
 }
 
 .cg-board square.move-dest {

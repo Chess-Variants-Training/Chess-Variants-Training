@@ -98,7 +98,7 @@ function submitMove(origin, destination, promotion) {
 
 window.addEventListener('load', function () {
     window.ground = Chessground(document.getElementById("chessground"), {
-        coordinates: false,
+        coordinates: true,
         movable: {
             free: false,
             dropOff: "revert",

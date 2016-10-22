@@ -440,7 +440,7 @@ function replayControlClicked(e) {
 
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
-        coordinates: false,
+        coordinates: true,
         movable: {
             free: false,
             dropOff: "revert",

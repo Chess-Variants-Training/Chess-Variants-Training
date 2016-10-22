@@ -210,7 +210,7 @@ function clearBoard(e) {
 
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
-        coordinates: false,
+        coordinates: true,
         disableContextMenu: true,
         movable: {
             free: true,
