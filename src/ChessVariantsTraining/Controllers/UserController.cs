@@ -56,7 +56,7 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/User/Register", Name = "NewUser")]
-        public IActionResult New(string username, string email, string password)
+        public IActionResult New(string username, string email, string password, string passwordConfirmation)
         {
             ViewBag.Error = new List<string>();
             if (!validator.IsValidUsername(username))
@@ -74,6 +74,10 @@ namespace ChessVariantsTraining.Controllers
             if (userRepository.FindByEmail(email) != null)
             {
                 ViewBag.Error.Add("The email address is already taken.");
+            }
+            if (!password.Equals(passwordConfirmation))
+            {
+                ViewBag.Error.Add("The password does not match its confirmation.");
             }
             if (ViewBag.Error.Count > 0)
             {
