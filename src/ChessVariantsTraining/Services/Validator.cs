@@ -9,12 +9,12 @@ namespace ChessVariantsTraining.Services
 
         public bool IsValidUsername(string username)
         {
-            return allowedUserNameRegex.IsMatch(username);
+            return !string.IsNullOrEmpty(username) && allowedUserNameRegex.IsMatch(username);
         }
 
         public bool IsValidEmail(string email)
         {
-            return allowedEmailRegex.IsMatch(email);
+            return !string.IsNullOrEmpty(email) && allowedEmailRegex.IsMatch(email);
         }
     }
 }

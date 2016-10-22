@@ -75,10 +75,16 @@ namespace ChessVariantsTraining.Controllers
             {
                 ViewBag.Error.Add("The email address is already taken.");
             }
-            if (!password.Equals(passwordConfirmation))
+
+            if (string.IsNullOrEmpty(password) || string.IsNullOrEmpty(passwordConfirmation))
+            {
+                ViewBag.Error.Add("Your password or its confirmation cannot be empty.");
+            }
+            else if (!password.Equals(passwordConfirmation))
             {
                 ViewBag.Error.Add("The password does not match its confirmation.");
             }
+
             if (ViewBag.Error.Count > 0)
             {
                 return View("Register");
