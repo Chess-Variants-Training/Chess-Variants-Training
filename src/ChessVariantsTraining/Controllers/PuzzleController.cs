@@ -269,10 +269,6 @@ namespace ChessVariantsTraining.Controllers
         public IActionResult GetOneRandomly(string variant, string trainingSessionId = null)
         {
             variant = Utilities.NormalizeVariantNameCapitalization(variant);
-            if (variant == "Mixed")
-            {
-                variant = supportedVariants[new Random().Next(0, supportedVariants.Length)];
-            }
             List<int> toBeExcluded;
             double nearRating = 1500;
             int? userId = loginHandler.LoggedInUserId(HttpContext);
