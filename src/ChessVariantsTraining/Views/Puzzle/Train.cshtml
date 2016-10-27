@@ -17,7 +17,7 @@
     bool isReviewer = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_REVIEWER);
     bool isAuthor = loggedIn && Model != null && Model.Author == loggedInUser.ID;
     bool isReviewerOrAuthor = isReviewer || isAuthor;
-    bool immediatelyShowComments = Model != null && (isAuthor || isReviewer || Context.Request.Query.ContainsKey("comment"));
+    bool immediatelyShowComments = Model != null && (isAuthor || Context.Request.Query.ContainsKey("comment") || (isReviewer && Model.InReview));
 }
 @if (Model != null && Model.InReview && !isReviewerOrAuthor)
 {
