@@ -276,7 +276,14 @@ namespace ChessVariantsTraining.Controllers
             {
                 User u = userRepository.FindById(userId.Value);
                 toBeExcluded = u.SolvedPuzzles;
-                nearRating = u.Ratings[variant].Value;
+                if (variant != "Mixed")
+                {
+                    nearRating = u.Ratings[variant].Value;
+                }
+                else
+                {
+                    nearRating = u.Ratings.Average(x => x.Value.Value);
+                }
             }
             else if (trainingSessionId != null)
             {
