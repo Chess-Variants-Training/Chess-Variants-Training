@@ -1,4 +1,10 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Variants.Antichess;
+using ChessDotNet.Variants.Atomic;
+using ChessDotNet.Variants.Horde;
+using ChessDotNet.Variants.KingOfTheHill;
+using ChessDotNet.Variants.RacingKings;
+using ChessDotNet.Variants.ThreeCheck;
 using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories;
@@ -387,6 +393,80 @@ namespace ChessVariantsTraining.Controllers
                 jsonResp.replayMoves = response.ReplayMoves;
             }
             return Json(jsonResp);
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Generation/Submit")]
+        [Restricted(true, UserRole.GENERATOR, UserRole.BETA_GENERATOR)]
+        public IActionResult SubmitGeneratedPuzzle(string category, string last_pos, string last_move, string move_list, string variant)
+        {
+            Puzzle generated = new Puzzle();
+            variant = Utilities.NormalizeVariantNameCapitalization(variant.Replace(" ", "").Replace("-", ""));
+            generated.Variant = variant;
+            generated.Rating = new Rating(1500, 350, 0.06);
+            generated.ExplanationUnsafe = "Auto-generated puzzle. Category: " + category;
+            generated.Author = loginHandler.LoggedInUserId(HttpContext).Value;
+            generated.Approved = loginHandler.LoggedInUser(HttpContext).Roles.Contains(UserRole.GENERATOR);
+            generated.InReview = !generated.Approved;
+            generated.Reviewers = new List<int>();
+            generated.DateSubmittedUtc = DateTime.UtcNow;
+
+            ChessGame game;
+            switch (variant)
+            {
+                case "Antichess":
+                    game = new AntichessGame(last_pos);
+                    break;
+                case "Atomic":
+                    game = new AtomicChessGame(last_pos);
+                    break;
+                case "Horde":
+                    game = new HordeChessGame(last_pos);
+                    break;
+                case "KingOfTheHill":
+                    game = new KingOfTheHillChessGame(last_pos);
+                    break;
+                case "RacingKings":
+                    game = new RacingKingsChessGame(last_pos);
+                    break;
+                case "ThreeCheck":
+                    game = new ThreeCheckChessGame(last_pos);
+                    break;
+                default:
+                    return Json(new { success = false, error = "Unknown variant." });
+            }
+
+            MoveType moveType = game.ApplyMove(new Move(last_move.Substring(0, 2), last_move.Substring(2, 2), game.WhoseTurn, last_move.Length == 4 ? null : new char?(last_move[last_move.Length - 1])),
+                false);
+            if (moveType == MoveType.Invalid)
+            {
+                return Json(new { success = false, error = "Invalid last_move." });
+            }
+
+            generated.InitialFen = string.Join(" ", game.GetFen().Split(' ').Take(4)) + " - 0 1";
+            generated.Solutions = new List<string>()
+            {
+                string.Join(" ",
+                move_list.Split(' ')
+                  .Select(x => string.Concat(
+                      x.Substring(0, 2),
+                      "-",
+                      x.Substring(2, 2),
+                      x.Length == 4 ? "" : "=" + x[x.Length - 1].ToString()
+                    )
+                  ))
+            };
+
+            generated.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
+
+            if (puzzleRepository.Add(generated))
+            {
+                return Json(new { success = true, id = generated.ID });
+            }
+            else
+            {
+                return Json(new { success = false, error = "Failure when inserting puzzle in database." });
+            }
         }
     }
 }
