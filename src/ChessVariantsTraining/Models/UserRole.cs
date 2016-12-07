@@ -6,6 +6,9 @@ namespace ChessVariantsTraining.Models
     {
         public const string NONE = "None";
 
+        public const string GENERATOR = "Generator";
+        public const string BETA_GENERATOR = "BetaGenerator";
+
         public const string PUZZLE_REVIEWER = "PuzzleReviewer";
         public const string PUZZLE_EDITOR = "PuzzleEditor";
 
@@ -47,6 +50,10 @@ namespace ChessVariantsTraining.Models
                     return actualPrivilege == PUZZLE_EDITOR;
                 case PUZZLE_REVIEWER:
                     return actualPrivilege == PUZZLE_REVIEWER || actualPrivilege == PUZZLE_EDITOR;
+                case BETA_GENERATOR:
+                    return actualPrivilege == BETA_GENERATOR;
+                case GENERATOR:
+                    return actualPrivilege == GENERATOR;
                 default:
                     return false;
             }
