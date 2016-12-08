@@ -56,9 +56,36 @@ namespace ChessVariantsTraining.Models
                 }
             }
             ReadOnlyCollection<Move> antiValidMoves;
-            if (Game is AntichessGame && (antiValidMoves = Game.GetValidMoves(Player.White)).Count == 1 && Game.GetPieceAt(antiValidMoves[0].NewPosition) != null)
+            if (Game is AntichessGame)
             {
-                WasAlreadyLost = true;
+                if ((antiValidMoves = Game.GetValidMoves(Player.White)).Count == 1 && Game.GetPieceAt(antiValidMoves[0].NewPosition) != null)
+                {
+                    WasAlreadyLost = true;
+                }
+                else
+                {
+                    WasAlreadyLost = true;
+                    foreach (Move valid in antiValidMoves)
+                    {
+                        AntichessGame copy = new AntichessGame(Game.GetFen());
+                        copy.ApplyMove(valid, true);
+                        ReadOnlyCollection<Move> validMoves2 = copy.GetValidMoves(copy.WhoseTurn);
+                        foreach (Move valid2 in validMoves2)
+                        {
+                            AntichessGame copy2 = new AntichessGame(copy.GetFen());
+                            copy2.ApplyMove(valid2, true);
+                            if (copy2.GetValidMoves(copy2.WhoseTurn).Any(x => copy2.GetPieceAt(x.NewPosition) == null))
+                            {
+                                WasAlreadyLost = false;
+                                break;
+                            }
+                        }
+                        if (!WasAlreadyLost)
+                        {
+                            break;
+                        }
+                    }
+                }
             }
             InitialFEN = Game.GetFen();
         }
