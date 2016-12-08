@@ -444,6 +444,13 @@ namespace ChessVariantsTraining.Controllers
             }
 
             generated.InitialFen = string.Join(" ", game.GetFen().Split(' ').Take(4)) + " - 0 1";
+
+            Puzzle possibleDuplicate = puzzleRepository.FindByFenAndVariant(generated.InitialFen, generated.Variant);
+            if (possibleDuplicate != null)
+            {
+                return Json(new { success = false, error = "This puzzle is a duplicate." });
+            }
+
             generated.Solutions = new List<string>()
             {
                 string.Join(" ",
