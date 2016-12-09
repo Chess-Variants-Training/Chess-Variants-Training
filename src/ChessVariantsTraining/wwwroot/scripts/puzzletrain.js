@@ -33,6 +33,11 @@ function setup(puzzleId) {
         if (document.getElementById("reportLinkContainer")) {
             document.getElementById("reportLinkContainer").setAttribute("class", "nodisplay");
         }
+        if (jsonResponse.additionalInfo) {
+            document.getElementById("additionalInfo").textContent = jsonResponse.additionalInfo;
+        } else {
+            document.getElementById("additionalInfo").textContent = "";
+        }
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse.author;

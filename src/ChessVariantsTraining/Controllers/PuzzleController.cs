@@ -345,6 +345,12 @@ namespace ChessVariantsTraining.Controllers
                 }
             }
             session.Setup(puzzle);
+            string additionalInfo = null;
+            if (puzzle.Variant == "ThreeCheck")
+            {
+                ThreeCheckChessGame tccg = puzzle.Game as ThreeCheckChessGame;
+                additionalInfo = string.Format("At the puzzle's initial position, white delivered {0} checks and black delivered {1} checks.", tccg.ChecksByWhite, tccg.ChecksByBlack);
+            }
             return Json(new
             {
                 success = true,
@@ -353,7 +359,8 @@ namespace ChessVariantsTraining.Controllers
                 fen = session.Current.InitialFen,
                 dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.Current.Game.GetValidMoves(session.Current.Game.WhoseTurn)),
                 whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant(),
-                variant = puzzle.Variant
+                variant = puzzle.Variant,
+                additionalInfo = additionalInfo
             });
         }
 
