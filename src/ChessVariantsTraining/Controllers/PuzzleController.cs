@@ -411,6 +411,22 @@ namespace ChessVariantsTraining.Controllers
             generated.Reviewers = new List<int>();
             generated.DateSubmittedUtc = DateTime.UtcNow;
 
+            string[] lastPosParts = last_pos.Split(' ');
+            if (lastPosParts.Length == 7)
+            {
+                string counter = lastPosParts[4];
+
+                lastPosParts[4] = lastPosParts[5];
+                lastPosParts[5] = lastPosParts[6];
+
+                int[] counterParts = counter.Split('+').Select(int.Parse).ToArray();
+                int whiteDelivered = 3 - counterParts[0];
+                int blackDelivered = 3 - counterParts[1];
+
+                lastPosParts[6] = string.Format("+{0}+{1}", whiteDelivered, blackDelivered);
+                last_pos = string.Join(" ", lastPosParts);
+            }
+
             ChessGame game;
             switch (variant)
             {
