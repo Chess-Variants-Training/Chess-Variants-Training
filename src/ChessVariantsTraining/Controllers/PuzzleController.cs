@@ -443,7 +443,7 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid last_move." });
             }
 
-            generated.InitialFen = string.Join(" ", game.GetFen().Split(' ').Take(4)) + " - 0 1";
+            generated.InitialFen = string.Join(" ", game.GetFen().Split(' ').Take(4)) + " 0 1";
 
             Puzzle possibleDuplicate = puzzleRepository.FindByFenAndVariant(generated.InitialFen, generated.Variant);
             if (possibleDuplicate != null)
