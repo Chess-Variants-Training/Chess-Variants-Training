@@ -41,6 +41,7 @@ function setup(puzzleId) {
         document.getElementById("result").setAttribute("class", "blue");
         document.getElementById("result").innerHTML = "Find the best move!";
         document.getElementById("author").textContent = jsonResponse.author;
+        document.getElementById("author").setAttribute("href", jsonResponse.authorUrl);
         document.getElementById("variantName").textContent = jsonResponse.variant;
         document.getElementById("controls").classList.add("nodisplay");
         document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;

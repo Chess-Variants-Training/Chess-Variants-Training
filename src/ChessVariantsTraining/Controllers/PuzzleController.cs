@@ -360,7 +360,8 @@ namespace ChessVariantsTraining.Controllers
                 dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.Current.Game.GetValidMoves(session.Current.Game.WhoseTurn)),
                 whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant(),
                 variant = puzzle.Variant,
-                additionalInfo = additionalInfo
+                additionalInfo = additionalInfo,
+                authorUrl = Url.Action("Profile", "User", new { id = session.Current.Author })
             });
         }
 
