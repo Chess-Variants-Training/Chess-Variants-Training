@@ -434,30 +434,7 @@ namespace ChessVariantsTraining.Controllers
                 last_pos = string.Join(" ", lastPosParts);
             }
 
-            ChessGame game;
-            switch (variant)
-            {
-                case "Antichess":
-                    game = new AntichessGame(last_pos);
-                    break;
-                case "Atomic":
-                    game = new AtomicChessGame(last_pos);
-                    break;
-                case "Horde":
-                    game = new HordeChessGame(last_pos);
-                    break;
-                case "KingOfTheHill":
-                    game = new KingOfTheHillChessGame(last_pos);
-                    break;
-                case "RacingKings":
-                    game = new RacingKingsChessGame(last_pos);
-                    break;
-                case "ThreeCheck":
-                    game = new ThreeCheckChessGame(last_pos);
-                    break;
-                default:
-                    return Json(new { success = false, error = "Unknown variant." });
-            }
+            ChessGame game = gameConstructor.Construct(generated.Variant, last_pos);
 
             MoveType moveType = game.ApplyMove(new Move(last_move.Substring(0, 2), last_move.Substring(2, 2), game.WhoseTurn, last_move.Length == 4 ? null : new char?(last_move[last_move.Length - 1])),
                 false);
