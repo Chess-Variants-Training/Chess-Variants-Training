@@ -466,7 +466,11 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid last_move." });
             }
 
-            generated.InitialFen = string.Join(" ", game.GetFen().Split(' ').Take(4)) + " 0 1";
+            string[] initialFenParts = game.GetFen().Split(' ');
+            initialFenParts[4] = "0";
+            initialFenParts[5] = "1";
+
+            generated.InitialFen = string.Join(" ", initialFenParts);
 
             Puzzle possibleDuplicate = puzzleRepository.FindByFenAndVariant(generated.InitialFen, generated.Variant);
             if (possibleDuplicate != null)
