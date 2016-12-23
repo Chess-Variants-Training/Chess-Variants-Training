@@ -1,6 +1,7 @@
 ﻿using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories;
+using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -49,6 +50,8 @@ namespace ChessVariantsTraining
 
             // Memory repositories
             services.AddSingleton<IEndgameTrainingSessionRepository, EndgameTrainingSessionRepository>();
+            services.AddSingleton<ILobbySeekRepository, LobbySeekRepository>();
+            services.AddSingleton<ILobbySocketHandlerRepository, LobbySocketHandlerRepository>();
             services.AddSingleton<IPuzzlesBeingEditedRepository, PuzzlesBeingEditedRepository>();
             services.AddSingleton<IPuzzleTrainingSessionRepository, PuzzleTrainingSessionRepository>();
             services.AddSingleton<ITimedTrainingSessionRepository, TimedTrainingSessionRepository>();
@@ -81,6 +84,7 @@ namespace ChessVariantsTraining
                     context.Context.Response.Headers["Cache-Control"] = "max-age=86400";
                 }
             });
+            app.UseWebSockets();
             app.UseMvc();
         }
     }
