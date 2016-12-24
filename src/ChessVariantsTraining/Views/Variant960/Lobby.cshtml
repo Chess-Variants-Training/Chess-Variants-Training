@@ -1,0 +1,47 @@
+﻿@section Title{Variant960 Lobby}
+@section AddToHead {
+    <link rel="stylesheet" type="text/css" href="@Url.Content("~/styles/variant960/lobby.css")">
+    <script type="text/javascript">window.wsUrl = "@Url.Action("LobbySocket", "Socket", null, "ws")";</script>
+    <script src="@Url.Content("~/scripts/variant960/lobby.js")" type="text/javascript"></script>
+}
+<h1>Play Variant960 games</h1>
+<div>
+    <div id="seek-table">
+        <div>
+            <div class="seek-player"><strong>Player</strong></div>
+            <div class="seek-time"><strong>Time</strong></div>
+            <div class="seek-variant"><strong>Variant</strong></div>
+        </div>
+    </div>
+    <div id="creation">
+        <h2>Create a game</h2>
+        <p>Initial time:</p>
+        <input type="range" min="0" max="33" value="6" id="time-range">
+        <p id="initial-time"></p>
+        <hr>
+        <p>Increment:</p>
+        <input type="range" min="0" max="30" value="2" id="inc-range">
+        <p id="increment"></p>
+        <hr>
+        <p>
+            Variant:
+            <select id="variant-selector">
+                <option value="Antichess">Antichess 960</option>
+                <option value="Atomic">Atomic 960</option>
+                <option value="Horde">Horde 960</option>
+                <option value="KingOfTheHill">King of the Hill 960</option>
+                <option value="RacingKings">Racing Kings 1440</option>
+                <option value="ThreeCheck">Three-Check 960</option>
+            </select>
+        </p>
+        <p>
+            Board:
+            <select id="symmetry-selector">
+                <option value="symmetrical">Symmetrical</option>
+                <option value="asymetrical">Asymmetrical</option>
+            </select>
+        </p>
+        <hr>
+        <button id="create-game">Create game</button>
+    </div>
+</div>

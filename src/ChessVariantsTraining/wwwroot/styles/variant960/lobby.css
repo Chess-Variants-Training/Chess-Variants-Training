@@ -1,0 +1,34 @@
+﻿#bodycontainer > div {
+    display: flex;
+}
+
+#seek-table {
+    flex: 4;
+}
+
+#seek-table > div {
+    display: flex;
+}
+
+.seek-player {
+    flex: 3;
+}
+
+.seek-time {
+    flex: 2;
+}
+
+.seek-variant {
+    flex: 7;
+}
+
+
+#creation {
+    flex: 1;
+}
+
+#create-game {
+    width: 100%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
