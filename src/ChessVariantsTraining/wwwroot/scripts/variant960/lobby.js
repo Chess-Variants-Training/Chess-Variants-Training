@@ -69,7 +69,6 @@
         var data = message.d;
         switch (type) {
             case "add":
-                console.log(data.c);
                 var seekTableRow = document.createElement("div");
                 seekTableRow.setAttribute("id", "seek-" + data.i);
                 var playerDiv = document.createElement("div");
@@ -85,6 +84,11 @@
                 variantDiv.classList.add("seek-variant");
                 seekTableRow.appendChild(variantDiv);
                 document.getElementById("seek-table").appendChild(seekTableRow);
+                break;
+            case "remove":
+                if (document.getElementById("seek-" + data)) {
+                    document.getElementById("seek-" + data).remove();
+                }
                 break;
         }
     }
