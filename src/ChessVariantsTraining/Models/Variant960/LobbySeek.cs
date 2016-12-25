@@ -80,7 +80,7 @@ namespace ChessVariantsTraining.Models.Variant960
             return true;
         }
 
-        public string SeekJson(IUserRepository userRepository)
+        public Dictionary<string, string> SeekJson(IUserRepository userRepository)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
             data.Add("v", Variant);
@@ -112,7 +112,7 @@ namespace ChessVariantsTraining.Models.Variant960
             }
             data.Add("c", string.Concat(minutes, "+", SecondsIncrement));
             data.Add("i", ID);
-            return JsonConvert.SerializeObject(data);
+            return data;
         }
     }
 }

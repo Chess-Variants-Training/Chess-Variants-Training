@@ -64,7 +64,29 @@
     }
 
     function wsMessageReceived(e) {
-        console.log(e);
+        var message = JSON.parse(e.data);
+        var type = message.t;
+        var data = message.d;
+        switch (type) {
+            case "add":
+                console.log(data.c);
+                var seekTableRow = document.createElement("div");
+                seekTableRow.setAttribute("id", "seek-" + data.i);
+                var playerDiv = document.createElement("div");
+                playerDiv.innerHTML = data.o;
+                playerDiv.classList.add("seek-player");
+                seekTableRow.appendChild(playerDiv);
+                var timeDiv = document.createElement("div");
+                timeDiv.innerHTML = data.c;
+                timeDiv.classList.add("seek-time");
+                seekTableRow.appendChild(timeDiv);
+                var variantDiv = document.createElement("div");
+                variantDiv.innerHTML = data.v + " (" + data.s + ")";
+                variantDiv.classList.add("seek-variant");
+                seekTableRow.appendChild(variantDiv);
+                document.getElementById("seek-table").appendChild(seekTableRow);
+                break;
+        }
     }
 
     window.addEventListener("load", function () {
