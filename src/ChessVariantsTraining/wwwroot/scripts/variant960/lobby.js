@@ -90,7 +90,8 @@
                 timeDiv.classList.add("seek-time");
                 seekTableRow.appendChild(timeDiv);
                 var variantDiv = document.createElement("div");
-                variantDiv.innerHTML = data.v + " (" + data.s + ")";
+                var variantName = document.querySelector("option[value=" + data.v + "]").textContent;
+                variantDiv.innerHTML = variantName + " (" + data.s + ")";
                 variantDiv.classList.add("seek-variant");
                 seekTableRow.appendChild(variantDiv);
                 document.getElementById("seek-table").appendChild(seekTableRow);
