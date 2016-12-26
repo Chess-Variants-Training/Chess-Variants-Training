@@ -37,6 +37,9 @@
     }
 
     function makeSeek() {
+        if (currentLobbySeek) {
+            ws.send(JSON.stringify({ "t": "remove", "d": currentLobbySeek }));
+        }
         var initialTimeValue = parseInt(document.getElementById("time-range").value, 10);
         switch (initialTimeValue) {
             case 0:
