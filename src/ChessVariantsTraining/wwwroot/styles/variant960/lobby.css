@@ -25,10 +25,32 @@
 
 #creation {
     flex: 1;
+    margin-left: 15px;
 }
 
 #create-game {
     width: 100%;
     padding-top: 15px;
     padding-bottom: 15px;
+}
+
+.header {
+    padding-bottom: 7px;
+    padding-left: 8px;
+}
+
+#seek-table > div:not(.header) {
+    padding-bottom: 6px;
+    padding-top: 6px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    padding-left: 7px;
+}
+
+#seek-table > div:not(.header):hover {
+    background: #bfd7ff;
+}
+
+#seek-table > .own {
+    background: #c9ffbf;
 }
