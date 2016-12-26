@@ -100,6 +100,7 @@
             case "ack":
                 currentLobbySeek = data;
                 setInterval(bumper, 3000);
+                document.getElementById("seek-" + data).classList.add("own");
                 break;
         }
     }
