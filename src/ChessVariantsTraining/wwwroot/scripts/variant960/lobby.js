@@ -1,6 +1,8 @@
 ﻿(function main() {
     var ws;
     var clientId;
+    var currentLobbySeek;
+    var bumpInterval;
 
     function initialTimeChanged() {
         var value = parseInt(document.getElementById("time-range").value, 10);
@@ -63,6 +65,11 @@
         ws.send(JSON.stringify(message));
     }
 
+    function bumper() {
+        if (!currentLobbySeek) return;
+        ws.send(JSON.stringify({ "t": "bump", "d": currentLobbySeek }));
+    }
+
     function wsMessageReceived(e) {
         var message = JSON.parse(e.data);
         var type = message.t;
@@ -89,6 +96,10 @@
                 if (document.getElementById("seek-" + data)) {
                     document.getElementById("seek-" + data).remove();
                 }
+                break;
+            case "ack":
+                currentLobbySeek = data;
+                setInterval(bumper, 3000);
                 break;
         }
     }
