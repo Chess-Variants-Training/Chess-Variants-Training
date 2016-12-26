@@ -58,7 +58,7 @@ namespace ChessVariantsTraining.Models.Variant960
             SocketMessage message = new SocketMessage(text);
             if (!message.Okay)
             {
-                await Send("{\"t\":\"error\",\"d:\":\"invalid message\"}");
+                await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                 return;
             }
             switch (message.Type)
@@ -68,11 +68,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     bool isValid = LobbySeek.TryParse(message.Data, clientUser, clientId, out seek);
                     if (!isValid)
                     {
-                        await Send("{\"t\":\"error\",\"d:\":\"invalid seek\"}");
+                        await Send("{\"t\":\"error\",\"d\":\"invalid seek\"}");
                         return;
                     }
                     string seekId = await seekRepository.Add(seek);
-                    await Send("{\"t\":\"ack\",\"d:\":\"" + seekId + "\"}");
+                    await Send("{\"t\":\"ack\",\"d\":\"" + seekId + "\"}");
                     break;
                 case "remove":
                     await seekRepository.Remove(message.Data, clientUser, clientId);
@@ -81,7 +81,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     seekRepository.Bump(message.Data, clientUser, clientId);
                     break;
                 default:
-                    await Send("{\"t\":\"error\",\"d:\":\"invalid message\"}");
+                    await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                     break;
             }
         }
