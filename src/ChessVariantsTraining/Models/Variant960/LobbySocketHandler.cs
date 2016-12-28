@@ -80,6 +80,16 @@ namespace ChessVariantsTraining.Models.Variant960
                 case "bump":
                     seekRepository.Bump(message.Data, clientUser, clientId);
                     break;
+                case "join":
+                    LobbySeek joined = seekRepository.Get(message.Data);
+                    if (joined == null)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"seek does not exist\"}");
+                        return;
+                    }
+                    await seekRepository.Remove(joined.ID, joined.Owner, joined.ClientID);
+                    // TODO: create game and redirect joined user and seek host
+                    break;
                 default:
                     await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                     break;

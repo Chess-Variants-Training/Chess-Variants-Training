@@ -20,6 +20,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             cleanupThread.Start();
         }
 
+        public LobbySeek Get(string id)
+        {
+            return seeks.FirstOrDefault(x => x.ID == id);
+        }
+
         public async Task<string> Add(LobbySeek seek)
         {
             string id;

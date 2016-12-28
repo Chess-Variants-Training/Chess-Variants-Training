@@ -5,6 +5,8 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
 {
     public interface ILobbySeekRepository
     {
+        LobbySeek Get(string id);
+
         Task<string> Add(LobbySeek seek);
 
         Task Remove(string id, int? user, string clientId);

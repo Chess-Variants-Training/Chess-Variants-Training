@@ -73,6 +73,22 @@
         ws.send(JSON.stringify({ "t": "bump", "d": currentLobbySeek }));
     }
 
+    function seekClicked(e) {
+        e = e || window.event;
+        if (e.target.classList.contains("own") || e.target.parentElement.classList.contains("own")) {
+            clearInterval(bumpInterval);
+            ws.send(JSON.stringify({ "t": "remove", "d": currentLobbySeek }));
+            currentLobbySeek = null;
+        } else {
+            if (e.target.getAttribute("id").startsWith("seek-")) {
+                var seekId = e.target.getAttribute("id").slice(5);
+            } else {
+                var seekId = e.target.parentElement.getAttribute("id").slice(5);
+            }
+            ws.send(JSON.stringify({ "t": "join", "d": seekId }));
+        }
+    }
+
     function wsMessageReceived(e) {
         var message = JSON.parse(e.data);
         var type = message.t;
@@ -94,6 +110,7 @@
                 variantDiv.innerHTML = variantName + " (" + data.s + ")";
                 variantDiv.classList.add("seek-variant");
                 seekTableRow.appendChild(variantDiv);
+                seekTableRow.addEventListener("click", seekClicked);
                 document.getElementById("seek-table").appendChild(seekTableRow);
                 break;
             case "remove":
@@ -103,7 +120,7 @@
                 break;
             case "ack":
                 currentLobbySeek = data;
-                setInterval(bumper, 3000);
+                bumpInterval = setInterval(bumper, 3000);
                 document.getElementById("seek-" + data).classList.add("own");
                 break;
         }
