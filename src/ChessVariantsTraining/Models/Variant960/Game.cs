@@ -57,7 +57,7 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
-        public Game(int? white, int? black, string variant)
+        public Game(int? white, int? black, string variant, string fen)
         {
             White = white;
             Black = black;
@@ -66,26 +66,26 @@ namespace ChessVariantsTraining.Models.Variant960
             {
                 case Variants.ANTICHESS960ASYMMETRICAL:
                 case Variants.ANTICHESS960SYMMETRICAL:
-                    ChessGame = new AntichessGame();
+                    ChessGame = new AntichessGame(fen);
                     break;
                 case Variants.ATOMIC960ASYMMETRICAL:
                 case Variants.ATOMIC960SYMMETRICAL:
-                    ChessGame = new AtomicChessGame();
+                    ChessGame = new AtomicChessGame(fen);
                     break;
                 case Variants.HORDE960:
-                    ChessGame = new HordeChessGame();
+                    ChessGame = new HordeChessGame(fen);
                     break;
                 case Variants.KOTH960ASYMMETRICAL:
                 case Variants.KOTH960SYMMETRICAL:
-                    ChessGame = new KingOfTheHillChessGame();
+                    ChessGame = new KingOfTheHillChessGame(fen);
                     break;
                 case Variants.RK1440ASYMMETRICAL:
                 case Variants.RK1440SYMMETRICAL:
-                    ChessGame = new RacingKingsChessGame();
+                    ChessGame = new RacingKingsChessGame(fen);
                     break;
                 case Variants.THREECHECK960ASYMMETRICAL:
                 case Variants.THREECHECK960SYMMETRICAL:
-                    ChessGame = new ThreeCheckChessGame();
+                    ChessGame = new ThreeCheckChessGame(fen);
                     break;
                 default:
                     throw new InvalidOperationException("Game constructor: invalid variant '" + variant + "'");
