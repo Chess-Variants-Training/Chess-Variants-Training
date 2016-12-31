@@ -20,11 +20,12 @@
     "MongoDB.Driver": "2.3.0",
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.NETCore.App": "1.0.0",
-    "ChessDotNet": "0.9.2",
-    "ChessDotNet.Variants": "0.9.2.1",
+    "ChessDotNet": "0.9.3.1",
+    "ChessDotNet.Variants": "0.9.3.1",
     "glicko2-csharp": "1.0.0",
     "MailKit": "1.6.0",
-    "Microsoft.AspNetCore.WebSockets.Server": "0.1.0"
+    "Microsoft.AspNetCore.WebSockets.Server": "0.1.0",
+    "Microsoft.NETCore.Portable.Compatibility": "1.0.1"
   },
 
   "frameworks": {
