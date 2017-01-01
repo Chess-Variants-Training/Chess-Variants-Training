@@ -5,7 +5,7 @@ namespace ChessVariantsTraining.DbRepositories.Variant960
     public interface IGameRepository
     {
         void Add(Game game);
-        void Get(string id);
+        Game Get(string id);
         void Update(Game game);
     }
 }
