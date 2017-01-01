@@ -13,7 +13,8 @@
     "AttemptCollectionName": "attempts",
     "CounterCollectionName": "counters",
     "SavedLoginCollectionName": "savedlogins",
-    "NotificationCollectionName":  "notifications"
+    "NotificationCollectionName": "notifications",
+    "GameCollectionName": "games"
   },
   "TimedTrainingSessionAutoAcknowledgerDelay": 10
 }

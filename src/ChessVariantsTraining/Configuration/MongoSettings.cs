@@ -16,5 +16,6 @@
         public string CounterCollectionName { get; set; }
         public string SavedLoginCollectionName { get; set; }
         public string NotificationCollectionName { get; set; }
+        public string GameCollectionName { get; set; }
     }
 }

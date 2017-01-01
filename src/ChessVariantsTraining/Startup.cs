@@ -1,5 +1,6 @@
 ﻿using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Services;
@@ -39,6 +40,7 @@ namespace ChessVariantsTraining
             services.AddSingleton<ICommentRepository, CommentRepository>();
             services.AddSingleton<ICommentVoteRepository, CommentVoteRepository>();
             services.AddSingleton<ICounterRepository, CounterRepository>();
+            services.AddSingleton<IGameRepository, GameRepository>();
             services.AddSingleton<INotificationRepository, NotificationRepository>();
             services.AddSingleton<IPositionRepository, PositionRepository>();
             services.AddSingleton<IPuzzleRepository, PuzzleRepository>();
