@@ -1,4 +1,5 @@
 ﻿using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960;
 using ChessVariantsTraining.Services;
@@ -12,12 +13,14 @@ namespace ChessVariantsTraining.Controllers
     {
         ILobbySocketHandlerRepository lobbySocketHandlerRepository;
         ILobbySeekRepository seekRepository;
+        IGameRepository gameRepository;
 
-        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository)
+        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository)
             : base(_userRepository, _loginHandler)
         {
             lobbySocketHandlerRepository = _lobbySocketHandlerRepository;
             seekRepository = _seekRepository;
+            gameRepository = _gameRepository;
         }
 
         [Route("/Socket/Lobby")]
@@ -36,7 +39,7 @@ namespace ChessVariantsTraining.Controllers
             }
 
             WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            LobbySocketHandler handler = new LobbySocketHandler(ws, loginHandler.LoggedInUserId(HttpContext), clientId, lobbySocketHandlerRepository, seekRepository);
+            LobbySocketHandler handler = new LobbySocketHandler(ws, loginHandler.LoggedInUserId(HttpContext), clientId, lobbySocketHandlerRepository, seekRepository, gameRepository);
             lobbySocketHandlerRepository.Add(handler);
             await handler.LobbyLoop();
         }

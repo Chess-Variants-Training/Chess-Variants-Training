@@ -1,4 +1,5 @@
-﻿using ChessVariantsTraining.MemoryRepositories.Variant960;
+﻿using ChessVariantsTraining.DbRepositories.Variant960;
+using ChessVariantsTraining.MemoryRepositories.Variant960;
 using System;
 using System.Net.WebSockets;
 using System.Text;
@@ -15,6 +16,7 @@ namespace ChessVariantsTraining.Models.Variant960
         string clientId;
         ILobbySocketHandlerRepository handlerRepository;
         ILobbySeekRepository seekRepository;
+        IGameRepository gameRepository;
 
         public bool Closed
         {
@@ -31,13 +33,14 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public LobbySocketHandler(WebSocket socket, int? _clientUser, string _clientId, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository)
+        public LobbySocketHandler(WebSocket socket, int? _clientUser, string _clientId, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository)
         {
             ws = socket;
             clientUser = _clientUser;
             handlerRepository = _handlerRepository;
             seekRepository = _seekRepository;
             clientId = _clientId;
+            gameRepository = _gameRepository;
         }
 
         public async Task LobbyLoop()
