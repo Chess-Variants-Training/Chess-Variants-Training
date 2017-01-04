@@ -40,10 +40,10 @@ namespace ChessVariantsTraining.Models.Variant960
         public string ID { get; set; }
 
         [BsonElement("white")]
-        public int? White { get; set; }
+        public GamePlayer White { get; set; }
 
         [BsonElement("black")]
-        public int? Black { get; set; }
+        public GamePlayer Black { get; set; }
 
         [BsonElement("outcome")]
         public string Outcome { get; set; }
@@ -57,7 +57,7 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
-        public Game(int? white, int? black, string variant, string fen)
+        public Game(GamePlayer white, GamePlayer black, string variant, string fen)
         {
             White = white;
             Black = black;
