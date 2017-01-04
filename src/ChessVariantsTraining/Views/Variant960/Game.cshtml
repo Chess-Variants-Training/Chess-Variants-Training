@@ -1,0 +1,18 @@
+﻿@section Title{Play Variant960}
+@section AddToHead {
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
+    <script type="text/javascript" src="@Url.Content("~/scripts/variant960/game.js")"></script>
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
+}
+<div id="ground-container">
+    <div>
+        <div id="chessground" class="brown"></div>
+    </div>
+    <div id="next-to-ground">
+        <p>White: ...<br>Black: ...</p>
+        <p>Variant: ...</p>
+        <p>Time control: ...</p>
+    </div>
+</div>

@@ -13,5 +13,11 @@ namespace ChessVariantsTraining.Controllers
         {
             return View();
         }
+
+        [Route("/Variant960/Game/{id}")]
+        public IActionResult Game()
+        {
+            return View();
+        }
     }
 }
