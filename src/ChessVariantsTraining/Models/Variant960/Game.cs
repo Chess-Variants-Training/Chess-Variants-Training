@@ -59,7 +59,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public Game() { }
 
-        public Game(GamePlayer white, GamePlayer black, string variant, string fen)
+        public Game(GamePlayer white, GamePlayer black, string variant, int nWhite, int nBlack)
         {
             White = white;
             Black = black;
@@ -67,27 +67,37 @@ namespace ChessVariantsTraining.Models.Variant960
             switch (variant)
             {
                 case Variants.ANTICHESS960ASYMMETRICAL:
+                    ChessGame = new AntichessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
+                    break;
                 case Variants.ANTICHESS960SYMMETRICAL:
-                    ChessGame = new AntichessGame(fen);
+                    ChessGame = new AntichessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
                     break;
                 case Variants.ATOMIC960ASYMMETRICAL:
+                    ChessGame = new AtomicChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
+                    break;
                 case Variants.ATOMIC960SYMMETRICAL:
-                    ChessGame = new AtomicChessGame(fen);
+                    ChessGame = new AtomicChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
                     break;
                 case Variants.HORDE960:
-                    ChessGame = new HordeChessGame(fen);
+                    ChessGame = new HordeChessGame(ChessUtilities.FenForHorde960(nWhite));
                     break;
                 case Variants.KOTH960ASYMMETRICAL:
+                    ChessGame = new KingOfTheHillChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
+                    break;
                 case Variants.KOTH960SYMMETRICAL:
-                    ChessGame = new KingOfTheHillChessGame(fen);
+                    ChessGame = new KingOfTheHillChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
                     break;
                 case Variants.RK1440ASYMMETRICAL:
+                    ChessGame = new RacingKingsChessGame(ChessUtilities.FenForRacingKings1440Asymmetrical(nWhite, nBlack));
+                    break;
                 case Variants.RK1440SYMMETRICAL:
-                    ChessGame = new RacingKingsChessGame(fen);
+                    ChessGame = new RacingKingsChessGame(ChessUtilities.FenForRacingKings1440Symmetrical(nWhite));
                     break;
                 case Variants.THREECHECK960ASYMMETRICAL:
+                    ChessGame = new ThreeCheckChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
+                    break;
                 case Variants.THREECHECK960SYMMETRICAL:
-                    ChessGame = new ThreeCheckChessGame(fen);
+                    ChessGame = new ThreeCheckChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
                     break;
                 default:
                     throw new InvalidOperationException("Game constructor: invalid variant '" + variant + "'");

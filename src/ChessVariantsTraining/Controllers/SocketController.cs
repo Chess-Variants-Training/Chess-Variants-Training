@@ -14,13 +14,15 @@ namespace ChessVariantsTraining.Controllers
         ILobbySocketHandlerRepository lobbySocketHandlerRepository;
         ILobbySeekRepository seekRepository;
         IGameRepository gameRepository;
+        IRandomProvider randomProvider;
 
-        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository)
+        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider)
             : base(_userRepository, _loginHandler)
         {
             lobbySocketHandlerRepository = _lobbySocketHandlerRepository;
             seekRepository = _seekRepository;
             gameRepository = _gameRepository;
+            randomProvider = _randomProvider;
         }
 
         [Route("/Socket/Lobby")]
@@ -49,7 +51,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 client = new AnonymousPlayer() { AnonymousIdentifier = clientId };
             }
-            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository);
+            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider);
             lobbySocketHandlerRepository.Add(handler);
             await handler.LobbyLoop();
         }

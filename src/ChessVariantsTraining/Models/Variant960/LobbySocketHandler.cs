@@ -94,7 +94,19 @@ namespace ChessVariantsTraining.Models.Variant960
                     await seekRepository.Remove(joined.ID, client);
                     // TODO: create game and redirect joined user and seek host
                     bool hostIsWhite = randomProvider.RandomBool();
-                    Game game = new Game(hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.FullVariantName, "move this logic to Game");
+                    int nWhite;
+                    int nBlack;
+                    int max = joined.Variant != "RacingKings" ? 960 : 1440;
+                    nWhite = randomProvider.RandomPositiveInt(max);
+                    if (joined.Symmetrical)
+                    {
+                        nBlack = nWhite;
+                    }
+                    else
+                    {
+                        nBlack = randomProvider.RandomPositiveInt(max);
+                    }
+                    Game game = new Game(hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.FullVariantName, nWhite, nBlack);
                     break;
                 default:
                     await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
