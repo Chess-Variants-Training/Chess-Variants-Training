@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Security.Cryptography;
 
 namespace ChessVariantsTraining.Services
@@ -20,6 +21,14 @@ namespace ChessVariantsTraining.Services
             RandomNumberGenerator rng = RandomNumberGenerator.Create();
             rng.GetBytes(result);
             return string.Concat(result.Select(x => x % chars.Length).Select(x => chars[x]));
+        }
+
+        public int RandomPositiveInt(int maxExclusive)
+        {
+            RandomNumberGenerator rng = RandomNumberGenerator.Create();
+            byte[] result = new byte[4];
+            rng.GetBytes(result);
+            return ((int)Math.Abs(BitConverter.ToInt32(result, 0))) % maxExclusive;
         }
     }
 }

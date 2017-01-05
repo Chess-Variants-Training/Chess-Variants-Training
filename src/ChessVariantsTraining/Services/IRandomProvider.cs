@@ -5,5 +5,7 @@
         bool RandomBool();
 
         string RandomString(int length);
+
+        int RandomPositiveInt(int maxExclusive);
     }
 }
