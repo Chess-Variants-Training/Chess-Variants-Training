@@ -7,8 +7,7 @@
     function initialTimeChanged() {
         var value = parseInt(document.getElementById("time-range").value, 10);
         var text = "";
-        switch (value)
-        {
+        switch (value) {
             case 0:
                 text = "0 minutes";
                 break;
@@ -135,9 +134,12 @@
         document.getElementById("inc-range").addEventListener("change", incrementChanged);
         document.getElementById("create-game").addEventListener("click", makeSeek);
 
-        clientId = Math.random().toString(36).substring(2);
-        while (clientId.length < 6) { clientId += clientId; }
-        ws = new WebSocket(window.wsUrl + "?clientId=" + clientId);
-        ws.addEventListener("message", wsMessageReceived);
+        jsonXhr("/Variant960/Lobby/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
+            ws = new WebSocket(window.wsUrl);
+            ws.addEventListener("message", wsMessageReceived);
+        },
+        function (req, err) {
+            displayError(err);
+        });
     });
 })();
