@@ -6,9 +6,14 @@ namespace ChessVariantsTraining.Services
 {
     public class RandomProvider : IRandomProvider
     {
+        RandomNumberGenerator rng;
+
+        public RandomProvider()
+        {
+            rng = RandomNumberGenerator.Create();
+        }
         public bool RandomBool()
         {
-            RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] result = new byte[1];
             rng.GetBytes(result);
             return result[0] % 2 == 0;
@@ -18,14 +23,12 @@ namespace ChessVariantsTraining.Services
         {
             char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".ToCharArray();
             byte[] result = new byte[length];
-            RandomNumberGenerator rng = RandomNumberGenerator.Create();
             rng.GetBytes(result);
             return string.Concat(result.Select(x => x % chars.Length).Select(x => chars[x]));
         }
 
         public int RandomPositiveInt(int maxExclusive)
         {
-            RandomNumberGenerator rng = RandomNumberGenerator.Create();
             byte[] result = new byte[4];
             rng.GetBytes(result);
             return ((int)Math.Abs(BitConverter.ToInt32(result, 0))) % maxExclusive;
