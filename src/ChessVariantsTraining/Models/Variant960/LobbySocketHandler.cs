@@ -1,5 +1,6 @@
 ﻿using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
+using ChessVariantsTraining.Services;
 using System;
 using System.Net.WebSockets;
 using System.Text;
@@ -16,6 +17,7 @@ namespace ChessVariantsTraining.Models.Variant960
         ILobbySocketHandlerRepository handlerRepository;
         ILobbySeekRepository seekRepository;
         IGameRepository gameRepository;
+        IRandomProvider randomProvider;
 
         public bool Closed
         {
@@ -32,13 +34,14 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository)
+        public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider)
         {
             ws = socket;
             client = _client;
             handlerRepository = _handlerRepository;
             seekRepository = _seekRepository;
             gameRepository = _gameRepository;
+            randomProvider = _randomProvider;
         }
 
         public async Task LobbyLoop()
@@ -90,6 +93,8 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     await seekRepository.Remove(joined.ID, client);
                     // TODO: create game and redirect joined user and seek host
+                    bool hostIsWhite = randomProvider.RandomBool();
+                    Game game = new Game(hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.FullVariantName, "move this logic to Game");
                     break;
                 default:
                     await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");

@@ -12,6 +12,13 @@ namespace ChessVariantsTraining.Models.Variant960
         public int SecondsInitial { get; private set; }
         public int SecondsIncrement { get; private set; }
         public string Variant { get; private set; }
+        public string FullVariantName
+        {
+            get
+            {
+                return string.Format("{0} {1} {2}", Variant, Variant != "Racing Kings" ? 960 : 1440, Variant != "Horde" ? string.Format("({0})", Symmetrical ? "symmetrical" : "asymmetrical") : "");
+            }
+        }
         public bool Symmetrical { get; private set; }
         public GamePlayer Owner { get; private set; }
         public DateTime LatestBump { get; set; }
