@@ -57,6 +57,8 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
+        public Game() { }
+
         public Game(GamePlayer white, GamePlayer black, string variant, string fen)
         {
             White = white;
