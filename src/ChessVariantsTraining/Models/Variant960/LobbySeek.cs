@@ -16,6 +16,15 @@ namespace ChessVariantsTraining.Models.Variant960
         {
             get
             {
+                string beautifiedVariantName = Variant;
+                if (beautifiedVariantName == "ThreeCheck")
+                {
+                    beautifiedVariantName = "Three-check";
+                }
+                else if (beautifiedVariantName == "RacingKings")
+                {
+                    beautifiedVariantName = "Racing Kings";
+                }
                 return string.Format("{0} {1} {2}", Variant, Variant != "Racing Kings" ? 960 : 1440, Variant != "Horde" ? string.Format("({0})", Symmetrical ? "symmetrical" : "asymmetrical") : "");
             }
         }
