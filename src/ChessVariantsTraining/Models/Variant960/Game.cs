@@ -54,6 +54,18 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("pgn")]
         public string PGN { get; set; }
 
+        [BsonElement("initialFen")]
+        public string InitialFEN { get; set; }
+
+        [BsonElement("latestFen")]
+        public string LatestFEN { get; set; }
+
+        [BsonElement("positionWhite")]
+        public int PositionWhite { get; set; }
+
+        [BsonElement("positionBlack")]
+        public int PositionBlack { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
@@ -62,7 +74,9 @@ namespace ChessVariantsTraining.Models.Variant960
         public Game(GamePlayer white, GamePlayer black, string variant, int nWhite, int nBlack)
         {
             White = white;
+            PositionWhite = nWhite;
             Black = black;
+            PositionBlack = nBlack;
             Outcome = Outcomes.ONGOING;
             switch (variant)
             {
@@ -102,6 +116,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 default:
                     throw new InvalidOperationException("Game constructor: invalid variant '" + variant + "'");
             }
+            InitialFEN = LatestFEN = ChessGame.GetFen();
         }
     }
 }
