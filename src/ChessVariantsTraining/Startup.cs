@@ -64,6 +64,7 @@ namespace ChessVariantsTraining
             services.AddSingleton<IMoveCollectionTransformer, MoveCollectionTransformer>();
             services.AddSingleton<IPasswordHasher, PasswordHasher>();
             services.AddSingleton<IPersistentLoginHandler, PersistentLoginHandler>();
+            services.AddSingleton<IRandomProvider, RandomProvider>();
             services.AddSingleton<IRatingUpdater, RatingUpdater>();
             services.AddSingleton<IUserVerifier, UserVerifier>();
             services.AddSingleton<IValidator, Validator>();
