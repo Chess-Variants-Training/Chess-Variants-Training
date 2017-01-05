@@ -3,10 +3,7 @@ using ChessVariantsTraining.Models.Variant960;
 using ChessVariantsTraining.Services;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories.Variant960
 {
