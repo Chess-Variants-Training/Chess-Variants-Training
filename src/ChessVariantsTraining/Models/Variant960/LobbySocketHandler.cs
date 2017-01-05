@@ -33,6 +33,13 @@ namespace ChessVariantsTraining.Models.Variant960
                 return ws.State == WebSocketState.Open;
             }
         }
+        public GamePlayer Client
+        {
+            get
+            {
+                return client;
+            }
+        }
 
         public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider)
         {
@@ -92,7 +99,6 @@ namespace ChessVariantsTraining.Models.Variant960
                         return;
                     }
                     await seekRepository.Remove(joined.ID, client);
-                    // TODO: create game and redirect joined user and seek host
                     bool hostIsWhite = randomProvider.RandomBool();
                     int nWhite;
                     int nBlack;
@@ -107,6 +113,10 @@ namespace ChessVariantsTraining.Models.Variant960
                         nBlack = randomProvider.RandomPositiveInt(max);
                     }
                     Game game = new Game(hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.FullVariantName, nWhite, nBlack);
+                    gameRepository.Add(game);
+                    string redirectJson = "{\"t\":\"redirect\",\"d\":\"" + game.ID + "\"}";
+                    await Send(redirectJson);
+                    await handlerRepository.SendTo(joined.Owner, redirectJson);
                     break;
                 default:
                     await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");

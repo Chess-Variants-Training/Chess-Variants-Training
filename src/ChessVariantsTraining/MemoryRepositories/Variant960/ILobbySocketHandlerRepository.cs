@@ -12,5 +12,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         Task SendSeekAddition(LobbySeek seek);
 
         Task SendSeekRemoval(string id);
+
+        Task SendTo(GamePlayer client, string text);
     }
 }

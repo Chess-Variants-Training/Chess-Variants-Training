@@ -48,6 +48,15 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             await SendAll("{\"t\":\"remove\",\"d\":\"" + id + "\"}");
         }
 
+        public async Task SendTo(GamePlayer client, string text)
+        {
+            LobbySocketHandler handler = handlers.FirstOrDefault(x => x.Client.Equals(client));
+            if (handler != null)
+            {
+                await handler.Send(text);
+            }
+        }
+
         void ScheduledCleanup()
         {
             while (shouldCleanup)
