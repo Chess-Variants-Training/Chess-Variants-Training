@@ -27,6 +27,7 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Variant960/Lobby/StoreAnonymousIdentifier")]
+        [HttpPost]
         public IActionResult StoreAnonymousIdentifier()
         {
             if (loginHandler.LoggedInUserId(HttpContext).HasValue)
