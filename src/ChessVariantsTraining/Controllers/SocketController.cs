@@ -39,7 +39,17 @@ namespace ChessVariantsTraining.Controllers
             }
 
             WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            LobbySocketHandler handler = new LobbySocketHandler(ws, loginHandler.LoggedInUserId(HttpContext), clientId, lobbySocketHandlerRepository, seekRepository, gameRepository);
+            GamePlayer client;
+            int? userId = loginHandler.LoggedInUserId(HttpContext);
+            if (userId.HasValue)
+            {
+                client = new RegisteredPlayer() { UserId = userId.Value };
+            }
+            else
+            {
+                client = new AnonymousPlayer() { AnonymousIdentifier = clientId };
+            }
+            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository);
             lobbySocketHandlerRepository.Add(handler);
             await handler.LobbyLoop();
         }

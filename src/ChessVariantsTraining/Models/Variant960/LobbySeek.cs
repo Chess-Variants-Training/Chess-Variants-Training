@@ -13,21 +13,19 @@ namespace ChessVariantsTraining.Models.Variant960
         public int SecondsIncrement { get; private set; }
         public string Variant { get; private set; }
         public bool Symmetrical { get; private set; }
-        public int? Owner { get; private set; }
+        public GamePlayer Owner { get; private set; }
         public DateTime LatestBump { get; set; }
-        public string ClientID { get; private set; }
 
-        public LobbySeek(int secondsInitial, int secondsIncrement, string variant, bool symmetrical, int? owner, string clientId)
+        public LobbySeek(int secondsInitial, int secondsIncrement, string variant, bool symmetrical, GamePlayer owner)
         {
             SecondsInitial = secondsInitial;
             SecondsIncrement = secondsIncrement;
             Variant = variant;
             Symmetrical = symmetrical;
             Owner = owner;
-            ClientID = clientId;
         }
 
-        public static bool TryParse(string encoded, int? owner, string clientId, out LobbySeek seek)
+        public static bool TryParse(string encoded, GamePlayer owner, out LobbySeek seek)
         {
             string[] parts = encoded.Split(';');
             if (parts.Length != 4)
@@ -76,7 +74,7 @@ namespace ChessVariantsTraining.Models.Variant960
             }
             bool symmetrical = parts[3] == "true";
 
-            seek = new LobbySeek(secondsInitial, secondsIncrement, variant, symmetrical, owner, clientId);
+            seek = new LobbySeek(secondsInitial, secondsIncrement, variant, symmetrical, owner);
             return true;
         }
 
@@ -85,9 +83,9 @@ namespace ChessVariantsTraining.Models.Variant960
             Dictionary<string, string> data = new Dictionary<string, string>();
             data.Add("v", Variant);
             data.Add("s", Symmetrical ? "Symmetrical" : "Asymmetrical");
-            if (Owner.HasValue)
+            if (Owner is RegisteredPlayer)
             {
-                data.Add("o", userRepository.FindById(Owner.Value).Username);
+                data.Add("o", userRepository.FindById((Owner as RegisteredPlayer).UserId).Username);
             }
             else
             {

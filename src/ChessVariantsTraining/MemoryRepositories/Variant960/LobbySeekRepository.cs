@@ -39,11 +39,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             return id;
         }
 
-        public async Task Remove(string id, int? user, string clientId)
+        public async Task Remove(string id, GamePlayer client)
         {
             LobbySeek found = seeks.FirstOrDefault(x => x.ID == id);
             if (found == null) return;
-            if (!((found.Owner.HasValue && user.HasValue && found.Owner.Value == user.Value) || found.ClientID == clientId))
+            if (!found.Owner.Equals(client))
             {
                 return;
             }
@@ -52,11 +52,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             await socketHandlerRepository.SendSeekRemoval(id);
         }
 
-        public void Bump(string id, int? user, string clientId)
+        public void Bump(string id, GamePlayer client)
         {
             LobbySeek toBump = seeks.Find(x => x.ID == id);
             if (toBump == null) return;
-            if (!((toBump.Owner.HasValue && user.HasValue && toBump.Owner.Value == user.Value) || toBump.ClientID == clientId))
+            if (!toBump.Owner.Equals(client))
             {
                 return;
             }

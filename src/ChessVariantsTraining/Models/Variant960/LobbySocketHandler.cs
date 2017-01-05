@@ -12,8 +12,7 @@ namespace ChessVariantsTraining.Models.Variant960
     {
         WebSocket ws;
         CancellationToken ct = new CancellationToken(false);
-        int? clientUser;
-        string clientId;
+        GamePlayer client;
         ILobbySocketHandlerRepository handlerRepository;
         ILobbySeekRepository seekRepository;
         IGameRepository gameRepository;
@@ -33,13 +32,12 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public LobbySocketHandler(WebSocket socket, int? _clientUser, string _clientId, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository)
+        public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository)
         {
             ws = socket;
-            clientUser = _clientUser;
+            client = _client;
             handlerRepository = _handlerRepository;
             seekRepository = _seekRepository;
-            clientId = _clientId;
             gameRepository = _gameRepository;
         }
 
@@ -68,7 +66,7 @@ namespace ChessVariantsTraining.Models.Variant960
             {
                 case "create":
                     LobbySeek seek;
-                    bool isValid = LobbySeek.TryParse(message.Data, clientUser, clientId, out seek);
+                    bool isValid = LobbySeek.TryParse(message.Data, client, out seek);
                     if (!isValid)
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid seek\"}");
@@ -78,10 +76,10 @@ namespace ChessVariantsTraining.Models.Variant960
                     await Send("{\"t\":\"ack\",\"d\":\"" + seekId + "\"}");
                     break;
                 case "remove":
-                    await seekRepository.Remove(message.Data, clientUser, clientId);
+                    await seekRepository.Remove(message.Data, client);
                     break;
                 case "bump":
-                    seekRepository.Bump(message.Data, clientUser, clientId);
+                    seekRepository.Bump(message.Data, client);
                     break;
                 case "join":
                     LobbySeek joined = seekRepository.Get(message.Data);
@@ -90,7 +88,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"seek does not exist\"}");
                         return;
                     }
-                    await seekRepository.Remove(joined.ID, joined.Owner, joined.ClientID);
+                    await seekRepository.Remove(joined.ID, client);
                     // TODO: create game and redirect joined user and seek host
                     break;
                 default:

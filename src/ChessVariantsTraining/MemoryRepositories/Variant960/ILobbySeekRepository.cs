@@ -9,8 +9,8 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
 
         Task<string> Add(LobbySeek seek);
 
-        Task Remove(string id, int? user, string clientId);
+        Task Remove(string id, GamePlayer client);
 
-        void Bump(string id, int? user, string clientId);
+        void Bump(string id, GamePlayer client);
     }
 }
