@@ -122,6 +122,10 @@
                 bumpInterval = setInterval(bumper, 3000);
                 document.getElementById("seek-" + data).classList.add("own");
                 break;
+            case "redirect":
+                ws.close();
+                window.location.replace("/Variant960/Game/" + data);
+                break;
         }
     }
 
