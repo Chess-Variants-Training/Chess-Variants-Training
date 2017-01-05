@@ -7,5 +7,6 @@ namespace ChessVariantsTraining.DbRepositories.Variant960
         void Add(Game game);
         Game Get(string id);
         void Update(Game game);
+        string GenerateId();
     }
 }
