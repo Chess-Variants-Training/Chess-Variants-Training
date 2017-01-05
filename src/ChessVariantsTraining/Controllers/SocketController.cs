@@ -3,6 +3,7 @@ using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960;
 using ChessVariantsTraining.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
@@ -26,17 +27,11 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Socket/Lobby")]
-        public async Task LobbySocket([FromQuery] string clientId)
+        public async Task LobbySocket()
         {
             if (!HttpContext.WebSockets.IsWebSocketRequest)
             {
                 HttpContext.Response.StatusCode = 418;
-                return;
-            }
-
-            if (string.IsNullOrWhiteSpace(clientId) || clientId.Length < 6)
-            {
-                HttpContext.Response.StatusCode = 400;
                 return;
             }
 
@@ -49,7 +44,12 @@ namespace ChessVariantsTraining.Controllers
             }
             else
             {
-                client = new AnonymousPlayer() { AnonymousIdentifier = clientId };
+                if (HttpContext.Session.GetString("anonymousIdentifier") == null)
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    return;
+                }
+                client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
             }
             LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider);
             lobbySocketHandlerRepository.Add(handler);

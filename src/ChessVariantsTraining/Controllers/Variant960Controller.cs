@@ -1,12 +1,18 @@
 ﻿using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace ChessVariantsTraining.Controllers
 {
     public class Variant960Controller : CVTController
     {
-        public Variant960Controller(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler) : base(_userRepository, _loginHandler) { }
+        IRandomProvider randomProvider;
+
+        public Variant960Controller(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, IRandomProvider _randomProvider) : base(_userRepository, _loginHandler)
+        {
+            randomProvider = _randomProvider;
+        }
 
         [Route("/Variant960")]
         public IActionResult Lobby()
@@ -18,6 +24,18 @@ namespace ChessVariantsTraining.Controllers
         public IActionResult Game()
         {
             return View();
+        }
+
+        [Route("/Variant960/Lobby/StoreAnonymousIdentifier")]
+        public IActionResult StoreAnonymousIdentifier()
+        {
+            if (loginHandler.LoggedInUserId(HttpContext).HasValue)
+            {
+                return Json(new {});
+            }
+
+            HttpContext.Session.SetString("anonymousIdentifier", randomProvider.RandomString(12));
+            return Json(new {});
         }
     }
 }
