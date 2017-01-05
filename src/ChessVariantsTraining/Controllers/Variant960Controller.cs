@@ -31,11 +31,11 @@ namespace ChessVariantsTraining.Controllers
         {
             if (loginHandler.LoggedInUserId(HttpContext).HasValue)
             {
-                return Json(new {});
+                return Json(new { success = true });
             }
 
             HttpContext.Session.SetString("anonymousIdentifier", randomProvider.RandomString(12));
-            return Json(new {});
+            return Json(new { success = true });
         }
     }
 }
