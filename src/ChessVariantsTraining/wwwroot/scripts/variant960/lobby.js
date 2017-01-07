@@ -79,7 +79,7 @@
             ws.send(JSON.stringify({ "t": "remove", "d": currentLobbySeek }));
             currentLobbySeek = null;
         } else {
-            if (e.target.getAttribute("id").startsWith("seek-")) {
+            if (e.target.getAttribute("id") && e.target.getAttribute("id").startsWith("seek-")) {
                 var seekId = e.target.getAttribute("id").slice(5);
             } else {
                 var seekId = e.target.parentElement.getAttribute("id").slice(5);
