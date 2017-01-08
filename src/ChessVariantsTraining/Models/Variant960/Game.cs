@@ -79,6 +79,7 @@ namespace ChessVariantsTraining.Models.Variant960
             Black = black;
             PositionBlack = nBlack;
             Outcome = Outcomes.ONGOING;
+            Variant = variant;
             switch (variant)
             {
                 case Variants.ANTICHESS960ASYMMETRICAL:
