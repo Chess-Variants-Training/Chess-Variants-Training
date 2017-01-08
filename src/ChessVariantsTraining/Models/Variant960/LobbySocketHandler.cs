@@ -112,7 +112,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         nBlack = randomProvider.RandomPositiveInt(max);
                     }
-                    Game game = new Game(hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.FullVariantName, nWhite, nBlack);
+                    Game game = new Game(gameRepository.GenerateId(), hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.FullVariantName, nWhite, nBlack);
                     gameRepository.Add(game);
                     string redirectJson = "{\"t\":\"redirect\",\"d\":\"" + game.ID + "\"}";
                     await Send(redirectJson);

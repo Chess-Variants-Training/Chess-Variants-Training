@@ -71,8 +71,9 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public Game() { }
 
-        public Game(GamePlayer white, GamePlayer black, string variant, int nWhite, int nBlack)
+        public Game(string id, GamePlayer white, GamePlayer black, string variant, int nWhite, int nBlack)
         {
+            ID = id;
             White = white;
             PositionWhite = nWhite;
             Black = black;
