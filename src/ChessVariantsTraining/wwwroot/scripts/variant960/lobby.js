@@ -124,7 +124,7 @@
                 break;
             case "redirect":
                 ws.close();
-                window.location.replace("/Variant960/Game/" + data);
+                window.location.assign("/Variant960/Game/" + data);
                 break;
         }
     }
