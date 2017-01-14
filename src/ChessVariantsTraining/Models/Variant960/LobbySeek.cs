@@ -9,8 +9,7 @@ namespace ChessVariantsTraining.Models.Variant960
     public class LobbySeek
     {
         public string ID { get; set; }
-        public int SecondsInitial { get; private set; }
-        public int SecondsIncrement { get; private set; }
+        public TimeControl TimeControl { get; set; }
         public string Variant { get; private set; }
         public string FullVariantName
         {
@@ -36,10 +35,9 @@ namespace ChessVariantsTraining.Models.Variant960
         public GamePlayer Owner { get; private set; }
         public DateTime LatestBump { get; set; }
 
-        public LobbySeek(int secondsInitial, int secondsIncrement, string variant, bool symmetrical, GamePlayer owner)
+        public LobbySeek(TimeControl timeControl, string variant, bool symmetrical, GamePlayer owner)
         {
-            SecondsInitial = secondsInitial;
-            SecondsIncrement = secondsIncrement;
+            TimeControl = timeControl;
             Variant = variant;
             Symmetrical = symmetrical;
             Owner = owner;
@@ -94,7 +92,7 @@ namespace ChessVariantsTraining.Models.Variant960
             }
             bool symmetrical = parts[3] == "true";
 
-            seek = new LobbySeek(secondsInitial, secondsIncrement, variant, symmetrical, owner);
+            seek = new LobbySeek(new TimeControl(secondsInitial, secondsIncrement), variant, symmetrical, owner);
             return true;
         }
 
@@ -111,24 +109,7 @@ namespace ChessVariantsTraining.Models.Variant960
             {
                 data.Add("o", "(Anonymous)");
             }
-
-            string minutes;
-            switch (SecondsInitial)
-            {
-                case 30:
-                    minutes = "½";
-                    break;
-                case 45:
-                    minutes = "¾";
-                    break;
-                case 90:
-                    minutes = "1.5";
-                    break;
-                default:
-                    minutes = (SecondsInitial / 60).ToString();
-                    break;
-            }
-            data.Add("c", string.Concat(minutes, "+", SecondsIncrement));
+            data.Add("c", TimeControl.ToString());
             data.Add("i", ID);
             return data;
         }
