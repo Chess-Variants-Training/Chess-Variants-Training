@@ -60,7 +60,7 @@ namespace ChessVariantsTraining.Controllers
                 blackUsername = userRepository.FindById(blackId.Value).Username;
             }
 
-            ViewModels.Game model = new ViewModels.Game(whiteUsername, blackUsername, whiteId, blackId, game.Variant, "NYI");
+            ViewModels.Game model = new ViewModels.Game(whiteUsername, blackUsername, whiteId, blackId, game.Variant, game.TimeControl.ToString());
 
             return View(model);
         }
