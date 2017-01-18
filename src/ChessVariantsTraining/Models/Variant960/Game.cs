@@ -66,12 +66,15 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("positionBlack")]
         public int PositionBlack { get; set; }
 
+        [BsonElement("timeControl")]
+        public TimeControl TimeControl { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
         public Game() { }
 
-        public Game(string id, GamePlayer white, GamePlayer black, string variant, int nWhite, int nBlack)
+        public Game(string id, GamePlayer white, GamePlayer black, string variant, int nWhite, int nBlack, TimeControl tc)
         {
             ID = id;
             White = white;
@@ -79,6 +82,7 @@ namespace ChessVariantsTraining.Models.Variant960
             Black = black;
             PositionBlack = nBlack;
             Outcome = Outcomes.ONGOING;
+            TimeControl = tc;
             Variant = variant;
             switch (variant)
             {
