@@ -28,6 +28,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Variant960/Game/{id}")]
         public IActionResult Game(string id)
         {
+            id = id.ToLowerInvariant();
             Game game = gameRepository.Get(id);
             if (game == null)
             {
