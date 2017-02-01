@@ -1,4 +1,4 @@
-﻿using ChessVariantsTraining.DbRepositories.Variant960;
+﻿using ChessVariantsTraining.MemoryRepositories.Variant960;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace ChessVariantsTraining.Models.Variant960
         WebSocket ws;
         CancellationToken ct = new CancellationToken(false);
         GamePlayer client;
-        IGameRepository gameRepository;
+        IGameRepoForSocketHandlers gameRepository;
         Game subject;
 
         public bool Closed
@@ -39,7 +39,7 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepository _gameRepository, Game _subject)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, Game _subject)
         {
             ws = socket;
             client = _client;
