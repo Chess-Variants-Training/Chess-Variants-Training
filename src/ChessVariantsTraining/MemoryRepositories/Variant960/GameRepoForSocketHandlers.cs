@@ -31,9 +31,12 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             }
         }
 
-        public void RegisterMove(Move move)
+        public void RegisterMove(string id, Move move)
         {
-
+            Game subject = Get(id);
+            subject.ChessGame.ApplyMove(move, true);
+            subject.LatestFEN = subject.ChessGame.GetFen();
+            gameRepository.Update(subject);
         }
     }
 }
