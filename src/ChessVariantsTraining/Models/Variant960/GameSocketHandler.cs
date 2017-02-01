@@ -39,12 +39,12 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, Game _subject)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, string gameId)
         {
             ws = socket;
             client = _client;
             gameRepository = _gameRepository;
-            subject = _subject;
+            subject = gameRepository.Get(gameId);
         }
 
         public async Task LobbyLoop()
