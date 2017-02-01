@@ -27,6 +27,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             else
             {
                 cache[id] = gameRepository.Get(id);
+                cache[id].ChessGame = new ChessGame(cache[id].LatestFEN);
                 return cache[id];
             }
         }
