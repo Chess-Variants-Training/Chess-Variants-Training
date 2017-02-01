@@ -52,6 +52,7 @@ namespace ChessVariantsTraining
 
             // Memory repositories
             services.AddSingleton<IEndgameTrainingSessionRepository, EndgameTrainingSessionRepository>();
+            services.AddSingleton<IGameRepoForSocketHandlers, GameRepoForSocketHandlers>();
             services.AddSingleton<ILobbySeekRepository, LobbySeekRepository>();
             services.AddSingleton<ILobbySocketHandlerRepository, LobbySocketHandlerRepository>();
             services.AddSingleton<IPuzzlesBeingEditedRepository, PuzzlesBeingEditedRepository>();
