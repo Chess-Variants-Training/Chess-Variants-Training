@@ -1,9 +1,11 @@
-﻿using ChessVariantsTraining.MemoryRepositories.Variant960;
+﻿using ChessDotNet;
+using ChessVariantsTraining.MemoryRepositories.Variant960;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -71,12 +73,29 @@ namespace ChessVariantsTraining.Models.Variant960
             switch (message.Type)
             {
                 case "move":
-                    if ((subject.ChessGame.WhoseTurn == ChessDotNet.Player.White && !subject.White.Equals(client)) ||
-                        (subject.ChessGame.WhoseTurn == ChessDotNet.Player.Black && !subject.Black.Equals(client)))
+                    if ((subject.ChessGame.WhoseTurn == Player.White && !subject.White.Equals(client)) ||
+                        (subject.ChessGame.WhoseTurn == Player.Black && !subject.Black.Equals(client)))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
+                    if (!Regex.IsMatch(message.Data, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+                    string[] moveParts = message.Data.Split(' ');
+                    Move move;
+                    if (moveParts.Length == 2)
+                    {
+                        move = new Move(moveParts[0], moveParts[1], subject.ChessGame.WhoseTurn);
+                    }
+                    else
+                    {
+                        move = new Move(moveParts[0], moveParts[1], subject.ChessGame.WhoseTurn, moveParts[2][0]);
+                    }
+                    gameRepository.RegisterMove(subject, move);
+                    // TODO: inform all GameSocketHandlers
                     break;
             }
         }
