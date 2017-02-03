@@ -1,5 +1,6 @@
 ﻿using ChessDotNet;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace ChessVariantsTraining.Models.Variant960
         CancellationToken ct = new CancellationToken(false);
         GamePlayer client;
         IGameRepoForSocketHandlers gameRepository;
+        IGameSocketHandlerRepository handlerRepository;
         Game subject;
 
         public bool Closed
@@ -41,11 +43,12 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, string gameId)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, string gameId)
         {
             ws = socket;
             client = _client;
             gameRepository = _gameRepository;
+            handlerRepository = _handlerRepository;
             subject = gameRepository.Get(gameId);
         }
 
@@ -95,7 +98,17 @@ namespace ChessVariantsTraining.Models.Variant960
                         move = new Move(moveParts[0], moveParts[1], subject.ChessGame.WhoseTurn, moveParts[2][0]);
                     }
                     gameRepository.RegisterMove(subject, move);
-                    // TODO: inform all GameSocketHandlers
+
+                    Dictionary<string, object> messageForClients = new Dictionary<string, object>();
+                    messageForClients["t"] = "move";
+                    messageForClients["d"] = new Dictionary<string, string>()
+                    {
+                        { "fen", subject.ChessGame.GetFen() },
+                        { "move", message.Data }
+                    };
+                    string json = JsonConvert.SerializeObject(messageForClients);
+                    await handlerRepository.SendAll(json);
+
                     break;
             }
         }
