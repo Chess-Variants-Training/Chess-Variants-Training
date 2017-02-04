@@ -1,10 +1,7 @@
 ﻿using ChessDotNet;
 using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
 {
