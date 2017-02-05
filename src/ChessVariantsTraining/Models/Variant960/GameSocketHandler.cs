@@ -41,6 +41,13 @@ namespace ChessVariantsTraining.Models.Variant960
                 return client;
             }
         }
+        public bool GameExists
+        {
+            get
+            {
+                return subject != null;
+            }
+        }
 
         public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, string gameId)
         {
