@@ -42,7 +42,13 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
-        public Game(string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl)
+        public string FEN
+        {
+            get;
+            private set;
+        }
+
+        public Game(string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl, string fen)
         {
             WhiteUsername = whiteUsername;
             BlackUsername = blackUsername;
@@ -50,6 +56,7 @@ namespace ChessVariantsTraining.ViewModels
             BlackId = blackId;
             Variant = variant;
             TimeControl = timeControl;
+            FEN = fen;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
