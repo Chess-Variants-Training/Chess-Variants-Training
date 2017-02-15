@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Http;
 using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.HttpErrors;
 using ChessVariantsTraining.Models.Variant960;
+using ChessDotNet;
+using Newtonsoft.Json;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -12,11 +14,15 @@ namespace ChessVariantsTraining.Controllers
     {
         IRandomProvider randomProvider;
         IGameRepository gameRepository;
+        IMoveCollectionTransformer moveCollectionTransformer;
+        IGameConstructor gameConstructor;
 
-        public Variant960Controller(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, IRandomProvider _randomProvider, IGameRepository _gameRepository) : base(_userRepository, _loginHandler)
+        public Variant960Controller(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, IRandomProvider _randomProvider, IGameRepository _gameRepository, IMoveCollectionTransformer _moveCollectionTransformer, IGameConstructor _gameConstructor) : base(_userRepository, _loginHandler)
         {
             randomProvider = _randomProvider;
             gameRepository = _gameRepository;
+            moveCollectionTransformer = _moveCollectionTransformer;
+            gameConstructor = _gameConstructor;
         }
 
         [Route("/Variant960")]
@@ -39,29 +45,81 @@ namespace ChessVariantsTraining.Controllers
             int? whiteId;
             string blackUsername;
             int? blackId;
+            Player requester = Player.None;
             if (game.White is AnonymousPlayer)
             {
                 whiteUsername = null;
                 whiteId = null;
+
+                string anonIdentifier = HttpContext.Session.GetString("anonymousIdentifier");
+                if (anonIdentifier == (game.White as AnonymousPlayer).AnonymousIdentifier)
+                {
+                    requester = Player.White;
+                }
             }
             else
             {
                 whiteId = (game.White as RegisteredPlayer).UserId;
                 whiteUsername = userRepository.FindById(whiteId.Value).Username;
+
+                int? loggedOnUserId = loginHandler.LoggedInUserId(HttpContext);
+                if (loggedOnUserId.HasValue && loggedOnUserId.Value == whiteId)
+                {
+                    requester = Player.White;
+                }
             }
 
             if (game.Black is AnonymousPlayer)
             {
                 blackUsername = null;
                 blackId = null;
+
+                string anonIdentifier = HttpContext.Session.GetString("anonymousIdentifier");
+                if (anonIdentifier == (game.Black as AnonymousPlayer).AnonymousIdentifier)
+                {
+                    requester = Player.Black;
+                }
             }
             else
             {
                 blackId = (game.Black as RegisteredPlayer).UserId;
                 blackUsername = userRepository.FindById(blackId.Value).Username;
+
+                int? loggedOnUserId = loginHandler.LoggedInUserId(HttpContext);
+                if (loggedOnUserId.HasValue && loggedOnUserId.Value == blackId)
+                {
+                    requester = Player.Black;
+                }
             }
 
-            ViewModels.Game model = new ViewModels.Game(whiteUsername, blackUsername, whiteId, blackId, game.Variant, game.TimeControl.ToString(), game.LatestFEN);
+            bool finished = game.Outcome != Models.Variant960.Game.Outcomes.ONGOING;
+            string destsJson;
+            if (finished || requester == Player.None)
+            {
+                destsJson = "{}";
+            }
+            else
+            {
+                ChessGame g = gameConstructor.Construct(game.ShortVariantName, game.LatestFEN);
+                if (g.WhoseTurn != requester)
+                {
+                    destsJson = "{}";
+                }
+                destsJson = JsonConvert.SerializeObject(moveCollectionTransformer.GetChessgroundDestsForMoveCollection(g.GetValidMoves(g.WhoseTurn)));
+            }
+
+            ViewModels.Game model = new ViewModels.Game(whiteUsername,
+                blackUsername,
+                whiteId,
+                blackId,
+                game.FullVariantName,
+                game.TimeControl.ToString(),
+                game.LatestFEN,
+                requester != Player.None,
+                requester == Player.None ? null : requester.ToString().ToLowerInvariant(),
+                game.LatestFEN.Split(' ')[1] == "w" ? "white" : "black",
+                game.Outcome != Models.Variant960.Game.Outcomes.ONGOING,
+                destsJson);
 
             return View(model);
         }

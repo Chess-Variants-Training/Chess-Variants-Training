@@ -48,8 +48,11 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("outcome")]
         public string Outcome { get; set; }
 
-        [BsonElement("variant")]
-        public string Variant { get; set; }
+        [BsonElement("shortVariantName")]
+        public string ShortVariantName { get; set; }
+
+        [BsonElement("fullVariantName")]
+        public string FullVariantName { get; set; }
 
         [BsonElement("pgn")]
         public string PGN { get; set; }
@@ -74,7 +77,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public Game() { }
 
-        public Game(string id, GamePlayer white, GamePlayer black, string variant, int nWhite, int nBlack, TimeControl tc)
+        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, TimeControl tc)
         {
             ID = id;
             White = white;
@@ -83,8 +86,9 @@ namespace ChessVariantsTraining.Models.Variant960
             PositionBlack = nBlack;
             Outcome = Outcomes.ONGOING;
             TimeControl = tc;
-            Variant = variant;
-            switch (variant)
+            ShortVariantName = shortVariant;
+            FullVariantName = fullVariant;
+            switch (fullVariant)
             {
                 case Variants.ANTICHESS960ASYMMETRICAL:
                     ChessGame = new AntichessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
@@ -120,7 +124,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     ChessGame = new ThreeCheckChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
                     break;
                 default:
-                    throw new InvalidOperationException("Game constructor: invalid variant '" + variant + "'");
+                    throw new InvalidOperationException("Game constructor: invalid variant '" + fullVariant + "'");
             }
             InitialFEN = LatestFEN = ChessGame.GetFen();
         }

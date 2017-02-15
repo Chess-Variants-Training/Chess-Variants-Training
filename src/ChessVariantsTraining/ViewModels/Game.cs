@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Html;
+﻿using ChessDotNet;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
@@ -48,7 +49,37 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
-        public Game(string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl, string fen)
+        public bool IsPlayer
+        {
+            get;
+            private set;
+        }
+
+        public string MyColor
+        {
+            get;
+            private set;
+        }
+
+        public string WhoseTurn
+        {
+            get;
+            private set;
+        }
+
+        public bool IsFinished
+        {
+            get;
+            private set;
+        }
+
+        public string DestsJSON
+        {
+            get;
+            private set;
+        }
+
+        public Game(string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson)
         {
             WhiteUsername = whiteUsername;
             BlackUsername = blackUsername;
@@ -57,6 +88,11 @@ namespace ChessVariantsTraining.ViewModels
             Variant = variant;
             TimeControl = timeControl;
             FEN = fen;
+            IsPlayer = isPlayer;
+            MyColor = myColor;
+            WhoseTurn = whoseTurn;
+            IsFinished = isFinished;
+            DestsJSON = destsJson;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
