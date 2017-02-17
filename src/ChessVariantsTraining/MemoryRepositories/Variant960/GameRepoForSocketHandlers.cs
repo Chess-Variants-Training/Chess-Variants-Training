@@ -1,6 +1,7 @@
 ﻿using ChessDotNet;
 using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960;
+using ChessVariantsTraining.Services;
 using System.Collections.Generic;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
@@ -9,10 +10,12 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
     {
         Dictionary<string, Game> cache = new Dictionary<string, Game>();
         IGameRepository gameRepository;
+        IGameConstructor gameConstructor;
 
-        public GameRepoForSocketHandlers(IGameRepository _gameRepository)
+        public GameRepoForSocketHandlers(IGameRepository _gameRepository, IGameConstructor _gameConstructor)
         {
             gameRepository = _gameRepository;
+            gameConstructor = _gameConstructor;
         }
 
         public Game Get(string id)
@@ -23,8 +26,9 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             }
             else
             {
-                cache[id] = gameRepository.Get(id);
-                cache[id].ChessGame = new ChessGame(cache[id].LatestFEN);
+                Game g = gameRepository.Get(id);
+                g.ChessGame = gameConstructor.Construct(g.ShortVariantName, g.LatestFEN);
+                cache[id] = g;
                 return cache[id];
             }
         }
