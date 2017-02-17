@@ -7,6 +7,12 @@ namespace ChessVariantsTraining.ViewModels
 {
     public class Game
     {
+        public string GameID
+        {
+            get;
+            private set;
+        }
+
         public string WhiteUsername
         {
             get;
@@ -79,8 +85,9 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
-        public Game(string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson)
+        public Game(string gameId, string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson)
         {
+            GameID = gameId;
             WhiteUsername = whiteUsername;
             BlackUsername = blackUsername;
             WhiteId = whiteId;

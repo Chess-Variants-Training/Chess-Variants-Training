@@ -108,7 +108,8 @@ namespace ChessVariantsTraining.Controllers
                 destsJson = JsonConvert.SerializeObject(moveCollectionTransformer.GetChessgroundDestsForMoveCollection(g.GetValidMoves(g.WhoseTurn)));
             }
 
-            ViewModels.Game model = new ViewModels.Game(whiteUsername,
+            ViewModels.Game model = new ViewModels.Game(game.ID,
+                whiteUsername,
                 blackUsername,
                 whiteId,
                 blackId,
