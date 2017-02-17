@@ -110,11 +110,8 @@ namespace ChessVariantsTraining.Models.Variant960
 
                     Dictionary<string, object> messageForClients = new Dictionary<string, object>();
                     messageForClients["t"] = "moved";
-                    messageForClients["d"] = new Dictionary<string, object>()
-                    {
-                        { "fen", subject.ChessGame.GetFen() },
-                        { "dests", moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn)) }
-                    };
+                    messageForClients["fen"] = subject.ChessGame.GetFen();
+                    messageForClients["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn));
                     string json = JsonConvert.SerializeObject(messageForClients);
                     await handlerRepository.SendAll(json);
 
