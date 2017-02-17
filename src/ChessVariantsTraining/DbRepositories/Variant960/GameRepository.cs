@@ -47,7 +47,7 @@ namespace ChessVariantsTraining.DbRepositories.Variant960
             string generated;
             do
             {
-                generated = randomProvider.RandomString(8);
+                generated = randomProvider.RandomString(8).ToLowerInvariant();
                 okay = Get(generated) == null;
             } while (!okay);
             return generated;
