@@ -43,6 +43,6 @@
     }
 
     function pieceMoved(orig, dest, metadata) {
-        ws.send(JSON.stringify({ "t": "move", "d": orig + dest }));
+        ws.send(JSON.stringify({ "t": "move", "d": orig + '-' + dest }));
     }
 }

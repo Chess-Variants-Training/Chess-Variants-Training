@@ -18,8 +18,9 @@ namespace ChessVariantsTraining.Controllers
         IRandomProvider randomProvider;
         IGameSocketHandlerRepository gameSocketHandlerRepository;
         IGameRepoForSocketHandlers gameRepoForSocketHandlers;
+        IMoveCollectionTransformer moveCollectionTransformer;
 
-        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IGameSocketHandlerRepository _gameSocketHandlerRepository, IGameRepoForSocketHandlers _gameRepoForSocketHandlers)
+        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IGameSocketHandlerRepository _gameSocketHandlerRepository, IGameRepoForSocketHandlers _gameRepoForSocketHandlers, IMoveCollectionTransformer _moveCollectionTransformer)
             : base(_userRepository, _loginHandler)
         {
             lobbySocketHandlerRepository = _lobbySocketHandlerRepository;
@@ -28,6 +29,7 @@ namespace ChessVariantsTraining.Controllers
             randomProvider = _randomProvider;
             gameSocketHandlerRepository = _gameSocketHandlerRepository;
             gameRepoForSocketHandlers = _gameRepoForSocketHandlers;
+            moveCollectionTransformer = _moveCollectionTransformer;
         }
 
         [Route("/Socket/Lobby")]
@@ -85,7 +87,7 @@ namespace ChessVariantsTraining.Controllers
                 }
                 client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
             }
-            GameSocketHandler handler = new GameSocketHandler(ws, client, gameRepoForSocketHandlers, gameSocketHandlerRepository, id);
+            GameSocketHandler handler = new GameSocketHandler(ws, client, gameRepoForSocketHandlers, gameSocketHandlerRepository, moveCollectionTransformer, id);
             if (!handler.GameExists)
             {
                 HttpContext.Response.StatusCode = 400;

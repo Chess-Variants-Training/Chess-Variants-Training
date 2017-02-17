@@ -1,5 +1,6 @@
 ﻿using ChessDotNet;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
+using ChessVariantsTraining.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -18,6 +19,7 @@ namespace ChessVariantsTraining.Models.Variant960
         GamePlayer client;
         IGameRepoForSocketHandlers gameRepository;
         IGameSocketHandlerRepository handlerRepository;
+        IMoveCollectionTransformer moveCollectionTransformer;
         Game subject;
 
         public bool Closed
@@ -49,12 +51,13 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, string gameId)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, string gameId)
         {
             ws = socket;
             client = _client;
             gameRepository = _gameRepository;
             handlerRepository = _handlerRepository;
+            moveCollectionTransformer = _moveCollectionTransformer;
             subject = gameRepository.Get(gameId);
         }
 
@@ -93,7 +96,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
-                    string[] moveParts = message.Data.Split(' ');
+                    string[] moveParts = message.Data.Split('-');
                     Move move;
                     if (moveParts.Length == 2)
                     {
@@ -106,11 +109,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     gameRepository.RegisterMove(subject, move);
 
                     Dictionary<string, object> messageForClients = new Dictionary<string, object>();
-                    messageForClients["t"] = "move";
-                    messageForClients["d"] = new Dictionary<string, string>()
+                    messageForClients["t"] = "moved";
+                    messageForClients["d"] = new Dictionary<string, object>()
                     {
                         { "fen", subject.ChessGame.GetFen() },
-                        { "move", message.Data }
+                        { "dests", moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn)) }
                     };
                     string json = JsonConvert.SerializeObject(messageForClients);
                     await handlerRepository.SendAll(json);
