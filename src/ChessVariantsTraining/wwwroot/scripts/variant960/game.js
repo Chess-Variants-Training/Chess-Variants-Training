@@ -18,6 +18,9 @@
             },
             drawable: {
                 enabled: true
+            },
+            events: {
+                move: pieceMoved
             }
         });
 
@@ -27,5 +30,9 @@
 
     function wsMessageReceived(e) {
         var message = JSON.parse(e.data);
+    }
+
+    function pieceMoved(orig, dest, metadata) {
+        ws.send(JSON.stringify({ "t": "move", "d": orig + dest }));
     }
 }
