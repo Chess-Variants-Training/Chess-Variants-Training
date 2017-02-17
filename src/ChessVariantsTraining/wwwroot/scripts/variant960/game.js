@@ -30,6 +30,16 @@
 
     function wsMessageReceived(e) {
         var message = JSON.parse(e.data);
+        switch (message.t) {
+            case "moved":
+                ground.set({
+                    fen: message.fen,
+                    movable: {
+                        dests: message.dests
+                    }
+                });
+                break;
+        }
     }
 
     function pieceMoved(orig, dest, metadata) {
