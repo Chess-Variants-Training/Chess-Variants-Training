@@ -107,7 +107,14 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         move = new Move(moveParts[0], moveParts[1], subject.ChessGame.WhoseTurn, moveParts[2][0]);
                     }
-                    gameRepository.RegisterMove(subject, move);
+                    if (subject.ChessGame.IsValidMove(move))
+                    {
+                        gameRepository.RegisterMove(subject, move);
+                    }
+                    else if (message.Type == "move")
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
+                    } // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
 
                     Dictionary<string, object> messageForPlayerWhoseTurnItIs = new Dictionary<string, object>();
                     Dictionary<string, object> messageForOthers = new Dictionary<string, object>();
