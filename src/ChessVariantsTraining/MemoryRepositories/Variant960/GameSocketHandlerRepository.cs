@@ -14,14 +14,6 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             handlers.Add(handler);
         }
 
-        public async Task SendAll(string message)
-        {
-            foreach (GameSocketHandler handler in handlers)
-            {
-                await handler.Send(message);
-            }
-        }
-
         public async Task SendAll(string messageA, string messageB, Func<GamePlayer, bool> chooseA)
         {
             foreach (GameSocketHandler handler in handlers)
