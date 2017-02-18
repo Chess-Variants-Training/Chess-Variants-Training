@@ -114,6 +114,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     messageForPlayerWhoseTurnItIs["fen"] = messageForOthers["fen"] = subject.ChessGame.GetFen();
                     messageForPlayerWhoseTurnItIs["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn));
                     messageForPlayerWhoseTurnItIs["lastMove"] = messageForOthers["lastMove"] = new string[] { moveParts[0], moveParts[1] };
+                    messageForPlayerWhoseTurnItIs["turnColor"] = messageForOthers["turnColor"] = subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();
                     messageForOthers["dests"] = new Dictionary<object, object>();
                     string jsonPlayers = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
                     string jsonSpectators = JsonConvert.SerializeObject(messageForOthers);

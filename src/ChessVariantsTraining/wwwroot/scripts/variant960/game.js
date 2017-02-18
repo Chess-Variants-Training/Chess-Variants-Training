@@ -14,7 +14,8 @@
                 free: false,
                 dropOff: "revert",
                 showDests: false,
-                dests: dests
+                dests: dests,
+                color: myColor,
             },
             drawable: {
                 enabled: true
@@ -35,6 +36,7 @@
                 ground.set({
                     fen: message.fen,
                     lastMove: message.lastMove,
+                    turnColor: message.turnColor,
                     movable: {
                         dests: message.dests
                     }
