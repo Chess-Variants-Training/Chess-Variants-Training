@@ -1,4 +1,5 @@
 ﻿using ChessVariantsTraining.Models.Variant960;
+using System;
 using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
@@ -7,6 +8,6 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
     {
         void Add(GameSocketHandler handler);
 
-        Task SendAll(string message);
+        Task SendAll(string messageA, string messageB, Func<GamePlayer, bool> chooseA);
     }
 }

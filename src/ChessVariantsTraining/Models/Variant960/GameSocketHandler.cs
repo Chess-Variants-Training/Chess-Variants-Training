@@ -108,12 +108,15 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     gameRepository.RegisterMove(subject, move);
 
-                    Dictionary<string, object> messageForClients = new Dictionary<string, object>();
-                    messageForClients["t"] = "moved";
-                    messageForClients["fen"] = subject.ChessGame.GetFen();
-                    messageForClients["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn));
-                    string json = JsonConvert.SerializeObject(messageForClients);
-                    await handlerRepository.SendAll(json);
+                    Dictionary<string, object> messageForPlayerWhoseTurnItIs = new Dictionary<string, object>();
+                    Dictionary<string, object> messageForOthers = new Dictionary<string, object>();
+                    messageForPlayerWhoseTurnItIs["t"] = messageForOthers["t"] = "moved";
+                    messageForPlayerWhoseTurnItIs["fen"] = messageForOthers["fen"] = subject.ChessGame.GetFen();
+                    messageForPlayerWhoseTurnItIs["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn));
+                    messageForOthers["dests"] = new Dictionary<object, object>();
+                    string jsonPlayers = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
+                    string jsonSpectators = JsonConvert.SerializeObject(messageForOthers);
+                    await handlerRepository.SendAll(jsonPlayers, jsonSpectators, p => (subject.White.Equals(p) && subject.ChessGame.WhoseTurn == Player.White) || (subject.Black.Equals(p) && subject.ChessGame.WhoseTurn == Player.Black));
 
                     break;
             }
