@@ -129,7 +129,10 @@ namespace ChessVariantsTraining.Models.Variant960
             byte[] buffer = Encoding.UTF8.GetBytes(text);
             int length = buffer.Length;
             ArraySegment<byte> segment = new ArraySegment<byte>(buffer);
-            await ws.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+            if (ws.State == WebSocketState.Open)
+            {
+                await ws.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+            }
         }
 
         public void Dispose()
