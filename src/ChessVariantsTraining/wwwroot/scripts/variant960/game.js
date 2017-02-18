@@ -34,6 +34,7 @@
             case "moved":
                 ground.set({
                     fen: message.fen,
+                    lastMove: message.lastMove,
                     movable: {
                         dests: message.dests
                     }
