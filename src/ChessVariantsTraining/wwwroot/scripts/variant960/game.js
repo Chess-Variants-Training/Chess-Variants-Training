@@ -2,6 +2,7 @@
     if (myColor === "") myColor = null;
     var ground;
     var ws;
+    var premove = null;
 
     window.addEventListener("load", function () {
         ground = Chessground(document.getElementById("chessground"), {
@@ -22,6 +23,14 @@
             },
             events: {
                 move: pieceMoved
+            },
+            premovable: {
+                enabled: true,
+                showDests: false,
+                events: {
+                    set: premoveSet,
+                    unset: premoveUnset
+                }
             }
         });
 
@@ -41,11 +50,28 @@
                         dests: message.dests
                     }
                 });
+                if (isPlayer && myColor == message.turnColor && premove) {
+                    ws.send(JSON.stringify({ "t": "premove", "d": premove.origin + '-' + premove.destination }));
+                    premoveUnset();
+                    ground.set({
+                        premovable: {
+                            current: null
+                        }
+                    });
+                }
                 break;
         }
     }
 
     function pieceMoved(orig, dest, metadata) {
         ws.send(JSON.stringify({ "t": "move", "d": orig + '-' + dest }));
+    }
+
+    function premoveSet(orig, dest) {
+        premove = { origin: orig, destination: dest };
+    }
+
+    function premoveUnset() {
+        premove = null;
     }
 }

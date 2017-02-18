@@ -85,6 +85,7 @@ namespace ChessVariantsTraining.Models.Variant960
             switch (message.Type)
             {
                 case "move":
+                case "premove":
                     if ((subject.ChessGame.WhoseTurn == Player.White && !subject.White.Equals(client)) ||
                         (subject.ChessGame.WhoseTurn == Player.Black && !subject.Black.Equals(client)))
                     {
