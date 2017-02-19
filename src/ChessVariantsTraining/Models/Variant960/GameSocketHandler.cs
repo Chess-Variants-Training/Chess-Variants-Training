@@ -116,6 +116,23 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
                     } // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
 
+                    string outcome = null;
+                    if (subject.ChessGame.IsWinner(Player.White))
+                    {
+                        outcome = "1-0, white wins";
+                        gameRepository.RegisterGameOutcome(subject, Game.Outcomes.WHITE_WINS);
+                    }
+                    else if (subject.ChessGame.IsWinner(Player.Black))
+                    {
+                        outcome = "0-1, black wins";
+                        gameRepository.RegisterGameOutcome(subject, Game.Outcomes.BLACK_WINS);
+                    }
+                    else if (subject.ChessGame.IsDraw())
+                    {
+                        outcome = "½-½, draw";
+                        gameRepository.RegisterGameOutcome(subject, Game.Outcomes.DRAW);
+                    }
+
                     Dictionary<string, object> messageForPlayerWhoseTurnItIs = new Dictionary<string, object>();
                     Dictionary<string, object> messageForOthers = new Dictionary<string, object>();
                     messageForPlayerWhoseTurnItIs["t"] = messageForOthers["t"] = "moved";
@@ -123,6 +140,10 @@ namespace ChessVariantsTraining.Models.Variant960
                     messageForPlayerWhoseTurnItIs["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn));
                     messageForPlayerWhoseTurnItIs["lastMove"] = messageForOthers["lastMove"] = new string[] { moveParts[0], moveParts[1] };
                     messageForPlayerWhoseTurnItIs["turnColor"] = messageForOthers["turnColor"] = subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();
+                    if (outcome != null)
+                    {
+                        messageForPlayerWhoseTurnItIs["outcome"] = messageForOthers["outcome"] = outcome;
+                    }
                     messageForOthers["dests"] = new Dictionary<object, object>();
                     string jsonPlayers = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
                     string jsonSpectators = JsonConvert.SerializeObject(messageForOthers);

@@ -50,7 +50,10 @@
                         dests: message.dests
                     }
                 });
-                if (isPlayer && myColor == message.turnColor && premove) {
+                if (message.outcome) {
+                    document.getElementById("game-result").textContent = message.outcome;
+                }
+                if (isPlayer && myColor == message.turnColor && premove && !message.outcome) {
                     ws.send(JSON.stringify({ "t": "premove", "d": premove.origin + '-' + premove.destination }));
                     premoveUnset();
                     ground.set({

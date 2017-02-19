@@ -39,5 +39,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             subject.LatestFEN = subject.ChessGame.GetFen();
             gameRepository.Update(subject);
         }
+
+        public void RegisterGameOutcome(Game subject, string outcome)
+        {
+            subject.Outcome = outcome;
+            gameRepository.Update(subject);
+        }
     }
 }

@@ -8,5 +8,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         Game Get(string id);
 
         void RegisterMove(Game subject, Move move);
+
+        void RegisterGameOutcome(Game subject, string outcome);
     }
 }
