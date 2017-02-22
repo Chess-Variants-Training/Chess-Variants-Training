@@ -13,6 +13,11 @@
     position: relative;
 }
 
+#left-of-ground {
+    margin-right: 20px;
+    flex: 1;
+}
+
 #next-to-ground {
     margin-left: 20px;
     flex: 1;
