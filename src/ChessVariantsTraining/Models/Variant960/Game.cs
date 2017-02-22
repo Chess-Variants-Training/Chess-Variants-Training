@@ -7,6 +7,7 @@ using ChessDotNet.Variants.RacingKings;
 using ChessDotNet.Variants.ThreeCheck;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
+using System.Collections.Generic;
 
 namespace ChessVariantsTraining.Models.Variant960
 {
@@ -72,6 +73,9 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("timeControl")]
         public TimeControl TimeControl { get; set; }
 
+        [BsonElement("chats")]
+        public List<ChatMessage> Chats { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
@@ -127,6 +131,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     throw new InvalidOperationException("Game constructor: invalid variant '" + fullVariant + "'");
             }
             InitialFEN = LatestFEN = ChessGame.GetFen();
+            Chats = new List<ChatMessage>();
         }
     }
 }
