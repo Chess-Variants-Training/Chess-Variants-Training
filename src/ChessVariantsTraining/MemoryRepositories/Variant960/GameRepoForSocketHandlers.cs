@@ -45,5 +45,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             subject.Outcome = outcome;
             gameRepository.Update(subject);
         }
+
+        public void RegisterChatMessage(Game subject, ChatMessage msg)
+        {
+            subject.Chats.Add(msg);
+            gameRepository.Update(subject);
+        }
     }
 }
