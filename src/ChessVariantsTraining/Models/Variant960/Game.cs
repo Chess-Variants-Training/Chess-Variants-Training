@@ -73,8 +73,11 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("timeControl")]
         public TimeControl TimeControl { get; set; }
 
-        [BsonElement("chats")]
-        public List<ChatMessage> Chats { get; set; }
+        [BsonElement("playerChats")]
+        public List<ChatMessage> PlayerChats { get; set; }
+
+        [BsonElement("spectatorChats")]
+        public List<ChatMessage> SpectatorChats { get; set; }
 
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
@@ -131,7 +134,8 @@ namespace ChessVariantsTraining.Models.Variant960
                     throw new InvalidOperationException("Game constructor: invalid variant '" + fullVariant + "'");
             }
             InitialFEN = LatestFEN = ChessGame.GetFen();
-            Chats = new List<ChatMessage>();
+            PlayerChats = new List<ChatMessage>();
+            SpectatorChats = new List<ChatMessage>();
         }
     }
 }
