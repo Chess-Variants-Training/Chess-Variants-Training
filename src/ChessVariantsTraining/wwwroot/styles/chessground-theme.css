@@ -13,11 +13,6 @@
     position: relative;
 }
 
-#chat-box {
-    margin-right: 20px;
-    flex: 1;
-}
-
 #next-to-ground {
     margin-left: 20px;
     flex: 1;
