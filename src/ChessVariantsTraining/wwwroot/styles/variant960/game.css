@@ -1,4 +1,6 @@
 ﻿#chat-box {
-    margin-right: 20px;
+    margin-right: 15px;
     flex: 1;
+    border: 1px solid #333;
+    padding: 5px;
 }
