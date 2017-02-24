@@ -3,6 +3,8 @@
     var ground;
     var ws;
     var premove = null;
+    var currentChatChannel = isPlayer ? "player" : "spectator";
+    var chats = { player: [], spectator: [] };
 
     window.addEventListener("load", function () {
         ground = Chessground(document.getElementById("chessground"), {
@@ -63,6 +65,13 @@
                     });
                 }
                 break;
+            case "chat":
+                chats[message.channel].push(message.msg);
+                if (message.channel === currentChatChannel) {
+                    var msgDiv = document.createElement("div");
+                    msgDiv.textContent = message.msg;
+                    document.getElementById("chat-content").appendChild(msgDiv);
+                }
         }
     }
 
