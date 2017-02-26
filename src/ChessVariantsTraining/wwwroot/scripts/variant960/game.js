@@ -95,6 +95,6 @@
 
         var messageToSend = document.getElementById("chat-input").value;
         document.getElementById("chat-input").value = "";
-        ws.send(JSON.stringify({ "t": "chat", "d": messageToSend }));
+        ws.send(JSON.stringify({ "t": "chat", "d": messageToSend, "channel": currentChatChannel }));
     }
 }
