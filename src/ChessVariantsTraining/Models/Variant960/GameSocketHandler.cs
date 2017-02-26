@@ -88,6 +88,11 @@ namespace ChessVariantsTraining.Models.Variant960
                 case "move":
                 case "premove":
                     MoveSocketMessage message = new MoveSocketMessage(preprocessed);
+                    if (!message.Okay)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
+                        return;
+                    }
                     if ((subject.ChessGame.WhoseTurn == Player.White && !subject.White.Equals(client)) ||
                         (subject.ChessGame.WhoseTurn == Player.Black && !subject.Black.Equals(client)))
                     {
