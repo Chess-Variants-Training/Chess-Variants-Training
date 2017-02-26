@@ -82,7 +82,7 @@
                 }
                 break;
             case "error":
-                alert(message.d);
+                displayError(message.d);
                 break;
         }
     }
