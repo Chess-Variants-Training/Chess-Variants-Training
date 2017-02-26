@@ -1,5 +1,6 @@
 ﻿using ChessDotNet;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
+using ChessVariantsTraining.Models.Variant960.SocketMessages;
 using ChessVariantsTraining.Services;
 using Newtonsoft.Json;
 using System;
@@ -76,28 +77,29 @@ namespace ChessVariantsTraining.Models.Variant960
 
         async Task HandleReceived(string text)
         {
-            SocketMessage message = new SocketMessage(text);
-            if (!message.Okay)
+            GameSocketMessage preprocessed = new GameSocketMessage(text);
+            if (!preprocessed.Okay)
             {
                 await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                 return;
             }
-            switch (message.Type)
+            switch (preprocessed.Type)
             {
                 case "move":
                 case "premove":
+                    MoveSocketMessage message = new MoveSocketMessage(preprocessed);
                     if ((subject.ChessGame.WhoseTurn == Player.White && !subject.White.Equals(client)) ||
                         (subject.ChessGame.WhoseTurn == Player.Black && !subject.Black.Equals(client)))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
-                    if (!Regex.IsMatch(message.Data, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
+                    if (!Regex.IsMatch(message.Move, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
-                    string[] moveParts = message.Data.Split('-');
+                    string[] moveParts = message.Move.Split('-');
                     Move move;
                     if (moveParts.Length == 2)
                     {
