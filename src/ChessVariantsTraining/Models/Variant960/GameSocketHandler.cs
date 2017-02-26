@@ -96,7 +96,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     if (!Regex.IsMatch(message.Move, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
                     {
-                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        await Send("{\"t\":\"error\",\"d\":\"invalid message format\"}");
                         return;
                     }
                     string[] moveParts = message.Move.Split('-');
