@@ -38,8 +38,14 @@
 
         document.getElementById("chat-input").addEventListener("keydown", chatKeyDown);
 
-        ws = new WebSocket(wsUrl);
-        ws.addEventListener("message", wsMessageReceived);
+        jsonXhr("/Variant960/Game/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
+            ws = new WebSocket(wsUrl);
+            ws.addEventListener("message", wsMessageReceived);
+        },
+        function (req, err) {
+            displayError(err);
+        });
+
     });
 
     function wsMessageReceived(e) {

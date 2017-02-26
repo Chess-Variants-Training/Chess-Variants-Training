@@ -126,10 +126,11 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Variant960/Lobby/StoreAnonymousIdentifier")]
+        [Route("/Variant960/Game/StoreAnonymousIdentifier")]
         [HttpPost]
         public IActionResult StoreAnonymousIdentifier()
         {
-            if (loginHandler.LoggedInUserId(HttpContext).HasValue)
+            if (loginHandler.LoggedInUserId(HttpContext).HasValue || HttpContext.Session.GetString("anonymousIdentifier") != null)
             {
                 return Json(new { success = true });
             }
