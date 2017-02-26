@@ -8,13 +8,12 @@ namespace ChessVariantsTraining.Models.Variant960.SocketMessages
     {
         public bool Okay { get; protected set; }
         public string Type { get; protected set; }
-        protected Dictionary<string, object> DeserializedDictionary { get; set; }
+        public Dictionary<string, object> DeserializedDictionary { get; protected set; }
 
         protected GameSocketMessage() { }
 
         public GameSocketMessage(string json)
         {
-            Dictionary<string, object> deserialized = null;
             try
             {
                 DeserializedDictionary = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
@@ -27,7 +26,7 @@ namespace ChessVariantsTraining.Models.Variant960.SocketMessages
 
             if (Okay)
             {
-                if (deserialized.ContainsKey("t"))
+                if (DeserializedDictionary.ContainsKey("t"))
                 {
                     Type = DeserializedDictionary["t"] as string;
                     if (Type == null)

@@ -11,6 +11,7 @@
             if (!Okay) return;
 
             Type = gms.Type;
+            DeserializedDictionary = gms.DeserializedDictionary;
             if (DeserializedDictionary.ContainsKey("d"))
             {
                 Content = DeserializedDictionary["d"] as string;
@@ -37,7 +38,7 @@
                 return;
             }
 
-            if (Channel != "player" || Channel != "spectator")
+            if (Channel != "player" && Channel != "spectator")
             {
                 Okay = false;
                 return;

@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960.SocketMessages;
 using ChessVariantsTraining.Services;
@@ -21,6 +22,7 @@ namespace ChessVariantsTraining.Models.Variant960
         IGameRepoForSocketHandlers gameRepository;
         IGameSocketHandlerRepository handlerRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
+        IUserRepository userRepository;
         Game subject;
 
         public bool Closed
@@ -52,13 +54,14 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, string gameId)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, string gameId)
         {
             ws = socket;
             client = _client;
             gameRepository = _gameRepository;
             handlerRepository = _handlerRepository;
             moveCollectionTransformer = _moveCollectionTransformer;
+            userRepository = _userRepository;
             subject = gameRepository.Get(gameId);
         }
 
@@ -87,8 +90,8 @@ namespace ChessVariantsTraining.Models.Variant960
             {
                 case "move":
                 case "premove":
-                    MoveSocketMessage message = new MoveSocketMessage(preprocessed);
-                    if (!message.Okay)
+                    MoveSocketMessage moveMessage = new MoveSocketMessage(preprocessed);
+                    if (!moveMessage.Okay)
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                         return;
@@ -99,12 +102,12 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
-                    if (!Regex.IsMatch(message.Move, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
+                    if (!Regex.IsMatch(moveMessage.Move, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid message format\"}");
                         return;
                     }
-                    string[] moveParts = message.Move.Split('-');
+                    string[] moveParts = moveMessage.Move.Split('-');
                     Move move;
                     if (moveParts.Length == 2)
                     {
@@ -118,7 +121,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         gameRepository.RegisterMove(subject, move);
                     }
-                    else if (message.Type == "move")
+                    else if (moveMessage.Type == "move")
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
                     } // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
@@ -152,10 +155,62 @@ namespace ChessVariantsTraining.Models.Variant960
                         messageForPlayerWhoseTurnItIs["outcome"] = messageForOthers["outcome"] = outcome;
                     }
                     messageForOthers["dests"] = new Dictionary<object, object>();
-                    string jsonPlayers = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
-                    string jsonSpectators = JsonConvert.SerializeObject(messageForOthers);
-                    await handlerRepository.SendAll(jsonPlayers, jsonSpectators, p => (subject.White.Equals(p) && subject.ChessGame.WhoseTurn == Player.White) || (subject.Black.Equals(p) && subject.ChessGame.WhoseTurn == Player.Black));
+                    string jsonPlayersMove = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
+                    string jsonSpectatorsMove = JsonConvert.SerializeObject(messageForOthers);
+                    await handlerRepository.SendAll(jsonPlayersMove, jsonSpectatorsMove, p => (subject.White.Equals(p) && subject.ChessGame.WhoseTurn == Player.White) || (subject.Black.Equals(p) && subject.ChessGame.WhoseTurn == Player.Black));
 
+                    break;
+                case "chat":
+                    ChatSocketMessage chatSocketMessage = new ChatSocketMessage(preprocessed);
+                    if (!chatSocketMessage.Okay)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
+                        return;
+                    }
+
+                    int? senderUserId = null;
+                    string displayName = null;
+                    if (client is RegisteredPlayer)
+                    {
+                        senderUserId = (client as RegisteredPlayer).UserId;
+                        displayName = userRepository.FindById(senderUserId.Value).Username;
+                    }
+                    else
+                    {
+                        if (client.Equals(subject.White))
+                        {
+                            displayName = "[white]";
+                        }
+                        else if (client.Equals(subject.Black))
+                        {
+                            displayName = "[black]";
+                        }
+                    }
+
+                    if (displayName == null)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+
+                    ChatMessage chatMessage = new ChatMessage(senderUserId, displayName, chatSocketMessage.Content);
+                    Dictionary<string, string> forPlayers = null;
+                    Dictionary<string, string> forSpectators = null;
+                    string jsonPlayersChat = null;
+                    string jsonSpectatorsChat = null;
+                    if (chatSocketMessage.Channel == "player")
+                    {
+                        gameRepository.RegisterPlayerChatMessage(subject, chatMessage);
+                        forPlayers = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "player" }, { "msg", chatMessage.GetHtml() } };
+                        jsonPlayersChat = JsonConvert.SerializeObject(forPlayers);
+                    }
+                    else if (chatSocketMessage.Channel == "spectator")
+                    {
+                        gameRepository.RegisterSpectatorChatMessage(subject, chatMessage);
+                        forSpectators = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "spectator" }, { "msg", chatMessage.GetHtml() } };
+                        jsonSpectatorsChat = JsonConvert.SerializeObject(forSpectators);
+                    }
+                    await handlerRepository.SendAll(jsonPlayersChat, jsonSpectatorsChat, p => subject.White.Equals(p) || subject.Black.Equals(p));
                     break;
             }
         }

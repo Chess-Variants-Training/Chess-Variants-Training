@@ -71,9 +71,13 @@
                 chats[message.channel].push(message.msg);
                 if (message.channel === currentChatChannel) {
                     var msgDiv = document.createElement("div");
-                    msgDiv.textContent = message.msg;
+                    msgDiv.innerHTML = message.msg;
                     document.getElementById("chat-content").appendChild(msgDiv);
                 }
+                break;
+            case "error":
+                alert(message.d);
+                break;
         }
     }
 

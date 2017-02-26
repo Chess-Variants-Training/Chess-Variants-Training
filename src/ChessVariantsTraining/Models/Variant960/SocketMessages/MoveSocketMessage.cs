@@ -9,6 +9,7 @@
             Okay = gms.Okay;
             if (!Okay) return;
 
+            DeserializedDictionary = gms.DeserializedDictionary;
             if (DeserializedDictionary.ContainsKey("d"))
             {
                 Move = DeserializedDictionary["d"] as string;

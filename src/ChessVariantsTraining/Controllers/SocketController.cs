@@ -87,7 +87,7 @@ namespace ChessVariantsTraining.Controllers
                 }
                 client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
             }
-            GameSocketHandler handler = new GameSocketHandler(ws, client, gameRepoForSocketHandlers, gameSocketHandlerRepository, moveCollectionTransformer, id);
+            GameSocketHandler handler = new GameSocketHandler(ws, client, gameRepoForSocketHandlers, gameSocketHandlerRepository, moveCollectionTransformer, userRepository, id);
             if (!handler.GameExists)
             {
                 HttpContext.Response.StatusCode = 400;

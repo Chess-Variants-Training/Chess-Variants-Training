@@ -20,11 +20,17 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             {
                 if (chooseA(handler.Client))
                 {
-                    await handler.Send(messageA);
+                    if (!string.IsNullOrEmpty(messageA))
+                    {
+                        await handler.Send(messageA);
+                    }
                 }
                 else
                 {
-                    await handler.Send(messageB);
+                    if (!string.IsNullOrEmpty(messageB))
+                    {
+                        await handler.Send(messageB);
+                    }
                 }
             }
         }
