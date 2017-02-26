@@ -36,6 +36,8 @@
             }
         });
 
+        document.getElementById("chat-input").addEventListener("keydown", chatKeyDown);
+
         ws = new WebSocket(wsUrl);
         ws.addEventListener("message", wsMessageReceived);
     });
@@ -85,5 +87,14 @@
 
     function premoveUnset() {
         premove = null;
+    }
+
+    function chatKeyDown(e) {
+        e = e || window.event;
+        if (e.keyCode !== 13) return;
+
+        var messageToSend = document.getElementById("chat-input").value;
+        document.getElementById("chat-input").value = "";
+        ws.send(JSON.stringify({ "t": "chat", "d": messageToSend }));
     }
 }
