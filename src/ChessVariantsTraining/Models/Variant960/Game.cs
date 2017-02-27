@@ -85,6 +85,12 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("endedUtc")]
         public DateTime? EndedUtc { get; set; }
 
+        [BsonElement("clockWhite")]
+        public Clock ClockWhite { get; set; }
+
+        [BsonElement("clockBlack")]
+        public Clock ClockBlack { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 

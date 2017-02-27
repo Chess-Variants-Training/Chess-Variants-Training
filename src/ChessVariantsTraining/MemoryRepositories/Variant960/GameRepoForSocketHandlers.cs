@@ -38,6 +38,22 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         {
             subject.ChessGame.ApplyMove(move, true);
             subject.LatestFEN = subject.ChessGame.GetFen();
+            if (subject.ChessGame.Moves.Count > 1)
+            {
+                if (move.Player == Player.White)
+                {
+                    subject.ClockWhite.MoveMade();
+                    subject.ClockBlack.Start();
+                }
+                else
+                {
+                    if (subject.ChessGame.Moves.Count != 2)
+                    {
+                        subject.ClockBlack.MoveMade();
+                    }
+                    subject.ClockWhite.Start();
+                }
+            }
             gameRepository.Update(subject);
         }
 
