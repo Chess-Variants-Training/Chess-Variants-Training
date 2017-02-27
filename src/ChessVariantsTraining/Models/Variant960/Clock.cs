@@ -5,7 +5,6 @@ namespace ChessVariantsTraining.Models.Variant960
 {
     public class Clock
     {
-        double secondsLimit;
         Stopwatch stopwatch;
         TimeControl timeControl;
 
@@ -21,8 +20,7 @@ namespace ChessVariantsTraining.Models.Variant960
         public Clock(TimeControl tc)
         {
             timeControl = tc;
-            secondsLimit = tc.InitialSeconds;
-            SecondsLeftAfterLatestMove = secondsLimit;
+            SecondsLeftAfterLatestMove = tc.InitialSeconds;
         }
 
         public void Start()
@@ -33,11 +31,12 @@ namespace ChessVariantsTraining.Models.Variant960
         public void Pause()
         {
             stopwatch.Stop();
+            stopwatch.Reset();
         }
 
         public void AddIncrement()
         {
-            secondsLimit += timeControl.Increment;
+            SecondsLeftAfterLatestMove += timeControl.Increment;
         }
 
         public void MoveMade()
@@ -49,7 +48,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public double GetSecondsLeft()
         {
-            return secondsLimit - stopwatch.Elapsed.TotalSeconds;
+            return SecondsLeftAfterLatestMove - stopwatch.Elapsed.TotalSeconds;
         }
     }
 }
