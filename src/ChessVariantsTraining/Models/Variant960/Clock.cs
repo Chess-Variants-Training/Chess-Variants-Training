@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using MongoDB.Bson.Serialization.Attributes;
+using System.Diagnostics;
 
 namespace ChessVariantsTraining.Models.Variant960
 {
@@ -8,10 +9,18 @@ namespace ChessVariantsTraining.Models.Variant960
         Stopwatch stopwatch;
         TimeControl timeControl;
 
+        [BsonElement("secondsLeftAfterLatestMove")]
+        public double SecondsLeftAfterLatestMove
+        {
+            get;
+            set;
+        }
+
         public Clock(TimeControl tc)
         {
             timeControl = tc;
             secondsLimit = tc.InitialSeconds;
+            SecondsLeftAfterLatestMove = secondsLimit;
         }
 
         public void Start()
@@ -27,6 +36,13 @@ namespace ChessVariantsTraining.Models.Variant960
         public void AddIncrement()
         {
             secondsLimit += timeControl.Increment;
+        }
+
+        public void MoveMade()
+        {
+            Pause();
+            AddIncrement();
+            SecondsLeftAfterLatestMove = GetSecondsLeft();
         }
 
         public double GetSecondsLeft()
