@@ -34,7 +34,6 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public void Start()
         {
-            stopwatch.Reset();
             stopwatch.Start();
         }
 
@@ -53,6 +52,7 @@ namespace ChessVariantsTraining.Models.Variant960
             Pause();
             AddIncrement();
             SecondsLeftAfterLatestMove = GetSecondsLeft();
+            stopwatch.Reset();
         }
 
         public double GetSecondsLeft()
