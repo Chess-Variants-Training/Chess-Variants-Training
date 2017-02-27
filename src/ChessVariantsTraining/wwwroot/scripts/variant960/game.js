@@ -72,6 +72,8 @@
                         }
                     });
                 }
+                document.getElementById("white-clock").textContent = clockDisplay(message.clock.white);
+                document.getElementById("black-clock").textContent = clockDisplay(message.clock.black);
                 break;
             case "chat":
                 chats[message.channel].push(message.msg);
