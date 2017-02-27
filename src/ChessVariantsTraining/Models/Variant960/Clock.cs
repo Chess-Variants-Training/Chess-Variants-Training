@@ -6,10 +6,16 @@ namespace ChessVariantsTraining.Models.Variant960
     public class Clock
     {
         Stopwatch stopwatch;
-        TimeControl timeControl;
 
         [BsonElement("secondsLeftAfterLatestMove")]
         public double SecondsLeftAfterLatestMove
+        {
+            get;
+            set;
+        }
+
+        [BsonElement("increment")]
+        public int Increment
         {
             get;
             set;
@@ -19,8 +25,9 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public Clock(TimeControl tc)
         {
-            timeControl = tc;
+            Increment = tc.Increment;
             SecondsLeftAfterLatestMove = tc.InitialSeconds;
+            stopwatch = new Stopwatch();
         }
 
         public void Start()
@@ -36,7 +43,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public void AddIncrement()
         {
-            SecondsLeftAfterLatestMove += timeControl.Increment;
+            SecondsLeftAfterLatestMove += Increment;
         }
 
         public void MoveMade()
