@@ -111,6 +111,7 @@
     }
 
     function clockDisplay(time) {
+        time = Math.round(time * 10) / 10;
         var minutes = Math.floor(time / 60);
         var seconds = time % 60;
         if (seconds < 10) {
