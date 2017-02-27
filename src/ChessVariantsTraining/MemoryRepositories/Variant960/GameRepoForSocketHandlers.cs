@@ -60,6 +60,8 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
 
         public void RegisterGameOutcome(Game subject, string outcome)
         {
+            subject.ClockWhite.Pause();
+            subject.ClockBlack.Pause();
             subject.Outcome = outcome;
             subject.EndedUtc = DateTime.UtcNow;
             gameRepository.Update(subject);
