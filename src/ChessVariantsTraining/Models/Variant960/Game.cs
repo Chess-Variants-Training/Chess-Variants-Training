@@ -150,6 +150,8 @@ namespace ChessVariantsTraining.Models.Variant960
             SpectatorChats = new List<ChatMessage>();
             StartedUtc = startedUtc;
             EndedUtc = null;
+            ClockWhite = new Clock(tc);
+            ClockBlack = new Clock(tc);
         }
     }
 }
