@@ -16,6 +16,8 @@ namespace ChessVariantsTraining.Models.Variant960
             set;
         }
 
+        public Clock() { }
+
         public Clock(TimeControl tc)
         {
             timeControl = tc;
