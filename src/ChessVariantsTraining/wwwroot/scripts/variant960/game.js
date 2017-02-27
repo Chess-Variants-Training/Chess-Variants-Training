@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, wsUrl) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, wsUrl, whiteSecondsLeft, blackSecondsLeft) {
     if (myColor === "") myColor = null;
     var ground;
     var ws;
@@ -37,6 +37,8 @@
         });
 
         document.getElementById("chat-input").addEventListener("keydown", chatKeyDown);
+        document.getElementById("white-clock").textContent = clockDisplay(whiteSecondsLeft);
+        document.getElementById("black-clock").textContent = clockDisplay(blackSecondsLeft);
 
         jsonXhr("/Variant960/Game/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
             ws = new WebSocket(wsUrl);
