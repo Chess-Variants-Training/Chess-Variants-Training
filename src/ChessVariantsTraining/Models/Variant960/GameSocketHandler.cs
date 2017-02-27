@@ -150,6 +150,10 @@ namespace ChessVariantsTraining.Models.Variant960
                     messageForPlayerWhoseTurnItIs["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn));
                     messageForPlayerWhoseTurnItIs["lastMove"] = messageForOthers["lastMove"] = new string[] { moveParts[0], moveParts[1] };
                     messageForPlayerWhoseTurnItIs["turnColor"] = messageForOthers["turnColor"] = subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();
+                    Dictionary<string, double> clockDictionary = new Dictionary<string, double>();
+                    clockDictionary["white"] = subject.ClockWhite.GetSecondsLeft();
+                    clockDictionary["black"] = subject.ClockBlack.GetSecondsLeft();
+                    messageForPlayerWhoseTurnItIs["clock"] = messageForOthers["clock"] = clockDictionary;
                     if (outcome != null)
                     {
                         messageForPlayerWhoseTurnItIs["outcome"] = messageForOthers["outcome"] = outcome;
