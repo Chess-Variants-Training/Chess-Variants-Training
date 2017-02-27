@@ -34,13 +34,13 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public void Start()
         {
+            stopwatch.Reset();
             stopwatch.Start();
         }
 
         public void Pause()
         {
             stopwatch.Stop();
-            stopwatch.Reset();
         }
 
         public void AddIncrement()
