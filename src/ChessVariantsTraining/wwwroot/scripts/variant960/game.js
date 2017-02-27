@@ -5,6 +5,8 @@
     var premove = null;
     var currentChatChannel = isPlayer ? "player" : "spectator";
     var chats = { player: [], spectator: [] };
+    var clockValues = { white: NaN, black: NaN };
+    var clockTickInterval = -1;
 
     window.addEventListener("load", function () {
         ground = Chessground(document.getElementById("chessground"), {
@@ -77,8 +79,12 @@
                         }
                     });
                 }
-                document.getElementById("white-clock").textContent = clockDisplay(message.clock.white);
-                document.getElementById("black-clock").textContent = clockDisplay(message.clock.black);
+                stopClockTicking();
+                updateClockValue("white", message.clock.white);
+                updateClockValue("black", message.clock.black);
+                if (message.plies > 1) {
+                    startClockTicking(message.turnColor);
+                }
                 break;
             case "chat":
                 chats[message.channel].push(message.msg);
@@ -89,8 +95,8 @@
                 }
                 break;
             case "clock":
-                document.getElementById("white-clock").textContent = clockDisplay(message.white);
-                document.getElementById("black-clock").textContent = clockDisplay(message.black);
+                updateClockValue("white", message.white);
+                updateClockValue("black", message.black);
                 break;
             case "error":
                 displayError(message.d);
@@ -119,6 +125,11 @@
         ws.send(JSON.stringify({ "t": "chat", "d": messageToSend, "channel": currentChatChannel }));
     }
 
+    function updateClockValue(which, seconds) {
+        clockValues[which] = seconds;
+        document.getElementById(which + "-clock").textContent = clockDisplay(seconds);
+    }
+
     function clockDisplay(time) {
         time = Math.round(time * 10) / 10;
         var minutes = Math.floor(time / 60);
@@ -131,4 +142,14 @@
         return minutes + ":" + secondsStr;
     }
 
+    function startClockTicking(which) {
+        clockTickInterval = setInterval(function () {
+            clockValues[which] -= 0.1;
+            updateClockValue(which, clockValues[which]);
+        }, 100);
+    }
+
+    function stopClockTicking() {
+        clearInterval(clockTickInterval);
+    }
 }
