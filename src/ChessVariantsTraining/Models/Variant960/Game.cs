@@ -91,6 +91,9 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("clockBlack")]
         public Clock ClockBlack { get; set; }
 
+        [BsonElement("moveTimestampsUtc")]
+        public List<DateTime> MoveTimeStampsUtc { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
@@ -152,6 +155,7 @@ namespace ChessVariantsTraining.Models.Variant960
             EndedUtc = null;
             ClockWhite = new Clock(tc);
             ClockBlack = new Clock(tc);
+            MoveTimeStampsUtc = new List<DateTime>();
         }
     }
 }
