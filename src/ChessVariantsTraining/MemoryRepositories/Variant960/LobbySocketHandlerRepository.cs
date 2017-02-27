@@ -50,10 +50,13 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
 
         public async Task SendTo(GamePlayer client, string text)
         {
-            LobbySocketHandler handler = handlers.FirstOrDefault(x => x.Client.Equals(client));
-            if (handler != null)
+            IEnumerable<LobbySocketHandler> receiverHandlers = handlers.Where(x => x.Client.Equals(client));
+            foreach (LobbySocketHandler handler in receiverHandlers)
             {
-                await handler.Send(text);
+                if (handler != null)
+                {
+                    await handler.Send(text);
+                }
             }
         }
 
