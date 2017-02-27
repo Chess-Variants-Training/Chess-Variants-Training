@@ -120,9 +120,7 @@ namespace ChessVariantsTraining.Controllers
                 requester == Player.None ? null : requester.ToString().ToLowerInvariant(),
                 game.LatestFEN.Split(' ')[1] == "w" ? "white" : "black",
                 game.Outcome != Models.Variant960.Game.Outcomes.ONGOING,
-                destsJson,
-                game.ClockWhite.GetSecondsLeft(),
-                game.ClockBlack.GetSecondsLeft());
+                destsJson);
 
             return View(model);
         }

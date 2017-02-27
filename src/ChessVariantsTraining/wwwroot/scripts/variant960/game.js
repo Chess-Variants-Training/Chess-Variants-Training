@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, wsUrl, whiteSecondsLeft, blackSecondsLeft) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, wsUrl) {
     if (myColor === "") myColor = null;
     var ground;
     var ws;
@@ -37,11 +37,10 @@
         });
 
         document.getElementById("chat-input").addEventListener("keydown", chatKeyDown);
-        document.getElementById("white-clock").textContent = clockDisplay(whiteSecondsLeft);
-        document.getElementById("black-clock").textContent = clockDisplay(blackSecondsLeft);
 
         jsonXhr("/Variant960/Game/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
             ws = new WebSocket(wsUrl);
+            ws.addEventListener("open", wsOpened);
             ws.addEventListener("message", wsMessageReceived);
         },
         function (req, err) {
@@ -49,6 +48,10 @@
         });
 
     });
+
+    function wsOpened() {
+        ws.send(JSON.stringify({ "t": "syncClock" }));
+    }
 
     function wsMessageReceived(e) {
         var message = JSON.parse(e.data);
@@ -84,6 +87,10 @@
                     msgDiv.innerHTML = message.msg;
                     document.getElementById("chat-content").appendChild(msgDiv);
                 }
+                break;
+            case "clock":
+                document.getElementById("white-clock").textContent = clockDisplay(message.white);
+                document.getElementById("black-clock").textContent = clockDisplay(message.black);
                 break;
             case "error":
                 displayError(message.d);

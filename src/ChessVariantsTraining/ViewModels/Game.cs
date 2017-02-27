@@ -85,19 +85,7 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
-        public double WhiteSecondsLeft
-        {
-            get;
-            private set;
-        }
-
-        public double BlackSecondsLeft
-        {
-            get;
-            private set;
-        }
-
-        public Game(string gameId, string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson, double whiteSecondsLeft, double blackSecondsLeft)
+        public Game(string gameId, string whiteUsername, string blackUsername, int? whiteId, int? blackId, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -112,8 +100,6 @@ namespace ChessVariantsTraining.ViewModels
             WhoseTurn = whoseTurn;
             IsFinished = isFinished;
             DestsJSON = destsJson;
-            WhiteSecondsLeft = whiteSecondsLeft;
-            BlackSecondsLeft = blackSecondsLeft;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)

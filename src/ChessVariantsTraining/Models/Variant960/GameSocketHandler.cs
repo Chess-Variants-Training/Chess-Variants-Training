@@ -216,6 +216,16 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     await handlerRepository.SendAll(jsonPlayersChat, jsonSpectatorsChat, p => subject.White.Equals(p) || subject.Black.Equals(p));
                     break;
+                case "syncClock":
+                    Dictionary<string, object> syncedClockDict = new Dictionary<string, object>()
+                    {
+                        { "t", "clock" },
+                        { "white", subject.ClockWhite.GetSecondsLeft() },
+                        { "black", subject.ClockBlack.GetSecondsLeft() }
+                    };
+                    await Send(JsonConvert.SerializeObject(syncedClockDict));
+
+                    break;
             }
         }
 
