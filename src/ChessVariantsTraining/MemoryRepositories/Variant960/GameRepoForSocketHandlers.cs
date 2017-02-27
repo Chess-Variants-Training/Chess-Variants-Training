@@ -2,6 +2,7 @@
 using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960;
 using ChessVariantsTraining.Services;
+using System;
 using System.Collections.Generic;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
@@ -43,6 +44,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         public void RegisterGameOutcome(Game subject, string outcome)
         {
             subject.Outcome = outcome;
+            subject.EndedUtc = DateTime.UtcNow;
             gameRepository.Update(subject);
         }
 

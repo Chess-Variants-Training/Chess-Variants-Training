@@ -79,12 +79,18 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("spectatorChats")]
         public List<ChatMessage> SpectatorChats { get; set; }
 
+        [BsonElement("startedUtc")]
+        public DateTime StartedUtc { get; set; }
+
+        [BsonElement("endedUtc")]
+        public DateTime? EndedUtc { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
         public Game() { }
 
-        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, TimeControl tc)
+        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, TimeControl tc, DateTime startedUtc)
         {
             ID = id;
             White = white;
@@ -136,6 +142,8 @@ namespace ChessVariantsTraining.Models.Variant960
             InitialFEN = LatestFEN = ChessGame.GetFen();
             PlayerChats = new List<ChatMessage>();
             SpectatorChats = new List<ChatMessage>();
+            StartedUtc = startedUtc;
+            EndedUtc = null;
         }
     }
 }
