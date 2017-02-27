@@ -21,13 +21,15 @@ namespace ChessVariantsTraining.Models.Variant960
             set;
         }
 
-        public Clock() { }
+        public Clock()
+        {
+            stopwatch = new Stopwatch();
+        }
 
-        public Clock(TimeControl tc)
+        public Clock(TimeControl tc) : this()
         {
             Increment = tc.Increment;
             SecondsLeftAfterLatestMove = tc.InitialSeconds;
-            stopwatch = new Stopwatch();
         }
 
         public void Start()
