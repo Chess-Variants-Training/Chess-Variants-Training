@@ -107,4 +107,16 @@
         document.getElementById("chat-input").value = "";
         ws.send(JSON.stringify({ "t": "chat", "d": messageToSend, "channel": currentChatChannel }));
     }
+
+    function clockDisplay(time) {
+        var minutes = Math.floor(time / 60);
+        var seconds = time % 60;
+        if (seconds < 10) {
+            var secondsStr = "0" + seconds.toFixed(1);
+        } else {
+            var secondsStr = seconds.toFixed(1);
+        }
+        return minutes + ":" + secondsStr;
+    }
+
 }
