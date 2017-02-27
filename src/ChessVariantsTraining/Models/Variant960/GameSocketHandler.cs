@@ -226,7 +226,11 @@ namespace ChessVariantsTraining.Models.Variant960
             ArraySegment<byte> segment = new ArraySegment<byte>(buffer);
             if (Open)
             {
-                await ws.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+                try
+                {
+                    await ws.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+                }
+                catch { } // just in case the web socket closes after if(Open) but before SendAsync
             }
         }
 
