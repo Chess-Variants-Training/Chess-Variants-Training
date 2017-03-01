@@ -1,7 +1,10 @@
-﻿using ChessVariantsTraining.DbRepositories.Variant960;
+﻿using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Services;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
@@ -18,6 +21,7 @@ namespace ChessVariantsTraining.Models.Variant960
         ILobbySeekRepository seekRepository;
         IGameRepository gameRepository;
         IRandomProvider randomProvider;
+        IUserRepository userRepository;
 
         public bool Closed
         {
@@ -41,7 +45,7 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider)
+        public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IUserRepository _userRepository)
         {
             ws = socket;
             client = _client;
@@ -49,6 +53,7 @@ namespace ChessVariantsTraining.Models.Variant960
             seekRepository = _seekRepository;
             gameRepository = _gameRepository;
             randomProvider = _randomProvider;
+            userRepository = _userRepository;
         }
 
         public async Task LobbyLoop()
@@ -117,6 +122,16 @@ namespace ChessVariantsTraining.Models.Variant960
                     string redirectJson = "{\"t\":\"redirect\",\"d\":\"" + game.ID + "\"}";
                     await Send(redirectJson);
                     await handlerRepository.SendTo(joined.Owner, redirectJson);
+                    break;
+                case "init":
+                    List<LobbySeek> seeks = seekRepository.GetShallowCopy();
+                    foreach (LobbySeek s in seeks)
+                    {
+                        Dictionary<string, object> msg = new Dictionary<string, object>();
+                        msg.Add("t", "add");
+                        msg.Add("d", s.SeekJson(userRepository));
+                        await Send(JsonConvert.SerializeObject(msg));
+                    }
                     break;
                 default:
                     await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");

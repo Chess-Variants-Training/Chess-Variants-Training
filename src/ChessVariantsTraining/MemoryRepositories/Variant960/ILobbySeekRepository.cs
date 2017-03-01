@@ -1,4 +1,5 @@
 ﻿using ChessVariantsTraining.Models.Variant960;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
@@ -12,5 +13,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         Task Remove(string id, GamePlayer client);
 
         void Bump(string id, GamePlayer client);
+
+        List<LobbySeek> GetShallowCopy();
     }
 }

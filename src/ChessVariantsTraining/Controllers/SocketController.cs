@@ -57,7 +57,7 @@ namespace ChessVariantsTraining.Controllers
                 }
                 client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
             }
-            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider);
+            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider, userRepository);
             lobbySocketHandlerRepository.Add(handler);
             await handler.LobbyLoop();
         }

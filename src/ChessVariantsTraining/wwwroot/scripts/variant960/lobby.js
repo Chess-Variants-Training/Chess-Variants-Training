@@ -129,6 +129,10 @@
         }
     }
 
+    function wsOpened() {
+        ws.send(JSON.stringify({ "t": "init", d: "" }));
+    }
+
     window.addEventListener("load", function () {
         initialTimeChanged();
         incrementChanged();
@@ -141,6 +145,7 @@
         jsonXhr("/Variant960/Lobby/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
             ws = new WebSocket(window.wsUrl);
             ws.addEventListener("message", wsMessageReceived);
+            ws.addEventListener("open", wsOpened);
         },
         function (req, err) {
             displayError(err);

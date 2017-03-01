@@ -63,6 +63,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             toBump.LatestBump = DateTime.UtcNow;
         }
 
+        public List<LobbySeek> GetShallowCopy()
+        {
+            return new List<LobbySeek>(seeks);
+        }
+
         void RemoveOldSeeks()
         {
             List<LobbySeek> old = seeks.Where(x => (DateTime.UtcNow - x.LatestBump).TotalSeconds > 10).ToList();
