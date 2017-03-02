@@ -5,8 +5,10 @@
     var premove = null;
     var currentChatChannel = isPlayer ? "player" : "spectator";
     var chats = { player: [], spectator: [] };
-    var clockValues = { white: NaN, black: NaN };
-    var clockTickInterval = -1;
+    var clockInfo = { whiteUpdate: NaN, blackUpdate: NaN, whiteValue: NaN, blackValue: NaN, which: null };
+    var clocksStarted = false;
+    var stopClocks = false;
+    var latestFlagRequest = 0;
 
     window.addEventListener("load", function () {
         ground = Chessground(document.getElementById("chessground"), {
@@ -69,6 +71,7 @@
                 });
                 if (message.outcome) {
                     document.getElementById("game-result").textContent = message.outcome;
+                    stopClockTicking();
                 }
                 if (isPlayer && myColor == message.turnColor && premove && !message.outcome) {
                     ws.send(JSON.stringify({ "t": "premove", "d": premove.origin + '-' + premove.destination }));
@@ -79,11 +82,14 @@
                         }
                     });
                 }
-                stopClockTicking();
                 updateClockValue("white", message.clock.white);
                 updateClockValue("black", message.clock.black);
                 if (message.plies > 1) {
-                    startClockTicking(message.turnColor);
+                    clockInfo.which = message.turnColor;
+                    if (!clocksStarted) {
+                        clocksStarted = true;
+                        requestAnimationFrame(clockTick);
+                    }
                 }
                 break;
             case "chat":
@@ -101,6 +107,9 @@
             case "error":
                 displayError(message.d);
                 break;
+            case "outcome":
+                document.getElementById("game-result").textContent = message.outcome;
+                stopClockTicking();
         }
     }
 
@@ -126,8 +135,14 @@
     }
 
     function updateClockValue(which, seconds) {
-        clockValues[which] = seconds;
-        document.getElementById(which + "-clock").textContent = clockDisplay(seconds);
+        var latestUpdate = new Date();
+        clockInfo[which + "Update"] = latestUpdate;
+        clockInfo[which + "Value"] = seconds;
+        updateClockElement(which);
+    }
+
+    function updateClockElement(which) {
+        document.getElementById(which + "-clock").textContent = clockDisplay(clockInfo[which + "Value"]);
     }
 
     function clockDisplay(time) {
@@ -142,14 +157,21 @@
         return minutes + ":" + secondsStr;
     }
 
-    function startClockTicking(which) {
-        clockTickInterval = setInterval(function () {
-            clockValues[which] -= 0.1;
-            updateClockValue(which, clockValues[which]);
-        }, 100);
+    function clockTick() {
+        if (stopClocks) return;
+        var which = clockInfo.which;
+        var latestUpdate = new Date();
+        clockInfo[which + "Value"] = clockInfo[which + "Value"] - (latestUpdate - clockInfo[which + "Update"]) / 1000;
+        clockInfo[which + "Update"] = latestUpdate;
+        if (clockInfo[which + "Value"] <= 0 && (new Date() - latestFlagRequest) > 500) {
+            latestFlagRequest = new Date();
+            ws.send(JSON.stringify({ "t": "flag", "d": which }));
+        }
+        updateClockElement(which);
+        requestAnimationFrame(clockTick);
     }
 
     function stopClockTicking() {
-        clearInterval(clockTickInterval);
+        stopClocks = true;
     }
 }

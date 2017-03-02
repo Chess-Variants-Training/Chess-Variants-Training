@@ -227,6 +227,29 @@ namespace ChessVariantsTraining.Models.Variant960
                     await Send(JsonConvert.SerializeObject(syncedClockDict));
 
                     break;
+                case "flag":
+                    if (subject.Outcome != Game.Outcomes.ONGOING)
+                    {
+                        return;
+                    }
+                    FlagSocketMessage flagMessage = new FlagSocketMessage(preprocessed);
+                    if (!flagMessage.Okay)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
+                        return;
+                    }
+                    double secondsLeft = flagMessage.Player == "white" ? subject.ClockWhite.GetSecondsLeft() : subject.ClockBlack.GetSecondsLeft();
+                    if (secondsLeft <= 0)
+                    {
+                        gameRepository.RegisterGameOutcome(subject, flagMessage.Player == "white" ? Game.Outcomes.BLACK_WINS : Game.Outcomes.WHITE_WINS);
+                        Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
+                        {
+                            { "t", "outcome" },
+                            { "outcome", flagMessage.Player == "white" ? "0-1, black wins" : "1-0, white wins" }
+                        };
+                        await handlerRepository.SendAll(JsonConvert.SerializeObject(flagVerificationResponse), null, x => true);
+                    }
+                    break;
             }
         }
 
