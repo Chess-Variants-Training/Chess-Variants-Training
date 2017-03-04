@@ -28,7 +28,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 {
                     beautifiedVariantName = "King of the Hill";
                 }
-                return string.Format("{0} {1} {2}", beautifiedVariantName, Variant != "RacingKings" ? 960 : 1440, Variant != "Horde" ? string.Format("({0})", Symmetrical ? "symmetrical" : "asymmetrical") : "");
+                return string.Format("{0} {1}{2}", beautifiedVariantName, Variant != "RacingKings" ? 960 : 1440, Variant != "Horde" ? string.Format(" ({0})", Symmetrical ? "symmetrical" : "asymmetrical") : "");
             }
         }
         public bool Symmetrical { get; private set; }
