@@ -28,7 +28,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 {
                     beautifiedVariantName = "King of the Hill";
                 }
-                return string.Format("{0} {1} {2}", beautifiedVariantName, Variant != "Racing Kings" ? 960 : 1440, Variant != "Horde" ? string.Format("({0})", Symmetrical ? "symmetrical" : "asymmetrical") : "");
+                return string.Format("{0} {1} {2}", beautifiedVariantName, Variant != "RacingKings" ? 960 : 1440, Variant != "Horde" ? string.Format("({0})", Symmetrical ? "symmetrical" : "asymmetrical") : "");
             }
         }
         public bool Symmetrical { get; private set; }
@@ -99,8 +99,7 @@ namespace ChessVariantsTraining.Models.Variant960
         public Dictionary<string, string> SeekJson(IUserRepository userRepository)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
-            data.Add("v", Variant);
-            data.Add("s", Symmetrical ? "Symmetrical" : "Asymmetrical");
+            data.Add("l", FullVariantName);
             if (Owner is RegisteredPlayer)
             {
                 data.Add("o", userRepository.FindById((Owner as RegisteredPlayer).UserId).Username);

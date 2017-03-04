@@ -105,8 +105,7 @@
                 timeDiv.classList.add("seek-time");
                 seekTableRow.appendChild(timeDiv);
                 var variantDiv = document.createElement("div");
-                var variantName = document.querySelector("option[value=" + data.v + "]").textContent;
-                variantDiv.innerHTML = variantName + " (" + data.s + ")";
+                variantDiv.innerHTML = data.l;
                 variantDiv.classList.add("seek-variant");
                 seekTableRow.appendChild(variantDiv);
                 seekTableRow.addEventListener("click", seekClicked);
