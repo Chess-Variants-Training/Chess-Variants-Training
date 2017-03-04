@@ -21,7 +21,7 @@
     "Microsoft.AspNetCore.Server.IISIntegration": "1.0.0",
     "Microsoft.NETCore.App": "1.0.0",
     "ChessDotNet": "0.9.4.1",
-    "ChessDotNet.Variants": "0.9.4",
+    "ChessDotNet.Variants": "0.9.4.1",
     "glicko2-csharp": "1.0.0",
     "MailKit": "1.6.0",
     "Microsoft.AspNetCore.WebSockets.Server": "0.1.0",
