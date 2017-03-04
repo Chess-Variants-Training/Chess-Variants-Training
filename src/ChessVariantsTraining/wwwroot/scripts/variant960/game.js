@@ -146,15 +146,9 @@
     }
 
     function clockDisplay(time) {
-        time = Math.round(time * 10) / 10;
         var minutes = Math.floor(time / 60);
-        var seconds = time % 60;
-        if (seconds < 10) {
-            var secondsStr = "0" + seconds.toFixed(1);
-        } else {
-            var secondsStr = seconds.toFixed(1);
-        }
-        return minutes + ":" + secondsStr;
+        var seconds = Math.floor((time % 60) * 10) / 10;
+        return minutes + ":" + (seconds < 10 ? "0" + seconds.toFixed(1) : seconds.toFixed(1));
     }
 
     function clockTick() {
