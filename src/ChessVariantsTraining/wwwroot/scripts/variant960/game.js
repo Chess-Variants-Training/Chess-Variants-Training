@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, wsUrl) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, wsUrl, isAnti) {
     if (myColor === "") myColor = null;
     var ground;
     var ws;
@@ -113,8 +113,20 @@
         }
     }
 
-    function pieceMoved(orig, dest, metadata) {
-        ws.send(JSON.stringify({ "t": "move", "d": orig + '-' + dest }));
+    function sendMoveMessage(orig, dest, promotion) {
+        if (promotion) {
+            ws.send(JSON.stringify({ "t": "move", "d": orig + '-' + dest + '-' + promotion.toLowerCase() }));
+        } else {
+            ws.send(JSON.stringify({ "t": "move", "d": orig + '-' + dest }));
+        }
+    }
+
+    function pieceMoved(origin, destination, metadata) {
+        if (ChessgroundExtensions.needsPromotion(ground, destination)) {
+            ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), sendMoveMessage, ground, isAnti);
+        } else {
+            sendMoveMessage(origin, destination, null);
+        }
     }
 
     function premoveSet(orig, dest) {

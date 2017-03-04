@@ -113,6 +113,7 @@ namespace ChessVariantsTraining.Controllers
                 blackUsername,
                 whiteId,
                 blackId,
+                game.ShortVariantName,
                 game.FullVariantName,
                 game.TimeControl.ToString(),
                 game.LatestFEN,
