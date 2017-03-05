@@ -50,6 +50,7 @@
             ws = new WebSocket(wsUrl);
             ws.addEventListener("open", wsOpened);
             ws.addEventListener("message", wsMessageReceived);
+            ws.addEventListener("close", wsClosed);
         },
         function (req, err) {
             displayError(err);
@@ -60,6 +61,10 @@
     function wsOpened() {
         ws.send(JSON.stringify({ "t": "syncClock" }));
         ws.send(JSON.stringify({ "t": "syncChat" }));
+    }
+
+    function wsClosed() {
+        displayError("WebSocket closed! Please reload the page (there is no auto-reconnect yet)");
     }
 
     function wsMessageReceived(e) {
