@@ -131,9 +131,11 @@
     function gotOutcome(outcome) {
         document.getElementById("game-result").textContent = outcome;
         stopClockTicking();
-        document.getElementById("chat-header").innerHTML = '<a href="#" id="switch-to-players" class="selected-chat">Players\' chat</a> | <a href="#" id="switch-to-spectators">Spectators\' chat</a>';
-        document.getElementById("switch-to-players").addEventListener("click", switchToPlayersChat);
-        document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
+        if (isPlayer) {
+            document.getElementById("chat-header").innerHTML = '<a href="#" id="switch-to-players" class="selected-chat">Players\' chat</a> | <a href="#" id="switch-to-spectators">Spectators\' chat</a>';
+            document.getElementById("switch-to-players").addEventListener("click", switchToPlayersChat);
+            document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
+        }
     }
 
     function sendMoveMessage(orig, dest, promotion) {
