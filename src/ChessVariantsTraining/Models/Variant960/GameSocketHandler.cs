@@ -54,6 +54,11 @@ namespace ChessVariantsTraining.Models.Variant960
                 return subject != null;
             }
         }
+        public bool Disposed
+        {
+            get;
+            private set;
+        }
 
         public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, string gameId)
         {
@@ -64,18 +69,27 @@ namespace ChessVariantsTraining.Models.Variant960
             moveCollectionTransformer = _moveCollectionTransformer;
             userRepository = _userRepository;
             subject = gameRepository.Get(gameId);
+            Disposed = false;
         }
 
         public async Task LobbyLoop()
         {
             byte[] buffer = new byte[4096];
-            while (ws.State == WebSocketState.Open)
+            while (ws.State == WebSocketState.Open && !Disposed)
             {
                 WebSocketReceiveResult result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
-                byte[] message = new byte[result.Count];
-                Array.Copy(buffer, message, result.Count);
-                buffer = new byte[4096];
-                await HandleReceived(Encoding.ASCII.GetString(message));
+                if (result.MessageType != WebSocketMessageType.Close)
+                {
+                    byte[] message = new byte[result.Count];
+                    Array.Copy(buffer, message, result.Count);
+                    buffer = new byte[4096];
+                    await HandleReceived(Encoding.ASCII.GetString(message));
+                }
+                else
+                {
+                    await ws.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "close requested", ct);
+                    Dispose();
+                }
             }
         }
 
@@ -288,6 +302,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public void Dispose()
         {
+            Disposed = true;
             ws.Dispose();
         }
     }
