@@ -210,6 +210,11 @@
             elem.innerHTML = chats.player[i];
             document.getElementById("chat-content").appendChild(elem);
         }
+
+        if (document.getElementById("switch-to-players")) {
+            document.getElementById("switch-to-players").classList.add("selected-chat");
+            document.getElementById("switch-to-spectators").classList.remove("selected-chat");
+        }
     }
 
     function switchToSpectatorsChat(e) {
@@ -223,6 +228,11 @@
             elem = document.createElement("div");
             elem.innerHTML = chats.spectator[i];
             document.getElementById("chat-content").appendChild(elem);
+        }
+
+        if (document.getElementById("switch-to-players")) {
+            document.getElementById("switch-to-players").classList.remove("selected-chat");
+            document.getElementById("switch-to-spectators").classList.add("selected-chat");
         }
     }
 }
