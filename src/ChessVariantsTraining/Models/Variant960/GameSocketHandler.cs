@@ -87,7 +87,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 }
                 else
                 {
-                    await ws.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "close requested", ct);
+                    await ws.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "close requested", CancellationToken.None);
                     Dispose();
                 }
             }
