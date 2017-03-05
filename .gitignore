@@ -3,9 +3,6 @@ artifacts/
 bin/
 obj/
 *.xproj.user
-src/ChessVariantsTraining/wwwroot/scripts/chessground.min.js
-src/ChessVariantsTraining/wwwroot/styles/chessground-base.css
-src/ChessVariantsTraining/wwwroot/images/pieces/cburnett/
 data/
 deps/
 project.lock.json
