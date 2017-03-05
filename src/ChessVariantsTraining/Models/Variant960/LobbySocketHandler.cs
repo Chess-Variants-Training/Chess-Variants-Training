@@ -15,7 +15,6 @@ namespace ChessVariantsTraining.Models.Variant960
     public class LobbySocketHandler : IDisposable
     {
         WebSocket ws;
-        CancellationToken ct = new CancellationToken(false);
         GamePlayer client;
         ILobbySocketHandlerRepository handlerRepository;
         ILobbySeekRepository seekRepository;
@@ -63,7 +62,7 @@ namespace ChessVariantsTraining.Models.Variant960
             byte[] buffer = new byte[4096];
             while (ws.State == WebSocketState.Open && !Disposed)
             {
-                WebSocketReceiveResult result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
+                WebSocketReceiveResult result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                 if (result.MessageType != WebSocketMessageType.Close)
                 {
                     byte[] message = new byte[result.Count];
@@ -158,7 +157,7 @@ namespace ChessVariantsTraining.Models.Variant960
             {
                 try
                 {
-                    await ws.SendAsync(segment, WebSocketMessageType.Text, true, ct);
+                    await ws.SendAsync(segment, WebSocketMessageType.Text, true, CancellationToken.None);
                 }
                 catch { } // just in case the web socket closes after if(Open) but before SendAsync
             }
