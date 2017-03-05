@@ -28,6 +28,10 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             else
             {
                 Game g = gameRepository.Get(id);
+                if (g == null)
+                {
+                    return null;
+                }
                 g.ChessGame = gameConstructor.Construct(g.ShortVariantName, g.LatestFEN);
                 cache[id] = g;
                 return cache[id];
