@@ -95,6 +95,9 @@
                         requestAnimationFrame(clockTick);
                     }
                 }
+                if (message.additional) {
+                    document.getElementById("additional-info").textContent = message.additional;
+                }
                 break;
             case "chat":
                 chats[message.channel].push(message.msg);

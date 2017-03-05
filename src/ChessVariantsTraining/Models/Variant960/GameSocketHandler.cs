@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Variants.ThreeCheck;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960.SocketMessages;
@@ -180,6 +181,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     if (outcome != null)
                     {
                         messageForPlayerWhoseTurnItIs["outcome"] = messageForOthers["outcome"] = outcome;
+                    }
+                    if (Subject.ChessGame is ThreeCheckChessGame)
+                    {
+                        ThreeCheckChessGame tccg = Subject.ChessGame as ThreeCheckChessGame;
+                        messageForPlayerWhoseTurnItIs["additional"] = messageForOthers["additional"] = string.Format("White delivered {0} check(s), black delivered {1}.", tccg.ChecksByWhite, tccg.ChecksByBlack);
                     }
                     messageForOthers["dests"] = new Dictionary<object, object>();
                     string jsonPlayersMove = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
