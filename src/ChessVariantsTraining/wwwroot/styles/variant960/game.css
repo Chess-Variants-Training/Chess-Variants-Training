@@ -15,3 +15,8 @@
     border: 0;
     border-top: solid 1px black;
 }
+
+.selected-chat {
+    font-weight: bold;
+    text-decoration: underline;
+}

@@ -41,6 +41,10 @@
         });
 
         document.getElementById("chat-input").addEventListener("keydown", chatKeyDown);
+        if (document.getElementById("switch-to-players")) {
+            document.getElementById("switch-to-players").addEventListener("click", switchToPlayersChat);
+            document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
+        }
 
         jsonXhr("/Variant960/Game/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
             ws = new WebSocket(wsUrl);
@@ -55,6 +59,7 @@
 
     function wsOpened() {
         ws.send(JSON.stringify({ "t": "syncClock" }));
+        ws.send(JSON.stringify({ "t": "syncChat" }));
     }
 
     function wsMessageReceived(e) {
@@ -110,6 +115,18 @@
             case "outcome":
                 document.getElementById("game-result").textContent = message.outcome;
                 stopClockTicking();
+                break;
+            case "chatSync":
+                if (message.player) {
+                    chats.player = message.player;
+                }
+                if (message.spectator) {
+                    chats.spectator = message.spectator;
+                }
+                var placeholderEvent = { preventDefault: function () { } };
+                if (currentChatChannel === "player") switchToPlayersChat(placeholderEvent);
+                else switchToSpectatorsChat(placeholderEvent);
+                break;
         }
     }
 
@@ -179,5 +196,33 @@
 
     function stopClockTicking() {
         stopClocks = true;
+    }
+
+    function switchToPlayersChat(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        document.getElementById("chat-content").innerHTML = "";
+        currentChatChannel = "player";
+        var elem;
+        for (var i = 0; i < chats.player.length; i++) {
+            elem = document.createElement("div");
+            elem.innerHTML = chats.player[i];
+            document.getElementById("chat-content").appendChild(elem);
+        }
+    }
+
+    function switchToSpectatorsChat(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        document.getElementById("chat-content").innerHTML = "";
+        currentChatChannel = "spectator";
+        var elem;
+        for (var i = 0; i < chats.spectator.length; i++) {
+            elem = document.createElement("div");
+            elem.innerHTML = chats.spectator[i];
+            document.getElementById("chat-content").appendChild(elem);
+        }
     }
 }

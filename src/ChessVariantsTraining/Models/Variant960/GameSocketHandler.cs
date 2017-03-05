@@ -6,6 +6,7 @@ using ChessVariantsTraining.Services;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.WebSockets;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -214,6 +215,10 @@ namespace ChessVariantsTraining.Models.Variant960
                         gameRepository.RegisterSpectatorChatMessage(subject, chatMessage);
                         forSpectators = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "spectator" }, { "msg", chatMessage.GetHtml() } };
                         jsonSpectatorsChat = JsonConvert.SerializeObject(forSpectators);
+                        if (subject.Outcome != Game.Outcomes.ONGOING)
+                        {
+                            jsonPlayersChat = jsonSpectatorsChat;
+                        }
                     }
                     await handlerRepository.SendAll(jsonPlayersChat, jsonSpectatorsChat, p => subject.White.Equals(p) || subject.Black.Equals(p));
                     break;
@@ -249,6 +254,19 @@ namespace ChessVariantsTraining.Models.Variant960
                         };
                         await handlerRepository.SendAll(JsonConvert.SerializeObject(flagVerificationResponse), null, x => true);
                     }
+                    break;
+                case "syncChat":
+                    Dictionary<string, object> syncedChat = new Dictionary<string, object>();
+                    syncedChat["t"] = "chatSync";
+                    if (subject.White.Equals(client) || subject.Black.Equals(client))
+                    {
+                        syncedChat["player"] = subject.PlayerChats.Select(x => x.GetHtml());
+                    }
+                    if (subject.Outcome != Game.Outcomes.ONGOING || !(subject.White.Equals(client) || subject.Black.Equals(client)))
+                    {
+                        syncedChat["spectator"] = subject.SpectatorChats.Select(x => x.GetHtml());
+                    }
+                    await Send(JsonConvert.SerializeObject(syncedChat));
                     break;
             }
         }

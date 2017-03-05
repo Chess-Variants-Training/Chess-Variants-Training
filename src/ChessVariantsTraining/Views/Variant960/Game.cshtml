@@ -13,6 +13,20 @@
 }
 <div id="ground-container">
     <div id="chat-box">
+        <div id="chat-header">
+        @if (Model.IsPlayer && Model.IsFinished)
+        {
+            @:<a href="#" id="switch-to-players" class="selected-chat">Players' chat</a> | <a href="#" id="switch-to-spectators">Spectators' chat</a>
+        }
+        else if (Model.IsPlayer)
+        {
+            <b>Players' chat</b>
+        }
+        else
+        {
+            <b>Spectators' chat</b>
+        }
+        </div>
         <div id="chat-content"></div>
         <input type="text" id="chat-input" placeholder="Type in chat">
     </div>
