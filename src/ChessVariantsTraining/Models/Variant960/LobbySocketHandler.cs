@@ -166,6 +166,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public void Dispose()
         {
+            Disposed = true;
             ws.Dispose();
         }
     }
