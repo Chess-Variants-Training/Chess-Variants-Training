@@ -23,7 +23,7 @@ namespace ChessVariantsTraining.Models.Variant960
         IGameSocketHandlerRepository handlerRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
         IUserRepository userRepository;
-        Game subject;
+        string gameId;
 
         public bool Closed
         {
@@ -50,7 +50,7 @@ namespace ChessVariantsTraining.Models.Variant960
         {
             get
             {
-                return subject != null;
+                return Subject != null;
             }
         }
         public bool Disposed
@@ -58,8 +58,16 @@ namespace ChessVariantsTraining.Models.Variant960
             get;
             private set;
         }
+        
+        Game Subject
+        {
+            get
+            {
+                return gameRepository.Get(gameId);
+            }
+        }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, string gameId)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, string _gameId)
         {
             ws = socket;
             client = _client;
@@ -67,7 +75,7 @@ namespace ChessVariantsTraining.Models.Variant960
             handlerRepository = _handlerRepository;
             moveCollectionTransformer = _moveCollectionTransformer;
             userRepository = _userRepository;
-            subject = gameRepository.Get(gameId);
+            gameId = _gameId;
             Disposed = false;
         }
 
@@ -110,8 +118,8 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                         return;
                     }
-                    if ((subject.ChessGame.WhoseTurn == Player.White && !subject.White.Equals(client)) ||
-                        (subject.ChessGame.WhoseTurn == Player.Black && !subject.Black.Equals(client)))
+                    if ((Subject.ChessGame.WhoseTurn == Player.White && !Subject.White.Equals(client)) ||
+                        (Subject.ChessGame.WhoseTurn == Player.Black && !Subject.Black.Equals(client)))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
@@ -125,15 +133,15 @@ namespace ChessVariantsTraining.Models.Variant960
                     Move move;
                     if (moveParts.Length == 2)
                     {
-                        move = new Move(moveParts[0], moveParts[1], subject.ChessGame.WhoseTurn);
+                        move = new Move(moveParts[0], moveParts[1], Subject.ChessGame.WhoseTurn);
                     }
                     else
                     {
-                        move = new Move(moveParts[0], moveParts[1], subject.ChessGame.WhoseTurn, moveParts[2][0]);
+                        move = new Move(moveParts[0], moveParts[1], Subject.ChessGame.WhoseTurn, moveParts[2][0]);
                     }
-                    if (subject.ChessGame.IsValidMove(move))
+                    if (Subject.ChessGame.IsValidMove(move))
                     {
-                        gameRepository.RegisterMove(subject, move);
+                        gameRepository.RegisterMove(Subject, move);
                     }
                     else if (moveMessage.Type == "move")
                     {
@@ -141,33 +149,33 @@ namespace ChessVariantsTraining.Models.Variant960
                     } // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
 
                     string outcome = null;
-                    if (subject.ChessGame.IsWinner(Player.White))
+                    if (Subject.ChessGame.IsWinner(Player.White))
                     {
                         outcome = "1-0, white wins";
-                        gameRepository.RegisterGameOutcome(subject, Game.Outcomes.WHITE_WINS);
+                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.WHITE_WINS);
                     }
-                    else if (subject.ChessGame.IsWinner(Player.Black))
+                    else if (Subject.ChessGame.IsWinner(Player.Black))
                     {
                         outcome = "0-1, black wins";
-                        gameRepository.RegisterGameOutcome(subject, Game.Outcomes.BLACK_WINS);
+                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.BLACK_WINS);
                     }
-                    else if (subject.ChessGame.IsDraw())
+                    else if (Subject.ChessGame.IsDraw())
                     {
                         outcome = "½-½, draw";
-                        gameRepository.RegisterGameOutcome(subject, Game.Outcomes.DRAW);
+                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.DRAW);
                     }
 
                     Dictionary<string, object> messageForPlayerWhoseTurnItIs = new Dictionary<string, object>();
                     Dictionary<string, object> messageForOthers = new Dictionary<string, object>();
                     messageForPlayerWhoseTurnItIs["t"] = messageForOthers["t"] = "moved";
-                    messageForPlayerWhoseTurnItIs["fen"] = messageForOthers["fen"] = subject.ChessGame.GetFen();
-                    messageForPlayerWhoseTurnItIs["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(subject.ChessGame.GetValidMoves(subject.ChessGame.WhoseTurn));
+                    messageForPlayerWhoseTurnItIs["fen"] = messageForOthers["fen"] = Subject.ChessGame.GetFen();
+                    messageForPlayerWhoseTurnItIs["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(Subject.ChessGame.GetValidMoves(Subject.ChessGame.WhoseTurn));
                     messageForPlayerWhoseTurnItIs["lastMove"] = messageForOthers["lastMove"] = new string[] { moveParts[0], moveParts[1] };
-                    messageForPlayerWhoseTurnItIs["turnColor"] = messageForOthers["turnColor"] = subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();
-                    messageForPlayerWhoseTurnItIs["plies"] = messageForOthers["plies"] = subject.ChessGame.Moves.Count;
+                    messageForPlayerWhoseTurnItIs["turnColor"] = messageForOthers["turnColor"] = Subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();
+                    messageForPlayerWhoseTurnItIs["plies"] = messageForOthers["plies"] = Subject.ChessGame.Moves.Count;
                     Dictionary<string, double> clockDictionary = new Dictionary<string, double>();
-                    clockDictionary["white"] = subject.ClockWhite.GetSecondsLeft();
-                    clockDictionary["black"] = subject.ClockBlack.GetSecondsLeft();
+                    clockDictionary["white"] = Subject.ClockWhite.GetSecondsLeft();
+                    clockDictionary["black"] = Subject.ClockBlack.GetSecondsLeft();
                     messageForPlayerWhoseTurnItIs["clock"] = messageForOthers["clock"] = clockDictionary;
                     if (outcome != null)
                     {
@@ -176,7 +184,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     messageForOthers["dests"] = new Dictionary<object, object>();
                     string jsonPlayersMove = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
                     string jsonSpectatorsMove = JsonConvert.SerializeObject(messageForOthers);
-                    await handlerRepository.SendAll(jsonPlayersMove, jsonSpectatorsMove, p => (subject.White.Equals(p) && subject.ChessGame.WhoseTurn == Player.White) || (subject.Black.Equals(p) && subject.ChessGame.WhoseTurn == Player.Black));
+                    await handlerRepository.SendAll(jsonPlayersMove, jsonSpectatorsMove, p => (Subject.White.Equals(p) && Subject.ChessGame.WhoseTurn == Player.White) || (Subject.Black.Equals(p) && Subject.ChessGame.WhoseTurn == Player.Black));
 
                     break;
                 case "chat":
@@ -196,11 +204,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     else
                     {
-                        if (client.Equals(subject.White))
+                        if (client.Equals(Subject.White))
                         {
                             displayName = "[white]";
                         }
-                        else if (client.Equals(subject.Black))
+                        else if (client.Equals(Subject.Black))
                         {
                             displayName = "[black]";
                         }
@@ -219,34 +227,34 @@ namespace ChessVariantsTraining.Models.Variant960
                     string jsonSpectatorsChat = null;
                     if (chatSocketMessage.Channel == "player")
                     {
-                        gameRepository.RegisterPlayerChatMessage(subject, chatMessage);
+                        gameRepository.RegisterPlayerChatMessage(Subject, chatMessage);
                         forPlayers = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "player" }, { "msg", chatMessage.GetHtml() } };
                         jsonPlayersChat = JsonConvert.SerializeObject(forPlayers);
                     }
                     else if (chatSocketMessage.Channel == "spectator")
                     {
-                        gameRepository.RegisterSpectatorChatMessage(subject, chatMessage);
+                        gameRepository.RegisterSpectatorChatMessage(Subject, chatMessage);
                         forSpectators = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "spectator" }, { "msg", chatMessage.GetHtml() } };
                         jsonSpectatorsChat = JsonConvert.SerializeObject(forSpectators);
-                        if (subject.Outcome != Game.Outcomes.ONGOING)
+                        if (Subject.Outcome != Game.Outcomes.ONGOING)
                         {
                             jsonPlayersChat = jsonSpectatorsChat;
                         }
                     }
-                    await handlerRepository.SendAll(jsonPlayersChat, jsonSpectatorsChat, p => subject.White.Equals(p) || subject.Black.Equals(p));
+                    await handlerRepository.SendAll(jsonPlayersChat, jsonSpectatorsChat, p => Subject.White.Equals(p) || Subject.Black.Equals(p));
                     break;
                 case "syncClock":
                     Dictionary<string, object> syncedClockDict = new Dictionary<string, object>()
                     {
                         { "t", "clock" },
-                        { "white", subject.ClockWhite.GetSecondsLeft() },
-                        { "black", subject.ClockBlack.GetSecondsLeft() }
+                        { "white", Subject.ClockWhite.GetSecondsLeft() },
+                        { "black", Subject.ClockBlack.GetSecondsLeft() }
                     };
                     await Send(JsonConvert.SerializeObject(syncedClockDict));
 
                     break;
                 case "flag":
-                    if (subject.Outcome != Game.Outcomes.ONGOING)
+                    if (Subject.Outcome != Game.Outcomes.ONGOING)
                     {
                         return;
                     }
@@ -256,10 +264,10 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                         return;
                     }
-                    double secondsLeft = flagMessage.Player == "white" ? subject.ClockWhite.GetSecondsLeft() : subject.ClockBlack.GetSecondsLeft();
+                    double secondsLeft = flagMessage.Player == "white" ? Subject.ClockWhite.GetSecondsLeft() : Subject.ClockBlack.GetSecondsLeft();
                     if (secondsLeft <= 0)
                     {
-                        gameRepository.RegisterGameOutcome(subject, flagMessage.Player == "white" ? Game.Outcomes.BLACK_WINS : Game.Outcomes.WHITE_WINS);
+                        gameRepository.RegisterGameOutcome(Subject, flagMessage.Player == "white" ? Game.Outcomes.BLACK_WINS : Game.Outcomes.WHITE_WINS);
                         Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
                         {
                             { "t", "outcome" },
@@ -271,13 +279,13 @@ namespace ChessVariantsTraining.Models.Variant960
                 case "syncChat":
                     Dictionary<string, object> syncedChat = new Dictionary<string, object>();
                     syncedChat["t"] = "chatSync";
-                    if (subject.White.Equals(client) || subject.Black.Equals(client))
+                    if (Subject.White.Equals(client) || Subject.Black.Equals(client))
                     {
-                        syncedChat["player"] = subject.PlayerChats.Select(x => x.GetHtml());
+                        syncedChat["player"] = Subject.PlayerChats.Select(x => x.GetHtml());
                     }
-                    if (subject.Outcome != Game.Outcomes.ONGOING || !(subject.White.Equals(client) || subject.Black.Equals(client)))
+                    if (Subject.Outcome != Game.Outcomes.ONGOING || !(Subject.White.Equals(client) || Subject.Black.Equals(client)))
                     {
-                        syncedChat["spectator"] = subject.SpectatorChats.Select(x => x.GetHtml());
+                        syncedChat["spectator"] = Subject.SpectatorChats.Select(x => x.GetHtml());
                     }
                     await Send(JsonConvert.SerializeObject(syncedChat));
                     break;

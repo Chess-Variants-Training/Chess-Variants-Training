@@ -78,5 +78,6 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             subject.SpectatorChats.Add(msg);
             gameRepository.Update(subject);
         }
+
     }
 }
