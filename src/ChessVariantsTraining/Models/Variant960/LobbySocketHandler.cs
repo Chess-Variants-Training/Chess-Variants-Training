@@ -44,6 +44,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 return client;
             }
         }
+        public bool Disposed { get; private set; }
 
         public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IUserRepository _userRepository)
         {
@@ -54,18 +55,27 @@ namespace ChessVariantsTraining.Models.Variant960
             gameRepository = _gameRepository;
             randomProvider = _randomProvider;
             userRepository = _userRepository;
+            Disposed = false;
         }
 
         public async Task LobbyLoop()
         {
             byte[] buffer = new byte[4096];
-            while (ws.State == WebSocketState.Open)
+            while (ws.State == WebSocketState.Open && !Disposed)
             {
                 WebSocketReceiveResult result = await ws.ReceiveAsync(new ArraySegment<byte>(buffer), ct);
-                byte[] message = new byte[result.Count];
-                Array.Copy(buffer, message, result.Count);
-                buffer = new byte[4096];
-                await HandleReceived(Encoding.ASCII.GetString(message));
+                if (result.MessageType != WebSocketMessageType.Close)
+                {
+                    byte[] message = new byte[result.Count];
+                    Array.Copy(buffer, message, result.Count);
+                    buffer = new byte[4096];
+                    await HandleReceived(Encoding.ASCII.GetString(message));
+                }
+                else
+                {
+                    await ws.CloseOutputAsync(WebSocketCloseStatus.NormalClosure, "close requested", ct);
+                    Dispose();
+                }
             }
         }
 
