@@ -35,41 +35,31 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Socket/Lobby")]
         public async Task LobbySocket()
         {
-            System.Console.WriteLine(HttpContext.WebSockets.IsWebSocketRequest);
-            /*if (!HttpContext.WebSockets.IsWebSocketRequest)
+            if (!HttpContext.WebSockets.IsWebSocketRequest)
             {
                 HttpContext.Response.StatusCode = 418;
                 return;
-            }*/
+            }
 
-            try
+            WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
+            GamePlayer client;
+            int? userId = loginHandler.LoggedInUserId(HttpContext);
+            if (userId.HasValue)
             {
-                WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
-                GamePlayer client;
-                int? userId = loginHandler.LoggedInUserId(HttpContext);
-                if (userId.HasValue)
-                {
-                    client = new RegisteredPlayer() { UserId = userId.Value };
-                }
-                else
-                {
-                    if (HttpContext.Session.GetString("anonymousIdentifier") == null)
-                    {
-                        HttpContext.Response.StatusCode = 400;
-                        return;
-                    }
-                    client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
-                }
-                LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider, userRepository);
-                lobbySocketHandlerRepository.Add(handler);
-                await handler.LobbyLoop();
+                client = new RegisteredPlayer() { UserId = userId.Value };
             }
-            catch (System.Exception e)
+            else
             {
-                System.Console.WriteLine(e.Message);
-                System.Console.WriteLine(e.StackTrace);
-                System.Console.WriteLine(e.GetType().FullName);   
+                if (HttpContext.Session.GetString("anonymousIdentifier") == null)
+                {
+                    HttpContext.Response.StatusCode = 400;
+                    return;
+                }
+                client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
             }
+            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider, userRepository);
+            lobbySocketHandlerRepository.Add(handler);
+            await handler.LobbyLoop();
         }
 
         [Route("/Socket/Game/{id}")]
