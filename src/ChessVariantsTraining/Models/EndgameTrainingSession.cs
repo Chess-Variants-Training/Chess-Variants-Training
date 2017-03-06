@@ -70,18 +70,20 @@ namespace ChessVariantsTraining.Models
                         AntichessGame copy = new AntichessGame(Game.GetFen());
                         copy.ApplyMove(valid, true);
                         ReadOnlyCollection<Move> validMoves2 = copy.GetValidMoves(copy.WhoseTurn);
+                        bool wonForAll = true;
                         foreach (Move valid2 in validMoves2)
                         {
                             AntichessGame copy2 = new AntichessGame(copy.GetFen());
                             copy2.ApplyMove(valid2, true);
-                            if (copy2.GetValidMoves(copy2.WhoseTurn).Any(x => copy2.GetPieceAt(x.NewPosition) == null))
+                            if (copy2.GetValidMoves(copy2.WhoseTurn).Any(x => copy2.GetPieceAt(x.NewPosition) != null))
                             {
-                                WasAlreadyLost = false;
+                                wonForAll = false;
                                 break;
                             }
                         }
-                        if (!WasAlreadyLost)
+                        if (wonForAll)
                         {
+                            WasAlreadyLost = false;
                             break;
                         }
                     }
