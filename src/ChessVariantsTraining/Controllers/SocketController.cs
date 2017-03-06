@@ -35,11 +35,12 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Socket/Lobby")]
         public async Task LobbySocket()
         {
-            if (!HttpContext.WebSockets.IsWebSocketRequest)
+            System.Console.WriteLine(HttpContext.WebSockets.IsWebSocketRequest);
+            /*if (!HttpContext.WebSockets.IsWebSocketRequest)
             {
                 HttpContext.Response.StatusCode = 418;
                 return;
-            }
+            }*/
 
             WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
             GamePlayer client;
