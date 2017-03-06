@@ -42,25 +42,34 @@ namespace ChessVariantsTraining.Controllers
                 return;
             }*/
 
-            WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
-            GamePlayer client;
-            int? userId = loginHandler.LoggedInUserId(HttpContext);
-            if (userId.HasValue)
+            try
             {
-                client = new RegisteredPlayer() { UserId = userId.Value };
-            }
-            else
-            {
-                if (HttpContext.Session.GetString("anonymousIdentifier") == null)
+                WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
+                GamePlayer client;
+                int? userId = loginHandler.LoggedInUserId(HttpContext);
+                if (userId.HasValue)
                 {
-                    HttpContext.Response.StatusCode = 400;
-                    return;
+                    client = new RegisteredPlayer() { UserId = userId.Value };
                 }
-                client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
+                else
+                {
+                    if (HttpContext.Session.GetString("anonymousIdentifier") == null)
+                    {
+                        HttpContext.Response.StatusCode = 400;
+                        return;
+                    }
+                    client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
+                }
+                LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider, userRepository);
+                lobbySocketHandlerRepository.Add(handler);
+                await handler.LobbyLoop();
             }
-            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider, userRepository);
-            lobbySocketHandlerRepository.Add(handler);
-            await handler.LobbyLoop();
+            catch (System.Exception e)
+            {
+                System.Console.WriteLine(e.Message);
+                System.Console.WriteLine(e.StackTrace);
+                System.Console.WriteLine(e.GetType().FullName);   
+            }
         }
 
         [Route("/Socket/Game/{id}")]
