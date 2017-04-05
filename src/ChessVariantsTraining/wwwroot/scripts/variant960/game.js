@@ -9,6 +9,7 @@
     var clocksStarted = false;
     var stopClocks = false;
     var latestFlagRequest = 0;
+    var closing = false;
 
     window.addEventListener("load", function () {
         ground = Chessground(document.getElementById("chessground"), {
@@ -40,6 +41,10 @@
             }
         });
 
+        window.addEventListener("beforeunload", function () {
+            closing = true;
+        })
+
         document.getElementById("chat-input").addEventListener("keydown", chatKeyDown);
         if (document.getElementById("switch-to-players")) {
             document.getElementById("switch-to-players").addEventListener("click", switchToPlayersChat);
@@ -64,7 +69,9 @@
     }
 
     function wsClosed() {
-        displayError("WebSocket closed! Please reload the page (there is no auto-reconnect yet)");
+        if (!closing) {
+            displayError("WebSocket closed! Please reload the page (there is no auto-reconnect yet)");
+        }
     }
 
     function wsMessageReceived(e) {
