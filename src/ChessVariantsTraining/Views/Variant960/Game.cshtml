@@ -40,5 +40,13 @@
         <p>Time control: @Model.TimeControl</p>
         <p id="additional-info"></p>
         <p><em id="game-result"></em></p>
+        @if (Model.IsPlayer)
+        {
+            <div id="rematch-offer" class="nodisplay"><a href="#" id="rematch-offer-link">Offer rematch</a></div>
+            <div id="rematch-offered" class="nodisplay">
+                Rematch offered<br>
+                <a href="#" id="rematch-accept">Accept rematch</a> | <a href="#" id="rematch-decline">Decline rematch</a>
+            </div>
+        }
     </div>
 </div>

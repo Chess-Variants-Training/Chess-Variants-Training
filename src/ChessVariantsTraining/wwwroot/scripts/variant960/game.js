@@ -143,6 +143,7 @@
             document.getElementById("chat-header").innerHTML = '<a href="#" id="switch-to-players" class="selected-chat">Players\' chat</a> | <a href="#" id="switch-to-spectators">Spectators\' chat</a>';
             document.getElementById("switch-to-players").addEventListener("click", switchToPlayersChat);
             document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
+            document.getElementById("rematch-offer").classList.remove("nodisplay");
         }
     }
 
