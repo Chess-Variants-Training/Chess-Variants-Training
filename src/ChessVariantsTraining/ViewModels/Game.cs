@@ -103,7 +103,22 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
-        public Game(string gameId, string whiteUsername, string blackUsername, int? whiteId, int? blackId, string shortVariant, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson, string result, string termination)
+        public Game(string gameId,
+            string whiteUsername,
+            string blackUsername,
+            int? whiteId,
+            int? blackId,
+            string shortVariant,
+            string variant,
+            string timeControl,
+            string fen,
+            bool isPlayer,
+            string myColor,
+            string whoseTurn,
+            bool isFinished,
+            string destsJson,
+            string result,
+            string termination)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
