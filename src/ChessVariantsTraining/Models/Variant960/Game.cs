@@ -143,6 +143,9 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("isSymmetrical")]
         public bool IsSymmetrical { get; set; }
 
+        [BsonElement("uciMoves")]
+        public List<string> UciMoves { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
@@ -210,6 +213,7 @@ namespace ChessVariantsTraining.Models.Variant960
             WhiteWantsRematch = false;
             BlackWantsRematch = false;
             RematchLevel = rematchLevel;
+            UciMoves = new List<string>();
         }
     }
 }

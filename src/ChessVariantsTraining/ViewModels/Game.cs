@@ -103,6 +103,18 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public string LastMove
+        {
+            get;
+            private set;
+        }
+
+        public string Check
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -118,7 +130,9 @@ namespace ChessVariantsTraining.ViewModels
             bool isFinished,
             string destsJson,
             string result,
-            string termination)
+            string termination,
+            string lastMove,
+            string check)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -136,6 +150,8 @@ namespace ChessVariantsTraining.ViewModels
             DestsJSON = destsJson;
             Result = result;
             Termination = termination;
+            LastMove = lastMove;
+            Check = check;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
@@ -159,6 +175,30 @@ namespace ChessVariantsTraining.ViewModels
             else
             {
                 return new HtmlString("Anonymous");
+            }
+        }
+
+        public HtmlString RenderLastMoveAsArray()
+        {
+            if (LastMove == null)
+            {
+                return new HtmlString("null");
+            }
+            else
+            {
+                return new HtmlString(string.Format("[\"{0}\",\"{1}\"]", LastMove.Substring(0, 2), LastMove.Substring(2, 2)));
+            }
+        }
+
+        public HtmlString RenderCheckingSquare()
+        {
+            if (Check == null)
+            {
+                return new HtmlString("null");
+            }
+            else
+            {
+                return new HtmlString("\"" + Check + "\"");
             }
         }
     }

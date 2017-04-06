@@ -7,6 +7,8 @@ using ChessVariantsTraining.HttpErrors;
 using ChessVariantsTraining.Models.Variant960;
 using ChessDotNet;
 using Newtonsoft.Json;
+using System.Linq;
+using ChessDotNet.Pieces;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -94,18 +96,59 @@ namespace ChessVariantsTraining.Controllers
 
             bool finished = game.Result != Models.Variant960.Game.Results.ONGOING;
             string destsJson;
+            ChessGame g = gameConstructor.Construct(game.ShortVariantName, game.LatestFEN);
             if (finished || requester == Player.None)
             {
                 destsJson = "{}";
             }
             else
             {
-                ChessGame g = gameConstructor.Construct(game.ShortVariantName, game.LatestFEN);
                 if (g.WhoseTurn != requester)
                 {
                     destsJson = "{}";
                 }
                 destsJson = JsonConvert.SerializeObject(moveCollectionTransformer.GetChessgroundDestsForMoveCollection(g.GetValidMoves(g.WhoseTurn)));
+            }
+            string check = null;
+            if (g.IsInCheck(Player.White))
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        Position pos = new Position((File)i, j + 1);
+                        Piece pieceAt = g.GetPieceAt(pos);
+                        if (pieceAt != null && pieceAt.Owner == Player.White && pieceAt is King)
+                        {
+                            check = pos.ToString().ToLowerInvariant();
+                            break;
+                        }
+                    }
+                    if (check != null)
+                    {
+                        break;
+                    }
+                }
+            }
+            else if (g.IsInCheck(Player.Black))
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        Position pos = new Position((File)i, j + 1);
+                        Piece pieceAt = g.GetPieceAt(pos);
+                        if (pieceAt != null && pieceAt.Owner == Player.Black && pieceAt is King)
+                        {
+                            check = pos.ToString().ToLowerInvariant();
+                            break;
+                        }
+                    }
+                    if (check != null)
+                    {
+                        break;
+                    }
+                }
             }
 
             ViewModels.Game model = new ViewModels.Game(game.ID,
@@ -123,7 +166,9 @@ namespace ChessVariantsTraining.Controllers
                 game.Result != Models.Variant960.Game.Results.ONGOING,
                 destsJson,
                 game.Result,
-                game.Termination);
+                game.Termination,
+                game.UciMoves.LastOrDefault(),
+                check);
 
             return View(model);
         }

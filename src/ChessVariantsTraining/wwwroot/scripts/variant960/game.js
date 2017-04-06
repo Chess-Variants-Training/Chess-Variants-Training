@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, wsUrl, isAnti) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, isAnti) {
     if (myColor === "") myColor = null;
     var ground;
     var ws;
@@ -17,6 +17,8 @@
             coordinates: true,
             orientation: myColor || "white",
             turnColor: whoseTurn,
+            lastMove: lastMove,
+            check: check,
             viewOnly: !isPlayer || isFinished,
             movable: {
                 free: false,
@@ -91,6 +93,7 @@
                     fen: message.fen,
                     lastMove: message.lastMove,
                     turnColor: message.turnColor,
+                    check: message.check,
                     movable: {
                         dests: message.dests
                     }

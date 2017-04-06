@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Pieces;
 using ChessDotNet.Variants.ThreeCheck;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
@@ -158,6 +159,25 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
                     } // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
 
+                    string check = null;
+                    if (Subject.ChessGame.IsInCheck(Subject.ChessGame.WhoseTurn))
+                    {
+                        for (int i = 0; i < 8; i++)
+                        {
+                            for (int j = 0; j < 8; j++)
+                            {
+                                Position pos = new Position((File)i, j + 1);
+                                Piece pieceAt = Subject.ChessGame.GetPieceAt(pos);
+                                if (pieceAt != null && pieceAt.Owner == Subject.ChessGame.WhoseTurn && pieceAt is King)
+                                {
+                                    check = pos.ToString().ToLowerInvariant();
+                                    break;
+                                }
+                            }
+                            if (check != null) break;
+                        }
+                    }
+
                     string outcome = null;
                     if (Subject.ChessGame.IsWinner(Player.White))
                     {
@@ -187,6 +207,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     clockDictionary["white"] = Subject.ClockWhite.GetSecondsLeft();
                     clockDictionary["black"] = Subject.ClockBlack.GetSecondsLeft();
                     messageForPlayerWhoseTurnItIs["clock"] = messageForOthers["clock"] = clockDictionary;
+                    messageForPlayerWhoseTurnItIs["check"] = messageForOthers["check"] = check;
                     if (outcome != null)
                     {
                         messageForPlayerWhoseTurnItIs["outcome"] = messageForOthers["outcome"] = outcome;

@@ -42,6 +42,9 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         {
             subject.ChessGame.ApplyMove(move, true);
             subject.LatestFEN = subject.ChessGame.GetFen();
+            subject.UciMoves.Add(move.OriginalPosition.ToString().ToLowerInvariant() +
+                move.NewPosition.ToString().ToLowerInvariant() +
+                (move.Promotion.HasValue ? move.Promotion.Value.ToString().ToLowerInvariant() : ""));
             if (subject.ChessGame.Moves.Count > 1)
             {
                 if (move.Player == Player.White)
