@@ -92,7 +92,7 @@ namespace ChessVariantsTraining.Controllers
                 }
             }
 
-            bool finished = game.Outcome != Models.Variant960.Game.Outcomes.ONGOING;
+            bool finished = game.Result != Models.Variant960.Game.Results.ONGOING;
             string destsJson;
             if (finished || requester == Player.None)
             {
@@ -120,7 +120,7 @@ namespace ChessVariantsTraining.Controllers
                 requester != Player.None,
                 requester == Player.None ? null : requester.ToString().ToLowerInvariant(),
                 game.LatestFEN.Split(' ')[1] == "w" ? "white" : "black",
-                game.Outcome != Models.Variant960.Game.Outcomes.ONGOING,
+                game.Result != Models.Variant960.Game.Results.ONGOING,
                 destsJson);
 
             return View(model);

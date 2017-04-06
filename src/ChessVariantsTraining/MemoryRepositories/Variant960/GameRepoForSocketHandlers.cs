@@ -62,11 +62,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             gameRepository.Update(subject);
         }
 
-        public void RegisterGameOutcome(Game subject, string outcome)
+        public void RegisterGameResult(Game subject, string result, string termination)
         {
             subject.ClockWhite.End();
             subject.ClockBlack.End();
-            subject.Outcome = outcome;
+            subject.Result = result;
             subject.EndedUtc = DateTime.UtcNow;
             gameRepository.Update(subject);
         }

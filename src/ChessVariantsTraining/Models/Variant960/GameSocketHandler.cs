@@ -162,17 +162,17 @@ namespace ChessVariantsTraining.Models.Variant960
                     if (Subject.ChessGame.IsWinner(Player.White))
                     {
                         outcome = "1-0, white wins";
-                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.WHITE_WINS);
+                        gameRepository.RegisterGameResult(Subject, Game.Results.WHITE_WINS, Game.Terminations.NORMAL);
                     }
                     else if (Subject.ChessGame.IsWinner(Player.Black))
                     {
                         outcome = "0-1, black wins";
-                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.BLACK_WINS);
+                        gameRepository.RegisterGameResult(Subject, Game.Results.BLACK_WINS, Game.Terminations.NORMAL);
                     }
                     else if (Subject.ChessGame.IsDraw())
                     {
                         outcome = "½-½, draw";
-                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.DRAW);
+                        gameRepository.RegisterGameResult(Subject, Game.Results.DRAW, Game.Terminations.NORMAL);
                     }
 
                     Dictionary<string, object> messageForPlayerWhoseTurnItIs = new Dictionary<string, object>();
@@ -251,7 +251,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         gameRepository.RegisterSpectatorChatMessage(Subject, chatMessage);
                         forSpectators = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "spectator" }, { "msg", chatMessage.GetHtml() } };
                         jsonSpectatorsChat = JsonConvert.SerializeObject(forSpectators);
-                        if (Subject.Outcome != Game.Outcomes.ONGOING)
+                        if (Subject.Result != Game.Results.ONGOING)
                         {
                             jsonPlayersChat = jsonSpectatorsChat;
                         }
@@ -269,7 +269,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
                     break;
                 case "flag":
-                    if (Subject.Outcome != Game.Outcomes.ONGOING)
+                    if (Subject.Result != Game.Results.ONGOING)
                     {
                         return;
                     }
@@ -282,7 +282,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     double secondsLeft = flagMessage.Player == "white" ? Subject.ClockWhite.GetSecondsLeft() : Subject.ClockBlack.GetSecondsLeft();
                     if (secondsLeft <= 0)
                     {
-                        gameRepository.RegisterGameOutcome(Subject, flagMessage.Player == "white" ? Game.Outcomes.BLACK_WINS : Game.Outcomes.WHITE_WINS);
+                        gameRepository.RegisterGameResult(Subject, flagMessage.Player == "white" ? Game.Results.BLACK_WINS : Game.Results.WHITE_WINS, Game.Terminations.TIME_FORFEIT);
                         Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
                         {
                             { "t", "outcome" },
@@ -298,7 +298,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         syncedChat["player"] = Subject.PlayerChats.Select(x => x.GetHtml());
                     }
-                    if (Subject.Outcome != Game.Outcomes.ONGOING || !(Subject.White.Equals(client) || Subject.Black.Equals(client)))
+                    if (Subject.Result != Game.Results.ONGOING || !(Subject.White.Equals(client) || Subject.Black.Equals(client)))
                     {
                         syncedChat["spectator"] = Subject.SpectatorChats.Select(x => x.GetHtml());
                     }
@@ -392,7 +392,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
-                    if (Subject.Outcome != Game.Outcomes.ONGOING)
+                    if (Subject.Result != Game.Results.ONGOING)
                     {
                         await Send("{\"t\":\"error\",\"d\":\"Game is not ongoing.\"}");
                         return;
@@ -401,12 +401,12 @@ namespace ChessVariantsTraining.Models.Variant960
                     if (!whiteResigns)
                     {
                         outcomeAfterResign = "1-0, white wins";
-                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.WHITE_WINS);
+                        gameRepository.RegisterGameResult(Subject, Game.Results.WHITE_WINS, Game.Terminations.RESIGNATION);
                     }
                     else
                     {
                         outcomeAfterResign = "0-1, black wins";
-                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.BLACK_WINS);
+                        gameRepository.RegisterGameResult(Subject, Game.Results.BLACK_WINS, Game.Terminations.RESIGNATION);
                     }
                     Dictionary<string, string> outcomeResponseDict = new Dictionary<string, string>()
                     {

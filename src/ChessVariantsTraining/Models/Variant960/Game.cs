@@ -13,13 +13,24 @@ namespace ChessVariantsTraining.Models.Variant960
 {
     public class Game
     {
-        public static class Outcomes
+        public static class Results
         {
             public const string WHITE_WINS = "WhiteWins";
             public const string BLACK_WINS = "BlackWins";
             public const string DRAW = "Draw";
             public const string ONGOING = "Ongoing";
             public const string ABORTED = "Aborted";
+        }
+
+        public static class Terminations
+        {
+            public const string NORMAL = "Normal";
+            public const string RESIGNATION = "Resignation";
+            public const string TIME_FORFEIT = "Time forfeit";
+            public const string RULES_INFRACTION = "Rules infraction";
+            public const string ABANDONED = "Abandoned";
+            public const string UNTERMINATED = "Unterminated";
+            public const string ADJUDICATION = "Adjudication";
         }
 
         public static class Variants
@@ -46,8 +57,11 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("black")]
         public GamePlayer Black { get; set; }
 
-        [BsonElement("outcome")]
-        public string Outcome { get; set; }
+        [BsonElement("result")]
+        public string Result { get; set; }
+
+        [BsonElement("termination")]
+        public string Termination { get; set; }
 
         [BsonElement("shortVariantName")]
         public string ShortVariantName { get; set; }
@@ -122,7 +136,8 @@ namespace ChessVariantsTraining.Models.Variant960
             Black = black;
             PositionBlack = nBlack;
             IsSymmetrical = isSymmetrical;
-            Outcome = Outcomes.ONGOING;
+            Result = Results.ONGOING;
+            Termination = Terminations.UNTERMINATED;
             TimeControl = tc;
             ShortVariantName = shortVariant;
             FullVariantName = fullVariant;

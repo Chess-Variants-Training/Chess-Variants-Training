@@ -9,7 +9,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
 
         void RegisterMove(Game subject, Move move);
 
-        void RegisterGameOutcome(Game subject, string outcome);
+        void RegisterGameResult(Game subject, string result, string termination);
 
         void RegisterPlayerChatMessage(Game subject, ChatMessage msg);
 
