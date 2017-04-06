@@ -91,7 +91,19 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
-        public Game(string gameId, string whiteUsername, string blackUsername, int? whiteId, int? blackId, string shortVariant, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson)
+        public string Result
+        {
+            get;
+            private set;
+        }
+
+        public string Termination
+        {
+            get;
+            private set;
+        }
+
+        public Game(string gameId, string whiteUsername, string blackUsername, int? whiteId, int? blackId, string shortVariant, string variant, string timeControl, string fen, bool isPlayer, string myColor, string whoseTurn, bool isFinished, string destsJson, string result, string termination)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -107,6 +119,8 @@ namespace ChessVariantsTraining.ViewModels
             WhoseTurn = whoseTurn;
             IsFinished = isFinished;
             DestsJSON = destsJson;
+            Result = result;
+            Termination = termination;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)

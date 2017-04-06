@@ -96,7 +96,7 @@
                     }
                 });
                 if (message.outcome) {
-                    gotOutcome(message.outcome);
+                    gotOutcome(message.outcome, message.termination);
                 }
                 if (isPlayer && myColor == message.turnColor && premove && !message.outcome) {
                     ws.send(JSON.stringify({ "t": "premove", "d": premove.origin + '-' + premove.destination }));
@@ -136,7 +136,7 @@
                 displayError(message.d);
                 break;
             case "outcome":
-                gotOutcome(message.outcome);
+                gotOutcome(message.outcome, message.termination);
                 break;
             case "chatSync":
                 if (message.player) {
@@ -171,8 +171,9 @@
         }
     }
 
-    function gotOutcome(outcome) {
+    function gotOutcome(outcome, termination) {
         document.getElementById("game-result").textContent = outcome;
+        document.getElementById("game-termination").textContent = termination;
         stopClockTicking();
         if (isPlayer) {
             document.getElementById("chat-header").innerHTML = '<a href="#" id="switch-to-players" class="selected-chat">Players\' chat</a> | <a href="#" id="switch-to-spectators">Spectators\' chat</a>';

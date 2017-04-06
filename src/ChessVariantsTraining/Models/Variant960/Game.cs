@@ -20,6 +20,26 @@ namespace ChessVariantsTraining.Models.Variant960
             public const string DRAW = "Draw";
             public const string ONGOING = "Ongoing";
             public const string ABORTED = "Aborted";
+
+            public static string ToFriendlyString(string result)
+            {
+                if (result == WHITE_WINS)
+                {
+                    return "1-0, white wins";
+                }
+                else if (result == BLACK_WINS)
+                {
+                    return "0-1, black wins";
+                }
+                else if (result == DRAW)
+                {
+                    return "½-½, draw";
+                }
+                else
+                {
+                    return result;
+                }
+            }
         }
 
         public static class Terminations

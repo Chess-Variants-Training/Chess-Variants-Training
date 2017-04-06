@@ -39,7 +39,7 @@
         <p>Variant: @Model.Variant</p>
         <p>Time control: @Model.TimeControl</p>
         <p id="additional-info"></p>
-        <p><em id="game-result"></em></p>
+        <p><em>Result: </em><em id="game-result">@ChessVariantsTraining.Models.Variant960.Game.Results.ToFriendlyString(Model.Result)</em><br><em>Termination: </em><em id="game-termination">@Model.Termination</em></p>
         @if (Model.IsPlayer)
         {
             <p><a href="#" id="resign-link">Resign</a></p>

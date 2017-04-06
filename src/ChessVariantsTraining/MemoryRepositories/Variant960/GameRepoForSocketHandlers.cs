@@ -67,6 +67,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             subject.ClockWhite.End();
             subject.ClockBlack.End();
             subject.Result = result;
+            subject.Termination = termination;
             subject.EndedUtc = DateTime.UtcNow;
             gameRepository.Update(subject);
         }

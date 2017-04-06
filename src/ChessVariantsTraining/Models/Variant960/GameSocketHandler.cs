@@ -190,6 +190,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     if (outcome != null)
                     {
                         messageForPlayerWhoseTurnItIs["outcome"] = messageForOthers["outcome"] = outcome;
+                        messageForPlayerWhoseTurnItIs["termination"] = messageForOthers["termination"] = Game.Terminations.NORMAL;
                     }
                     if (Subject.ChessGame is ThreeCheckChessGame)
                     {
@@ -286,7 +287,8 @@ namespace ChessVariantsTraining.Models.Variant960
                         Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
                         {
                             { "t", "outcome" },
-                            { "outcome", flagMessage.Player == "white" ? "0-1, black wins" : "1-0, white wins" }
+                            { "outcome", flagMessage.Player == "white" ? "0-1, black wins" : "1-0, white wins" },
+                            { "termination", Game.Terminations.TIME_FORFEIT }
                         };
                         await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(flagVerificationResponse), null, x => true);
                     }
@@ -411,7 +413,8 @@ namespace ChessVariantsTraining.Models.Variant960
                     Dictionary<string, string> outcomeResponseDict = new Dictionary<string, string>()
                     {
                         { "t", "outcome" },
-                        { "outcome", outcomeAfterResign }
+                        { "outcome", outcomeAfterResign },
+                        { "termination", Game.Terminations.RESIGNATION }
                     };
                     await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(outcomeResponseDict), null, x => true);
                     break;
