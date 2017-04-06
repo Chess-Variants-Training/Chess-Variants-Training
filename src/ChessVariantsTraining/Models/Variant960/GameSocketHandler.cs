@@ -385,6 +385,36 @@ namespace ChessVariantsTraining.Models.Variant960
                     gameRepository.ClearRematchOffers(Subject);
                     await handlerRepository.SendAll(gameId, "{\"t\":\"rematch-decline\"}", null, x => x.Equals(isWhite_ ? Subject.Black : Subject.White));
                     break;
+                case "resign":
+                    bool whiteResigns;
+                    if (!(whiteResigns = Subject.White.Equals(client)) && !Subject.Black.Equals(client))
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+                    if (Subject.Outcome != Game.Outcomes.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"Game is not ongoing.\"}");
+                        return;
+                    }
+                    string outcomeAfterResign;
+                    if (!whiteResigns)
+                    {
+                        outcomeAfterResign = "1-0, white wins";
+                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.WHITE_WINS);
+                    }
+                    else
+                    {
+                        outcomeAfterResign = "0-1, black wins";
+                        gameRepository.RegisterGameOutcome(Subject, Game.Outcomes.BLACK_WINS);
+                    }
+                    Dictionary<string, string> outcomeResponseDict = new Dictionary<string, string>()
+                    {
+                        { "t", "outcome" },
+                        { "outcome", outcomeAfterResign }
+                    };
+                    await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(outcomeResponseDict), null, x => true);
+                    break;
             }
         }
 

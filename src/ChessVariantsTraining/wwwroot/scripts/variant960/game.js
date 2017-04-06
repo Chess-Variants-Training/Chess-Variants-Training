@@ -53,6 +53,7 @@
 
         if (isPlayer)
         {
+            document.getElementById("resign-link").addEventListener("click", resign);
             document.getElementById("rematch-offer-link").addEventListener("click", offerRematch);
             document.getElementById("rematch-accept").addEventListener("click", acceptRematch);
             document.getElementById("rematch-decline").addEventListener("click", declineRematch);
@@ -178,6 +179,7 @@
             document.getElementById("switch-to-players").addEventListener("click", switchToPlayersChat);
             document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
             document.getElementById("rematch-offer").classList.remove("nodisplay");
+            document.getElementById("resign-link").classList.add("nodisplay");
         }
     }
 
@@ -319,5 +321,12 @@
         ws.send(JSON.stringify({ "t": "rematch-no" }));
         document.getElementById("rematch-offer-sent").classList.add("nodisplay");
         document.getElementById("rematch-offer").classList.remove("nodisplay");
+    }
+
+    function resign(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({"t": "resign"}));
     }
 }
