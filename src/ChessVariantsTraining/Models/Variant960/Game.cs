@@ -100,12 +100,18 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("blackWantsRematch")]
         public bool BlackWantsRematch { get; set; }
 
+        [BsonElement("rematchId")]
+        public string RematchID { get; set; }
+
+        [BsonElement("rematchLevel")]
+        public int RematchLevel { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
         public Game() { }
 
-        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, TimeControl tc, DateTime startedUtc)
+        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, TimeControl tc, DateTime startedUtc, int rematchLevel)
         {
             ID = id;
             White = white;
@@ -164,6 +170,7 @@ namespace ChessVariantsTraining.Models.Variant960
             MoveTimeStampsUtc = new List<DateTime>();
             WhiteWantsRematch = false;
             BlackWantsRematch = false;
+            RematchLevel = rematchLevel;
         }
     }
 }

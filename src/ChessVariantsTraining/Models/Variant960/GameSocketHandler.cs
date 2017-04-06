@@ -338,8 +338,10 @@ namespace ChessVariantsTraining.Models.Variant960
                             Subject.PositionWhite,
                             Subject.PositionBlack,
                             Subject.TimeControl,
-                            DateTime.UtcNow);
+                            DateTime.UtcNow,
+                            Subject.RematchLevel + 1);
                         gameRepository.Add(newGame);
+                        gameRepository.SetRematchID(Subject, newGame.ID);
                         string rematchJson = "{\"t\":\"rematch\",\"d\":\"" + newGame.ID + "\"}";
                         await Send(rematchJson);
                         await handlerRepository.SendAll(gameId, rematchJson, null, x => true);

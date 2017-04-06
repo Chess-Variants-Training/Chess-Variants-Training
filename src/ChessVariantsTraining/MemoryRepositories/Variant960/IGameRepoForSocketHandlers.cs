@@ -24,5 +24,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         string GenerateId();
 
         void Add(Game subject);
+
+        void SetRematchID(Game subject, string rematchId);
     }
 }

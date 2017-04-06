@@ -111,5 +111,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         {
             gameRepository.Add(subject);
         }
+
+        public void SetRematchID(Game subject, string rematchId)
+        {
+            subject.RematchID = rematchId;
+            gameRepository.Update(subject);
+        }
     }
 }
