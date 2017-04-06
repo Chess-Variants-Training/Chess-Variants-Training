@@ -106,18 +106,22 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("rematchLevel")]
         public int RematchLevel { get; set; }
 
+        [BsonElement("isSymmetrical")]
+        public bool IsSymmetrical { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
         public Game() { }
 
-        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, TimeControl tc, DateTime startedUtc, int rematchLevel)
+        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, bool isSymmetrical, TimeControl tc, DateTime startedUtc, int rematchLevel)
         {
             ID = id;
             White = white;
             PositionWhite = nWhite;
             Black = black;
             PositionBlack = nBlack;
+            IsSymmetrical = isSymmetrical;
             Outcome = Outcomes.ONGOING;
             TimeControl = tc;
             ShortVariantName = shortVariant;

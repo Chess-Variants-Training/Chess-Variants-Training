@@ -24,6 +24,7 @@ namespace ChessVariantsTraining.Models.Variant960
         IGameSocketHandlerRepository handlerRepository;
         IMoveCollectionTransformer moveCollectionTransformer;
         IUserRepository userRepository;
+        IRandomProvider randomProvider;
         string gameId;
 
         public string SubjectID
@@ -75,7 +76,7 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, string _gameId)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, IRandomProvider _randomProvider, string _gameId)
         {
             ws = socket;
             client = _client;
@@ -83,6 +84,7 @@ namespace ChessVariantsTraining.Models.Variant960
             handlerRepository = _handlerRepository;
             moveCollectionTransformer = _moveCollectionTransformer;
             userRepository = _userRepository;
+            randomProvider = _randomProvider;
             gameId = _gameId;
             Disposed = false;
         }
@@ -330,13 +332,33 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     if (createRematch)
                     {
+                        int posWhite;
+                        int posBlack;
+                        if (Subject.RematchLevel % 2 == 0)
+                        {
+                            posWhite = Subject.PositionWhite;
+                            posBlack = Subject.PositionBlack;
+                        }
+                        else
+                        {
+                            posWhite = randomProvider.RandomPositiveInt(Subject.ShortVariantName != "RacingKings" ? 960 : 1440);
+                            if (Subject.IsSymmetrical)
+                            {
+                                posBlack = posWhite;
+                            }
+                            else
+                            {
+                                posBlack = randomProvider.RandomPositiveInt(Subject.ShortVariantName != "RacingKings" ? 960 : 1440);
+                            }
+                        }
                         Game newGame = new Game(gameRepository.GenerateId(),
                             Subject.Black,
                             Subject.White,
                             Subject.ShortVariantName,
                             Subject.FullVariantName,
-                            Subject.PositionWhite,
-                            Subject.PositionBlack,
+                            posWhite,
+                            posBlack,
+                            Subject.IsSymmetrical,
                             Subject.TimeControl,
                             DateTime.UtcNow,
                             Subject.RematchLevel + 1);
