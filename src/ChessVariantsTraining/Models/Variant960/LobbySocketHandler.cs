@@ -112,7 +112,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"seek does not exist\"}");
                         return;
                     }
-                    await seekRepository.Remove(joined.ID, client);
+                    await seekRepository.Remove(joined.ID, joined.Owner);
                     bool hostIsWhite = randomProvider.RandomBool();
                     int nWhite;
                     int nBlack;
