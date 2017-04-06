@@ -131,6 +131,11 @@
             case "clock":
                 updateClockValue("white", message.white);
                 updateClockValue("black", message.black);
+                if (!clocksStarted && message.run) {
+                    clockInfo.which = message.whoseTurn;
+                    clocksStarted = true;
+                    requestAnimationFrame(clockTick);
+                }
                 break;
             case "error":
                 displayError(message.d);

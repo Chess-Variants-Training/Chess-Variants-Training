@@ -264,7 +264,9 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         { "t", "clock" },
                         { "white", Subject.ClockWhite.GetSecondsLeft() },
-                        { "black", Subject.ClockBlack.GetSecondsLeft() }
+                        { "black", Subject.ClockBlack.GetSecondsLeft() },
+                        { "run", Subject.ChessGame.Moves.Count > 1 },
+                        { "whoseTurn", Subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant() }
                     };
                     await Send(JsonConvert.SerializeObject(syncedClockDict));
 
