@@ -43,10 +43,12 @@
         @if (Model.IsPlayer)
         {
             <div id="rematch-offer" class="nodisplay"><a href="#" id="rematch-offer-link">Offer rematch</a></div>
-            <div id="rematch-offered" class="nodisplay">
+            <div id="rematch-offer-sent" class="nodisplay">Rematch offer sent. <a href="#" id="rematch-cancel">Cancel</a></div>
+            <div id="rematch-offer-received" class="nodisplay">
                 Rematch offered<br>
                 <a href="#" id="rematch-accept">Accept rematch</a> | <a href="#" id="rematch-decline">Decline rematch</a>
             </div>
         }
+        <p><a id="view-rematch" class="nodisplay">View rematch</a></p>
     </div>
 </div>

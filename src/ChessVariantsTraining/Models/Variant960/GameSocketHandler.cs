@@ -295,6 +295,65 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     await Send(JsonConvert.SerializeObject(syncedChat));
                     break;
+                case "rematch-offer":
+                case "rematch-yes":
+                    bool isWhite = false;
+                    bool isBlack = false;
+                    if (!(isWhite = Subject.White.Equals(client)) && !(isBlack = Subject.Black.Equals(client)))
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+                    bool createRematch = false;
+                    if (isWhite)
+                    {
+                        gameRepository.RegisterWhiteRematchOffer(Subject);
+                        if (Subject.BlackWantsRematch)
+                        {
+                            createRematch = true;
+                        }
+                    }
+                    else
+                    {
+                        gameRepository.RegisterBlackRematchOffer(Subject);
+                        if (Subject.WhiteWantsRematch)
+                        {
+                            createRematch = true;
+                        }
+                    }
+                    if (createRematch)
+                    {
+                        Game newGame = new Game(gameRepository.GenerateId(),
+                            Subject.Black,
+                            Subject.White,
+                            Subject.ShortVariantName,
+                            Subject.FullVariantName,
+                            Subject.PositionWhite,
+                            Subject.PositionBlack,
+                            Subject.TimeControl,
+                            DateTime.UtcNow);
+                        gameRepository.Add(newGame);
+                        string rematchJson = "{\"t\":\"rematch\",\"d\":\"" + newGame.ID + "\"}";
+                        await Send(rematchJson);
+                        await handlerRepository.SendAll(rematchJson, null, x => true);
+                    }
+                    else
+                    {
+                        string rematchOfferJson = "{\"t\":\"rematch-offer\"}";
+                        await handlerRepository.SendAll(rematchOfferJson, null, x => x.Equals(isWhite ? Subject.Black : Subject.White));
+                    }
+                    break;
+                case "rematch-no":
+                    bool isWhite_ = false;
+                    bool isBlack_ = false;
+                    if (!(isWhite_ = Subject.White.Equals(client)) && !(isBlack_ = Subject.Black.Equals(client)))
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+                    gameRepository.ClearRematchOffers(Subject);
+                    await handlerRepository.SendAll("{\"t\":\"rematch-decline\"}", null, x => x.Equals(isWhite_ ? Subject.Black : Subject.White));
+                    break;
             }
         }
 

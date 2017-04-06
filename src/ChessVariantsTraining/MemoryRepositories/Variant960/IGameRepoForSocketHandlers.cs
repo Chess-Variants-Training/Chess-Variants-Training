@@ -14,5 +14,15 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         void RegisterPlayerChatMessage(Game subject, ChatMessage msg);
 
         void RegisterSpectatorChatMessage(Game subject, ChatMessage msg);
+
+        void RegisterWhiteRematchOffer(Game subject);
+
+        void RegisterBlackRematchOffer(Game subject);
+
+        void ClearRematchOffers(Game subject);
+
+        string GenerateId();
+
+        void Add(Game subject);
     }
 }

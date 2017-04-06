@@ -83,5 +83,33 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             gameRepository.Update(subject);
         }
 
+        public void RegisterWhiteRematchOffer(Game subject)
+        {
+            subject.WhiteWantsRematch = true;
+            gameRepository.Update(subject);
+        }
+
+        public void RegisterBlackRematchOffer(Game subject)
+        {
+            subject.BlackWantsRematch = true;
+            gameRepository.Update(subject);
+        }
+
+        public void ClearRematchOffers(Game subject)
+        {
+            subject.WhiteWantsRematch = false;
+            subject.BlackWantsRematch = false;
+            gameRepository.Update(subject);
+        }
+
+        public string GenerateId()
+        {
+            return gameRepository.GenerateId();
+        }
+
+        public void Add(Game subject)
+        {
+            gameRepository.Add(subject);
+        }
     }
 }

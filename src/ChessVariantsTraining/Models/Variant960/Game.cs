@@ -94,6 +94,12 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("moveTimestampsUtc")]
         public List<DateTime> MoveTimeStampsUtc { get; set; }
 
+        [BsonElement("whiteWantsRematch")]
+        public bool WhiteWantsRematch { get; set; }
+
+        [BsonElement("blackWantsRematch")]
+        public bool BlackWantsRematch { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
@@ -156,6 +162,8 @@ namespace ChessVariantsTraining.Models.Variant960
             ClockWhite = new Clock(tc);
             ClockBlack = new Clock(tc);
             MoveTimeStampsUtc = new List<DateTime>();
+            WhiteWantsRematch = false;
+            BlackWantsRematch = false;
         }
     }
 }

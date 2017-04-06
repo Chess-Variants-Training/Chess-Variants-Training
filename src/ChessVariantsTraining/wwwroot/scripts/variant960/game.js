@@ -51,6 +51,14 @@
             document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
         }
 
+        if (isPlayer)
+        {
+            document.getElementById("rematch-offer-link").addEventListener("click", offerRematch);
+            document.getElementById("rematch-accept").addEventListener("click", acceptRematch);
+            document.getElementById("rematch-decline").addEventListener("click", declineRematch);
+            document.getElementById("rematch-cancel").addEventListener("click", cancelRematch);
+        }
+
         jsonXhr("/Variant960/Game/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
             ws = new WebSocket(wsUrl);
             ws.addEventListener("open", wsOpened);
@@ -139,6 +147,25 @@
                 var placeholderEvent = { preventDefault: function () { } };
                 if (currentChatChannel === "player") switchToPlayersChat(placeholderEvent);
                 else switchToSpectatorsChat(placeholderEvent);
+                break;
+            case "rematch":
+                var loc = "/Variant960/Game/" + message.d;
+                document.getElementById("view-rematch").classList.remove("nodisplay");
+                document.getElementById("view-rematch").setAttribute("href", loc);
+                if (isPlayer) {
+                    closing = true;
+                    ws.close();
+                    window.location.assign(loc);
+                }
+                break;
+            case "rematch-offer":
+                document.getElementById("rematch-offer").classList.add("nodisplay");
+                document.getElementById("rematch-offer-received").classList.remove("nodisplay");
+                break;
+            case "rematch-decline":
+                document.getElementById("rematch-offer").classList.remove("nodisplay");
+                document.getElementById("rematch-offer-sent").classList.add("nodisplay");
+                document.getElementById("rematch-offer-received").classList.add("nodisplay");
                 break;
         }
     }
@@ -258,5 +285,39 @@
             document.getElementById("switch-to-players").classList.remove("selected-chat");
             document.getElementById("switch-to-spectators").classList.add("selected-chat");
         }
+    }
+
+    function offerRematch(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "rematch-offer" }));
+        document.getElementById("rematch-offer").classList.add("nodisplay");
+        document.getElementById("rematch-offer-sent").classList.remove("nodisplay");
+    }
+
+    function acceptRematch(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "rematch-yes" }));
+    }
+
+    function declineRematch(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "rematch-no" }));
+        document.getElementById("rematch-offer-received").classList.add("nodisplay");
+        document.getElementById("rematch-offer").classList.remove("nodisplay");
+    }
+
+    function cancelRematch(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "rematch-no" }));
+        document.getElementById("rematch-offer-sent").classList.add("nodisplay");
+        document.getElementById("rematch-offer").classList.remove("nodisplay");
     }
 }
