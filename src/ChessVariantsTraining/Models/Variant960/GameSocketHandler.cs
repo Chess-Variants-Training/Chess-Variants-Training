@@ -169,7 +169,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         outcome = "0-1, black wins";
                         gameRepository.RegisterGameResult(Subject, Game.Results.BLACK_WINS, Game.Terminations.NORMAL);
                     }
-                    else if (Subject.ChessGame.IsDraw())
+                    else if (Subject.ChessGame.IsDraw() || Subject.ChessGame.DrawCanBeClaimed)
                     {
                         outcome = "½-½, draw";
                         gameRepository.RegisterGameResult(Subject, Game.Results.DRAW, Game.Terminations.NORMAL);
