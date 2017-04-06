@@ -26,6 +26,13 @@ namespace ChessVariantsTraining.Models.Variant960
         IUserRepository userRepository;
         string gameId;
 
+        public string SubjectID
+        {
+            get
+            {
+                return gameId;
+            }
+        }
         public bool Closed
         {
             get
@@ -190,7 +197,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     messageForOthers["dests"] = new Dictionary<object, object>();
                     string jsonPlayersMove = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
                     string jsonSpectatorsMove = JsonConvert.SerializeObject(messageForOthers);
-                    await handlerRepository.SendAll(jsonPlayersMove, jsonSpectatorsMove, p => (Subject.White.Equals(p) && Subject.ChessGame.WhoseTurn == Player.White) || (Subject.Black.Equals(p) && Subject.ChessGame.WhoseTurn == Player.Black));
+                    await handlerRepository.SendAll(gameId, jsonPlayersMove, jsonSpectatorsMove, p => (Subject.White.Equals(p) && Subject.ChessGame.WhoseTurn == Player.White) || (Subject.Black.Equals(p) && Subject.ChessGame.WhoseTurn == Player.Black));
 
                     break;
                 case "chat":
@@ -247,7 +254,7 @@ namespace ChessVariantsTraining.Models.Variant960
                             jsonPlayersChat = jsonSpectatorsChat;
                         }
                     }
-                    await handlerRepository.SendAll(jsonPlayersChat, jsonSpectatorsChat, p => Subject.White.Equals(p) || Subject.Black.Equals(p));
+                    await handlerRepository.SendAll(gameId, jsonPlayersChat, jsonSpectatorsChat, p => Subject.White.Equals(p) || Subject.Black.Equals(p));
                     break;
                 case "syncClock":
                     Dictionary<string, object> syncedClockDict = new Dictionary<string, object>()
@@ -279,7 +286,7 @@ namespace ChessVariantsTraining.Models.Variant960
                             { "t", "outcome" },
                             { "outcome", flagMessage.Player == "white" ? "0-1, black wins" : "1-0, white wins" }
                         };
-                        await handlerRepository.SendAll(JsonConvert.SerializeObject(flagVerificationResponse), null, x => true);
+                        await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(flagVerificationResponse), null, x => true);
                     }
                     break;
                 case "syncChat":
@@ -335,12 +342,12 @@ namespace ChessVariantsTraining.Models.Variant960
                         gameRepository.Add(newGame);
                         string rematchJson = "{\"t\":\"rematch\",\"d\":\"" + newGame.ID + "\"}";
                         await Send(rematchJson);
-                        await handlerRepository.SendAll(rematchJson, null, x => true);
+                        await handlerRepository.SendAll(gameId, rematchJson, null, x => true);
                     }
                     else
                     {
                         string rematchOfferJson = "{\"t\":\"rematch-offer\"}";
-                        await handlerRepository.SendAll(rematchOfferJson, null, x => x.Equals(isWhite ? Subject.Black : Subject.White));
+                        await handlerRepository.SendAll(gameId, rematchOfferJson, null, x => x.Equals(isWhite ? Subject.Black : Subject.White));
                     }
                     break;
                 case "rematch-no":
@@ -352,7 +359,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         return;
                     }
                     gameRepository.ClearRematchOffers(Subject);
-                    await handlerRepository.SendAll("{\"t\":\"rematch-decline\"}", null, x => x.Equals(isWhite_ ? Subject.Black : Subject.White));
+                    await handlerRepository.SendAll(gameId, "{\"t\":\"rematch-decline\"}", null, x => x.Equals(isWhite_ ? Subject.Black : Subject.White));
                     break;
             }
         }

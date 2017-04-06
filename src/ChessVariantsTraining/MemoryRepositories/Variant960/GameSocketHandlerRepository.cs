@@ -14,10 +14,14 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             handlers.Add(handler);
         }
 
-        public async Task SendAll(string messageA, string messageB, Func<GamePlayer, bool> chooseA)
+        public async Task SendAll(string gameId, string messageA, string messageB, Func<GamePlayer, bool> chooseA)
         {
             foreach (GameSocketHandler handler in handlers)
             {
+                if (handler.SubjectID != gameId)
+                {
+                    continue;
+                }
                 if (chooseA(handler.Client))
                 {
                     if (!string.IsNullOrEmpty(messageA))

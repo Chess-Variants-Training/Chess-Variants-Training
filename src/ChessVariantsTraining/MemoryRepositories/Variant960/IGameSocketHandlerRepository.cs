@@ -8,6 +8,6 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
     {
         void Add(GameSocketHandler handler);
 
-        Task SendAll(string messageA, string messageB, Func<GamePlayer, bool> chooseA);
+        Task SendAll(string gameId, string messageA, string messageB, Func<GamePlayer, bool> chooseA);
     }
 }
