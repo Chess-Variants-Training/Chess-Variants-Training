@@ -1,4 +1,5 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
+using System;
 using System.Diagnostics;
 
 namespace ChessVariantsTraining.Models.Variant960
@@ -29,7 +30,7 @@ namespace ChessVariantsTraining.Models.Variant960
         public Clock(TimeControl tc) : this()
         {
             Increment = tc.Increment;
-            SecondsLeftAfterLatestMove = tc.InitialSeconds;
+            SecondsLeftAfterLatestMove = tc.InitialSeconds != 0 ? tc.InitialSeconds : Math.Max(tc.Increment, 3);
         }
 
         public void Start()
