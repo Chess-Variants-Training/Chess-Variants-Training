@@ -37,9 +37,9 @@ function submitMove(origin, destination, promotion) {
                 });
             }
             if (jsonResponse.check) {
-                window.ground.setCheck(jsonResponse.check);
+                ChessgroundExtensions.setCheck(window.ground, jsonResponse.check);
             } else {
-                window.ground.set({ check: null });
+                ChessgroundExtensions.setCheck(window.ground, null);
             }
             switch (jsonResponse.correct) {
                 case 1:
@@ -63,9 +63,9 @@ function submitMove(origin, destination, promotion) {
                         fen: jsonResponse.fenAfterPlay
                     });
                     if (jsonResponse.checkAfterAutoMove) {
-                        window.ground.setCheck(jsonResponse.checkAfterAutoMove);
+                        ChessgroundExtensions.setCheck(window.ground, jsonResponse.checkAfterAutoMove);
                     } else {
-                        window.ground.set({ check: null });
+                        ChessgroundExtensions.setCheck(window.ground, null);
                     }
                     if (jsonResponse.drawAfterAutoMove) {
                         document.getElementById("result").setAttribute("class", "red");

@@ -110,9 +110,9 @@ function submitPuzzleMove(origin, destination, promotion) {
             });
         }
         if (jsonResponse.check) {
-            window.ground.setCheck(jsonResponse.check);
+            ChessgroundExtensions.setCheck(window.ground, jsonResponse.check);
         } else {
-            window.ground.set({ check: null });
+            ChessgroundExtensions.setCheck(window.ground, null);
         }
         if (jsonResponse.play) {
             window.ground.set({
@@ -120,7 +120,7 @@ function submitPuzzleMove(origin, destination, promotion) {
                 lastMove: jsonResponse.play.substr(0, 5).split("-")
             });
             if (jsonResponse.checkAfterAutoMove) {
-                window.ground.setCheck(jsonResponse.checkAfterAutoMove);
+                ChessgroundExtensions.setCheck(window.ground, jsonResponse.checkAfterAutoMove);
             }
         }
         switch (jsonResponse.correct) {
@@ -438,9 +438,9 @@ function replayControlClicked(e) {
     });
     var currentCheck = window.replay.checks[window.replay.current];
     if (currentCheck) {
-        window.ground.setCheck(currentCheck);
+        ChessgroundExtensions.setCheck(window.ground, currentCheck);
     } else {
-        window.ground.set({ check: null });
+        ChessgroundExtensions.setCheck(window.ground, null);
     }
 }
 

@@ -65,5 +65,17 @@
             case "king":
                 return "K";
         }
+    },
+    setCheck: function (ground, color) {
+        if (!color) {
+            ground.set({ check: null });
+        } else {
+            for (var square in ground.state.pieces) {
+                var piece = ground.state.pieces[square];
+                if (piece.role === "king" && piece.color === color) {
+                    ground.set({ check: square });
+                }
+            }
+        }
     }
 };
