@@ -137,7 +137,11 @@ namespace ChessVariantsTraining.Controllers
                 game.Termination,
                 game.UciMoves.LastOrDefault(),
                 check,
-                game.UciMoves.Count);
+                game.UciMoves.Count,
+                game.WhiteWantsDraw,
+                game.BlackWantsDraw,
+                game.WhiteWantsRematch,
+                game.BlackWantsRematch);
 
             return View(model);
         }

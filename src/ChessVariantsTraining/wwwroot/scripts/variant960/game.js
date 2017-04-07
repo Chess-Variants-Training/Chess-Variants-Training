@@ -60,10 +60,12 @@
             if (document.getElementById("abort-link")) {
                 document.getElementById("abort-link").addEventListener("click", abort);
             }
-            document.getElementById("draw-offer-link").addEventListener("click", offerDraw);
-            document.getElementById("draw-accept").addEventListener("click", acceptDraw);
-            document.getElementById("draw-decline").addEventListener("click", declineDraw);
-            document.getElementById("resign-link").addEventListener("click", resign);
+            if (!isFinished) {
+                document.getElementById("draw-offer-link").addEventListener("click", offerDraw);
+                document.getElementById("draw-accept").addEventListener("click", acceptDraw);
+                document.getElementById("draw-decline").addEventListener("click", declineDraw);
+                document.getElementById("resign-link").addEventListener("click", resign);
+            }
             document.getElementById("rematch-offer-link").addEventListener("click", offerRematch);
             document.getElementById("rematch-accept").addEventListener("click", acceptRematch);
             document.getElementById("rematch-decline").addEventListener("click", declineRematch);

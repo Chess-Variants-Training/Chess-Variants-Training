@@ -119,6 +119,30 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public bool WhiteWantsDraw
+        {
+            get;
+            private set;
+        }
+
+        public bool BlackWantsDraw
+        {
+            get;
+            private set;
+        }
+
+        public bool WhiteWantsRematch
+        {
+            get;
+            private set;
+        }
+
+        public bool BlackWantsRematch
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -137,7 +161,11 @@ namespace ChessVariantsTraining.ViewModels
             string termination,
             string lastMove,
             string check,
-            int plies)
+            int plies,
+            bool whiteWantsDraw,
+            bool blackWantsDraw,
+            bool whiteWantsRematch,
+            bool blackWantsRematch)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -158,6 +186,10 @@ namespace ChessVariantsTraining.ViewModels
             LastMove = lastMove;
             Check = check;
             Plies = plies;
+            WhiteWantsDraw = whiteWantsDraw;
+            BlackWantsDraw = blackWantsDraw;
+            WhiteWantsRematch = whiteWantsRematch;
+            BlackWantsRematch = blackWantsRematch;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)

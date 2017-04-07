@@ -46,23 +46,79 @@
             {
                 <p><a href="#" id="abort-link">Abort</a></p>
             }
-            <p id="draw-offer">
-                <a href="#" id="draw-offer-link">Offer draw</a>
-            </p>
-            <p id="draw-offer-sent" class="nodisplay">
-                Draw offer sent.
-            </p>
-            <p id="draw-offer-received" class="nodisplay">
-                <a href="#" id="draw-accept">Accept draw</a> | <a href="#" id="draw-decline">Decline draw</a>
-            </p>
-            <p></p>
-            <p><a href="#" id="resign-link">Resign</a></p>
-            <div id="rematch-offer" class="nodisplay"><a href="#" id="rematch-offer-link">Offer rematch</a></div>
+            @if (!Model.IsFinished)
+            {
+                @if (!Model.WhiteWantsDraw && !Model.BlackWantsDraw)
+                {
+                    <p id="draw-offer">
+                        <a href="#" id="draw-offer-link">Offer draw</a>
+                    </p>
+                    <p id="draw-offer-sent" class="nodisplay">
+                        Draw offer sent.
+                    </p>
+                    <p id="draw-offer-received" class="nodisplay">
+                        <a href="#" id="draw-accept">Accept draw</a> | <a href="#" id="draw-decline">Decline draw</a>
+                    </p>
+                }
+                else if ((Model.WhiteWantsDraw && Model.MyColor == "white") || (Model.BlackWantsDraw && Model.MyColor == "black"))
+                {
+                    <p id="draw-offer" class="nodisplay">
+                        <a href="#" id="draw-offer-link">Offer draw</a>
+                    </p>
+                    <p id="draw-offer-sent">
+                        Draw offer sent.
+                    </p>
+                    <p id="draw-offer-received" class="nodisplay">
+                        <a href="#" id="draw-accept">Accept draw</a> | <a href="#" id="draw-decline">Decline draw</a>
+                    </p>
+                }
+                else
+                {
+                    <p id="draw-offer" class="nodisplay">
+                        <a href="#" id="draw-offer-link">Offer draw</a>
+                    </p>
+                    <p id="draw-offer-sent" class="nodisplay">
+                        Draw offer sent.
+                    </p>
+                    <p id="draw-offer-received">
+                        <a href="#" id="draw-accept">Accept draw</a> | <a href="#" id="draw-decline">Decline draw</a>
+                    </p>
+                }
+                <p><a href="#" id="resign-link">Resign</a></p>
+                <div id="rematch-offer" class="nodisplay"><a href="#" id="rematch-offer-link">Offer rematch</a></div>
+                <div id="rematch-offer-sent" class="nodisplay">Rematch offer sent. <a href="#" id="rematch-cancel">Cancel</a></div>
+                <div id="rematch-offer-received" class="nodisplay">
+                    Rematch offered<br>
+                    <a href="#" id="rematch-accept">Accept rematch</a> | <a href="#" id="rematch-decline">Decline rematch</a>
+                </div>
+                }
+            else if (!Model.WhiteWantsRematch && !Model.BlackWantsRematch)
+            {
+            <div id="rematch-offer"><a href="#" id="rematch-offer-link">Offer rematch</a></div>
             <div id="rematch-offer-sent" class="nodisplay">Rematch offer sent. <a href="#" id="rematch-cancel">Cancel</a></div>
             <div id="rematch-offer-received" class="nodisplay">
                 Rematch offered<br>
                 <a href="#" id="rematch-accept">Accept rematch</a> | <a href="#" id="rematch-decline">Decline rematch</a>
             </div>
+            }
+            else if ((Model.WhiteWantsRematch && Model.MyColor == "white") || (Model.BlackWantsRematch && Model.MyColor == "black"))
+            {
+            <div id="rematch-offer" class="nodisplay"><a href="#" id="rematch-offer-link">Offer rematch</a></div>
+            <div id="rematch-offer-sent">Rematch offer sent. <a href="#" id="rematch-cancel">Cancel</a></div>
+            <div id="rematch-offer-received" class="nodisplay">
+                Rematch offered<br>
+                <a href="#" id="rematch-accept">Accept rematch</a> | <a href="#" id="rematch-decline">Decline rematch</a>
+            </div>
+            }
+            else
+            {
+                <div id="rematch-offer" class="nodisplay"><a href="#" id="rematch-offer-link">Offer rematch</a></div>
+                <div id="rematch-offer-sent" class="nodisplay">Rematch offer sent. <a href="#" id="rematch-cancel">Cancel</a></div>
+                <div id="rematch-offer-received">
+                    Rematch offered<br>
+                    <a href="#" id="rematch-accept">Accept rematch</a> | <a href="#" id="rematch-decline">Decline rematch</a>
+                </div>
+            }
         }
         <p><a id="view-rematch" class="nodisplay">View rematch</a></p>
     </div>
