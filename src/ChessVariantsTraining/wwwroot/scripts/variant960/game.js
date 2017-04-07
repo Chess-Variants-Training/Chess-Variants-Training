@@ -1,4 +1,6 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, isAnti) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant) {
+    var isAnti = shortVariant === "Antichess";
+    var isRacingKings = shortVariant === "RacingKings";
     if (myColor === "") myColor = null;
     var ground;
     var ws;
@@ -15,7 +17,7 @@
         ground = Chessground(document.getElementById("chessground"), {
             fen: fen,
             coordinates: true,
-            orientation: myColor || "white",
+            orientation: isRacingKings ? "white" : (myColor || "white"),
             turnColor: whoseTurn,
             lastMove: lastMove,
             viewOnly: !isPlayer || isFinished,

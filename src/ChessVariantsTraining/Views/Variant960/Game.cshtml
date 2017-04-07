@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.Content("~/styles/variant960/game.css")" type="text/css" />
     <script type="text/javascript">
-        main("@Model.FEN",@Model.IsPlayer.ToString().ToLowerInvariant(),"@Model.MyColor","@Model.WhoseTurn",@Model.IsFinished.ToString().ToLowerInvariant(),@Html.Raw(@Model.DestsJSON),@Model.RenderLastMoveAsArray(),@Model.RenderCheckingSquare(),"@Url.Action("GameSocket", "Socket", new { id = Model.GameID }, "wss")",@((Model.ShortVariant == "Antichess").ToString().ToLowerInvariant()));
+        main("@Model.FEN",@Model.IsPlayer.ToString().ToLowerInvariant(),"@Model.MyColor","@Model.WhoseTurn",@Model.IsFinished.ToString().ToLowerInvariant(),@Html.Raw(@Model.DestsJSON),@Model.RenderLastMoveAsArray(),@Model.RenderCheckingSquare(),"@Url.Action("GameSocket", "Socket", new { id = Model.GameID }, "wss")","@Model.ShortVariant");
     </script>
 }
 <div id="ground-container">
@@ -34,7 +34,7 @@
         <div id="chessground" class="brown"></div>
     </div>
     <div id="next-to-ground">
-        <p>White: @Model.RenderWhiteLink(Url)<br>Black: @Model.RenderBlackLink(Url)</p>
+        <p>@Model.RenderWhiteText() @Model.RenderWhiteLink(Url)<br>@Model.RenderBlackText() @Model.RenderBlackLink(Url)</p>
         <p>White clock: <span id="white-clock"></span><br>Black clock: <span id="black-clock"></span></p>
         <p>Variant: @Model.Variant</p>
         <p>Time control: @Model.TimeControl</p>

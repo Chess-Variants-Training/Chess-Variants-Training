@@ -199,5 +199,29 @@ namespace ChessVariantsTraining.ViewModels
                 return new HtmlString("\"" + Check + "\"");
             }
         }
+
+        public HtmlString RenderWhiteText()
+        {
+            if (IsPlayer && MyColor == "white")
+            {
+                return new HtmlString("White (you):");
+            }
+            else
+            {
+                return new HtmlString("White:");
+            }
+        }
+
+        public HtmlString RenderBlackText()
+        {
+            if (IsPlayer && MyColor == "black")
+            {
+                return new HtmlString("Black (you):");
+            }
+            else
+            {
+                return new HtmlString("Black:");
+            }
+        }
     }
 }
