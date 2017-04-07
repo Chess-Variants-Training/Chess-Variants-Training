@@ -113,6 +113,12 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public int Plies
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -130,7 +136,8 @@ namespace ChessVariantsTraining.ViewModels
             string result,
             string termination,
             string lastMove,
-            string check)
+            string check,
+            int plies)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -150,6 +157,7 @@ namespace ChessVariantsTraining.ViewModels
             Termination = termination;
             LastMove = lastMove;
             Check = check;
+            Plies = plies;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)

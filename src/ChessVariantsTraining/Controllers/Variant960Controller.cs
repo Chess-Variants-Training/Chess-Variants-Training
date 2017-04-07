@@ -136,7 +136,8 @@ namespace ChessVariantsTraining.Controllers
                 game.Result,
                 game.Termination,
                 game.UciMoves.LastOrDefault(),
-                check);
+                check,
+                game.UciMoves.Count);
 
             return View(model);
         }

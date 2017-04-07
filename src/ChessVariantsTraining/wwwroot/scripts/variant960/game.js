@@ -57,6 +57,9 @@
 
         if (isPlayer)
         {
+            if (document.getElementById("abort-link")) {
+                document.getElementById("abort-link").addEventListener("click", abort);
+            }
             document.getElementById("resign-link").addEventListener("click", resign);
             document.getElementById("rematch-offer-link").addEventListener("click", offerRematch);
             document.getElementById("rematch-accept").addEventListener("click", acceptRematch);
@@ -115,6 +118,9 @@
                 updateClockValue("white", message.clock.white);
                 updateClockValue("black", message.clock.black);
                 if (message.plies > 1) {
+                    if (document.getElementById("abort-link")) {
+                        document.getElementById("abort-link").classList.add("nodisplay");
+                    }
                     clockInfo.which = message.turnColor;
                     if (!clocksStarted) {
                         clocksStarted = true;
@@ -191,6 +197,7 @@
             document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
             document.getElementById("rematch-offer").classList.remove("nodisplay");
             document.getElementById("resign-link").classList.add("nodisplay");
+            document.getElementById("abort-link").classList.add("nodisplay");
         }
     }
 
@@ -340,5 +347,12 @@
         e.preventDefault();
 
         ws.send(JSON.stringify({"t": "resign"}));
+    }
+
+    function abort(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "abort" }));
     }
 }

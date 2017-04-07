@@ -51,6 +51,7 @@ namespace ChessVariantsTraining.Models.Variant960
             public const string ABANDONED = "Abandoned";
             public const string UNTERMINATED = "Unterminated";
             public const string ADJUDICATION = "Adjudication";
+            public const string ABORTED = "Aborted";
         }
 
         public static class Variants

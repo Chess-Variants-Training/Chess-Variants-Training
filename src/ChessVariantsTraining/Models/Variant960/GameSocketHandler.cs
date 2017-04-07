@@ -433,6 +433,26 @@ namespace ChessVariantsTraining.Models.Variant960
                     };
                     await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(outcomeResponseDict), null, x => true);
                     break;
+                case "abort":
+                    if (!Subject.White.Equals(client) && !Subject.Black.Equals(client))
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+                    if (Subject.UciMoves.Count > 1)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"It's too late to abort.\"}");
+                        return;
+                    }
+                    gameRepository.RegisterGameResult(Subject, Game.Results.ABORTED, Game.Terminations.ABORTED);
+                    Dictionary<string, string> abortResultDict = new Dictionary<string, string>()
+                    {
+                        { "t", "outcome" },
+                        { "outcome", Game.Results.ABORTED },
+                        { "termination", Game.Terminations.ABORTED }
+                    };
+                    await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(abortResultDict), null, x => true);
+                    break;
             }
         }
 
