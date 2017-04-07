@@ -18,7 +18,6 @@
             orientation: myColor || "white",
             turnColor: whoseTurn,
             lastMove: lastMove,
-            check: check,
             viewOnly: !isPlayer || isFinished,
             movable: {
                 free: false,
@@ -42,6 +41,7 @@
                 }
             }
         });
+        ChessgroundExtensions.setCheck(ground, check);
 
         window.addEventListener("beforeunload", function () {
             closing = true;
@@ -93,11 +93,11 @@
                     fen: message.fen,
                     lastMove: message.lastMove,
                     turnColor: message.turnColor,
-                    check: message.check,
                     movable: {
                         dests: message.dests
                     }
                 });
+                ChessgroundExtensions.setCheck(ground, message.check);
                 if (message.outcome) {
                     gotOutcome(message.outcome, message.termination);
                 }

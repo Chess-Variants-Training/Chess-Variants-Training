@@ -162,20 +162,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     string check = null;
                     if (Subject.ChessGame.IsInCheck(Subject.ChessGame.WhoseTurn))
                     {
-                        for (int i = 0; i < 8; i++)
-                        {
-                            for (int j = 0; j < 8; j++)
-                            {
-                                Position pos = new Position((File)i, j + 1);
-                                Piece pieceAt = Subject.ChessGame.GetPieceAt(pos);
-                                if (pieceAt != null && pieceAt.Owner == Subject.ChessGame.WhoseTurn && pieceAt is King)
-                                {
-                                    check = pos.ToString().ToLowerInvariant();
-                                    break;
-                                }
-                            }
-                            if (check != null) break;
-                        }
+                        check = Subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();
                     }
 
                     string outcome = null;

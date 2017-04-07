@@ -112,43 +112,11 @@ namespace ChessVariantsTraining.Controllers
             string check = null;
             if (g.IsInCheck(Player.White))
             {
-                for (int i = 0; i < 8; i++)
-                {
-                    for (int j = 0; j < 8; j++)
-                    {
-                        Position pos = new Position((File)i, j + 1);
-                        Piece pieceAt = g.GetPieceAt(pos);
-                        if (pieceAt != null && pieceAt.Owner == Player.White && pieceAt is King)
-                        {
-                            check = pos.ToString().ToLowerInvariant();
-                            break;
-                        }
-                    }
-                    if (check != null)
-                    {
-                        break;
-                    }
-                }
+                check = "white";
             }
             else if (g.IsInCheck(Player.Black))
             {
-                for (int i = 0; i < 8; i++)
-                {
-                    for (int j = 0; j < 8; j++)
-                    {
-                        Position pos = new Position((File)i, j + 1);
-                        Piece pieceAt = g.GetPieceAt(pos);
-                        if (pieceAt != null && pieceAt.Owner == Player.Black && pieceAt is King)
-                        {
-                            check = pos.ToString().ToLowerInvariant();
-                            break;
-                        }
-                    }
-                    if (check != null)
-                    {
-                        break;
-                    }
-                }
+                check = "black";
             }
 
             ViewModels.Game model = new ViewModels.Game(game.ID,
