@@ -17,6 +17,7 @@ function setup(puzzleId) {
         window.currentVariant = jsonResponse.variant;
         window.ground.set({
             fen: jsonResponse.fen,
+            check: null,
             orientation: jsonResponse.whoseTurn == "white" || window.currentVariant == "RacingKings" ? "white" : "black",
             turnColor: jsonResponse.whoseTurn,
             lastMove: null,
@@ -121,6 +122,8 @@ function submitPuzzleMove(origin, destination, promotion) {
             });
             if (jsonResponse.checkAfterAutoMove) {
                 ChessgroundExtensions.setCheck(window.ground, jsonResponse.checkAfterAutoMove);
+            } else {
+                ChessgroundExtensions.setCheck(window.ground, null);
             }
         }
         switch (jsonResponse.correct) {
