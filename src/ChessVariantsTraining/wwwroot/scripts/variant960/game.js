@@ -239,6 +239,7 @@
     }
 
     function clockDisplay(time) {
+        time = Math.max(0, time);
         var minutes = Math.floor(time / 60);
         var seconds = Math.floor((time % 60) * 10) / 10;
         return minutes + ":" + (seconds < 10 ? "0" + seconds.toFixed(1) : seconds.toFixed(1));
