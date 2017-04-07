@@ -240,7 +240,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
                     if (displayName == null)
                     {
-                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        await Send("{\"t\":\"error\",\"d\":\"Anonymous users cannot use the Spectators' chat.\"}");
                         return;
                     }
 
@@ -257,6 +257,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     else if (chatSocketMessage.Channel == "spectator")
                     {
+                        if (!(client is RegisteredPlayer))
+                        {
+                            await Send("{\"t\":\"error\",\"d\":\"Anonymous users cannot use the Spectators' chat.\"}");
+                            return;
+                        }
                         gameRepository.RegisterSpectatorChatMessage(Subject, chatMessage);
                         forSpectators = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "spectator" }, { "msg", chatMessage.GetHtml() } };
                         jsonSpectatorsChat = JsonConvert.SerializeObject(forSpectators);
