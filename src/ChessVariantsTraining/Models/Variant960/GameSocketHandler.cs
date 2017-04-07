@@ -68,7 +68,7 @@ namespace ChessVariantsTraining.Models.Variant960
             get;
             private set;
         }
-        
+
         Game Subject
         {
             get
@@ -452,6 +452,61 @@ namespace ChessVariantsTraining.Models.Variant960
                         { "termination", Game.Terminations.ABORTED }
                     };
                     await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(abortResultDict), null, x => true);
+                    break;
+                case "draw-offer":
+                case "draw-yes":
+                    bool whiteOfferingDraw = false;
+                    bool blackOfferingDraw = false;
+                    if (!(whiteOfferingDraw = Subject.White.Equals(client)) && !(blackOfferingDraw = Subject.Black.Equals(client)))
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+                    if (whiteOfferingDraw)
+                    {
+                        gameRepository.RegisterWhiteDrawOffer(Subject);
+                    }
+                    else
+                    {
+                        gameRepository.RegisterBlackDrawOffer(Subject);
+                    }
+                    if (Subject.WhiteWantsDraw && Subject.BlackWantsDraw)
+                    {
+                        gameRepository.RegisterGameResult(Subject, Game.Results.DRAW, Game.Terminations.NORMAL);
+                        Dictionary<string, string> drawResultDict = new Dictionary<string, string>()
+                        {
+                            { "t", "outcome" },
+                            { "outcome", Game.Results.DRAW },
+                            { "termination", Game.Terminations.NORMAL }
+                        };
+                        await handlerRepository.SendAll(SubjectID, JsonConvert.SerializeObject(drawResultDict), null, x => true);
+                    }
+                    else
+                    {
+                        string rematchOfferJson = "{\"t\":\"draw-offer\"}";
+                        await handlerRepository.SendAll(gameId, rematchOfferJson, null, x => x.Equals(whiteOfferingDraw ? Subject.Black : Subject.White));
+                    }
+                    break;
+                case "draw-no":
+                    bool whiteDecliningDraw = false;
+                    bool blackDecliningDraw = false;
+                    if (!(whiteDecliningDraw = Subject.White.Equals(client)) && !(blackDecliningDraw = Subject.Black.Equals(client)))
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
+                        return;
+                    }
+                    if (whiteDecliningDraw && !Subject.BlackWantsDraw)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"You have no open draw offers.\"}");
+                        return;
+                    }
+                    if (blackDecliningDraw && !Subject.WhiteWantsDraw)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"You have no open draw offers.\"}");
+                        return;
+                    }
+                    gameRepository.ClearDrawOffers(Subject);
+                    await handlerRepository.SendAll(gameId, "{\"t\":\"draw-decline\"}", null, x => x.Equals(whiteDecliningDraw ? Subject.Black : Subject.White));
                     break;
             }
         }

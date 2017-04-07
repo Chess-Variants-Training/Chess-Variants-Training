@@ -21,6 +21,12 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
 
         void ClearRematchOffers(Game subject);
 
+        void RegisterWhiteDrawOffer(Game subject);
+
+        void RegisterBlackDrawOffer(Game subject);
+
+        void ClearDrawOffers(Game subject);
+
         string GenerateId();
 
         void Add(Game subject);

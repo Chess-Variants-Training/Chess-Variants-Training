@@ -111,6 +111,25 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             gameRepository.Update(subject);
         }
 
+        public void RegisterWhiteDrawOffer(Game subject)
+        {
+            subject.WhiteWantsDraw = true;
+            gameRepository.Update(subject);
+        }
+
+        public void RegisterBlackDrawOffer(Game subject)
+        {
+            subject.BlackWantsDraw = true;
+            gameRepository.Update(subject);
+        }
+
+        public void ClearDrawOffers(Game subject)
+        {
+            subject.WhiteWantsDraw = false;
+            subject.BlackWantsDraw = false;
+            gameRepository.Update(subject);
+        }
+
         public string GenerateId()
         {
             return gameRepository.GenerateId();

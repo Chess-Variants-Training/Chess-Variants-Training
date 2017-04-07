@@ -147,6 +147,12 @@ namespace ChessVariantsTraining.Models.Variant960
         [BsonElement("uciMoves")]
         public List<string> UciMoves { get; set; }
 
+        [BsonElement("whiteWantsDraw")]
+        public bool WhiteWantsDraw { get; set; }
+
+        [BsonElement("blackWantsDraw")]
+        public bool BlackWantsDraw { get; set; }
+
         [BsonIgnore]
         public ChessGame ChessGame { get; set; }
 
@@ -213,6 +219,8 @@ namespace ChessVariantsTraining.Models.Variant960
             ClockTimes = new List<double>();
             WhiteWantsRematch = false;
             BlackWantsRematch = false;
+            WhiteWantsDraw = false;
+            BlackWantsDraw = false;
             RematchLevel = rematchLevel;
             UciMoves = new List<string>();
         }

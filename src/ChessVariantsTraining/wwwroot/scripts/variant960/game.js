@@ -60,6 +60,9 @@
             if (document.getElementById("abort-link")) {
                 document.getElementById("abort-link").addEventListener("click", abort);
             }
+            document.getElementById("draw-offer-link").addEventListener("click", offerDraw);
+            document.getElementById("draw-accept").addEventListener("click", acceptDraw);
+            document.getElementById("draw-decline").addEventListener("click", declineDraw);
             document.getElementById("resign-link").addEventListener("click", resign);
             document.getElementById("rematch-offer-link").addEventListener("click", offerRematch);
             document.getElementById("rematch-accept").addEventListener("click", acceptRematch);
@@ -180,6 +183,13 @@
                 document.getElementById("rematch-offer-sent").classList.add("nodisplay");
                 document.getElementById("rematch-offer-received").classList.add("nodisplay");
                 break;
+            case "draw-offer":
+                document.getElementById("draw-offer").classList.add("nodisplay");
+                document.getElementById("draw-offer-received").classList.remove("nodisplay");
+                break;
+            case "draw-decline":
+                document.getElementById("draw-offer").classList.remove("nodisplay");
+                document.getElementById("draw-offer-sent").classList.add("nodisplay");
         }
     }
 
@@ -350,5 +360,30 @@
         e.preventDefault();
 
         ws.send(JSON.stringify({ "t": "abort" }));
+    }
+
+    function offerDraw(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "draw-offer" }));
+        document.getElementById("draw-offer").classList.add("nodisplay");
+        document.getElementById("draw-offer-sent").classList.remove("nodisplay");
+    }
+
+    function acceptDraw(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "draw-yes" }));
+    }
+
+    function declineDraw(e) {
+        e = e || window.event;
+        e.preventDefault();
+
+        ws.send(JSON.stringify({ "t": "draw-no" }));
+        document.getElementById("draw-offer").classList.remove("nodisplay");
+        document.getElementById("draw-offer-received").classList.add("nodisplay");
     }
 }
