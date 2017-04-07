@@ -109,11 +109,7 @@
                 if (isPlayer && myColor == message.turnColor && premove && !message.outcome) {
                     ws.send(JSON.stringify({ "t": "premove", "d": premove.origin + '-' + premove.destination }));
                     premoveUnset();
-                    ground.set({
-                        premovable: {
-                            current: null
-                        }
-                    });
+                    ground.cancelPremove();
                 }
                 updateClockValue("white", message.clock.white);
                 updateClockValue("black", message.clock.black);
