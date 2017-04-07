@@ -123,6 +123,11 @@ namespace ChessVariantsTraining.Models.Variant960
             {
                 case "move":
                 case "premove":
+                    if (Subject.Result != Game.Results.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"The game is not ongoing.\"}");
+                        return;
+                    }
                     MoveSocketMessage moveMessage = new MoveSocketMessage(preprocessed);
                     if (!moveMessage.Okay)
                     {
@@ -323,6 +328,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     break;
                 case "rematch-offer":
                 case "rematch-yes":
+                    if (Subject.Result == Game.Results.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"The game is still ongoing.\"}");
+                        return;
+                    }
                     bool isWhite = false;
                     bool isBlack = false;
                     if (!(isWhite = Subject.White.Equals(client)) && !(isBlack = Subject.Black.Equals(client)))
@@ -392,6 +402,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     break;
                 case "rematch-no":
+                    if (Subject.Result == Game.Results.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"The game is still ongoing.\"}");
+                        return;
+                    }
                     bool isWhite_ = false;
                     bool isBlack_ = false;
                     if (!(isWhite_ = Subject.White.Equals(client)) && !(isBlack_ = Subject.Black.Equals(client)))
@@ -403,6 +418,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     await handlerRepository.SendAll(gameId, "{\"t\":\"rematch-decline\"}", null, x => x.Equals(isWhite_ ? Subject.Black : Subject.White));
                     break;
                 case "resign":
+                    if (Subject.Result != Game.Results.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"The game is not ongoing.\"}");
+                        return;
+                    }
                     bool whiteResigns;
                     if (!(whiteResigns = Subject.White.Equals(client)) && !Subject.Black.Equals(client))
                     {
@@ -434,6 +454,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(outcomeResponseDict), null, x => true);
                     break;
                 case "abort":
+                    if (Subject.Result != Game.Results.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"The game is not ongoing.\"}");
+                        return;
+                    }
                     if (!Subject.White.Equals(client) && !Subject.Black.Equals(client))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
@@ -455,6 +480,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     break;
                 case "draw-offer":
                 case "draw-yes":
+                    if (Subject.Result != Game.Results.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"The game is not ongoing.\"}");
+                        return;
+                    }
                     bool whiteOfferingDraw = false;
                     bool blackOfferingDraw = false;
                     if (!(whiteOfferingDraw = Subject.White.Equals(client)) && !(blackOfferingDraw = Subject.Black.Equals(client)))
@@ -488,6 +518,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     break;
                 case "draw-no":
+                    if (Subject.Result != Game.Results.ONGOING)
+                    {
+                        await Send("{\"t\":\"error\",\"d\":\"The game is not ongoing.\"}");
+                        return;
+                    }
                     bool whiteDecliningDraw = false;
                     bool blackDecliningDraw = false;
                     if (!(whiteDecliningDraw = Subject.White.Equals(client)) && !(blackDecliningDraw = Subject.Black.Equals(client)))
