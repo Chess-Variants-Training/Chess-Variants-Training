@@ -1,7 +1,5 @@
-﻿using ChessDotNet;
-using Microsoft.AspNetCore.Html;
+﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace ChessVariantsTraining.ViewModels
 {
