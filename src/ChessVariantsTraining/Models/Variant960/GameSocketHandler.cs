@@ -140,6 +140,8 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
+                    bool flagged = await HandlePotentialFlag(Subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant());
+                    if (flagged) return;
                     if (!Regex.IsMatch(moveMessage.Move, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid message format\"}");
@@ -290,28 +292,13 @@ namespace ChessVariantsTraining.Models.Variant960
 
                     break;
                 case "flag":
-                    if (Subject.Result != Game.Results.ONGOING)
-                    {
-                        return;
-                    }
                     FlagSocketMessage flagMessage = new FlagSocketMessage(preprocessed);
                     if (!flagMessage.Okay)
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                         return;
                     }
-                    double secondsLeft = flagMessage.Player == "white" ? Subject.ClockWhite.GetSecondsLeft() : Subject.ClockBlack.GetSecondsLeft();
-                    if (secondsLeft <= 0)
-                    {
-                        gameRepository.RegisterGameResult(Subject, flagMessage.Player == "white" ? Game.Results.BLACK_WINS : Game.Results.WHITE_WINS, Game.Terminations.TIME_FORFEIT);
-                        Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
-                        {
-                            { "t", "outcome" },
-                            { "outcome", flagMessage.Player == "white" ? "0-1, black wins" : "1-0, white wins" },
-                            { "termination", Game.Terminations.TIME_FORFEIT }
-                        };
-                        await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(flagVerificationResponse), null, x => true);
-                    }
+                    await HandlePotentialFlag(flagMessage.Player);
                     break;
                 case "syncChat":
                     Dictionary<string, object> syncedChat = new Dictionary<string, object>();
@@ -544,6 +531,29 @@ namespace ChessVariantsTraining.Models.Variant960
                     await handlerRepository.SendAll(gameId, "{\"t\":\"draw-decline\"}", null, x => x.Equals(whiteDecliningDraw ? Subject.Black : Subject.White));
                     break;
             }
+        }
+
+        public async Task<bool> HandlePotentialFlag(string player)
+        {
+            if (Subject.Result != Game.Results.ONGOING)
+            {
+                return false;
+            }
+
+            double secondsLeft = player == "white" ? Subject.ClockWhite.GetSecondsLeft() : Subject.ClockBlack.GetSecondsLeft();
+            if (secondsLeft <= 0)
+            {
+                gameRepository.RegisterGameResult(Subject, player == "white" ? Game.Results.BLACK_WINS : Game.Results.WHITE_WINS, Game.Terminations.TIME_FORFEIT);
+                Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
+                        {
+                            { "t", "outcome" },
+                            { "outcome", player == "white" ? "0-1, black wins" : "1-0, white wins" },
+                            { "termination", Game.Terminations.TIME_FORFEIT }
+                        };
+                await handlerRepository.SendAll(gameId, JsonConvert.SerializeObject(flagVerificationResponse), null, x => true);
+                return true;
+            }
+            return false;
         }
 
         public async Task Send(string text)
