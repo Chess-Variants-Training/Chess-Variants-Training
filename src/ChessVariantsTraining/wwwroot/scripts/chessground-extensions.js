@@ -1,6 +1,6 @@
 ﻿var ChessgroundExtensions = {
     needsPromotion: function (ground, dest) {
-        return (dest[1] === "8" || dest[1] === "1") && ground.getPieces()[dest]["role"] === "pawn";
+        return (dest[1] === "8" || dest[1] === "1") && ground.state.pieces[dest]["role"] === "pawn";
     },
     drawPromotionDialog: function (origin, destination, element, pieceSelected, ground, addKing) {
         var promotionChoiceElement = document.createElement("div");
