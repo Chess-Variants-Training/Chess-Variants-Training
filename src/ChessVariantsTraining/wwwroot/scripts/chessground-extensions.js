@@ -5,7 +5,7 @@
     drawPromotionDialog: function (origin, destination, element, pieceSelected, ground, addKing) {
         var promotionChoiceElement = document.createElement("div");
         promotionChoiceElement.id = "promotion-choice";
-        element.appendChild(promotionChoiceElement);
+        element.querySelector(".cg-board").insertBefore(promotionChoiceElement, element.querySelector(".cg-board").firstChild);
         var file = destination.charAt(0);
         var rank = parseInt(destination.charAt(1), 10);
         var color = rank === 1 ? "black" : "white";
@@ -36,9 +36,12 @@
             var square = document.createElement("square");
             square.style.left = left + "%";
             square.style.top = top + "%";
+            square.style.zIndex = 3;
             var piece = document.createElement("piece");
             piece.classList.add(promotionPiece.role);
             piece.classList.add(promotionPiece.color);
+            piece.style.width = "100%";
+            piece.style.height = "100%";
             piece.dataset.role = promotionPiece.role;
             piece.addEventListener("click", function (e) {
                 e.stopPropagation();
@@ -50,7 +53,7 @@
         }
     },
     removePromotionDialog: function (element) {
-        element.removeChild(document.getElementById("promotion-choice"));
+        element.querySelector(".cg-board").removeChild(document.getElementById("promotion-choice"));
     },
     pieceNameToPieceChar: function (name) {
         switch (name) {
