@@ -3,6 +3,7 @@
     var clientId;
     var currentLobbySeek;
     var bumpInterval;
+    var closing = false;
 
     function initialTimeChanged() {
         var value = parseInt(document.getElementById("time-range").value, 10);
@@ -132,6 +133,12 @@
         ws.send(JSON.stringify({ "t": "init", d: "" }));
     }
 
+    function wsClose() {
+        if (!closing) {
+            displayError("WebSocket closed! Please reload the page (there is no auto-reconnect yet)");
+        }
+    }
+
     window.addEventListener("load", function () {
         initialTimeChanged();
         incrementChanged();
@@ -145,9 +152,14 @@
             ws = new WebSocket(window.wsUrl);
             ws.addEventListener("message", wsMessageReceived);
             ws.addEventListener("open", wsOpened);
+            ws.addEventListener("close", wsClose);
         },
         function (req, err) {
             displayError(err);
         });
+    });
+
+    window.addEventListener("beforeunload", function () {
+        closing = true;
     });
 })();
