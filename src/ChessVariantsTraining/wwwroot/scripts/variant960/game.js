@@ -205,7 +205,9 @@
             document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
             document.getElementById("rematch-offer").classList.remove("nodisplay");
             document.getElementById("resign-link").classList.add("nodisplay");
-            document.getElementById("abort-link").classList.add("nodisplay");
+            if (document.getElementById("abort-link")) {
+                document.getElementById("abort-link").classList.add("nodisplay");
+            }
             document.getElementById("draw-offer").classList.add("nodisplay");
             document.getElementById("draw-offer-sent").classList.add("nodisplay");
             document.getElementById("draw-offer-received").classList.add("nodisplay");
