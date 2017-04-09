@@ -66,5 +66,11 @@ namespace ChessVariantsTraining.Models.Variant960
         {
             return SecondsLeftAfterLatestMove - stopwatch.Elapsed.TotalSeconds;
         }
+
+        public void AckFlag()
+        {
+            SecondsLeftAfterLatestMove = 0;
+            Pause();
+        }
     }
 }

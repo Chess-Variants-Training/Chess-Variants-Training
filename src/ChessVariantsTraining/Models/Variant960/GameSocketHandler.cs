@@ -543,6 +543,7 @@ namespace ChessVariantsTraining.Models.Variant960
             double secondsLeft = player == "white" ? Subject.ClockWhite.GetSecondsLeft() : Subject.ClockBlack.GetSecondsLeft();
             if (secondsLeft <= 0)
             {
+                (player == "white" ? Subject.ClockWhite : Subject.ClockBlack).AckFlag();
                 gameRepository.RegisterGameResult(Subject, player == "white" ? Game.Results.BLACK_WINS : Game.Results.WHITE_WINS, Game.Terminations.TIME_FORFEIT);
                 Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
                         {
