@@ -29,10 +29,10 @@
             }
             promotionPiece["color"] = color;
             var left = (file.charCodeAt(0) - 97) * 12.5;
-            if (ground.getOrientation() === "black") {
+            if (ground.state.orientation === "black") {
                 left = 87.5 - left;
             }
-            var top = ground.getOrientation() === color ? i * 12.5 : (7 - i) * 12.5;
+            var top = ground.state.orientation === color ? i * 12.5 : (7 - i) * 12.5;
             var square = document.createElement("square");
             square.style.left = left + "%";
             square.style.top = top + "%";
