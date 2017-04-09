@@ -87,6 +87,9 @@
     function wsOpened() {
         ws.send(JSON.stringify({ "t": "syncClock" }));
         ws.send(JSON.stringify({ "t": "syncChat" }));
+        setInterval(function () {
+            ws.send(JSON.stringify({ "t": "keepAlive" }));
+        }, 20 * 1000);
     }
 
     function wsClosed() {

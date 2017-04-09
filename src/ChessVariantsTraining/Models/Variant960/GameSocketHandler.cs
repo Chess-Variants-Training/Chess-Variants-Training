@@ -530,6 +530,9 @@ namespace ChessVariantsTraining.Models.Variant960
                     gameRepository.ClearDrawOffers(Subject);
                     await handlerRepository.SendAll(gameId, "{\"t\":\"draw-decline\"}", null, x => x.Equals(whiteDecliningDraw ? Subject.Black : Subject.White));
                     break;
+                case "keepAlive":
+                    await Send("{\"t\":\"keepAlive\"}");
+                    break;
             }
         }
 
