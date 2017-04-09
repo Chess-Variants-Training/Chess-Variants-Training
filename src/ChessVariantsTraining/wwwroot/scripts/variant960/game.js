@@ -140,7 +140,9 @@
                 if (message.channel === currentChatChannel) {
                     var msgDiv = document.createElement("div");
                     msgDiv.innerHTML = message.msg;
-                    document.getElementById("chat-content").appendChild(msgDiv);
+                    var chatContent = document.getElementById("chat-content");
+                    chatContent.appendChild(msgDiv);
+                    chatContent.scrollTop = chatContent.scrollHeight;
                 }
                 break;
             case "clock":

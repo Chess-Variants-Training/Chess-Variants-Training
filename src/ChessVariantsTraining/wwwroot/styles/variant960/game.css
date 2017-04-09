@@ -16,6 +16,13 @@
     border-top: solid 1px black;
 }
 
+#chat-content {
+    overflow-y: scroll;
+    margin-bottom: 20px;
+    max-height: 578px;
+    height: calc(35vw - 50px);
+}
+
 .selected-chat {
     font-weight: bold;
     text-decoration: underline;
