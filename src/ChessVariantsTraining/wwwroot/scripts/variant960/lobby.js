@@ -131,6 +131,9 @@
 
     function wsOpened() {
         ws.send(JSON.stringify({ "t": "init", d: "" }));
+        setInterval(function () {
+            ws.send(JSON.stringify({ "t": "keepAlive", d: "" }));
+        }, 20 * 1000);
     }
 
     function wsClose() {

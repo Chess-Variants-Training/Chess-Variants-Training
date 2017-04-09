@@ -142,6 +142,9 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send(JsonConvert.SerializeObject(msg));
                     }
                     break;
+                case "keepAlive":
+                    await Send("{\"t\":\"keepAlive\"}");
+                    break;
                 default:
                     await Send("{\"t\":\"error\",\"d\":\"invalid message\"}");
                     break;
