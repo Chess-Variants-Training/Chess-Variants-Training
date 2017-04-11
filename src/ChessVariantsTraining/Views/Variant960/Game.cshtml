@@ -4,10 +4,10 @@
 @section AddToHead {
     <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground.min.js")"></script>
     <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground-extensions.js")"></script>
-    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/variant960/game.js?av=3")"></script>
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/variant960/game.js")"></script>
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-base.css")" type="text/css">
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-theme.css")" type="text/css">
-    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/variant960/game.css?av=3")" type="text/css" />
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/variant960/game.css")" type="text/css" />
     <script type="text/javascript">
         main("@Model.FEN",@Model.IsPlayer.ToString().ToLowerInvariant(),"@Model.MyColor","@Model.WhoseTurn",@Model.IsFinished.ToString().ToLowerInvariant(),@Html.Raw(@Model.DestsJSON),@Model.RenderLastMoveAsArray(),@Model.RenderCheckingSquare(),"@Url.Action("GameSocket", "Socket", new { id = Model.GameID }, "wss")","@Model.ShortVariant");
     </script>
