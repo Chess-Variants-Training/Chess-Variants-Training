@@ -43,7 +43,7 @@
             piece.style.width = "100%";
             piece.style.height = "100%";
             piece.dataset.role = promotionPiece.role;
-            piece.addEventListener("click", function (e) {
+            piece.addEventListener("mousedown", function (e) {
                 e.stopPropagation();
                 ChessgroundExtensions.removePromotionDialog(element);
                 pieceSelected(origin, destination, ChessgroundExtensions.pieceNameToPieceChar(e.target.dataset.role));
