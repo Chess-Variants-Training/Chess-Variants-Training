@@ -82,3 +82,6 @@
         }
     }
 };
+window.addEventListener("resize", function () {
+    document.body.dispatchEvent(new Event("chessground.resize"));
+});
