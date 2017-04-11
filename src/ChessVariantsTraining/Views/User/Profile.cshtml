@@ -1,7 +1,8 @@
 ﻿@model ChessVariantsTraining.ViewModels.User
 @section Title {Profile page of @Model.Username}
+@using ChessVariantsTraining.Extensions
 @section AddToHead {
-    <link rel="stylesheet" href="@Url.Content("~/styles/profile.css")">
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/profile.css")">
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.2.1/Chart.bundle.min.js"></script>
     <script type="text/javascript">
         window.userId = @Model.ID;
@@ -10,7 +11,7 @@
             @:window.accountClosed = true;
         }
     </script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/profile-page.js")"></script>
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/profile-page.js")"></script>
 }
 @if (Model.Closed)
 {

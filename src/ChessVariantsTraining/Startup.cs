@@ -1,6 +1,7 @@
 ﻿using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.DbRepositories.Variant960;
+using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Services;
@@ -34,6 +35,11 @@ namespace ChessVariantsTraining
             // Configuration
             services.AddOptions();
             services.Configure<Settings>(Configuration);
+            int assetVersion = Configuration.GetValue<int>("AssetVersion");
+            if (!UrlHelperExtensions.SetAssetVersionIfUnset(assetVersion))
+            {
+                throw new System.Exception("Asset value already set, which must not happen.");
+            }
 
             // Database repositories
             services.AddSingleton<IAttemptRepository, AttemptRepository>();

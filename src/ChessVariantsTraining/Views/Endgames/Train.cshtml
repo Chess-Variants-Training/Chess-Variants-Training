@@ -1,12 +1,13 @@
-﻿@section Title{Endgame training}
+﻿@using ChessVariantsTraining.Extensions
+@section Title{Endgame training}
 @model Tuple<string, string>
 @section AddToHead {
-    <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/endgame-training.js")"></script>
-    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
-    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
-    <link rel="stylesheet" href="@Url.Content("~/styles/puzzletrain.css")" type="text/css">
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground.min.js")"></script>
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground-extensions.js")"></script>
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/endgame-training.js")"></script>
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-base.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-theme.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/puzzletrain.css")" type="text/css">
 }
 <span id="start-link" class="start-link">Start!</span>
 <div id="ground-container">

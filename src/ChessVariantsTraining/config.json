@@ -16,5 +16,6 @@
     "NotificationCollectionName": "notifications",
     "GameCollectionName": "games"
   },
-  "TimedTrainingSessionAutoAcknowledgerDelay": 10
+  "TimedTrainingSessionAutoAcknowledgerDelay": 10,
+  "AssetVersion": 3
 }

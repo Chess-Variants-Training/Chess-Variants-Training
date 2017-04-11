@@ -14,6 +14,12 @@
             set;
         }
 
+        public int AssetVersion
+        {
+            get;
+            set;
+        }
+
         public EmailSettings Email
         {
             get;

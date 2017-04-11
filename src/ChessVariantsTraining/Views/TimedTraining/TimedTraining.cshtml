@@ -1,16 +1,17 @@
 @section Title{Timed training}
 @model List<ChessVariantsTraining.Models.TimedTrainingScore>
+@using ChessVariantsTraining.Extensions
 @section AddToHead {
     <script type="text/javascript">
         window.type = "@ViewBag.Type";
         window.variant = "@ViewBag.Variant";
     </script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/chessground.min.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/chessground-extensions.js")"></script>
-    <script type="text/javascript" src="@Url.Content("~/scripts/timed-training.js")"></script>
-    <link rel="stylesheet" href="@Url.Content("~/styles/mate-in-one-train.css")" type="text/css">
-    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-base.css")" type="text/css">
-    <link rel="stylesheet" href="@Url.Content("~/styles/chessground-theme.css")" type="text/css">
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground.min.js")"></script>
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground-extensions.js")"></script>
+    <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/timed-training.js")"></script>
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/mate-in-one-train.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-base.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-theme.css")" type="text/css">
 }
 <p>
     @ViewBag.Description
