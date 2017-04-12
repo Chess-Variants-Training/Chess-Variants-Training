@@ -7,6 +7,8 @@ using System.Collections.Generic;
 using ChessVariantsTraining.Models;
 using System.Linq;
 using ChessVariantsTraining.Attributes;
+using ChessVariantsTraining.Models.Variant960;
+using ChessVariantsTraining.DbRepositories.Variant960;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -19,6 +21,7 @@ namespace ChessVariantsTraining.Controllers
         ITimedTrainingScoreRepository timedTrainingScoreRepository;
         IUserVerifier userVerifier;
         IEmailSender emailSender;
+        IGameRepository gameRepository;
 
         public UserController(IUserRepository _userRepository,
             IRatingRepository _ratingRepository,
@@ -28,7 +31,8 @@ namespace ChessVariantsTraining.Controllers
             IPersistentLoginHandler _loginHandler,
             ITimedTrainingScoreRepository _timedTrainingScoreRepository,
             IUserVerifier _userVerifier,
-            IEmailSender _emailSender)
+            IEmailSender _emailSender,
+            IGameRepository _gameRepository)
             : base(_userRepository, _loginHandler)
         {
             userRepository = _userRepository;
@@ -40,6 +44,7 @@ namespace ChessVariantsTraining.Controllers
             timedTrainingScoreRepository = _timedTrainingScoreRepository;
             userVerifier = _userVerifier;
             emailSender = _emailSender;
+            gameRepository = _gameRepository;
         }
 
         [HttpGet]
@@ -121,7 +126,8 @@ namespace ChessVariantsTraining.Controllers
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user with ID '{0}' could not be found.", id)));
             }
-            ViewModels.User userViewModel = new ViewModels.User(user);
+            long gamesPlayed = gameRepository.CountByPlayerId(id);
+            ViewModels.User userViewModel = new ViewModels.User(user, gamesPlayed);
             return View(userViewModel);
         }
 
@@ -416,6 +422,68 @@ namespace ChessVariantsTraining.Controllers
             userRepository.Update(loggedIn);
             loginHandler.LogoutEverywhereExceptHere(HttpContext);
             return View("PasswordUpdated");
+        }
+
+        [HttpGet]
+        [Route("/User/GameList/{id:int}")]
+        public IActionResult GameList(int id, [FromQuery] int page = 1)
+        {
+            int perPage = 25;
+            if (page < 1)
+            {
+                return ViewResultForHttpError(HttpContext, new NotFound(string.Format("Page number too low.")));
+            }
+            User player = userRepository.FindById(id);
+            if (player == null)
+            {
+                return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user with ID '{0}' could not be found.", id)));
+            }
+            long gameCount = gameRepository.CountByPlayerId(id);
+            if (gameCount == 0)
+            {
+                return ViewResultForHttpError(HttpContext, new NotFound(string.Format("This user hasn't played any games.")));
+            }
+            if ((page - 1) * perPage >= gameCount)
+            {
+                return ViewResultForHttpError(HttpContext, new NotFound(string.Format("Page number too high.")));
+            }
+            List<Game> gamesByPlayer = gameRepository.GetByPlayerId(id, (page - 1) * perPage, perPage);
+            IEnumerable<int> opponentsWhenWhite = gamesByPlayer.Where(x => (x.White as RegisteredPlayer)?.UserId == id && x.Black is RegisteredPlayer).Select(x => (x.Black as RegisteredPlayer).UserId);
+            IEnumerable<int> opponentsWhenBlack = gamesByPlayer.Where(x => (x.Black as RegisteredPlayer)?.UserId == id && x.White is RegisteredPlayer).Select(x => (x.White as RegisteredPlayer).UserId);
+            IEnumerable<int> allOpponentIds = opponentsWhenBlack.Concat(opponentsWhenWhite).Distinct();
+            Dictionary<int, User> players = userRepository.FindByIds(allOpponentIds);
+            players[id] = player;
+            List<ViewModels.LightGame> light = new List<ViewModels.LightGame>();
+            foreach (Game game in gamesByPlayer)
+            {
+                string white;
+                string black;
+                
+                if (game.White is AnonymousPlayer)
+                {
+                    white = "(Anonymous)";
+                }
+                else
+                {
+                    white = players[(game.White as RegisteredPlayer).UserId].Username;
+                }
+
+                if (game.Black is AnonymousPlayer)
+                {
+                    black = "(Anonymous)";
+                }
+                else
+                {
+                    black = players[(game.Black as RegisteredPlayer).UserId].Username;
+                }
+
+                string result = Game.Results.ToFriendlyString(game.Result);
+                string url = Url.Action("Game", "Variant960", new { id = game.ID });
+                light.Add(new ViewModels.LightGame(white, black, result, url, game.StartedUtc.ToString("dd/MM/yyyy HH:mm")));
+            }
+            IEnumerable<int> pagesToShow = Enumerable.Range(1, (int)Math.Ceiling(gameCount / 20F));
+            ViewModels.GameListView model = new ViewModels.GameListView(player.Username, light, page, pagesToShow);
+            return View(model);
         }
     }
 }

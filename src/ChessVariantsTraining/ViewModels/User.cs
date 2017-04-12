@@ -18,13 +18,14 @@ namespace ChessVariantsTraining.ViewModels
             }
         }
         public bool Closed { get; private set; }
+        public long GamesPlayed { get; private set; }
 
         public User(string username)
         {
             Username = username;
         }
 
-        public User(Models.User user)
+        public User(Models.User user, long gamesPlayed)
         {
             Username = user.Username;
             About = user.About;
@@ -33,6 +34,7 @@ namespace ChessVariantsTraining.ViewModels
             Roles = user.Roles;
             ID = user.ID;
             Closed = user.Closed;
+            GamesPlayed = gamesPlayed;
         }
     }
 }

@@ -25,7 +25,7 @@ About:
 </p>
 <hr>
 <p>
-    Puzzles attempted: @Model.PuzzlesMade
+    Puzzles attempted: @Model.PuzzlesMade | @Html.ActionLink("Games played: " + Model.GamesPlayed, "GameList", "User", new { id = Model.ID })
 </p>
 <p>
     Role: @ChessVariantsTraining.Models.UserRole.UserRolesToString(Model.Roles)

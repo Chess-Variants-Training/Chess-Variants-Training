@@ -1,0 +1,26 @@
+﻿@section Title{Games played by @Model.Player}
+@using ChessVariantsTraining.ViewModels
+@model GameListView
+
+<h1>Games played by @Model.Player</h1>
+<p>
+    Page:
+    @foreach (int num in Model.PagesToDisplay)
+    {
+        @if (num != Model.CurrentPage)
+        {
+            @Html.ActionLink(num.ToString(), "GameList", "User", new { page = num })
+        }
+        else
+        {
+            <strong>@Model.CurrentPage</strong>
+        }
+    }
+</p>
+<table>
+    <tr><th>Date/time started (UTC)</th><th>Game</th></tr>
+@foreach (LightGame game in Model.Games)
+{
+    <tr><td>@game.TimeStarted</td><td><a href="@game.Url">@game.White - @game.Black: @game.Result</a></td></tr>
+}
+</table>
