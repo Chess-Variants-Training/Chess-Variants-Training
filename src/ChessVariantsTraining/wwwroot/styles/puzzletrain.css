@@ -66,6 +66,7 @@
 #controls:not(.nodisplay) {
     display: flex;
     flex-direction: row;
+    margin-top: 14px;
 }
 
     #controls > div {
