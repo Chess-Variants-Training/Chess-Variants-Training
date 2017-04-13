@@ -127,8 +127,14 @@ namespace ChessVariantsTraining.Models
             response.Correct = correct ? 1 : -1;
             response.ExplanationSafe = Current.ExplanationSafe;
 
-            PastPuzzleIds.Add(Current.ID);
+            if (!PastPuzzleIds.Contains(Current.ID))
+            {
+                PastPuzzleIds.Add(Current.ID);
+            }
 
+            List<string> replayFens = new List<string>(FENs);
+            List<string> replayChecks = new List<string>(Checks);
+            List<string> replayMoves = new List<string>(Moves);
             if (!correct)
             {
                 Moves.RemoveAt(Moves.Count - 1);
@@ -142,14 +148,17 @@ namespace ChessVariantsTraining.Models
                 {
                     string[] p = move.Split('-', '=');
                     correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : new char?(p[2][0])), true);
-                    FENs.Add(correctGame.GetFen());
-                    Checks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
-                    Moves.Add(move);
+                    replayFens.Add(correctGame.GetFen());
+                    replayChecks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
+                    replayMoves.Add(move);
                 }
+
+                Current.Game = gameConstructor.Construct(Current.Variant, response.FEN);
+                response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
             }
-            response.ReplayFENs = FENs;
-            response.ReplayChecks = Checks;
-            response.ReplayMoves = Moves;
+            response.ReplayFENs = replayFens;
+            response.ReplayChecks = replayChecks;
+            response.ReplayMoves = replayMoves;
         }
     }
 }

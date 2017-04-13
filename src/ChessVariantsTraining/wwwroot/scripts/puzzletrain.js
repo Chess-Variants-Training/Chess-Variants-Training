@@ -144,9 +144,10 @@ function submitPuzzleMove(origin, destination, promotion) {
                     document.getElementById("reportLinkContainer").classList.remove("nodisplay");
                 }
                 window.ground.set({ lastMove: null });
-                document.getElementById("result").textContent = "Puzzle failed.";
+                document.getElementById("result").innerHTML = "<div>Puzzle failed.</div><div><small>But you can keep making moves to solve it.</small></div><div><small>Or, if you want to see the solution instead, click the arrows below.</small></div>";
                 document.getElementById("result").setAttribute("class", "red");
                 loadComments();
+                console.log(jsonResponse);
         }
         if (jsonResponse.dests) {
             window.ground.set({
