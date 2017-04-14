@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant, replayFensInitial, replayMovesInitial, replayChecksInitial) {
     var isAnti = shortVariant === "Antichess";
     var isRacingKings = shortVariant === "RacingKings";
     if (myColor === "") myColor = null;
@@ -12,6 +12,16 @@
     var stopClocks = false;
     var latestFlagRequest = 0;
     var closing = false;
+    var replayFens = replayFensInitial.slice();
+    var replayMoves = replayMovesInitial.slice();
+    var replayChecks = replayChecksInitial.slice();
+    var latestDests = dests;
+    var currentReplayItem = replayFens.length - 1;
+    var needsReplayWarning = false;
+
+    function atLastReplayItem() {
+        return currentReplayItem + 1 == replayFens.length;
+    }
 
     window.addEventListener("load", function () {
         ground = Chessground(document.getElementById("chessground"), {
@@ -71,6 +81,10 @@
             document.getElementById("rematch-decline").addEventListener("click", declineRematch);
             document.getElementById("rematch-cancel").addEventListener("click", cancelRematch);
         }
+        document.getElementById("controls-begin").addEventListener("click", replayControlClickedBegin);
+        document.getElementById("controls-prev").addEventListener("click", replayControlClickedPrev);
+        document.getElementById("controls-next").addEventListener("click", replayControlClickedNext);
+        document.getElementById("controls-end").addEventListener("click", replayControlClickedEnd);
 
         jsonXhr("/Variant960/Game/StoreAnonymousIdentifier", "POST", null, function (req, jsonResponse) {
             ws = new WebSocket(wsUrl);
@@ -102,18 +116,30 @@
         var message = JSON.parse(e.data);
         switch (message.t) {
             case "moved":
-                ground.set({
-                    fen: message.fen,
-                    lastMove: message.lastMove,
-                    turnColor: message.turnColor,
-                    movable: {
-                        dests: message.dests
-                    }
-                });
+                if (atLastReplayItem()) {
+                    currentReplayItem++;
+                    ground.set({
+                        fen: message.fen,
+                        lastMove: message.lastMove,
+                        turnColor: message.turnColor,
+                        movable: {
+                            dests: message.dests
+                        }
+                    });
+                }
+                replayFens.push(message.fen);
+                replayChecks.push(message.check);
+                replayMoves.push(message.lastMove[0] + "-" + message.lastMove[1]);
+                latestDests = message.dests;
+                needsReplayWarning = isPlayer && myColor == message.turnColor;
+                if (!atLastReplayItem() && needsReplayWarning) {
+                    document.getElementById("controls-end").classList.add("orange-bg");
+                }
                 ChessgroundExtensions.setCheck(ground, message.check);
                 if (message.outcome) {
                     gotOutcome(message.outcome, message.termination);
                 }
+
                 if (isPlayer && myColor == message.turnColor && premove && !message.outcome) {
                     ws.send(JSON.stringify({ "t": "premove", "d": premove.origin + '-' + premove.destination }));
                     premoveUnset();
@@ -201,6 +227,7 @@
     }
 
     function gotOutcome(outcome, termination) {
+        needsReplayWarning = false;
         document.getElementById("game-result").textContent = outcome;
         document.getElementById("game-termination").textContent = termination;
         stopClockTicking();
@@ -397,5 +424,50 @@
         ws.send(JSON.stringify({ "t": "draw-no" }));
         document.getElementById("draw-offer").classList.remove("nodisplay");
         document.getElementById("draw-offer-received").classList.add("nodisplay");
+    }
+
+    function replayControlClickedBegin(e) {
+        currentReplayItem = 0;
+        updateBoardAfterReplayStateChanged();
+    }
+
+    function replayControlClickedPrev(e) {
+        if (currentReplayItem == 0) return;
+
+        currentReplayItem--;
+        updateBoardAfterReplayStateChanged();
+    }
+
+    function replayControlClickedNext(e) {
+        if (atLastReplayItem()) return;
+
+        currentReplayItem++;
+        updateBoardAfterReplayStateChanged();
+    }
+
+    function replayControlClickedEnd(e) {
+        if (atLastReplayItem()) return;
+
+        currentReplayItem = replayFens.length - 1;
+        updateBoardAfterReplayStateChanged();
+    }
+
+    function updateBoardAfterReplayStateChanged() {
+        var destsToUse = atLastReplayItem() ? latestDests : {};
+        ground.set({
+            fen: replayFens[currentReplayItem],
+            turnColor: replayFens.length % 2 == 0 ? 'black' : 'white',
+            lastMove: replayMoves[currentReplayItem] ? replayMoves[currentReplayItem].split("-") : null,
+            movable: {
+                dests: destsToUse
+            }
+        });
+        ChessgroundExtensions.setCheck(ground, replayChecks[currentReplayItem]);
+
+        if (atLastReplayItem()) {
+            document.getElementById("controls-end").classList.remove("orange-bg");
+        } else if (needsReplayWarning) {
+            document.getElementById("controls-end").classList.add("orange-bg");
+        }
     }
 }

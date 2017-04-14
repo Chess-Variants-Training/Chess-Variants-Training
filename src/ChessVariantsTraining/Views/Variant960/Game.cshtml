@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-base.css")" type="text/css">
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/variant960/game.css")" type="text/css" />
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/controls.css")" type="text/css">
     <script type="text/javascript">
-        main("@Model.FEN",@Model.IsPlayer.ToString().ToLowerInvariant(),"@Model.MyColor","@Model.WhoseTurn",@Model.IsFinished.ToString().ToLowerInvariant(),@Html.Raw(@Model.DestsJSON),@Model.RenderLastMoveAsArray(),@Model.RenderCheckingSquare(),"@Url.Action("GameSocket", "Socket", new { id = Model.GameID }, "wss")","@Model.ShortVariant");
+        main("@Model.FEN",@Model.IsPlayer.ToString().ToLowerInvariant(),"@Model.MyColor","@Model.WhoseTurn",@Model.IsFinished.ToString().ToLowerInvariant(),@Html.Raw(@Model.DestsJSON),@Model.RenderLastMoveAsArray(),@Model.RenderCheckingSquare(),"@Url.Action("GameSocket", "Socket", new { id = Model.GameID }, "wss")","@Model.ShortVariant",@Model.RenderReplayFens(),@Model.RenderReplayMoves(),@Model.RenderReplayChecks());
     </script>
 }
 <div id="ground-container">
@@ -33,6 +34,12 @@
     </div>
     <div>
         <div id="chessground" class="brown"></div>
+        <div id="controls">
+            <div id="controls-begin">|&lt;&lt;</div>
+            <div id="controls-prev">|&lt;</div>
+            <div id="controls-next">&gt;|</div>
+            <div id="controls-end">&gt;&gt;|</div>
+        </div>
     </div>
     <div id="next-to-ground">
         <p>@Model.RenderWhiteText() @Model.RenderWhiteLink(Url)<br>@Model.RenderBlackText() @Model.RenderBlackLink(Url)</p>

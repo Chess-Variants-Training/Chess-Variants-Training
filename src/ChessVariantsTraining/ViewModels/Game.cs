@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace ChessVariantsTraining.ViewModels
 {
@@ -143,6 +144,24 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public List<string> ReplayFENs
+        {
+            get;
+            private set;
+        }
+
+        public List<string> ReplayMoves
+        {
+            get;
+            private set;
+        }
+
+        public List<string> ReplayChecks
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -165,7 +184,10 @@ namespace ChessVariantsTraining.ViewModels
             bool whiteWantsDraw,
             bool blackWantsDraw,
             bool whiteWantsRematch,
-            bool blackWantsRematch)
+            bool blackWantsRematch,
+            List<string> replayFens,
+            List<string> replayMoves,
+            List<string> replayChecks)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -190,6 +212,9 @@ namespace ChessVariantsTraining.ViewModels
             BlackWantsDraw = blackWantsDraw;
             WhiteWantsRematch = whiteWantsRematch;
             BlackWantsRematch = blackWantsRematch;
+            ReplayFENs = replayFens;
+            ReplayMoves = replayMoves;
+            ReplayChecks = replayChecks;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
@@ -262,6 +287,34 @@ namespace ChessVariantsTraining.ViewModels
             {
                 return new HtmlString("Black:");
             }
+        }
+
+        public HtmlString RenderReplayFens()
+        {
+            return new HtmlString(string.Format("['{0}']", string.Join("','", ReplayFENs)));
+        }
+        
+        public HtmlString RenderReplayMoves()
+        {
+            return new HtmlString(string.Format("[null,'{0}']", string.Join("','", ReplayMoves)));
+        }
+
+        public HtmlString RenderReplayChecks()
+        {
+            List<string> stringifiedReplayChecks = new List<string>();
+            foreach (string replayCheck in ReplayChecks)
+            {
+                if (replayCheck == null)
+                {
+                    stringifiedReplayChecks.Add("null");
+                }
+                else
+                {
+                    stringifiedReplayChecks.Add(string.Concat("'", replayCheck, "'"));
+                }
+            }
+
+            return new HtmlString(string.Format("[{0}]", string.Join(",", stringifiedReplayChecks)));
         }
     }
 }

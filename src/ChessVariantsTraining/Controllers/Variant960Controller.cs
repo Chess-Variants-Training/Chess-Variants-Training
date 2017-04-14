@@ -9,6 +9,7 @@ using ChessDotNet;
 using Newtonsoft.Json;
 using System.Linq;
 using ChessDotNet.Pieces;
+using System.Collections.Generic;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -119,6 +120,41 @@ namespace ChessVariantsTraining.Controllers
                 check = "black";
             }
 
+            List<string> replay = new List<string>();
+            replay.Add(game.InitialFEN);
+
+            List<string> replayChecks = new List<string>();
+            replayChecks.Add(null);
+
+            List<string> replayMoves = new List<string>();
+
+            ChessGame replayGame = gameConstructor.Construct(game.ShortVariantName, game.InitialFEN);
+            foreach (string uciMove in game.UciMoves)
+            {
+                string from = uciMove.Substring(0, 2);
+                string to = uciMove.Substring(2, 2);
+                replayMoves.Add(string.Concat(from, "-", to));
+                char? promotion = null;
+                if (uciMove.Length == 5)
+                {
+                    promotion = uciMove[4];
+                }
+                replayGame.ApplyMove(new Move(from, to, replayGame.WhoseTurn, promotion), true);
+                replay.Add(replayGame.GetFen());
+                if (replayGame.IsInCheck(Player.White))
+                {
+                    replayChecks.Add("white");
+                }
+                else if (replayGame.IsInCheck(Player.Black))
+                {
+                    replayChecks.Add("black");
+                }
+                else
+                {
+                    replayChecks.Add(null);
+                }
+            }
+
             ViewModels.Game model = new ViewModels.Game(game.ID,
                 whiteUsername,
                 blackUsername,
@@ -141,7 +177,10 @@ namespace ChessVariantsTraining.Controllers
                 game.WhiteWantsDraw,
                 game.BlackWantsDraw,
                 game.WhiteWantsRematch,
-                game.BlackWantsRematch);
+                game.BlackWantsRematch,
+                replay,
+                replayMoves,
+                replayChecks);
 
             return View(model);
         }
