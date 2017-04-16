@@ -38,9 +38,10 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             }
         }
 
-        public void RegisterMove(Game subject, Move move)
+        public MoveType RegisterMove(Game subject, Move move)
         {
-            subject.ChessGame.ApplyMove(move, true);
+            MoveType ret;
+            ret = subject.ChessGame.ApplyMove(move, true);
             subject.LatestFEN = subject.ChessGame.GetFen();
             subject.UciMoves.Add(move.OriginalPosition.ToString().ToLowerInvariant() +
                 move.NewPosition.ToString().ToLowerInvariant() +
@@ -68,6 +69,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
                 subject.ClockTimes.Add(subject.ClockWhite.GetSecondsLeft());
             }
             gameRepository.Update(subject);
+            return ret;
         }
 
         public void RegisterGameResult(Game subject, string result, string termination)

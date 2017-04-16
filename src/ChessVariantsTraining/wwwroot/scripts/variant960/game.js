@@ -19,6 +19,18 @@
     var currentReplayItem = replayFens.length - 1;
     var needsReplayWarning = false;
 
+    var soundBasePath = "/sound/sfx/";
+    var sounds = {
+        genericNotify: new Howl({ src: [soundBasePath + "GenericNotify.mp3", soundBasePath + "GenericNotify.ogg"] }),
+        move: new Howl({ src: [soundBasePath + "Move.mp3", soundBasePath + "Move.ogg"] }),
+        capture: new Howl({ src: [soundBasePath + "Capture.mp3", soundBasePath + "Capture.ogg"] }),
+        explosion: new Howl({ src: [soundBasePath + "Explosion.mp3", soundBasePath + "Explosion.ogg"] })
+    };
+    sounds.genericNotify.once('load', function () {
+        if (isPlayer && !isFinished && replayFens.length < 3) {
+            sounds.genericNotify.play();
+        }
+    });
     function atLastReplayItem() {
         return currentReplayItem + 1 == replayFens.length;
     }
@@ -65,8 +77,7 @@
             document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
         }
 
-        if (isPlayer)
-        {
+        if (isPlayer) {
             if (document.getElementById("abort-link")) {
                 document.getElementById("abort-link").addEventListener("click", abort);
             }
@@ -117,6 +128,15 @@
         switch (message.t) {
             case "moved":
                 if (atLastReplayItem()) {
+                    if (message.isCapture) {
+                        if (shortVariant === "Atomic") {
+                            sounds.explosion.play();
+                        } else {
+                            sounds.capture.play();
+                        }
+                    } else {
+                        sounds.move.play();
+                    }
                     currentReplayItem++;
                     ground.set({
                         fen: message.fen,
@@ -391,7 +411,7 @@
         e = e || window.event;
         e.preventDefault();
 
-        ws.send(JSON.stringify({"t": "resign"}));
+        ws.send(JSON.stringify({ "t": "resign" }));
     }
 
     function abort(e) {

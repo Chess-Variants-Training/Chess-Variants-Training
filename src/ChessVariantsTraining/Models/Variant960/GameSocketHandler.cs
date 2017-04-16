@@ -157,14 +157,20 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         move = new Move(moveParts[0], moveParts[1], Subject.ChessGame.WhoseTurn, moveParts[2][0]);
                     }
+                    MoveType mt;
                     if (Subject.ChessGame.IsValidMove(move))
                     {
-                        gameRepository.RegisterMove(Subject, move);
+                        mt = gameRepository.RegisterMove(Subject, move);
                     }
                     else if (moveMessage.Type == "move")
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
-                    } // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
+                        return;
+                    }
+                    else
+                    {
+                        return; // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
+                    }
 
                     string check = null;
                     if (Subject.ChessGame.IsInCheck(Subject.ChessGame.WhoseTurn))
@@ -202,6 +208,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     clockDictionary["black"] = Subject.ClockBlack.GetSecondsLeft();
                     messageForPlayerWhoseTurnItIs["clock"] = messageForOthers["clock"] = clockDictionary;
                     messageForPlayerWhoseTurnItIs["check"] = messageForOthers["check"] = check;
+                    messageForPlayerWhoseTurnItIs["isCapture"] = messageForOthers["isCapture"] = mt.HasFlag(MoveType.Capture);
                     if (outcome != null)
                     {
                         messageForPlayerWhoseTurnItIs["outcome"] = messageForOthers["outcome"] = outcome;
