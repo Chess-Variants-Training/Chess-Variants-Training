@@ -2,7 +2,7 @@
 artifacts/
 bin/
 obj/
-*.xproj.user
+*.csproj.user
 data/
 deps/
 project.lock.json
