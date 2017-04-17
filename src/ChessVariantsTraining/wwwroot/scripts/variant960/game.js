@@ -19,6 +19,9 @@
     var currentReplayItem = replayFens.length - 1;
     var needsReplayWarning = false;
 
+
+    var soundTurnedOn = localStorage.getItem("sound") === "yes";
+
     var soundBasePath = "/sound/sfx/";
     var sounds = {
         genericNotify: new Howl({ src: [soundBasePath + "GenericNotify.mp3", soundBasePath + "GenericNotify.ogg"] }),
@@ -27,7 +30,7 @@
         explosion: new Howl({ src: [soundBasePath + "Explosion.mp3", soundBasePath + "Explosion.ogg"] })
     };
     sounds.genericNotify.once('load', function () {
-        if (isPlayer && !isFinished && replayFens.length < 3) {
+        if (soundTurnedOn && isPlayer && !isFinished && replayFens.length < 3) {
             sounds.genericNotify.play();
         }
     });
@@ -36,6 +39,19 @@
     }
 
     window.addEventListener("load", function () {
+        function renderSoundText() {
+            if (soundTurnedOn) {
+                document.getElementById("sound-toggle-text").innerHTML = "&#x1f50a;";
+            } else {
+                document.getElementById("sound-toggle-text").innerHTML = "&#x1f507;";
+            }
+        }
+        renderSoundText();
+        document.getElementById("sound-toggle").addEventListener("click", function () {
+            soundTurnedOn = !soundTurnedOn;
+            localStorage.setItem("sound", soundTurnedOn ? "yes" : "no");
+            renderSoundText();
+        })
         ground = Chessground(document.getElementById("chessground"), {
             fen: fen,
             coordinates: true,
@@ -128,14 +144,16 @@
         switch (message.t) {
             case "moved":
                 if (atLastReplayItem()) {
-                    if (message.isCapture) {
-                        if (shortVariant === "Atomic") {
-                            sounds.explosion.play();
+                    if (soundTurnedOn) {
+                        if (message.isCapture) {
+                            if (shortVariant === "Atomic") {
+                                sounds.explosion.play();
+                            } else {
+                                sounds.capture.play();
+                            }
                         } else {
-                            sounds.capture.play();
+                            sounds.move.play();
                         }
-                    } else {
-                        sounds.move.play();
                     }
                     currentReplayItem++;
                     ground.set({

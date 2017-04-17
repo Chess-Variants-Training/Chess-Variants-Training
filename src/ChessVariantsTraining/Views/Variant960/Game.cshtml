@@ -1,6 +1,7 @@
 ﻿@model ChessVariantsTraining.ViewModels.Game
 @using ChessVariantsTraining.Extensions
 @section Title{Play Variant960}
+@{ ViewBag.SupportsSound = true; }
 @section AddToHead {
     <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground.min.js")"></script>
     <script type="text/javascript" src="@Url.ContentWithAssetVersion("~/scripts/chessground-extensions.js")"></script>

@@ -74,6 +74,10 @@
                     }
                 }
             </li>
+            @if (ViewBag.SupportsSound)
+            {
+                <li class="right" id="sound-toggle"><span id="sound-toggle-text"></span></li>
+            }
             @if (loggedIn != null && UserRole.HasAtLeastThePrivilegesOf(loggedIn.Roles, new string[] { UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR }))
             {
                 <li class="right">@Html.ActionLink("Reports", "ListAll", "Report")</li>

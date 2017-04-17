@@ -31,3 +31,7 @@
 .orange-bg {
     background: orange !important;
 }
+
+#sound-toggle {
+    cursor: pointer;
+}
