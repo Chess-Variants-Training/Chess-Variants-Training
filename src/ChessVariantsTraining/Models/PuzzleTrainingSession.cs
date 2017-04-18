@@ -141,6 +141,10 @@ namespace ChessVariantsTraining.Models
                 FENs.RemoveAt(FENs.Count - 1);
                 Checks.RemoveAt(Checks.Count - 1);
 
+                replayFens.RemoveAt(replayFens.Count - 1);
+                replayMoves.RemoveAt(replayMoves.Count - 1);
+                replayChecks.RemoveAt(replayChecks.Count - 1);
+
                 response.FEN = FENs[FENs.Count - 1];
 
                 ChessGame correctGame = gameConstructor.Construct(Current.Variant, response.FEN);
