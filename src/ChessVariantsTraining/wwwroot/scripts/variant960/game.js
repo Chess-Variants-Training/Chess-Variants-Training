@@ -59,12 +59,14 @@
             turnColor: whoseTurn,
             lastMove: lastMove,
             viewOnly: !isPlayer || isFinished,
+            autoCastle: false,
             movable: {
                 free: false,
                 dropOff: "revert",
                 showDests: false,
                 dests: dests,
                 color: myColor,
+                rookCastle: false
             },
             drawable: {
                 enabled: true
