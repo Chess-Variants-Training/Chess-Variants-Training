@@ -200,7 +200,6 @@
                 if (message.additional) {
                     document.getElementById("additional-info").textContent = message.additional;
                 }
-                console.log(message.dests);
                 break;
             case "chat":
                 chats[message.channel].push(message.msg);
