@@ -29,7 +29,7 @@ namespace ChessVariantsTraining.Controllers
         ICounterRepository counterRepository;
         IGameConstructor gameConstructor;
 
-        static readonly string[] supportedVariants = new string[] { "Atomic", "KingOfTheHill", "ThreeCheck", "Antichess", "Horde", "RacingKings" };
+        static readonly string[] supportedVariants = new string[] { "Atomic", "KingOfTheHill", "ThreeCheck", "Antichess", "Horde", "RacingKings", "Crazyhouse" };
 
         public PuzzleController(IPuzzlesBeingEditedRepository _puzzlesBeingEdited,
             IPuzzleRepository _puzzleRepository,
