@@ -59,12 +59,14 @@
             turnColor: whoseTurn,
             lastMove: lastMove,
             viewOnly: !isPlayer || isFinished,
+            autoCastle: false,
             movable: {
                 free: false,
                 dropOff: "revert",
                 showDests: false,
                 dests: dests,
                 color: myColor,
+                rookCastle: false
             },
             drawable: {
                 enabled: true
@@ -198,6 +200,7 @@
                 if (message.additional) {
                     document.getElementById("additional-info").textContent = message.additional;
                 }
+                console.log(message.dests);
                 break;
             case "chat":
                 chats[message.channel].push(message.msg);
