@@ -203,6 +203,7 @@ function processResponseAfterMoveOrDrop(req, jsonResponse) {
         window.replay.current = window.replay.fens.indexOf(jsonResponse.fen || window.ground.getFen());
         window.replay.checks = jsonResponse.replayChecks;
         window.replay.moves = jsonResponse.replayMoves;
+        window.replay.pockets = jsonResponse.replayPockets;
         document.getElementById("controls").classList.remove("nodisplay");
     }
 }
@@ -484,6 +485,8 @@ function replayControlClicked(e) {
     } else {
         ChessgroundExtensions.setCheck(window.ground, null);
     }
+    window.pocket = window.replay.pockets[window.replay.current];
+    updatePocketCounters();
 }
 
 function startDragNewPiece(e) {

@@ -117,5 +117,11 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        public List<Dictionary<string, int>> ReplayPockets
+        {
+            get;
+            set;
+        }
     }
 }

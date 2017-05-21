@@ -15,6 +15,7 @@ namespace ChessVariantsTraining.Models
         public List<string> FENs { get; set; }
         public List<string> Checks { get; set; }
         public List<string> Moves { get; set; }
+        public List<Dictionary<string, int>> Pockets { get; set; }
         public List<int> PastPuzzleIds { get; set; }
         public DateTime? CurrentPuzzleStartedUtc { get; set; }
         public DateTime? CurrentPuzzleEndedUtc { get; set; }
@@ -30,6 +31,7 @@ namespace ChessVariantsTraining.Models
             FENs = new List<string>();
             Checks = new List<string>();
             Moves = new List<string>();
+            Pockets = new List<Dictionary<string, int>>();
 
             gameConstructor = _gameConstructor;
         }
@@ -46,6 +48,8 @@ namespace ChessVariantsTraining.Models
             Checks.Add(Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null);
             Moves.Clear();
             Moves.Add(null);
+            Pockets.Clear();
+            Pockets.Add(Current.Game.GenerateJsonPocket());
         }
 
         SubmittedMoveResponse ApplyMoveAndDropCommon(SubmittedMoveResponse response, string moveStr)
@@ -55,6 +59,9 @@ namespace ChessVariantsTraining.Models
             string fen = Current.Game.GetFen();
             response.FEN = fen;
             FENs.Add(fen);
+            Dictionary<string, int> pocket = Current.Game.GenerateJsonPocket();
+            response.Pocket = pocket;
+            Pockets.Add(pocket);
 
             if (Current.Game.IsWinner(ChessUtilities.GetOpponentOf(Current.Game.WhoseTurn)))
             {
@@ -102,6 +109,7 @@ namespace ChessVariantsTraining.Models
             response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
             response.Correct = 0;
             response.PocketAfterAutoMove = Current.Game.GenerateJsonPocket();
+            Pockets.Add(response.PocketAfterAutoMove);
             PossibleVariations = PossibleVariations.Select(x => x.Skip(1));
             if (PossibleVariations.Any(x => !x.Any()))
             {
@@ -134,7 +142,7 @@ namespace ChessVariantsTraining.Models
             }
 
             string promotionUpper = promotion?.ToUpperInvariant();
-            Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotion == null ? "" : "=" + promotionUpper));
+            Moves.Add(string.Format("{0}-{1}{2}", origin, destination, promotion == null ? "" : "=" + promotionUpper));
 
             string moveStr = origin + "-" + destination + (promotion != null ? "=" + promotionUpper : "");
 
@@ -196,21 +204,27 @@ namespace ChessVariantsTraining.Models
             List<string> replayFens = new List<string>(FENs);
             List<string> replayChecks = new List<string>(Checks);
             List<string> replayMoves = new List<string>(Moves);
+            List<Dictionary<string, int>> replayPockets = new List<Dictionary<string, int>>(Pockets);
             if (!correct)
             {
                 Moves.RemoveAt(Moves.Count - 1);
                 FENs.RemoveAt(FENs.Count - 1);
                 Checks.RemoveAt(Checks.Count - 1);
+                Pockets.RemoveAt(Pockets.Count - 1);
 
                 replayFens.RemoveAt(replayFens.Count - 1);
                 replayMoves.RemoveAt(replayMoves.Count - 1);
                 replayChecks.RemoveAt(replayChecks.Count - 1);
+                replayPockets.RemoveAt(replayPockets.Count - 1);
 
                 response.FEN = FENs[FENs.Count - 1];
 
-                ChessGame correctGame = gameConstructor.Construct(Current.Variant, response.FEN);
-                foreach (string move in PossibleVariations.First())
+                ChessGame correctGame = gameConstructor.Construct(Current.Variant, Current.InitialFen);
+                int i = 0;
+                var full = replayMoves.Concat(PossibleVariations.First());
+                foreach (string move in full)
                 {
+                    if (move == null) { i++; continue; }
                     if (!move.Contains("@"))
                     {
                         string[] p = move.Split('-', '=');
@@ -223,9 +237,14 @@ namespace ChessVariantsTraining.Models
                         Drop drop = new Drop(correctGame.MapPgnCharToPiece(p[0][0], correctGame.WhoseTurn), new Position(p[1]), correctGame.WhoseTurn);
                         (correctGame as CrazyhouseChessGame).ApplyDrop(drop, true);
                     }
-                    replayFens.Add(correctGame.GetFen());
-                    replayChecks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
-                    replayMoves.Add(move);
+                    if (i >= Moves.Count)
+                    {
+                        replayFens.Add(correctGame.GetFen());
+                        replayChecks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
+                        replayMoves.Add(move);
+                        replayPockets.Add(correctGame.GenerateJsonPocket());
+                    }
+                    i++;
                 }
 
                 Current.Game = gameConstructor.Construct(Current.Variant, response.FEN);
@@ -234,6 +253,7 @@ namespace ChessVariantsTraining.Models
             response.ReplayFENs = replayFens;
             response.ReplayChecks = replayChecks;
             response.ReplayMoves = replayMoves;
+            response.ReplayPockets = replayPockets;
         }
     }
 }

@@ -443,6 +443,7 @@ namespace ChessVariantsTraining.Controllers
                 jsonResp.replayFens = response.ReplayFENs;
                 jsonResp.replayChecks = response.ReplayChecks;
                 jsonResp.replayMoves = response.ReplayMoves;
+                jsonResp.replayPockets = response.ReplayPockets;
             }
             if (response.Pocket != null) jsonResp.pocket = response.Pocket;
             if (response.PocketAfterAutoMove != null) jsonResp.pocketAfterAutoMove = response.PocketAfterAutoMove;
