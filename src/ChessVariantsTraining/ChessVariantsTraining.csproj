@@ -23,8 +23,8 @@
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.1" />
     <PackageReference Include="MongoDB.Driver" Version="2.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.1" />
-    <PackageReference Include="ChessDotNet" Version="0.9.5.3" />
-    <PackageReference Include="ChessDotNet.Variants" Version="0.9.5.1" />
+    <PackageReference Include="ChessDotNet" Version="0.9.5.4" />
+    <PackageReference Include="ChessDotNet.Variants" Version="0.9.5.2" />
     <PackageReference Include="glicko2-csharp" Version="1.0.0" />
     <PackageReference Include="MailKit" Version="1.6.0" />
     <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="1.0.1" />
