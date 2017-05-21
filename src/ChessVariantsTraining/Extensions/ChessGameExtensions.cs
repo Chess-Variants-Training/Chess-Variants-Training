@@ -14,31 +14,29 @@ namespace ChessVariantsTraining.Extensions
                 return null;
             }
 
-            Dictionary<string, int> pocket = new Dictionary<string, int>();
+            Dictionary<string, int> pocket = new Dictionary<string, int>()
+            {
+                { "white-queen", 0 },
+                { "white-rook", 0 },
+                { "white-bishop", 0 },
+                { "white-knight", 0 },
+                { "white-pawn", 0 },
+                { "black-queen", 0 },
+                { "black-rook", 0 },
+                { "black-bishop", 0 },
+                { "black-knight", 0 },
+                { "black-pawn", 0 }
+            };
             foreach (Piece p in zhCurrent.WhitePocket)
             {
                 string key = "white-" + p.GetType().Name.ToLowerInvariant();
-                if (!pocket.ContainsKey(key))
-                {
-                    pocket.Add(key, 1);
-                }
-                else
-                {
-                    pocket[key]++;
-                }
+                pocket[key]++;
             }
 
             foreach (Piece p in zhCurrent.BlackPocket)
             {
                 string key = "black-" + p.GetType().Name.ToLowerInvariant();
-                if (!pocket.ContainsKey(key))
-                {
-                    pocket.Add(key, 1);
-                }
-                else
-                {
-                    pocket[key]++;
-                }
+                pocket[key]++;
             }
 
             return pocket;
