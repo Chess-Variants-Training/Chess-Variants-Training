@@ -159,13 +159,6 @@ function startDragNewPiece(e) {
 }
 
 function submitMove(orig, dest, metadata) {
-    if (metadata.captured && window.variant === "Crazyhouse") {
-        var role = metadata.captured.role;
-        var color = metadata.captured.color === "white" ? "black" : "white";
-        var newInPocket = color + "-" + role;
-        window.zhPocketCount[newInPocket]++;
-        document.querySelector("span[data-counter-for='" + newInPocket + "']").textContent = window.zhPocketCount[newInPocket];
-    }
     if (ChessgroundExtensions.needsPromotion(window.ground, dest)) {
         ChessgroundExtensions.drawPromotionDialog(orig, dest, document.getElementById("chessground"), doSubmitMoveRequest, window.ground, window.variant === "Antichess");
     } else {
@@ -182,10 +175,6 @@ function submitDrop(role, pos) {
 
             window.ground.set({ turnColor: window.ground.state.turnColor === "white" ? "black" : "white" });
         } else {
-            var dropped = (window.ground.state.turnColor === "white" ? "black" : "white") + "-" + role;
-            window.zhPocketCount[dropped]--;
-            document.querySelector("span[data-counter-for='" + dropped + "']").textContent = window.zhPocketCount[dropped];
-
             var fenMap = { "pawn": "", "knight": "N", "bishop": "B", "rook": "R", "queen": "Q" };
             document.getElementById("variations").children[window.currentVariation].innerHTML += " " + fenMap[role] + "@" + pos;
             updateChessGroundValidMoves();
@@ -219,6 +208,10 @@ function updateChessGroundValidMoves() {
                 color: jsonResponse["whoseturn"]
             }
         });
+        if (jsonResponse.pocket) {
+            window.zhPocketCount = jsonResponse.pocket;
+            updatePocketCounters();
+        }
     }, function (req, err) {
         displayError(err);
     });
@@ -314,6 +307,16 @@ function variantChanged(e) {
         document.getElementById("pocket-no-zh").classList.remove("nodisplay");
     }
     updateFen();
+}
+
+function updatePocketCounters() {
+    var keys = Object.keys(window.zhPocketCount);
+
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var counterElement = document.querySelector("span[data-counter-for='" + key + "']");
+        counterElement.textContent = window.zhPocketCount[key].toString();
+    }
 }
 
 window.addEventListener("load", function () {

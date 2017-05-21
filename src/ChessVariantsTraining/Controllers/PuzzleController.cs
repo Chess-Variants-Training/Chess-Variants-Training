@@ -137,7 +137,7 @@ namespace ChessVariantsTraining.Controllers
                 validMoves = puzzle.Game.GetValidMoves(puzzle.Game.WhoseTurn);
             }
             Dictionary<string, List<string>> dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(validMoves);
-            return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant() });
+            return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant(), pocket = puzzle.Game.GenerateJsonPocket() });
         }
 
         [HttpPost]
