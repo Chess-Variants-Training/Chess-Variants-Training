@@ -549,5 +549,13 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Failure when inserting puzzle in database." });
             }
         }
+
+        [HttpPost]
+        [Route("/Puzzle/Zh-Generator/Submit")]
+        [Restricted(true, UserRole.GENERATOR)]
+        public IActionResult SubmitGeneratedCrazyhousePuzzle(string json)
+        {
+            return null;
+        }
     }
 }
