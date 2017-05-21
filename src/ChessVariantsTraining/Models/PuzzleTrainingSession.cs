@@ -1,5 +1,6 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Crazyhouse;
+using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.Services;
 using System;
 using System.Collections.Generic;
@@ -45,44 +46,6 @@ namespace ChessVariantsTraining.Models
             Checks.Add(Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null);
             Moves.Clear();
             Moves.Add(null);
-        }
-
-        public Dictionary<string, int> GeneratePocket()
-        {
-            CrazyhouseChessGame zhCurrent = Current.Game as CrazyhouseChessGame;
-            if (zhCurrent == null)
-            {
-                return null;
-            }
-
-            Dictionary<string, int> pocket = new Dictionary<string, int>();
-            foreach (Piece p in zhCurrent.WhitePocket)
-            {
-                string key = "white-" + p.GetType().Name.ToLowerInvariant();
-                if (!pocket.ContainsKey(key))
-                {
-                    pocket.Add(key, 1);
-                }
-                else
-                {
-                    pocket[key]++;
-                }
-            }
-
-            foreach (Piece p in zhCurrent.BlackPocket)
-            {
-                string key = "black-" + p.GetType().Name.ToLowerInvariant();
-                if (!pocket.ContainsKey(key))
-                {
-                    pocket.Add(key, 1);
-                }
-                else
-                {
-                    pocket[key]++;
-                }
-            }
-
-            return pocket;
         }
 
         SubmittedMoveResponse ApplyMoveAndDropCommon(SubmittedMoveResponse response, string moveStr)
@@ -138,7 +101,7 @@ namespace ChessVariantsTraining.Models
             Checks.Add(response.CheckAfterAutoMove);
             response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
             response.Correct = 0;
-            response.PocketAfterAutoMove = GeneratePocket();
+            response.PocketAfterAutoMove = Current.Game.GenerateJsonPocket();
             PossibleVariations = PossibleVariations.Select(x => x.Skip(1));
             if (PossibleVariations.Any(x => !x.Any()))
             {

@@ -9,6 +9,7 @@ using ChessDotNet.Variants.RacingKings;
 using ChessDotNet.Variants.ThreeCheck;
 using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
@@ -408,7 +409,7 @@ namespace ChessVariantsTraining.Controllers
                 variant = puzzle.Variant,
                 additionalInfo = additionalInfo,
                 authorUrl = Url.Action("Profile", "User", new { id = session.Current.Author }),
-                pocket = session.GeneratePocket()
+                pocket = session.Current.Game.GenerateJsonPocket()
             });
         }
 
