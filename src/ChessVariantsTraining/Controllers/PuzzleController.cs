@@ -1,6 +1,8 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Pieces;
 using ChessDotNet.Variants.Antichess;
 using ChessDotNet.Variants.Atomic;
+using ChessDotNet.Variants.Crazyhouse;
 using ChessDotNet.Variants.Horde;
 using ChessDotNet.Variants.KingOfTheHill;
 using ChessDotNet.Variants.RacingKings;
@@ -168,6 +170,50 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "The given move is invalid." });
             }
             return Json(new { success = true, fen = puzzle.Game.GetFen() });
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Editor/SubmitDrop")]
+        [Restricted(true, UserRole.NONE)]
+        public IActionResult SubmitDrop(string id, string role, string pos)
+        {
+            int puzzleId;
+            if (!int.TryParse(id, out puzzleId))
+            {
+                return Json(new { success = false, error = "The given ID is invalid." });
+            }
+
+            Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
+            if (puzzle == null)
+            {
+                return Json(new { success = false, error = "The given ID doe snot correspond to a puzzle." });
+            }
+            if (puzzle.Author != loginHandler.LoggedInUserId(HttpContext).Value)
+            {
+                return Json(new { success = false, error = "Only the puzzle author can access this right now." });
+            }
+
+            if (!(puzzle.Game is CrazyhouseChessGame))
+            {
+                return Json(new { success = false, error = "This is not a crazyhouse puzzle." });
+            }
+
+            Piece p = Utilities.GetByRole(role, puzzle.Game.WhoseTurn);
+            if (p == null)
+            {
+                return Json(new { success = false, error = "Invalid drop piece." });
+            }
+
+            Drop drop = new Drop(p, new Position(pos), puzzle.Game.WhoseTurn);
+
+            CrazyhouseChessGame zhGame = puzzle.Game as CrazyhouseChessGame;
+            if (!zhGame.IsValidDrop(drop))
+            {
+                return Json(new { success = true, valid = false });
+            }
+
+            zhGame.ApplyDrop(drop, true);
+            return Json(new { success = true, valid = true });
         }
 
         [HttpPost("/Puzzle/Editor/NewVariation")]
@@ -361,16 +407,13 @@ namespace ChessVariantsTraining.Controllers
                 whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant(),
                 variant = puzzle.Variant,
                 additionalInfo = additionalInfo,
-                authorUrl = Url.Action("Profile", "User", new { id = session.Current.Author })
+                authorUrl = Url.Action("Profile", "User", new { id = session.Current.Author }),
+                pocket = session.GeneratePocket()
             });
         }
 
-        [HttpPost]
-        [Route("/Puzzle/Train/SubmitMove")]
-        public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination, string promotion = null)
+        IActionResult JsonAfterMove(SubmittedMoveResponse response, PuzzleTrainingSession session)
         {
-            PuzzleTrainingSession session = puzzleTrainingSessionRepository.Get(trainingSessionId);
-            SubmittedMoveResponse response = session.ApplyMove(origin, destination, promotion);
             dynamic jsonResp = new ExpandoObject();
             if (response.Correct == 1 || response.Correct == -1)
             {
@@ -400,7 +443,31 @@ namespace ChessVariantsTraining.Controllers
                 jsonResp.replayChecks = response.ReplayChecks;
                 jsonResp.replayMoves = response.ReplayMoves;
             }
+            if (response.Pocket != null) jsonResp.pocket = response.Pocket;
+            if (response.PocketAfterAutoMove != null) jsonResp.pocketAfterAutoMove = response.PocketAfterAutoMove;
             return Json(jsonResp);
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Train/SubmitMove")]
+        public IActionResult SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination, string promotion = null)
+        {
+            PuzzleTrainingSession session = puzzleTrainingSessionRepository.Get(trainingSessionId);
+            SubmittedMoveResponse response = session.ApplyMove(origin, destination, promotion);
+            return JsonAfterMove(response, session);
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Train/SubmitDrop")]
+        public IActionResult SubmitTrainingDrop(string id, string trainingSessionId, string role, string pos)
+        {
+            PuzzleTrainingSession session = puzzleTrainingSessionRepository.Get(trainingSessionId);
+            SubmittedMoveResponse response = session.ApplyDrop(role, pos);
+            if (response.Success && response.Correct == SubmittedMoveResponse.INVALID_MOVE)
+            {
+                return Json(new { success = true, invalidDrop = true, pos = pos });
+            }
+            return JsonAfterMove(response, session);
         }
 
         [HttpPost]

@@ -1,5 +1,25 @@
-﻿function updateFen() {
+﻿function repeatString(s, n) {
+    return (new Array(n + 1)).join(s);
+}
+
+function updateFen() {
     var fenStr = window.ground.getFen();
+
+    if (window.variant === "Crazyhouse") {
+        var pocketStr = "";
+        pocketStr += repeatString("P", window.zhPocketCount["white-pawn"]);
+        pocketStr += repeatString("N", window.zhPocketCount["white-knight"]);
+        pocketStr += repeatString("B", window.zhPocketCount["white-bishop"]);
+        pocketStr += repeatString("R", window.zhPocketCount["white-rook"]);
+        pocketStr += repeatString("Q", window.zhPocketCount["white-queen"]);
+        pocketStr += repeatString("p", window.zhPocketCount["black-pawn"]);
+        pocketStr += repeatString("n", window.zhPocketCount["black-knight"]);
+        pocketStr += repeatString("b", window.zhPocketCount["black-bishop"]);
+        pocketStr += repeatString("r", window.zhPocketCount["black-rook"]);
+        pocketStr += repeatString("q", window.zhPocketCount["black-queen"]);
+        if (pocketStr) fenStr += "/" + pocketStr;
+    }
+
     if (document.getElementById("whitetomove").checked) {
         fenStr += " w ";
     } else {
@@ -101,23 +121,78 @@ function goToStep2(e) {
                     free: false,
                     showDests: false,
                     events: {
-                        after: submitMove
+                        after: submitMove,
+                        afterNewPiece: submitDrop
                     },
                     dropOff: "revert"
                 }
             });
             updateChessGroundValidMoves();
+
+            var actionButtons = document.querySelectorAll("button[data-action]");
+            for (i = 0; i < actionButtons.length; i++) {
+                actionButtons[i].remove();
+            }
+
+            var pocketPieces = document.querySelectorAll(".pocket-piece");
+            for (i = 0; i < pocketPieces.length; i++) {
+                pocketPieces[i].classList.add("draggable");
+                pocketPieces[i].addEventListener("mousedown", startDragNewPiece);
+                pocketPieces[i].addEventListener("touchstart", startDragNewPiece);
+            }
+            window.originalPocket = JSON.parse(JSON.stringify(window.zhPocketCount));
         }, function (req, err) {
             displayError(err);
         });
 }
 
+function startDragNewPiece(e) {
+    e = e || window.event;
+
+    var color = e.target.dataset.color;
+    if (color != window.ground.state.turnColor) return;
+
+    var role = e.target.dataset.role;
+    if (window.zhPocketCount[color + "-" + role] < 1) return;
+
+    ground.dragNewPiece({ color: color, role: role }, e);
+}
+
 function submitMove(orig, dest, metadata) {
+    if (metadata.captured && window.variant === "Crazyhouse") {
+        var role = metadata.captured.role;
+        var color = metadata.captured.color === "white" ? "black" : "white";
+        var newInPocket = color + "-" + role;
+        window.zhPocketCount[newInPocket]++;
+        document.querySelector("span[data-counter-for='" + newInPocket + "']").textContent = window.zhPocketCount[newInPocket];
+    }
     if (ChessgroundExtensions.needsPromotion(window.ground, dest)) {
         ChessgroundExtensions.drawPromotionDialog(orig, dest, document.getElementById("chessground"), doSubmitMoveRequest, window.ground, window.variant === "Antichess");
     } else {
         doSubmitMoveRequest(orig, dest, null);
     }
+}
+
+function submitDrop(role, pos) {
+    jsonXhr("/Puzzle/Editor/SubmitDrop", "POST", "id=" + window.puzzleId + "&role=" + role + "&pos=" + pos, function (req, jsonResponse) {
+        if (!jsonResponse["valid"]) {
+            var pieceSet = {};
+            pieceSet[pos] = null;
+            window.ground.setPieces(pieceSet);
+
+            window.ground.set({ turnColor: window.ground.state.turnColor === "white" ? "black" : "white" });
+        } else {
+            var dropped = (window.ground.state.turnColor === "white" ? "black" : "white") + "-" + role;
+            window.zhPocketCount[dropped]--;
+            document.querySelector("span[data-counter-for='" + dropped + "']").textContent = window.zhPocketCount[dropped];
+
+            var fenMap = { "pawn": "", "knight": "N", "bishop": "B", "rook": "R", "queen": "Q" };
+            document.getElementById("variations").children[window.currentVariation].innerHTML += " " + fenMap[role] + "@" + pos;
+            updateChessGroundValidMoves();
+        }
+    }, function (req, err) {
+        displayError(err);
+    });
 }
 
 function doSubmitMoveRequest(orig, dest, promotion) {
@@ -177,6 +252,12 @@ function addAnotherVariation(e) {
             fen: jsonResponse["fen"]
         });
         updateChessGroundValidMoves();
+
+        window.zhPocketCount = JSON.parse(JSON.stringify(window.originalPocket));
+        var pocketKeys = Object.keys(window.zhPocketCount);
+        for (var i = 0; i < pocketKeys.length; i++) {
+            document.querySelector("span[data-counter-for='" + pocketKeys[i] + "']").textContent = window.zhPocketCount[pocketKeys[i]];
+        }
     }, function (req, err) {
         displayError(err);
     });
@@ -208,7 +289,35 @@ function clearBoard(e) {
     window.ground.set({ fen: "8/8/8/8/8/8/8/8 w - -" });
 }
 
+function incDecPocketCounter(e) {
+    e = e || window.event;
+
+    var actionTarget = e.target.dataset.piece;
+    var action = e.target.dataset.action;
+    if (action === "inc") {
+        window.zhPocketCount[actionTarget]++;
+    } else if (window.zhPocketCount[actionTarget] > 0) {
+        window.zhPocketCount[actionTarget]--;
+    }
+
+    document.querySelector("span[data-counter-for='" + actionTarget + "']").textContent = window.zhPocketCount[actionTarget];
+    updateFen();
+}
+
+function variantChanged(e) {
+    window.variant = document.getElementById("variantSelector").value;
+    if (window.variant === "Crazyhouse") {
+        document.getElementById("pocket-no-zh").classList.add("nodisplay");
+        document.getElementById("pocket-zh").classList.remove("nodisplay");
+    } else {
+        document.getElementById("pocket-zh").classList.add("nodisplay");
+        document.getElementById("pocket-no-zh").classList.remove("nodisplay");
+    }
+    updateFen();
+}
+
 window.addEventListener("load", function () {
+    window.zhPocketCount = { "white-pawn": 0, "white-knight": 0, "white-bishop": 0, "white-rook": 0, "white-queen": 0, "black-pawn": 0, "black-knight": 0, "black-bishop": 0, "black-rook": 0, "black-queen": 0 };
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: true,
         disableContextMenu: true,
@@ -258,4 +367,12 @@ window.addEventListener("load", function () {
     document.getElementById("submitpuzzle").addEventListener("click", submitPuzzle);
     document.getElementById("addVariation").addEventListener("click", addAnotherVariation);
     document.getElementById("deleteVariation").addEventListener("click", deleteVariation);
+
+    var incDecButtons = document.querySelectorAll("button[data-action]");
+    for (i = 0; i < incDecButtons.length; i++) {
+        incDecButtons[i].addEventListener("click", incDecPocketCounter);
+    }
+
+    window.variant = null;
+    document.getElementById("variantSelector").addEventListener("change", variantChanged);
 });

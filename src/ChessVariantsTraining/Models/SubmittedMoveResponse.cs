@@ -105,5 +105,17 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        public Dictionary<string, int> Pocket
+        {
+            get;
+            set;
+        }
+
+        public Dictionary<string, int> PocketAfterAutoMove
+        {
+            get;
+            set;
+        }
     }
 }

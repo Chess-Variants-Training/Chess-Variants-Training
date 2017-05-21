@@ -47,6 +47,7 @@
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-base.css")" type="text/css">
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/chessground-theme.css")" type="text/css">
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/puzzletrain.css")" type="text/css">
+    <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/puzzleeditor.css")" type="text/css">
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/controls.css")" type="text/css">
 }
 @if (Model != null && Model.InReview)
@@ -68,6 +69,40 @@
         </div>
     </div>
     <div id="next-to-ground">
+        <div id="pocket-zh" class="nodisplay">
+            <table class="pocket-table">
+                <tr>
+                    <td><div data-color="black" data-role="pawn" class="pocket-piece"></div></td>
+                    <td><div data-color="black" data-role="knight" class="pocket-piece"></div></td>
+                    <td><div data-color="black" data-role="bishop" class="pocket-piece"></div></td>
+                    <td><div data-color="black" data-role="rook" class="pocket-piece"></div></td>
+                    <td><div data-color="black" data-role="queen" class="pocket-piece"></div></td>
+                </tr>
+                <tr class="center-cells">
+                    <td><span data-counter-for="black-pawn">0</span></td>
+                    <td><span data-counter-for="black-knight">0</span></td>
+                    <td><span data-counter-for="black-bishop">0</span></td>
+                    <td><span data-counter-for="black-rook">0</span></td>
+                    <td><span data-counter-for="black-queen">0</span></td>
+                </tr>
+            </table>
+            <table class="pocket-table">
+                <tr>
+                    <td><div data-color="white" data-role="pawn" class="pocket-piece"></div></td>
+                    <td><div data-color="white" data-role="knight" class="pocket-piece"></div></td>
+                    <td><div data-color="white" data-role="bishop" class="pocket-piece"></div></td>
+                    <td><div data-color="white" data-role="rook" class="pocket-piece"></div></td>
+                    <td><div data-color="white" data-role="queen" class="pocket-piece"></div></td>
+                </tr>
+                <tr class="center-cells">
+                    <td><span data-counter-for="white-pawn">0</span></td>
+                    <td><span data-counter-for="white-knight">0</span></td>
+                    <td><span data-counter-for="white-bishop">0</span></td>
+                    <td><span data-counter-for="white-rook">0</span></td>
+                    <td><span data-counter-for="white-queen">0</span></td>
+                </tr>
+            </table>
+        </div>
         <div id="next-to-ground-inner">
             <div id="result"></div>
             <p>Created by <a id="author"></a></p>
