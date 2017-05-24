@@ -313,7 +313,14 @@ namespace ChessVariantsTraining.ViewModels
         
         public HtmlString RenderReplayMoves()
         {
-            return new HtmlString(string.Format("[null,'{0}']", string.Join("','", ReplayMoves)));
+            if (ReplayMoves.Count > 0)
+            {
+                return new HtmlString(string.Format("[null,'{0}']", string.Join("','", ReplayMoves)));
+            }
+            else
+            {
+                return new HtmlString("[null]");
+            }
         }
 
         public HtmlString RenderReplayChecks()
