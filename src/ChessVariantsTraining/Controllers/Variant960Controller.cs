@@ -3,6 +3,7 @@ using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using ChessVariantsTraining.DbRepositories.Variant960;
+using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.HttpErrors;
 using ChessVariantsTraining.Models.Variant960;
 using ChessDotNet;
@@ -180,7 +181,8 @@ namespace ChessVariantsTraining.Controllers
                 game.BlackWantsRematch,
                 replay,
                 replayMoves,
-                replayChecks);
+                replayChecks,
+                g.GenerateJsonPocket());
 
             return View(model);
         }

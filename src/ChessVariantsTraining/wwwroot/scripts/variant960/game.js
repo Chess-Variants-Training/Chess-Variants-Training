@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant, replayFensInitial, replayMovesInitial, replayChecksInitial) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant, replayFensInitial, replayMovesInitial, replayChecksInitial, pocket) {
     var isAnti = shortVariant === "Antichess";
     var isRacingKings = shortVariant === "RacingKings";
     if (myColor === "") myColor = null;
@@ -125,6 +125,7 @@
             displayError(err);
         });
 
+        updatePocketCounters();
     });
 
     function wsOpened() {
@@ -308,6 +309,18 @@
 
     function premoveUnset() {
         premove = null;
+    }
+
+    function updatePocketCounters() {
+        if (!pocket) return;
+
+        var keys = Object.keys(pocket);
+
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var counterElement = document.querySelector("span[data-counter-for='" + key + "']");
+            counterElement.textContent = pocket[key].toString();
+        }
     }
 
     function chatKeyDown(e) {

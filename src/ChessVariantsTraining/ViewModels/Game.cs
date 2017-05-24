@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace ChessVariantsTraining.ViewModels
@@ -162,6 +163,12 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public Dictionary<string, int> ZhPocket
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -187,7 +194,8 @@ namespace ChessVariantsTraining.ViewModels
             bool blackWantsRematch,
             List<string> replayFens,
             List<string> replayMoves,
-            List<string> replayChecks)
+            List<string> replayChecks,
+            Dictionary<string, int> zhPocket)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -215,6 +223,7 @@ namespace ChessVariantsTraining.ViewModels
             ReplayFENs = replayFens;
             ReplayMoves = replayMoves;
             ReplayChecks = replayChecks;
+            ZhPocket = zhPocket;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
@@ -315,6 +324,18 @@ namespace ChessVariantsTraining.ViewModels
             }
 
             return new HtmlString(string.Format("[{0}]", string.Join(",", stringifiedReplayChecks)));
+        }
+
+        public HtmlString RenderZhPocket()
+        {
+            if (ZhPocket == null)
+            {
+                return new HtmlString("null");
+            }
+            else
+            {
+                return new HtmlString(JsonConvert.SerializeObject(ZhPocket));
+            }
         }
     }
 }
