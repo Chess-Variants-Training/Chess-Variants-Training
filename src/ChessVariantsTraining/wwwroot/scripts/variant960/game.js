@@ -67,13 +67,13 @@
                 showDests: false,
                 dests: dests,
                 color: myColor,
-                rookCastle: false
+                rookCastle: false,
+                events: {
+                    after: pieceMoved
+                }
             },
             drawable: {
                 enabled: true
-            },
-            events: {
-                move: pieceMoved
             },
             premovable: {
                 enabled: true,
