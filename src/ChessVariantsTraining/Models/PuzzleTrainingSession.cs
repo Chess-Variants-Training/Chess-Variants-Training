@@ -52,6 +52,19 @@ namespace ChessVariantsTraining.Models
             Pockets.Add(Current.Game.GenerateJsonPocket());
         }
 
+        int CompareMoves(string move1, string move2)
+        {
+            if (move1.Contains("@") && move1.Length == 3)
+            {
+                move1 = "P" + move1;
+            }
+            if (move2.Contains("@") & move2.Length == 3)
+            {
+                move2 = "P" + move2;
+            }
+            return string.Compare(move1, move2, true);
+        }
+
         SubmittedMoveResponse ApplyMoveAndDropCommon(SubmittedMoveResponse response, string moveStr)
         {
             response.Check = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
@@ -69,13 +82,13 @@ namespace ChessVariantsTraining.Models
                 return response;
             }
 
-            if (!PossibleVariations.Any(x => string.Compare(x.First(), moveStr, true) == 0))
+            if (!PossibleVariations.Any(x => CompareMoves(x.First(), moveStr) == 0))
             {
                 PuzzleFinished(response, false);
                 return response;
             }
 
-            PossibleVariations = PossibleVariations.Where(x => string.Compare(x.First(), moveStr, true) == 0).Select(x => x.Skip(1));
+            PossibleVariations = PossibleVariations.Where(x => CompareMoves(x.First(), moveStr) == 0).Select(x => x.Skip(1));
 
             if (PossibleVariations.Any(x => x.Count() == 0))
             {
