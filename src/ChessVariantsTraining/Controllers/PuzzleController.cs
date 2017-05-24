@@ -12,8 +12,10 @@ using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.Models;
+using ChessVariantsTraining.Models.GeneratorIntegration;
 using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -555,7 +557,61 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.GENERATOR)]
         public IActionResult SubmitGeneratedCrazyhousePuzzle(string json)
         {
-            return null;
+            JsonSerializerSettings settings = new JsonSerializerSettings();
+            settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+
+            GeneratedPuzzle gen = JsonConvert.DeserializeObject<GeneratedPuzzle>(json, settings);
+
+            Puzzle puzzle = new Puzzle();
+            puzzle.Variant = "Crazyhouse";
+            puzzle.Rating = new Rating(1500, 350, 0.06);
+            puzzle.Author = loginHandler.LoggedInUserId(HttpContext).Value;
+            puzzle.Approved = loginHandler.LoggedInUser(HttpContext).Roles.Contains(UserRole.GENERATOR);
+            puzzle.InReview = !puzzle.Approved;
+            if (!puzzle.InReview)
+            {
+                puzzle.Reviewers = new List<int>() { puzzle.Author };
+            }
+            else
+            {
+                puzzle.Reviewers = new List<int>();
+            }
+            puzzle.DateSubmittedUtc = DateTime.UtcNow;
+
+            string[] fenParts = gen.FEN.Split(' ');
+            fenParts[4] = "0";
+            fenParts[5] = "1";
+            fenParts[0] = fenParts[0].TrimEnd(']').Replace('[', '/');
+            puzzle.InitialFen = string.Join(" ", fenParts);
+
+            try
+            {
+                CrazyhouseChessGame gameToTest = new CrazyhouseChessGame(puzzle.InitialFen);
+            }
+            catch
+            {
+                return Json(new { success = true, failure = "fen" });
+            }
+
+            Puzzle possibleDuplicate = puzzleRepository.FindByFenAndVariant(puzzle.InitialFen, puzzle.Variant);
+            if (possibleDuplicate != null)
+            {
+                return Json(new { success = false, failure = "duplicate" });
+            }
+
+            puzzle.ExplanationUnsafe = string.Format("Mate in {0}. (Slower mates won't be accepted.) Position from {1} - {2}, played on {3}.", gen.Depth, gen.White, gen.Black, gen.Site);
+            puzzle.Solutions = gen.FlattenSolution();
+
+            puzzle.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
+
+            if (puzzleRepository.Add(puzzle))
+            {
+                return Json(new { success = true, id = puzzle.ID });
+            }
+            else
+            {
+                return Json(new { success = false, failure = "database" });
+            }
         }
     }
 }
