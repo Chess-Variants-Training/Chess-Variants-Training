@@ -69,7 +69,8 @@
                 color: myColor,
                 rookCastle: false,
                 events: {
-                    after: pieceMoved
+                    after: pieceMoved,
+                    afterNewPiece: pieceDropped
                 }
             },
             drawable: {
@@ -154,6 +155,13 @@
     function wsMessageReceived(e) {
         var message = JSON.parse(e.data);
         switch (message.t) {
+            case "invalidDrop":
+                var pieceSet = {};
+                pieceSet[pos] = null;
+                ground.setPieces(pieceSet);
+
+                ground.set({ turnColor: ground.state.turnColor === "white" ? "black" : "white" });
+                break;
             case "moved":
                 if (atLastReplayItem()) {
                     if (soundTurnedOn) {
@@ -209,6 +217,10 @@
                 }
                 if (message.additional) {
                     document.getElementById("additional-info").textContent = message.additional;
+                }
+                if (message.pocket) {
+                    pocket = message.pocket;
+                    updatePocketCounters();
                 }
                 break;
             case "chat":
@@ -310,6 +322,10 @@
         } else {
             sendMoveMessage(origin, destination, null);
         }
+    }
+
+    function pieceDropped(role, pos) {
+        ws.send(JSON.stringify({ "t": "move", "d": (role === "knight" ? "N" : role[0].toUpperCase()) + "@" + pos }));
     }
 
     function premoveSet(orig, dest) {

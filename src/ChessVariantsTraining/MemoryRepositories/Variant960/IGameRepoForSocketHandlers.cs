@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Variants.Crazyhouse;
 using ChessVariantsTraining.Models.Variant960;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
@@ -8,6 +9,8 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         Game Get(string id);
 
         MoveType RegisterMove(Game subject, Move move);
+
+        void RegisterDrop(Game subject, Drop drop);
 
         void RegisterGameResult(Game subject, string result, string termination);
 
