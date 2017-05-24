@@ -599,7 +599,11 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, failure = "duplicate" });
             }
 
-            puzzle.ExplanationUnsafe = string.Format("Mate in {0}. (Slower mates won't be accepted.) Position from {1} - {2}, played on {3}.", gen.Depth, gen.White, gen.Black, gen.Site);
+            puzzle.ExplanationUnsafe = string.Format("Mate in {0}. (Slower mates won't be accepted.) Position from {1} - {2}, played on {3}.",
+                gen.Depth,
+                gen.White,
+                gen.Black,
+                gen.Site.Contains("lichess") ? "Lichess" : (gen.Site.Contains("FICS") ? "FICS": "an unknown server"));
             puzzle.Solutions = gen.FlattenSolution();
 
             puzzle.ID = counterRepository.GetAndIncrease(Counter.PUZZLE_ID);
