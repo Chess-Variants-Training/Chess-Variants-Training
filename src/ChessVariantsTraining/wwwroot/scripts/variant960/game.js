@@ -18,6 +18,7 @@
     var latestDests = dests;
     var currentReplayItem = replayFens.length - 1;
     var needsReplayWarning = false;
+    var isZh = shortVariant === "Crazyhouse";
 
 
     var soundTurnedOn = localStorage.getItem("sound") === "yes";
@@ -104,6 +105,14 @@
                 document.getElementById("draw-accept").addEventListener("click", acceptDraw);
                 document.getElementById("draw-decline").addEventListener("click", declineDraw);
                 document.getElementById("resign-link").addEventListener("click", resign);
+
+
+                var pocketPieces = document.querySelectorAll(".pocket-piece");
+                for (i = 0; i < pocketPieces.length; i++) {
+                    pocketPieces[i].classList.add("draggable");
+                    pocketPieces[i].addEventListener("mousedown", startDragNewPiece);
+                    pocketPieces[i].addEventListener("touchstart", startDragNewPiece);
+                }
             }
             document.getElementById("rematch-offer-link").addEventListener("click", offerRematch);
             document.getElementById("rematch-accept").addEventListener("click", acceptRematch);
@@ -320,6 +329,16 @@
             var key = keys[i];
             var counterElement = document.querySelector("span[data-counter-for='" + key + "']");
             counterElement.textContent = pocket[key].toString();
+        }
+    }
+
+    function startDragNewPiece(e) {
+        e = e || window.event;
+        var role = e.target.dataset.role;
+        var color = e.target.dataset.color;
+
+        if (isZh && isPlayer && myColor === ground.state.turnColor && color === myColor && pocket[color + "-" + role] > 0) {
+            ground.dragNewPiece({ color: color, role: role }, e);
         }
     }
 
