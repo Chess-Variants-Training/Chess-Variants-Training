@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using ChessDotNet.Pieces;
 using System.Collections.Generic;
+using ChessDotNet.Variants.Crazyhouse;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -130,17 +131,40 @@ namespace ChessVariantsTraining.Controllers
             List<string> replayMoves = new List<string>();
 
             ChessGame replayGame = gameConstructor.Construct(game.ShortVariantName, game.InitialFEN);
+
+            List<Dictionary<string, int>> replayPocket;
+            if (replayGame is CrazyhouseChessGame)
+            {
+                replayPocket = new List<Dictionary<string, int>>();
+                replayPocket.Add(replayGame.GenerateJsonPocket());
+            }
+            else
+            {
+                replayPocket = null;
+            }
             foreach (string uciMove in game.UciMoves)
             {
-                string from = uciMove.Substring(0, 2);
-                string to = uciMove.Substring(2, 2);
-                replayMoves.Add(string.Concat(from, "-", to));
-                char? promotion = null;
-                if (uciMove.Length == 5)
+                if (!uciMove.Contains("@"))
                 {
-                    promotion = uciMove[4];
+                    string from = uciMove.Substring(0, 2);
+                    string to = uciMove.Substring(2, 2);
+                    replayMoves.Add(string.Concat(from, "-", to));
+                    char? promotion = null;
+                    if (uciMove.Length == 5)
+                    {
+                        promotion = uciMove[4];
+                    }
+                    replayGame.ApplyMove(new Move(from, to, replayGame.WhoseTurn, promotion), true);
                 }
-                replayGame.ApplyMove(new Move(from, to, replayGame.WhoseTurn, promotion), true);
+                else
+                {
+                    string[] typeAndPos = uciMove.Split('@');
+                    Position pos = new Position(typeAndPos[1]);
+                    Piece piece = replayGame.MapPgnCharToPiece(typeAndPos[0][0], replayGame.WhoseTurn);
+                    Drop drop = new Drop(piece, pos, piece.Owner);
+                    (replayGame as CrazyhouseChessGame).ApplyDrop(drop, true);
+                    replayMoves.Add(pos.ToString().ToLowerInvariant() + "-" + pos.ToString().ToLowerInvariant());
+                }
                 replay.Add(replayGame.GetFen());
                 if (replayGame.IsInCheck(Player.White))
                 {
@@ -154,8 +178,18 @@ namespace ChessVariantsTraining.Controllers
                 {
                     replayChecks.Add(null);
                 }
+                if (replayPocket != null)
+                {
+                    replayPocket.Add(replayGame.GenerateJsonPocket());
+                }
             }
 
+            string lastMove = game.UciMoves.LastOrDefault();
+            if (lastMove != null && lastMove.Contains('@'))
+            {
+                string pos = lastMove.Split('@')[1].ToLowerInvariant();
+                lastMove = pos + pos;
+            }
             ViewModels.Game model = new ViewModels.Game(game.ID,
                 whiteUsername,
                 blackUsername,
@@ -172,7 +206,7 @@ namespace ChessVariantsTraining.Controllers
                 destsJson,
                 game.Result,
                 game.Termination,
-                game.UciMoves.LastOrDefault(),
+                lastMove,
                 check,
                 game.UciMoves.Count,
                 game.WhiteWantsDraw,
@@ -182,7 +216,8 @@ namespace ChessVariantsTraining.Controllers
                 replay,
                 replayMoves,
                 replayChecks,
-                g.GenerateJsonPocket());
+                g.GenerateJsonPocket(),
+                replayPocket);
 
             return View(model);
         }

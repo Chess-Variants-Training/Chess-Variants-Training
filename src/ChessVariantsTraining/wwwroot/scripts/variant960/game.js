@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant, replayFensInitial, replayMovesInitial, replayChecksInitial, pocket) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant, replayFensInitial, replayMovesInitial, replayChecksInitial, pocket, replayPocketInitial) {
     var isAnti = shortVariant === "Antichess";
     var isRacingKings = shortVariant === "RacingKings";
     if (myColor === "") myColor = null;
@@ -15,6 +15,7 @@
     var replayFens = replayFensInitial.slice();
     var replayMoves = replayMovesInitial.slice();
     var replayChecks = replayChecksInitial.slice();
+    var replayPocket = replayPocketInitial ? replayPocketInitial.slice() : null;
     var latestDests = dests;
     var currentReplayItem = replayFens.length - 1;
     var needsReplayWarning = false;
@@ -188,6 +189,9 @@
                 replayFens.push(message.fen);
                 replayChecks.push(message.check);
                 replayMoves.push(message.lastMove[0] + "-" + message.lastMove[1]);
+                if (message.pocket) {
+                    replayPocket.push(message.pocket);
+                }
                 latestDests = message.dests;
                 needsReplayWarning = isPlayer && myColor == message.turnColor;
                 if (!atLastReplayItem() && needsReplayWarning) {
@@ -353,7 +357,7 @@
         var role = e.target.dataset.role;
         var color = e.target.dataset.color;
 
-        if (isZh && isPlayer && myColor === ground.state.turnColor && color === myColor && pocket[color + "-" + role] > 0) {
+        if (isZh && isPlayer && atLastReplayItem() && myColor === ground.state.turnColor && color === myColor && pocket[color + "-" + role] > 0) {
             ground.dragNewPiece({ color: color, role: role }, e);
         }
     }
@@ -557,5 +561,8 @@
         } else if (needsReplayWarning) {
             document.getElementById("controls-end").classList.add("orange-bg");
         }
+
+        pocket = replayPocket[currentReplayItem];
+        updatePocketCounters();
     }
 }

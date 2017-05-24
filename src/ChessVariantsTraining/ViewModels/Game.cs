@@ -169,6 +169,12 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public List<Dictionary<string, int>> ReplayPocket
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -195,7 +201,8 @@ namespace ChessVariantsTraining.ViewModels
             List<string> replayFens,
             List<string> replayMoves,
             List<string> replayChecks,
-            Dictionary<string, int> zhPocket)
+            Dictionary<string, int> zhPocket,
+            List<Dictionary<string, int>> replayPocket)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -224,6 +231,7 @@ namespace ChessVariantsTraining.ViewModels
             ReplayMoves = replayMoves;
             ReplayChecks = replayChecks;
             ZhPocket = zhPocket;
+            ReplayPocket = replayPocket;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
@@ -335,6 +343,18 @@ namespace ChessVariantsTraining.ViewModels
             else
             {
                 return new HtmlString(JsonConvert.SerializeObject(ZhPocket));
+            }
+        }
+
+        public HtmlString RenderPocketReplay()
+        {
+            if (ReplayPocket == null)
+            {
+                return new HtmlString("null");
+            }
+            else
+            {
+                return new HtmlString(JsonConvert.SerializeObject(ReplayPocket));
             }
         }
     }

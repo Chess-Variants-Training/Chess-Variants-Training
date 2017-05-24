@@ -13,7 +13,7 @@
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/controls.css")" type="text/css">
     <link rel="stylesheet" href="@Url.ContentWithAssetVersion("~/styles/puzzleeditor.css")" type="text/css">
     <script type="text/javascript">
-        main("@Model.FEN",@Model.IsPlayer.ToString().ToLowerInvariant(),"@Model.MyColor","@Model.WhoseTurn",@Model.IsFinished.ToString().ToLowerInvariant(),@Html.Raw(@Model.DestsJSON),@Model.RenderLastMoveAsArray(),@Model.RenderCheckingSquare(),"@Url.Action("GameSocket", "Socket", new { id = Model.GameID }, "wss")","@Model.ShortVariant",@Model.RenderReplayFens(),@Model.RenderReplayMoves(),@Model.RenderReplayChecks(),@Model.RenderZhPocket());
+        main("@Model.FEN",@Model.IsPlayer.ToString().ToLowerInvariant(),"@Model.MyColor","@Model.WhoseTurn",@Model.IsFinished.ToString().ToLowerInvariant(),@Html.Raw(@Model.DestsJSON),@Model.RenderLastMoveAsArray(),@Model.RenderCheckingSquare(),"@Url.Action("GameSocket", "Socket", new { id = Model.GameID }, "wss")","@Model.ShortVariant",@Model.RenderReplayFens(),@Model.RenderReplayMoves(),@Model.RenderReplayChecks(),@Model.RenderZhPocket(),@Model.RenderPocketReplay());
     </script>
 }
 @{ 
