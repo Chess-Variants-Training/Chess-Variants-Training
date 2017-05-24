@@ -231,6 +231,7 @@ namespace ChessVariantsTraining.Models
                 replayPockets.RemoveAt(replayPockets.Count - 1);
 
                 response.FEN = FENs[FENs.Count - 1];
+                response.Pocket = Pockets[Pockets.Count - 1];
 
                 ChessGame correctGame = gameConstructor.Construct(Current.Variant, Current.InitialFen);
                 int i = 0;
