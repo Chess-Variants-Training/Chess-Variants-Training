@@ -263,6 +263,7 @@ namespace ChessVariantsTraining.Models
 
                 Current.Game = gameConstructor.Construct(Current.Variant, response.FEN);
                 response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
+                response.Check = Current.Game.IsInCheck(Player.White) ? "white" : (Current.Game.IsInCheck(Player.Black) ? "black" : null);
             }
             response.ReplayFENs = replayFens;
             response.ReplayChecks = replayChecks;
