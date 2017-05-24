@@ -86,7 +86,7 @@ namespace ChessVariantsTraining.Models.GeneratorIntegration
                 }
                 else
                 {
-                    return move.Substring(0, 2) + "-" + move.Substring(2, 2) + move[move.Length - 1];
+                    return move.Substring(0, 2) + "-" + move.Substring(2, 2) + "=" + char.ToUpperInvariant(move[move.Length - 1]);
                 }
             }
         }
