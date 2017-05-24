@@ -411,7 +411,8 @@ namespace ChessVariantsTraining.Controllers
                 variant = puzzle.Variant,
                 additionalInfo = additionalInfo,
                 authorUrl = Url.Action("Profile", "User", new { id = session.Current.Author }),
-                pocket = session.Current.Game.GenerateJsonPocket()
+                pocket = session.Current.Game.GenerateJsonPocket(),
+                check = session.Current.Game.IsInCheck(Player.White) ? "white" : (session.Current.Game.IsInCheck(Player.Black) ? "black" : null)
             });
         }
 

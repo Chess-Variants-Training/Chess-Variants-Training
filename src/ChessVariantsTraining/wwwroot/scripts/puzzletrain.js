@@ -35,6 +35,9 @@ function setup(puzzleId) {
                 dests: jsonResponse.dests
             }
         });
+        if (jsonResponse.check) {
+            ChessgroundExtensions.setCheck(window.ground, jsonResponse.check);
+        }
         clearExplanation();
         clearPuzzleRating();
         clearComments();
