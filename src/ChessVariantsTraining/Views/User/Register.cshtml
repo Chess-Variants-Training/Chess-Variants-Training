@@ -1,4 +1,5 @@
 ﻿@section Title {Register}
+@section AddToHead{<script src="https://www.google.com/recaptcha/api.js" async type="text/javascript"></script>}
 @if (ViewBag.Error != null)
 {
     @foreach (string err in ViewBag.Error)
@@ -12,6 +13,7 @@
 <p>Password: <input type="password" name="password"></p>
 <p>Password confirmation: <input type="password" name="passwordConfirmation"></p>
 <p>Email: <input type="text" placeholder="Email" name="email"></p>
+<div class="g-recaptcha" data-sitekey="6Le28SIUAAAAAFsIbAkUzYvJqqCUZwdgMBVayWvW"></div>
 <input type="submit" value="Sign up">
 @{ Html.EndForm(); }
 <p>By signing up you agree with our @Html.ActionLink("Terms of Service", "TermsOfService", "Misc") and @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Misc").</p>

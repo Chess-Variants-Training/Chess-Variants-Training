@@ -9,11 +9,21 @@ using System.Linq;
 using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.Models.Variant960;
 using ChessVariantsTraining.DbRepositories.Variant960;
+using System.Net;
+using System.Text;
+using Microsoft.Extensions.Options;
+using ChessVariantsTraining.Configuration;
+using System.IO;
+using System.Threading.Tasks;
+using System.Net.Http;
+using Newtonsoft.Json;
 
 namespace ChessVariantsTraining.Controllers
 {
     public class UserController : CVTController
     {
+        static HttpClient captchaClient = new HttpClient();
+
         IRatingRepository ratingRepository;
         IValidator validator;
         IPasswordHasher passwordHasher;
@@ -22,6 +32,7 @@ namespace ChessVariantsTraining.Controllers
         IUserVerifier userVerifier;
         IEmailSender emailSender;
         IGameRepository gameRepository;
+        string recaptchaKey;
 
         public UserController(IUserRepository _userRepository,
             IRatingRepository _ratingRepository,
@@ -32,7 +43,8 @@ namespace ChessVariantsTraining.Controllers
             ITimedTrainingScoreRepository _timedTrainingScoreRepository,
             IUserVerifier _userVerifier,
             IEmailSender _emailSender,
-            IGameRepository _gameRepository)
+            IGameRepository _gameRepository,
+            IOptions<Settings> settings)
             : base(_userRepository, _loginHandler)
         {
             userRepository = _userRepository;
@@ -45,6 +57,7 @@ namespace ChessVariantsTraining.Controllers
             userVerifier = _userVerifier;
             emailSender = _emailSender;
             gameRepository = _gameRepository;
+            recaptchaKey = settings.Value.RecaptchaKey;
         }
 
         [HttpGet]
@@ -61,7 +74,7 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/User/Register", Name = "NewUser")]
-        public IActionResult New(string username, string email, string password, string passwordConfirmation)
+        public async Task<IActionResult> New(string username, string email, string password, string passwordConfirmation, [FromForm(Name = "g-recaptcha-response")] string gRecaptchaResponse)
         {
             ViewBag.Error = new List<string>();
             if (!validator.IsValidUsername(username))
@@ -88,6 +101,20 @@ namespace ChessVariantsTraining.Controllers
             else if (!password.Equals(passwordConfirmation))
             {
                 ViewBag.Error.Add("The password does not match its confirmation.");
+            }
+
+            Dictionary<string, string> captchaRequestValues = new Dictionary<string, string>()
+            {
+                { "secret", recaptchaKey },
+                { "response", gRecaptchaResponse }
+            };
+            FormUrlEncodedContent content = new FormUrlEncodedContent(captchaRequestValues);
+            HttpResponseMessage response = await captchaClient.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
+            string responseString = await response.Content.ReadAsStringAsync();
+            Dictionary<string, dynamic> jsonResponse = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(responseString);
+            if (!((bool)jsonResponse["success"]))
+            {
+                ViewBag.Error.Add("Captcha verification failed.");
             }
 
             if (ViewBag.Error.Count > 0)
