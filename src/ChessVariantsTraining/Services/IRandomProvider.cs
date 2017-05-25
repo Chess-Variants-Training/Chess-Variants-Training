@@ -7,5 +7,7 @@
         string RandomString(int length);
 
         int RandomPositiveInt(int maxExclusive);
+
+        int RandomRating();
     }
 }

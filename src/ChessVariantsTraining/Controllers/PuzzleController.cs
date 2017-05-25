@@ -27,6 +27,7 @@ namespace ChessVariantsTraining.Controllers
         IPuzzleTrainingSessionRepository puzzleTrainingSessionRepository;
         ICounterRepository counterRepository;
         IGameConstructor gameConstructor;
+        IRandomProvider randomProvider;
 
         static readonly string[] supportedVariants = new string[] { "Atomic", "KingOfTheHill", "ThreeCheck", "Antichess", "Horde", "RacingKings", "Crazyhouse" };
 
@@ -38,7 +39,8 @@ namespace ChessVariantsTraining.Controllers
             IPuzzleTrainingSessionRepository _puzzleTrainingSessionRepository,
             ICounterRepository _counterRepository,
             IPersistentLoginHandler _loginHandler,
-            IGameConstructor _gameConstructor) : base(_userRepository, _loginHandler)
+            IGameConstructor _gameConstructor,
+            IRandomProvider _randomProvider) : base(_userRepository, _loginHandler)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
@@ -47,6 +49,7 @@ namespace ChessVariantsTraining.Controllers
             puzzleTrainingSessionRepository = _puzzleTrainingSessionRepository;
             counterRepository = _counterRepository;
             gameConstructor = _gameConstructor;
+            randomProvider = _randomProvider;
         }
 
         [Route("/Puzzle")]
@@ -319,7 +322,7 @@ namespace ChessVariantsTraining.Controllers
         {
             variant = Utilities.NormalizeVariantNameCapitalization(variant);
             List<int> toBeExcluded;
-            double nearRating = 1500;
+            double nearRating = randomProvider.RandomRating();
             int? userId = loginHandler.LoggedInUserId(HttpContext);
             if (userId.HasValue)
             {
