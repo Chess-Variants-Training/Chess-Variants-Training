@@ -1,4 +1,4 @@
-﻿div.selectable {
+﻿div.selectable, div.pocket-piece {
     display: inline-block;
     width: 45px;
     height: 45px;
@@ -11,4 +11,25 @@ div.selected {
 
 .hidden {
     display: none;
+}
+
+.center-cells > td {
+    text-align: center;
+}
+
+.pocket-table {
+    margin-top: 15px;
+    margin-bottom: 15px;
+    background-color: #ccc;
+}
+
+.draggable {
+    cursor: pointer;
+}
+
+span[data-counter-for] {
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }

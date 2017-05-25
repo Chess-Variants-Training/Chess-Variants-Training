@@ -1,4 +1,6 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Variants.Crazyhouse;
+using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.Services;
 using System;
 using System.Collections.Generic;
@@ -13,6 +15,7 @@ namespace ChessVariantsTraining.Models
         public List<string> FENs { get; set; }
         public List<string> Checks { get; set; }
         public List<string> Moves { get; set; }
+        public List<Dictionary<string, int>> Pockets { get; set; }
         public List<int> PastPuzzleIds { get; set; }
         public DateTime? CurrentPuzzleStartedUtc { get; set; }
         public DateTime? CurrentPuzzleEndedUtc { get; set; }
@@ -28,6 +31,7 @@ namespace ChessVariantsTraining.Models
             FENs = new List<string>();
             Checks = new List<string>();
             Moves = new List<string>();
+            Pockets = new List<Dictionary<string, int>>();
 
             gameConstructor = _gameConstructor;
         }
@@ -44,6 +48,87 @@ namespace ChessVariantsTraining.Models
             Checks.Add(Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null);
             Moves.Clear();
             Moves.Add(null);
+            Pockets.Clear();
+            Pockets.Add(Current.Game.GenerateJsonPocket());
+        }
+
+        int CompareMoves(string move1, string move2)
+        {
+            if (move1.Contains("@") && move1.Length == 3)
+            {
+                move1 = "P" + move1;
+            }
+            if (move2.Contains("@") & move2.Length == 3)
+            {
+                move2 = "P" + move2;
+            }
+            return string.Compare(move1, move2, true);
+        }
+
+        SubmittedMoveResponse ApplyMoveAndDropCommon(SubmittedMoveResponse response, string moveStr)
+        {
+            response.Check = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
+            Checks.Add(response.Check);
+            string fen = Current.Game.GetFen();
+            response.FEN = fen;
+            FENs.Add(fen);
+            Dictionary<string, int> pocket = Current.Game.GenerateJsonPocket();
+            response.Pocket = pocket;
+            Pockets.Add(pocket);
+
+            if (Current.Game.IsWinner(ChessUtilities.GetOpponentOf(Current.Game.WhoseTurn)))
+            {
+                PuzzleFinished(response, true);
+                return response;
+            }
+
+            if (!PossibleVariations.Any(x => CompareMoves(x.First(), moveStr) == 0))
+            {
+                PuzzleFinished(response, false);
+                return response;
+            }
+
+            PossibleVariations = PossibleVariations.Where(x => CompareMoves(x.First(), moveStr) == 0).Select(x => x.Skip(1));
+
+            if (PossibleVariations.Any(x => x.Count() == 0))
+            {
+                PuzzleFinished(response, true);
+                return response;
+            }
+
+            string moveToPlay = PossibleVariations.First().First();
+
+            if (!moveToPlay.Contains("@"))
+            {
+                string[] parts = moveToPlay.Split('-', '=');
+                Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : new char?(parts[2][0])), true);
+            }
+            else
+            {
+                string[] parts = moveToPlay.Split('@');
+
+                CrazyhouseChessGame zhCurrent = Current.Game as CrazyhouseChessGame;
+                Piece toDrop = zhCurrent.MapPgnCharToPiece(parts[0] == "" ? 'P' : parts[0][0], zhCurrent.WhoseTurn);
+                Drop drop = new Drop(toDrop, new Position(parts[1]), zhCurrent.WhoseTurn);
+                zhCurrent.ApplyDrop(drop, true);
+            }
+
+            response.Play = moveToPlay;
+            Moves.Add(moveToPlay);
+            response.FenAfterPlay = Current.Game.GetFen();
+            FENs.Add(response.FenAfterPlay);
+            response.CheckAfterAutoMove = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
+            Checks.Add(response.CheckAfterAutoMove);
+            response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
+            response.Correct = 0;
+            response.PocketAfterAutoMove = Current.Game.GenerateJsonPocket();
+            Pockets.Add(response.PocketAfterAutoMove);
+            PossibleVariations = PossibleVariations.Select(x => x.Skip(1));
+            if (PossibleVariations.Any(x => !x.Any()))
+            {
+                PuzzleFinished(response, true);
+            }
+            return response;
         }
 
         public SubmittedMoveResponse ApplyMove(string origin, string destination, string promotion)
@@ -69,55 +154,52 @@ namespace ChessVariantsTraining.Models
                 response.Correct = SubmittedMoveResponse.INVALID_MOVE;
             }
 
-            response.Check = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
-            Checks.Add(response.Check);
-            string fen = Current.Game.GetFen();
-            response.FEN = fen;
-            FENs.Add(fen);
-
             string promotionUpper = promotion?.ToUpperInvariant();
-            Moves.Add(string.Format("{0}-{1}={2}", origin, destination, promotion == null ? "" : "=" + promotionUpper));
-
-            if (Current.Game.IsWinner(ChessUtilities.GetOpponentOf(Current.Game.WhoseTurn)))
-            {
-                PuzzleFinished(response, true);
-                return response;
-            }
+            Moves.Add(string.Format("{0}-{1}{2}", origin, destination, promotion == null ? "" : "=" + promotionUpper));
 
             string moveStr = origin + "-" + destination + (promotion != null ? "=" + promotionUpper : "");
-            if (!PossibleVariations.Any(x => string.Compare(x.First(), moveStr, true) == 0))
+
+            return ApplyMoveAndDropCommon(response, moveStr);
+        }
+
+        public SubmittedMoveResponse ApplyDrop(string role, string pos)
+        {
+            SubmittedMoveResponse response = new SubmittedMoveResponse()
             {
-                PuzzleFinished(response, false);
+                Success = true,
+                Error = null
+            };
+
+            if (!(Current.Game is CrazyhouseChessGame))
+            {
+                response.Success = false;
+                response.Error = "Not a crazyhouse puzzle.";
+                response.Correct = SubmittedMoveResponse.INVALID_MOVE;
                 return response;
             }
 
-            PossibleVariations = PossibleVariations.Where(x => string.Compare(x.First(), moveStr, true) == 0).Select(x => x.Skip(1));
-
-            if (PossibleVariations.Any(x => x.Count() == 0))
+            CrazyhouseChessGame zhCurrentGame = Current.Game as CrazyhouseChessGame;
+            Piece p = Utilities.GetByRole(role, zhCurrentGame.WhoseTurn);
+            if (p == null)
             {
-                PuzzleFinished(response, true);
+                response.Success = false;
+                response.Error = "Invalid drop piece.";
+                response.Correct = SubmittedMoveResponse.INVALID_MOVE;
+                return response;
+            }
+            Drop drop = new Drop(p, new Position(pos), zhCurrentGame.WhoseTurn);
+
+            if (!zhCurrentGame.ApplyDrop(drop, false))
+            {
+                response.Correct = SubmittedMoveResponse.INVALID_MOVE;
                 return response;
             }
 
-            response.FEN = fen;
+            char pieceChar = char.ToUpper(p.GetFenCharacter());
+            string moveStr = (pieceChar == 'P' ? "" : pieceChar.ToString()) + "@" + pos;
+            Moves.Add(moveStr);
 
-            string moveToPlay = PossibleVariations.First().First();
-            string[] parts = moveToPlay.Split('-', '=');
-            Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : new char?(parts[2][0])), true);
-            response.Play = moveToPlay;
-            Moves.Add(moveToPlay);
-            response.FenAfterPlay = Current.Game.GetFen();
-            FENs.Add(response.FenAfterPlay);
-            response.CheckAfterAutoMove = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
-            Checks.Add(response.CheckAfterAutoMove);
-            response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
-            response.Correct = 0;
-            PossibleVariations = PossibleVariations.Select(x => x.Skip(1));
-            if (PossibleVariations.Any(x => !x.Any()))
-            {
-                PuzzleFinished(response, true);
-            }
-            return response;
+            return ApplyMoveAndDropCommon(response, moveStr);
         }
 
         void PuzzleFinished(SubmittedMoveResponse response, bool correct)
@@ -132,37 +214,92 @@ namespace ChessVariantsTraining.Models
                 PastPuzzleIds.Add(Current.ID);
             }
 
+            string analysisUrl = "https://lichess.org/analysis/{0}/{1}";
+            string analysisUrlVariant;
+            switch (Current.Variant)
+            {
+                case "Atomic":
+                    analysisUrlVariant = "atomic";
+                    break;
+                case "Antichess":
+                    analysisUrlVariant = "antichess";
+                    break;
+                case "Crazyhouse":
+                    analysisUrlVariant = "crazyhouse";
+                    break;
+                case "Horde":
+                    analysisUrlVariant = "horde";
+                    break;
+                case "KingOfTheHill":
+                    analysisUrlVariant = "kingOfTheHill";
+                    break;
+                case "ThreeCheck":
+                    analysisUrlVariant = "threeCheck";
+                    break;
+                case "RacingKings":
+                    analysisUrlVariant = "racingKings";
+                    break;
+                default:
+                    analysisUrlVariant = "unknown";
+                    break;
+            }
+            response.AnalysisUrl = string.Format(analysisUrl, analysisUrlVariant, Current.InitialFen.Replace(' ', '_'));
+
             List<string> replayFens = new List<string>(FENs);
             List<string> replayChecks = new List<string>(Checks);
             List<string> replayMoves = new List<string>(Moves);
+            List<Dictionary<string, int>> replayPockets = new List<Dictionary<string, int>>(Pockets);
             if (!correct)
             {
                 Moves.RemoveAt(Moves.Count - 1);
                 FENs.RemoveAt(FENs.Count - 1);
                 Checks.RemoveAt(Checks.Count - 1);
+                Pockets.RemoveAt(Pockets.Count - 1);
 
                 replayFens.RemoveAt(replayFens.Count - 1);
                 replayMoves.RemoveAt(replayMoves.Count - 1);
                 replayChecks.RemoveAt(replayChecks.Count - 1);
+                replayPockets.RemoveAt(replayPockets.Count - 1);
 
                 response.FEN = FENs[FENs.Count - 1];
+                response.Pocket = Pockets[Pockets.Count - 1];
 
-                ChessGame correctGame = gameConstructor.Construct(Current.Variant, response.FEN);
-                foreach (string move in PossibleVariations.First())
+                ChessGame correctGame = gameConstructor.Construct(Current.Variant, Current.InitialFen);
+                int i = 0;
+                var full = replayMoves.Concat(PossibleVariations.First());
+                foreach (string move in full)
                 {
-                    string[] p = move.Split('-', '=');
-                    correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : new char?(p[2][0])), true);
-                    replayFens.Add(correctGame.GetFen());
-                    replayChecks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
-                    replayMoves.Add(move);
+                    if (move == null) { i++; continue; }
+                    if (!move.Contains("@"))
+                    {
+                        string[] p = move.Split('-', '=');
+                        correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : new char?(p[2][0])), true);
+                    }
+                    else
+                    {
+                        string[] p = move.Split('@');
+                        if (string.IsNullOrEmpty(p[0])) p[0] = "P";
+                        Drop drop = new Drop(correctGame.MapPgnCharToPiece(p[0][0], correctGame.WhoseTurn), new Position(p[1]), correctGame.WhoseTurn);
+                        (correctGame as CrazyhouseChessGame).ApplyDrop(drop, true);
+                    }
+                    if (i >= Moves.Count)
+                    {
+                        replayFens.Add(correctGame.GetFen());
+                        replayChecks.Add(correctGame.IsInCheck(correctGame.WhoseTurn) ? correctGame.WhoseTurn.ToString().ToLowerInvariant() : null);
+                        replayMoves.Add(move);
+                        replayPockets.Add(correctGame.GenerateJsonPocket());
+                    }
+                    i++;
                 }
 
                 Current.Game = gameConstructor.Construct(Current.Variant, response.FEN);
                 response.Moves = Current.Game.GetValidMoves(Current.Game.WhoseTurn);
+                response.Check = Current.Game.IsInCheck(Player.White) ? "white" : (Current.Game.IsInCheck(Player.Black) ? "black" : null);
             }
             response.ReplayFENs = replayFens;
             response.ReplayChecks = replayChecks;
             response.ReplayMoves = replayMoves;
+            response.ReplayPockets = replayPockets;
         }
     }
 }

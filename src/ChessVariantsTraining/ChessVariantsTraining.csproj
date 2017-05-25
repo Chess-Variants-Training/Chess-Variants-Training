@@ -9,25 +9,25 @@
     <None Include="config-secret.json" CopyToPublishDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Session" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.1" />
-    <PackageReference Include="MongoDB.Driver" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.1" />
-    <PackageReference Include="ChessDotNet" Version="0.9.5.2" />
-    <PackageReference Include="ChessDotNet.Variants" Version="0.9.5" />
+    <PackageReference Include="Microsoft.AspNetCore" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.StaticFiles" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Extensions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="1.1.2" />
+    <PackageReference Include="MongoDB.Driver" Version="2.4.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.IISIntegration" Version="1.1.2" />
+    <PackageReference Include="ChessDotNet" Version="0.9.5.5" />
+    <PackageReference Include="ChessDotNet.Variants" Version="0.9.5.3" />
     <PackageReference Include="glicko2-csharp" Version="1.0.0" />
-    <PackageReference Include="MailKit" Version="1.6.0" />
-    <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="1.0.1" />
+    <PackageReference Include="MailKit" Version="1.16.1" />
+    <PackageReference Include="Microsoft.AspNetCore.WebSockets" Version="1.0.2" />
   </ItemGroup>
 
 </Project>

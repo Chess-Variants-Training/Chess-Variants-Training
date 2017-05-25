@@ -1,4 +1,4 @@
-﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant, replayFensInitial, replayMovesInitial, replayChecksInitial) {
+﻿function main(fen, isPlayer, myColor, whoseTurn, isFinished, dests, lastMove, check, wsUrl, shortVariant, replayFensInitial, replayMovesInitial, replayChecksInitial, pocket, replayPocketInitial) {
     var isAnti = shortVariant === "Antichess";
     var isRacingKings = shortVariant === "RacingKings";
     if (myColor === "") myColor = null;
@@ -15,9 +15,11 @@
     var replayFens = replayFensInitial.slice();
     var replayMoves = replayMovesInitial.slice();
     var replayChecks = replayChecksInitial.slice();
+    var replayPocket = replayPocketInitial ? replayPocketInitial.slice() : null;
     var latestDests = dests;
     var currentReplayItem = replayFens.length - 1;
     var needsReplayWarning = false;
+    var isZh = shortVariant === "Crazyhouse";
 
 
     var soundTurnedOn = localStorage.getItem("sound") === "yes";
@@ -66,13 +68,14 @@
                 showDests: false,
                 dests: dests,
                 color: myColor,
-                rookCastle: false
+                rookCastle: false,
+                events: {
+                    after: pieceMoved,
+                    afterNewPiece: pieceDropped
+                }
             },
             drawable: {
                 enabled: true
-            },
-            events: {
-                move: pieceMoved
             },
             premovable: {
                 enabled: true,
@@ -104,6 +107,14 @@
                 document.getElementById("draw-accept").addEventListener("click", acceptDraw);
                 document.getElementById("draw-decline").addEventListener("click", declineDraw);
                 document.getElementById("resign-link").addEventListener("click", resign);
+
+
+                var pocketPieces = document.querySelectorAll(".pocket-piece");
+                for (i = 0; i < pocketPieces.length; i++) {
+                    pocketPieces[i].classList.add("draggable");
+                    pocketPieces[i].addEventListener("mousedown", startDragNewPiece);
+                    pocketPieces[i].addEventListener("touchstart", startDragNewPiece);
+                }
             }
             document.getElementById("rematch-offer-link").addEventListener("click", offerRematch);
             document.getElementById("rematch-accept").addEventListener("click", acceptRematch);
@@ -125,6 +136,7 @@
             displayError(err);
         });
 
+        updatePocketCounters();
     });
 
     function wsOpened() {
@@ -144,6 +156,13 @@
     function wsMessageReceived(e) {
         var message = JSON.parse(e.data);
         switch (message.t) {
+            case "invalidDrop":
+                var pieceSet = {};
+                pieceSet[pos] = null;
+                ground.setPieces(pieceSet);
+
+                ground.set({ turnColor: ground.state.turnColor === "white" ? "black" : "white" });
+                break;
             case "moved":
                 if (atLastReplayItem()) {
                     if (soundTurnedOn) {
@@ -170,6 +189,9 @@
                 replayFens.push(message.fen);
                 replayChecks.push(message.check);
                 replayMoves.push(message.lastMove[0] + "-" + message.lastMove[1]);
+                if (message.pocket) {
+                    replayPocket.push(message.pocket);
+                }
                 latestDests = message.dests;
                 needsReplayWarning = isPlayer && myColor == message.turnColor;
                 if (!atLastReplayItem() && needsReplayWarning) {
@@ -199,6 +221,10 @@
                 }
                 if (message.additional) {
                     document.getElementById("additional-info").textContent = message.additional;
+                }
+                if (message.pocket) {
+                    pocket = message.pocket;
+                    updatePocketCounters();
                 }
                 break;
             case "chat":
@@ -302,12 +328,38 @@
         }
     }
 
+    function pieceDropped(role, pos) {
+        ws.send(JSON.stringify({ "t": "move", "d": (role === "knight" ? "N" : role[0].toUpperCase()) + "@" + pos }));
+    }
+
     function premoveSet(orig, dest) {
         premove = { origin: orig, destination: dest };
     }
 
     function premoveUnset() {
         premove = null;
+    }
+
+    function updatePocketCounters() {
+        if (!pocket) return;
+
+        var keys = Object.keys(pocket);
+
+        for (var i = 0; i < keys.length; i++) {
+            var key = keys[i];
+            var counterElement = document.querySelector("span[data-counter-for='" + key + "']");
+            counterElement.textContent = pocket[key].toString();
+        }
+    }
+
+    function startDragNewPiece(e) {
+        e = e || window.event;
+        var role = e.target.dataset.role;
+        var color = e.target.dataset.color;
+
+        if (isZh && isPlayer && atLastReplayItem() && myColor === ground.state.turnColor && color === myColor && pocket[color + "-" + role] > 0) {
+            ground.dragNewPiece({ color: color, role: role }, e);
+        }
     }
 
     function chatKeyDown(e) {
@@ -509,5 +561,8 @@
         } else if (needsReplayWarning) {
             document.getElementById("controls-end").classList.add("orange-bg");
         }
+
+        pocket = replayPocket[currentReplayItem];
+        updatePocketCounters();
     }
 }

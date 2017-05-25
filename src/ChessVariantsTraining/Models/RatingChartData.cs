@@ -25,6 +25,7 @@ namespace ChessVariantsTraining.Models
             foreach (IGrouping<DateTime, RatingWithMetadata> group in groupedByDatetime)
             {
                 int? atomicRating = null;
+                int? crazyhouseRating = null;
                 int? kothRating = null;
                 int? threeCheckRating = null;
                 int? antichessRating = null;
@@ -39,6 +40,9 @@ namespace ChessVariantsTraining.Models
                             break;
                         case "Atomic":
                             atomicRating = (int)rwm.Rating.Value;
+                            break;
+                        case "Crazyhouse":
+                            crazyhouseRating = (int)rwm.Rating.Value;
                             break;
                         case "Horde":
                             hordeRating = (int)rwm.Rating.Value;
@@ -56,12 +60,13 @@ namespace ChessVariantsTraining.Models
                 }
                 DateTime timestamp = group.Key;
                 string label = fullDateTimeOnLabel ? timestamp.ToString() : timestamp.ToString("D");
-                elements.Add(new Element(timestamp, label, atomicRating, kothRating, threeCheckRating, antichessRating, hordeRating, racingKingsRating));
+                elements.Add(new Element(timestamp, label, atomicRating, crazyhouseRating, kothRating, threeCheckRating, antichessRating, hordeRating, racingKingsRating));
             }
 
             IEnumerable<Element> ordered = elements.OrderBy(x => x.Timestamp);
             Labels = new List<string>();
             List<int?> atomicRatings = new List<int?>();
+            List<int?> crazyhouseRatings = new List<int?>();
             List<int?> kothRatings = new List<int?>();
             List<int?> threeCheckRatings = new List<int?>();
             List<int?> antichessRatings = new List<int?>();
@@ -71,6 +76,7 @@ namespace ChessVariantsTraining.Models
             {
                 Labels.Add(elem.Label);
                 atomicRatings.Add(elem.AtomicRating);
+                crazyhouseRatings.Add(elem.CrazyhouseRating);
                 kothRatings.Add(elem.KothRating);
                 threeCheckRatings.Add(elem.ThreeCheckRating);
                 antichessRatings.Add(elem.AntichessRating);
@@ -81,6 +87,7 @@ namespace ChessVariantsTraining.Models
             {
                 { "Antichess", antichessRatings },
                 { "Atomic", atomicRatings },
+                { "Crazyhouse", crazyhouseRatings },
                 { "Horde", hordeRatings },
                 { "King of the Hill", kothRatings },
                 { "Racing Kings", racingKingsRatings },
@@ -93,17 +100,19 @@ namespace ChessVariantsTraining.Models
             public DateTime Timestamp { get; set; }
             public string Label { get; set; }
             public int? AtomicRating { get; set; }
+            public int? CrazyhouseRating { get; set; }
             public int? KothRating { get; set; }
             public int? ThreeCheckRating { get; set; }
             public int? AntichessRating { get; set; }
             public int? HordeRating { get; set; }
             public int? RacingKingsRating { get; set; }
 
-            public Element(DateTime timestamp, string label, int? atomicRating, int? kothRating, int? threeCheckRating, int? antichessRating, int? hordeRating, int? racingKingsRating)
+            public Element(DateTime timestamp, string label, int? atomicRating, int? crazyhouseRating, int? kothRating, int? threeCheckRating, int? antichessRating, int? hordeRating, int? racingKingsRating)
             {
                 Timestamp = timestamp;
                 Label = label;
                 AtomicRating = atomicRating;
+                CrazyhouseRating = crazyhouseRating;
                 KothRating = kothRating;
                 ThreeCheckRating = threeCheckRating;
                 AntichessRating = antichessRating;

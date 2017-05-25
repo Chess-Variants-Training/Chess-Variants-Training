@@ -77,7 +77,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 return false;
             }
 
-            string[] allowedVariants = new string[] { "Antichess", "Atomic", "Horde", "KingOfTheHill", "RacingKings", "ThreeCheck" };
+            string[] allowedVariants = new string[] { "Antichess", "Atomic", "Crazyhouse", "Horde", "KingOfTheHill", "RacingKings", "ThreeCheck" };
             string variant = parts[2];
             if (!allowedVariants.Contains(parts[2]))
             {

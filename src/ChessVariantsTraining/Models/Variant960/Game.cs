@@ -1,6 +1,7 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Antichess;
 using ChessDotNet.Variants.Atomic;
+using ChessDotNet.Variants.Crazyhouse;
 using ChessDotNet.Variants.Horde;
 using ChessDotNet.Variants.KingOfTheHill;
 using ChessDotNet.Variants.RacingKings;
@@ -60,6 +61,8 @@ namespace ChessVariantsTraining.Models.Variant960
             public const string ANTICHESS960ASYMMETRICAL = "Antichess 960 (asymmetrical)";
             public const string ATOMIC960SYMMETRICAL = "Atomic 960 (symmetrical)";
             public const string ATOMIC960ASYMMETRICAL = "Atomic 960 (asymmetrical)";
+            public const string CRAZYHOUSE960SYMMETRICAL = "Crazyhouse 960 (symmetrical)";
+            public const string CRAZYHOUSE960ASYMMETRICAL = "Crazyhouse 960 (asymmetrical)";
             public const string HORDE960 = "Horde 960";
             public const string KOTH960SYMMETRICAL = "King of the Hill 960 (symmetrical)";
             public const string KOTH960ASYMMETRICAL = "King of the Hill 960 (asymmetrical)";
@@ -184,6 +187,12 @@ namespace ChessVariantsTraining.Models.Variant960
                     break;
                 case Variants.ATOMIC960SYMMETRICAL:
                     ChessGame = new AtomicChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
+                    break;
+                case Variants.CRAZYHOUSE960ASYMMETRICAL:
+                    ChessGame = new CrazyhouseChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
+                    break;
+                case Variants.CRAZYHOUSE960SYMMETRICAL:
+                    ChessGame = new CrazyhouseChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
                     break;
                 case Variants.HORDE960:
                     ChessGame = new HordeChessGame(ChessUtilities.FenForHorde960(nWhite));

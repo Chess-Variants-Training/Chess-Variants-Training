@@ -105,5 +105,29 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        public Dictionary<string, int> Pocket
+        {
+            get;
+            set;
+        }
+
+        public Dictionary<string, int> PocketAfterAutoMove
+        {
+            get;
+            set;
+        }
+
+        public List<Dictionary<string, int>> ReplayPockets
+        {
+            get;
+            set;
+        }
+
+        public string AnalysisUrl
+        {
+            get;
+            set;
+        }
     }
 }

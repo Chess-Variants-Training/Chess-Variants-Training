@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 
 namespace ChessVariantsTraining.ViewModels
@@ -162,6 +163,18 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public Dictionary<string, int> ZhPocket
+        {
+            get;
+            private set;
+        }
+
+        public List<Dictionary<string, int>> ReplayPocket
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -187,7 +200,9 @@ namespace ChessVariantsTraining.ViewModels
             bool blackWantsRematch,
             List<string> replayFens,
             List<string> replayMoves,
-            List<string> replayChecks)
+            List<string> replayChecks,
+            Dictionary<string, int> zhPocket,
+            List<Dictionary<string, int>> replayPocket)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -215,6 +230,8 @@ namespace ChessVariantsTraining.ViewModels
             ReplayFENs = replayFens;
             ReplayMoves = replayMoves;
             ReplayChecks = replayChecks;
+            ZhPocket = zhPocket;
+            ReplayPocket = replayPocket;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
@@ -296,7 +313,14 @@ namespace ChessVariantsTraining.ViewModels
         
         public HtmlString RenderReplayMoves()
         {
-            return new HtmlString(string.Format("[null,'{0}']", string.Join("','", ReplayMoves)));
+            if (ReplayMoves.Count > 0)
+            {
+                return new HtmlString(string.Format("[null,'{0}']", string.Join("','", ReplayMoves)));
+            }
+            else
+            {
+                return new HtmlString("[null]");
+            }
         }
 
         public HtmlString RenderReplayChecks()
@@ -315,6 +339,30 @@ namespace ChessVariantsTraining.ViewModels
             }
 
             return new HtmlString(string.Format("[{0}]", string.Join(",", stringifiedReplayChecks)));
+        }
+
+        public HtmlString RenderZhPocket()
+        {
+            if (ZhPocket == null)
+            {
+                return new HtmlString("null");
+            }
+            else
+            {
+                return new HtmlString(JsonConvert.SerializeObject(ZhPocket));
+            }
+        }
+
+        public HtmlString RenderPocketReplay()
+        {
+            if (ReplayPocket == null)
+            {
+                return new HtmlString("null");
+            }
+            else
+            {
+                return new HtmlString(JsonConvert.SerializeObject(ReplayPocket));
+            }
         }
     }
 }

@@ -33,5 +33,10 @@ namespace ChessVariantsTraining.Services
             rng.GetBytes(result);
             return ((int)Math.Abs(BitConverter.ToInt32(result, 0))) % maxExclusive;
         }
+
+        public int RandomRating()
+        {
+            return RandomPositiveInt(1600) + 900;
+        }
     }
 }

@@ -110,7 +110,8 @@ namespace ChessVariantsTraining.Controllers
                     { "KingOfTheHill", new Rating(1500, 350, 0.06) },
                     { "Antichess", new Rating(1500, 350, 0.06) },
                     { "Horde", new Rating(1500, 350, 0.06) },
-                    { "RacingKings", new Rating(1500, 350, 0.06) }
+                    { "RacingKings", new Rating(1500, 350, 0.06) },
+                    { "Crazyhouse", new Rating(1500, 350, 0.06) }
                 }, new List<int>());
             bool added = userRepository.Add(user);
             userVerifier.SendVerificationEmailTo(user.ID);

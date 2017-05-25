@@ -1,6 +1,7 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Antichess;
 using ChessDotNet.Variants.Atomic;
+using ChessDotNet.Variants.Crazyhouse;
 using ChessDotNet.Variants.Horde;
 using ChessDotNet.Variants.KingOfTheHill;
 using ChessDotNet.Variants.RacingKings;
@@ -19,6 +20,8 @@ namespace ChessVariantsTraining.Services
                     return new AntichessGame();
                 case "Atomic":
                     return new AtomicChessGame();
+                case "Crazyhouse":
+                    return new CrazyhouseChessGame();
                 case "Horde":
                     return new HordeChessGame();
                 case "KingOfTheHill":
@@ -40,6 +43,8 @@ namespace ChessVariantsTraining.Services
                     return new AntichessGame(fen);
                 case "Atomic":
                     return new AtomicChessGame(fen);
+                case "Crazyhouse":
+                    return new CrazyhouseChessGame(fen);
                 case "Horde":
                     return new HordeChessGame(fen);
                 case "KingOfTheHill":

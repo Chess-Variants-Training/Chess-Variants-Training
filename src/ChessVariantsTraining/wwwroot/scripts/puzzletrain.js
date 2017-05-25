@@ -15,6 +15,14 @@ function setup(puzzleId) {
         window.puzzleId = puzzleId;
         window.replay = null;
         window.currentVariant = jsonResponse.variant;
+        window.pocket = jsonResponse.pocket;
+        window.yourColor = jsonResponse.whoseTurn;
+        updatePocketCounters();
+        if (window.currentVariant === "Crazyhouse") {
+            document.getElementById("pocket-zh").classList.remove("nodisplay");
+        } else {
+            document.getElementById("pocket-zh").classList.add("nodisplay");
+        }
         window.ground.set({
             fen: jsonResponse.fen,
             check: null,
@@ -27,6 +35,9 @@ function setup(puzzleId) {
                 dests: jsonResponse.dests
             }
         });
+        if (jsonResponse.check) {
+            ChessgroundExtensions.setCheck(window.ground, jsonResponse.check);
+        }
         clearExplanation();
         clearPuzzleRating();
         clearComments();
@@ -47,6 +58,7 @@ function setup(puzzleId) {
         document.getElementById("controls").classList.add("nodisplay");
         document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;
         document.getElementById("permalink").setAttribute("href", "/Puzzle/" + window.puzzleId);
+        document.getElementById("analysis-board-p").classList.add("nodisplay");
         window.trainingSessionId = jsonResponse.trainingSessionId;
         if (window.immediatelyShowComments) {
             loadComments();
@@ -103,76 +115,105 @@ function processPuzzleMove(origin, destination, metadata) {
     }
 }
 
+function processPuzzleDrop(role, pos) {
+    jsonXhr("/Puzzle/Train/SubmitDrop", "POST", "id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&role=" + role + "&pos=" + pos, processResponseAfterMoveOrDrop, function (req, err) {
+        displayError(err);
+    });
+}
+
 function submitPuzzleMove(origin, destination, promotion) {
-    jsonXhr("/Puzzle/Train/SubmitMove", "POST", "id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&origin=" + origin + "&destination=" + destination + (promotion ? "&promotion=" + promotion : ""), function (req, jsonResponse) {
-        if (jsonResponse.fen) {
-            window.ground.set({
-                fen: jsonResponse.fen
-            });
-        }
-        if (jsonResponse.check) {
-            ChessgroundExtensions.setCheck(window.ground, jsonResponse.check);
+    jsonXhr("/Puzzle/Train/SubmitMove", "POST", "id=" + window.puzzleId + "&trainingSessionId=" + window.trainingSessionId + "&origin=" + origin + "&destination=" + destination + (promotion ? "&promotion=" + promotion : ""), processResponseAfterMoveOrDrop, function (req, err) {
+        displayError(err);
+    });
+}
+
+function processResponseAfterMoveOrDrop(req, jsonResponse) {
+    if (jsonResponse.invalidDrop) {
+        var pieceSet = {};
+        pieceSet[jsonResponse.pos] = null;
+        window.ground.setPieces(pieceSet);
+
+        window.ground.set({ turnColor: window.ground.state.turnColor === "white" ? "black" : "white" });
+        return;
+    }
+    if (jsonResponse.fen) {
+        window.ground.set({
+            fen: jsonResponse.fen
+        });
+    }
+    if (jsonResponse.check) {
+        ChessgroundExtensions.setCheck(window.ground, jsonResponse.check);
+    } else {
+        ChessgroundExtensions.setCheck(window.ground, null);
+    }
+    if (jsonResponse.pocket) {
+        window.pocket = jsonResponse.pocket;
+        updatePocketCounters();
+    }
+    if (jsonResponse.play) {
+        window.ground.set({
+            fen: jsonResponse.fenAfterPlay,
+            lastMove: jsonResponse.play.indexOf("@") === -1 ? jsonResponse.play.substr(0, 5).split("-") : [ jsonResponse.play.split("@")[1], jsonResponse.play.split("@")[1] ]
+        });
+        if (jsonResponse.checkAfterAutoMove) {
+            ChessgroundExtensions.setCheck(window.ground, jsonResponse.checkAfterAutoMove);
         } else {
             ChessgroundExtensions.setCheck(window.ground, null);
         }
-        if (jsonResponse.play) {
-            window.ground.set({
-                fen: jsonResponse.fenAfterPlay,
-                lastMove: jsonResponse.play.substr(0, 5).split("-")
-            });
-            if (jsonResponse.checkAfterAutoMove) {
-                ChessgroundExtensions.setCheck(window.ground, jsonResponse.checkAfterAutoMove);
-            } else {
-                ChessgroundExtensions.setCheck(window.ground, null);
+        if (jsonResponse.pocketAfterAutoMove) {
+            window.pocket = jsonResponse.pocketAfterAutoMove;
+            updatePocketCounters();
+        }
+    }
+    switch (jsonResponse.correct) {
+        case 0:
+            break;
+        case 1:
+            document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
+            if (document.getElementById("reportLinkContainer")) {
+                document.getElementById("reportLinkContainer").classList.remove("nodisplay");
             }
-        }
-        switch (jsonResponse.correct) {
-            case 0:
-                break;
-            case 1:
-                document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
-                if (document.getElementById("reportLinkContainer")) {
-                    document.getElementById("reportLinkContainer").classList.remove("nodisplay");
-                }
-                document.getElementById("result").textContent = "Success!";
-                document.getElementById("result").setAttribute("class", "green");
-                loadComments();
-                break;
-            case -1:
-                document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
-                if (document.getElementById("reportLinkContainer")) {
-                    document.getElementById("reportLinkContainer").classList.remove("nodisplay");
-                }
-                window.ground.set({ lastMove: null });
-                document.getElementById("result").innerHTML = "<div>Puzzle failed.</div><div><small>But you can keep making moves to solve it.</small></div><div><small>Or, if you want to see the solution instead, click the arrows below.</small></div>";
-                document.getElementById("result").setAttribute("class", "red");
-                loadComments();
-                console.log(jsonResponse);
-        }
-        if (jsonResponse.dests) {
-            window.ground.set({
-                movable: {
-                    dests: jsonResponse.dests
-                }
-            });
-        }
-        if (jsonResponse.explanation) {
-            addExplanation(jsonResponse.explanation);
-        }
-        if (jsonResponse.rating) {
-            showPuzzleRating(jsonResponse.rating);
-        }
-        if (jsonResponse.replayFens) {
-            window.replay = {};
-            window.replay.fens = jsonResponse.replayFens;
-            window.replay.current = window.replay.fens.indexOf(jsonResponse.fen || window.ground.getFen());
-            window.replay.checks = jsonResponse.replayChecks;
-            window.replay.moves = jsonResponse.replayMoves;
-            document.getElementById("controls").classList.remove("nodisplay");
-        }
-    }, function (req, err) {
-        displayError(err);
-    });
+            document.getElementById("result").textContent = "Success!";
+            document.getElementById("result").setAttribute("class", "green");
+            loadComments();
+            break;
+        case -1:
+            document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
+            if (document.getElementById("reportLinkContainer")) {
+                document.getElementById("reportLinkContainer").classList.remove("nodisplay");
+            }
+            window.ground.set({ lastMove: null });
+            document.getElementById("result").innerHTML = "<div>Puzzle failed.</div><div><small>But you can keep making moves to solve it.</small></div><div><small>Or, if you want to see the solution instead, click the arrows below.</small></div>";
+            document.getElementById("result").setAttribute("class", "red");
+            loadComments();
+            console.log(jsonResponse);
+    }
+    if (jsonResponse.analysisUrl) {
+        document.getElementById("analysis-board-p").classList.remove("nodisplay");
+        document.getElementById("analysis-board-link").setAttribute("href", jsonResponse.analysisUrl);
+    }
+    if (jsonResponse.dests) {
+        window.ground.set({
+            movable: {
+                dests: jsonResponse.dests
+            }
+        });
+    }
+    if (jsonResponse.explanation) {
+        addExplanation(jsonResponse.explanation);
+    }
+    if (jsonResponse.rating) {
+        showPuzzleRating(jsonResponse.rating);
+    }
+    if (jsonResponse.replayFens) {
+        window.replay = {};
+        window.replay.fens = jsonResponse.replayFens;
+        window.replay.current = window.replay.fens.indexOf(jsonResponse.fen || window.ground.getFen());
+        window.replay.checks = jsonResponse.replayChecks;
+        window.replay.moves = jsonResponse.replayMoves;
+        window.replay.pockets = jsonResponse.replayPockets;
+        document.getElementById("controls").classList.remove("nodisplay");
+    }
 }
 
 function submitComment(e) {
@@ -436,15 +477,47 @@ function replayControlClicked(e) {
         window.replay.current = window.replay.fens.length - 1;
     }
     var lastMove = window.replay.moves[window.replay.current];
+    if (lastMove) {
+        if (lastMove.indexOf("@") !== -1) lastMove = [lastMove.split("@")[1], lastMove.split("@")[1]];
+        else lastMove = lastMove.substr(0, 5).split("-");
+    } else {
+        lastMove = null;
+    }
     window.ground.set({
         fen: window.replay.fens[window.replay.current],
-        lastMove: lastMove ? lastMove.substr(0, 5).split("-") : null
+        lastMove: lastMove
     });
     var currentCheck = window.replay.checks[window.replay.current];
     if (currentCheck) {
         ChessgroundExtensions.setCheck(window.ground, currentCheck);
     } else {
         ChessgroundExtensions.setCheck(window.ground, null);
+    }
+    window.pocket = window.replay.pockets[window.replay.current];
+    updatePocketCounters();
+}
+
+function startDragNewPiece(e) {
+    e = e || window.event;
+
+    var color = e.target.dataset.color;
+    if (color != window.yourColor) return;
+
+    var role = e.target.dataset.role;
+    if (!window.pocket[color + "-" + role] || window.pocket[color + "-" + role] < 1) return;
+
+    ground.dragNewPiece({ color: color, role: role }, e);
+}
+
+function updatePocketCounters() {
+    if (!window.pocket) return;
+
+    var keys = Object.keys(window.pocket);
+
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        var counterElement = document.querySelector("span[data-counter-for='" + key + "']");
+        counterElement.textContent = window.pocket[key].toString();
     }
 }
 
@@ -456,7 +529,8 @@ window.addEventListener("load", function () {
             dropOff: "revert",
             showDests: false,
             events: {
-                after: processPuzzleMove
+                after: processPuzzleMove,
+                afterNewPiece: processPuzzleDrop
             }
         },
         drawable: {
@@ -481,5 +555,12 @@ window.addEventListener("load", function () {
     var controlIds = ["controls-begin", "controls-prev", "controls-next", "controls-end"];
     for (var i = 0; i < controlIds.length; i++) {
         document.getElementById(controlIds[i]).addEventListener("click", replayControlClicked);
+    }
+
+    var pocketPieces = document.querySelectorAll(".pocket-piece");
+    for (i = 0; i < pocketPieces.length; i++) {
+        pocketPieces[i].classList.add("draggable");
+        pocketPieces[i].addEventListener("mousedown", startDragNewPiece);
+        pocketPieces[i].addEventListener("touchstart", startDragNewPiece);
     }
 });

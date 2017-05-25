@@ -1,4 +1,5 @@
 ﻿using ChessDotNet;
+using ChessDotNet.Variants.Crazyhouse;
 using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960;
 using ChessVariantsTraining.Services;
@@ -46,9 +47,26 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             subject.UciMoves.Add(move.OriginalPosition.ToString().ToLowerInvariant() +
                 move.NewPosition.ToString().ToLowerInvariant() +
                 (move.Promotion.HasValue ? move.Promotion.Value.ToString().ToLowerInvariant() : ""));
+            ClockSwitchAfterMove(subject, move.Player == Player.White);
+            gameRepository.Update(subject);
+            return ret;
+        }
+
+        public void RegisterDrop(Game subject, Drop drop)
+        {
+            CrazyhouseChessGame zhGame = subject.ChessGame as CrazyhouseChessGame;
+            zhGame.ApplyDrop(drop, true);
+            subject.LatestFEN = subject.ChessGame.GetFen();
+            subject.UciMoves.Add(char.ToUpperInvariant(drop.ToDrop.GetFenCharacter()) + "@" + drop.Destination.ToString().ToLowerInvariant());
+            ClockSwitchAfterMove(subject, drop.Player == Player.White);
+            gameRepository.Update(subject);
+        }
+
+        void ClockSwitchAfterMove(Game subject, bool didWhiteMove)
+        {
             if (subject.ChessGame.Moves.Count > 1)
             {
-                if (move.Player == Player.White)
+                if (didWhiteMove)
                 {
                     subject.ClockWhite.MoveMade();
                     subject.ClockTimes.Add(subject.ClockWhite.GetSecondsLeft());
@@ -68,8 +86,6 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             {
                 subject.ClockTimes.Add(subject.ClockWhite.GetSecondsLeft());
             }
-            gameRepository.Update(subject);
-            return ret;
         }
 
         public void RegisterGameResult(Game subject, string result, string termination)

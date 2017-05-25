@@ -1,7 +1,9 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Pieces;
+using ChessDotNet.Variants.Crazyhouse;
 using ChessDotNet.Variants.ThreeCheck;
 using ChessVariantsTraining.DbRepositories;
+using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.MemoryRepositories.Variant960;
 using ChessVariantsTraining.Models.Variant960.SocketMessages;
 using ChessVariantsTraining.Services;
@@ -142,34 +144,66 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     bool flagged = await HandlePotentialFlag(Subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant());
                     if (flagged) return;
-                    if (!Regex.IsMatch(moveMessage.Move, "[a-h][1-8]-[a-h][1-8](-[qrnbk])?"))
+                    if (!Regex.IsMatch(moveMessage.Move, "([a-h][1-8]-[a-h][1-8](-[qrnbk])?|[PNBRQ]@[a-h][1-8])"))
                     {
                         await Send("{\"t\":\"error\",\"d\":\"invalid message format\"}");
                         return;
                     }
-                    string[] moveParts = moveMessage.Move.Split('-');
-                    Move move;
-                    if (moveParts.Length == 2)
+                    string[] moveParts;
+                    MoveType mt = MoveType.Move;
+
+                    if (!moveMessage.Move.Contains("@"))
                     {
-                        move = new Move(moveParts[0], moveParts[1], Subject.ChessGame.WhoseTurn);
+                        moveParts = moveMessage.Move.Split('-');
+                        Move move;
+                        if (moveParts.Length == 2)
+                        {
+                            move = new Move(moveParts[0], moveParts[1], Subject.ChessGame.WhoseTurn);
+                        }
+                        else
+                        {
+                            move = new Move(moveParts[0], moveParts[1], Subject.ChessGame.WhoseTurn, moveParts[2][0]);
+                        }
+
+                        if (Subject.ChessGame.IsValidMove(move))
+                        {
+                            mt = gameRepository.RegisterMove(Subject, move);
+                        }
+                        else if (moveMessage.Type == "move")
+                        {
+                            await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
+                            return;
+                        }
+                        else
+                        {
+                            return; // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
+                        }
                     }
                     else
                     {
-                        move = new Move(moveParts[0], moveParts[1], Subject.ChessGame.WhoseTurn, moveParts[2][0]);
-                    }
-                    MoveType mt;
-                    if (Subject.ChessGame.IsValidMove(move))
-                    {
-                        mt = gameRepository.RegisterMove(Subject, move);
-                    }
-                    else if (moveMessage.Type == "move")
-                    {
-                        await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
-                        return;
-                    }
-                    else
-                    {
-                        return; // for premoves, invalid moves can be silently ignored as mostly the problem is just a situation change on the board
+                        CrazyhouseChessGame zhGame = Subject.ChessGame as CrazyhouseChessGame;
+                        if (zhGame == null)
+                        {
+                            await Send("{\"t\":\"error\",\"d\":\"invalid move\"}");
+                            return;
+                        }
+
+                        string[] typeAndPos = moveMessage.Move.Split('@');
+
+                        Position pos = new Position(typeAndPos[1]);
+                        Piece piece = Subject.ChessGame.MapPgnCharToPiece(typeAndPos[0][0], Subject.ChessGame.WhoseTurn);
+                        Drop drop = new Drop(piece, pos, piece.Owner);
+
+                        if (zhGame.IsValidDrop(drop))
+                        {
+                            gameRepository.RegisterDrop(Subject, drop);
+                        }
+                        else
+                        {
+                            await Send("{\"t\":\"invalidDrop\",\"pos\":\"" + pos + "\"}");
+                        }
+
+                        moveParts = new string[] { pos.ToString().ToLowerInvariant(), pos.ToString().ToLowerInvariant() };
                     }
 
                     string check = null;
@@ -219,6 +253,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         ThreeCheckChessGame tccg = Subject.ChessGame as ThreeCheckChessGame;
                         messageForPlayerWhoseTurnItIs["additional"] = messageForOthers["additional"] = string.Format("White delivered {0} check(s), black delivered {1}.", tccg.ChecksByWhite, tccg.ChecksByBlack);
                     }
+                    messageForPlayerWhoseTurnItIs["pocket"] = messageForOthers["pocket"] = Subject.ChessGame.GenerateJsonPocket();
                     messageForOthers["dests"] = new Dictionary<object, object>();
                     string jsonPlayersMove = JsonConvert.SerializeObject(messageForPlayerWhoseTurnItIs);
                     string jsonSpectatorsMove = JsonConvert.SerializeObject(messageForOthers);
