@@ -123,5 +123,11 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        public string AnalysisUrl
+        {
+            get;
+            set;
+        }
     }
 }

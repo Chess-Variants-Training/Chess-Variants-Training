@@ -58,6 +58,7 @@ function setup(puzzleId) {
         document.getElementById("controls").classList.add("nodisplay");
         document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;
         document.getElementById("permalink").setAttribute("href", "/Puzzle/" + window.puzzleId);
+        document.getElementById("analysis-board-p").classList.add("nodisplay");
         window.trainingSessionId = jsonResponse.trainingSessionId;
         if (window.immediatelyShowComments) {
             loadComments();
@@ -186,6 +187,10 @@ function processResponseAfterMoveOrDrop(req, jsonResponse) {
             document.getElementById("result").setAttribute("class", "red");
             loadComments();
             console.log(jsonResponse);
+    }
+    if (jsonResponse.analysisUrl) {
+        document.getElementById("analysis-board-p").classList.remove("nodisplay");
+        document.getElementById("analysis-board-link").setAttribute("href", jsonResponse.analysisUrl);
     }
     if (jsonResponse.dests) {
         window.ground.set({

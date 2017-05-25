@@ -214,6 +214,37 @@ namespace ChessVariantsTraining.Models
                 PastPuzzleIds.Add(Current.ID);
             }
 
+            string analysisUrl = "https://lichess.org/analysis/{0}/{1}";
+            string analysisUrlVariant;
+            switch (Current.Variant)
+            {
+                case "Atomic":
+                    analysisUrlVariant = "atomic";
+                    break;
+                case "Antichess":
+                    analysisUrlVariant = "antichess";
+                    break;
+                case "Crazyhouse":
+                    analysisUrlVariant = "crazyhouse";
+                    break;
+                case "Horde":
+                    analysisUrlVariant = "horde";
+                    break;
+                case "KingOfTheHill":
+                    analysisUrlVariant = "kingOfTheHill";
+                    break;
+                case "ThreeCheck":
+                    analysisUrlVariant = "threeCheck";
+                    break;
+                case "RacingKings":
+                    analysisUrlVariant = "racingKings";
+                    break;
+                default:
+                    analysisUrlVariant = "unknown";
+                    break;
+            }
+            response.AnalysisUrl = string.Format(analysisUrl, analysisUrlVariant, Current.InitialFen.Replace(' ', '_'));
+
             List<string> replayFens = new List<string>(FENs);
             List<string> replayChecks = new List<string>(Checks);
             List<string> replayMoves = new List<string>(Moves);
