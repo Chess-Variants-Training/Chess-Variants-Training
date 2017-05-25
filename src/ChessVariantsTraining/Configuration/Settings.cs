@@ -25,5 +25,11 @@
             get;
             set;
         }
+
+        public string RecaptchaKey
+        {
+            get;
+            set;
+        }
     }
 }
