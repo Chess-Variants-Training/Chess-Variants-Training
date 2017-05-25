@@ -64,20 +64,23 @@ namespace ChessVariantsTraining.DbRepositories
             }
             FilterDefinition<Puzzle> lteFilter = filter;
             FilterDefinition<Puzzle> gtFilter = filter;
-            bool higherRated = RandomBoolean();
+
             gtFilter &= filterBuilder.Gt("rating.value", nearRating);
             lteFilter &= filterBuilder.Lte("rating.value", nearRating);
+
             var foundGt = puzzleCollection.Find(gtFilter);
             var foundLte = puzzleCollection.Find(lteFilter);
+
             if (foundGt == null && foundLte == null) return null;
+
             SortDefinitionBuilder<Puzzle> sortBuilder = Builders<Puzzle>.Sort;
-            foundGt = foundGt.Sort(sortBuilder.Ascending("rating.value")).Limit(1);
-            foundLte = foundLte.Sort(sortBuilder.Descending("rating.value")).Limit(1);
-            Puzzle oneGt = foundGt.FirstOrDefault();
-            Puzzle oneLte = foundLte.FirstOrDefault();
-            if (oneGt == null) return oneLte;
-            else if (oneLte == null) return oneGt;
-            else return RandomBoolean() ? oneGt : oneLte;
+            foundGt = foundGt.Sort(sortBuilder.Ascending("rating.value")).Limit(5);
+            foundLte = foundLte.Sort(sortBuilder.Descending("rating.value")).Limit(5);
+
+            List<Puzzle> options = foundGt.ToList().Concat(foundLte.ToList()).ToList();
+            if (options.Count == 0) return null;
+
+            return options.OrderBy(x => Guid.NewGuid()).First();
         }
 
         public DeleteResult Remove(int id)
@@ -96,11 +99,6 @@ namespace ChessVariantsTraining.DbRepositories
             UpdateDefinition<Puzzle> def = builder.Set("rating", newRating);
             UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
-        }
-
-        private bool RandomBoolean()
-        {
-            return rnd.Next() % 2 == 0;
         }
 
         public List<Puzzle> InReview()
