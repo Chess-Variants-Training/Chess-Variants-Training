@@ -182,10 +182,18 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Login", Name = "LoginPost")]
         public IActionResult LoginPost(string username, string password)
         {
-            User user = userRepository.FindByUsername(username);
+            User user;
+            if (!username.Contains("@"))
+            {
+                user = userRepository.FindByUsername(username);
+            }
+            else
+            {
+                user = userRepository.FindByEmail(username);
+            }
             if (user == null)
             {
-                TempData["Error"] = "Invalid username or password.";
+                TempData["Error"] = "Invalid username/email or password.";
                 return RedirectToAction("Login");
             }
             if (user.Closed)
@@ -197,7 +205,7 @@ namespace ChessVariantsTraining.Controllers
             string hash = passwordHasher.HashPassword(password, salt);
             if (hash != user.PasswordHash)
             {
-                TempData["Error"] = "Invalid username or password.";
+                TempData["Error"] = "Invalid username/email or password.";
                 return RedirectToAction("Login");
             }
             loginHandler.RegisterLogin(user.ID, HttpContext);
