@@ -1,17 +1,16 @@
-﻿using ChessVariantsTraining.DbRepositories;
-using ChessVariantsTraining.Services;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
+﻿using ChessDotNet;
+using ChessDotNet.Variants.Crazyhouse;
+using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.DbRepositories.Variant960;
 using ChessVariantsTraining.Extensions;
 using ChessVariantsTraining.HttpErrors;
 using ChessVariantsTraining.Models.Variant960;
-using ChessDotNet;
+using ChessVariantsTraining.Services;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Linq;
-using ChessDotNet.Pieces;
 using System.Collections.Generic;
-using ChessDotNet.Variants.Crazyhouse;
+using System.Linq;
 
 namespace ChessVariantsTraining.Controllers
 {
