@@ -236,7 +236,7 @@ namespace ChessVariantsTraining.Controllers
         [HttpPost]
         [Route("/User/Edit", Name = "EditPost")]
         [NoVerificationNeeded]
-        public IActionResult Edit(string email, string about)
+        public IActionResult Edit(string username, string email, string about)
         {
             int? userId = loginHandler.LoggedInUserId(HttpContext);
             if (!userId.HasValue)
@@ -244,6 +244,7 @@ namespace ChessVariantsTraining.Controllers
                 return RedirectToAction("Login");
             }
             User user = userRepository.FindById(userId.Value);
+            user.Username = username;
             user.Email = email;
             user.About = about;
             userRepository.Update(user);
