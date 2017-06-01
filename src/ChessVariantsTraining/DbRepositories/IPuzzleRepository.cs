@@ -10,7 +10,7 @@ namespace ChessVariantsTraining.DbRepositories
 
         Puzzle Get(int id);
 
-        Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating = 1500);
+        Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating);
 
         DeleteResult Remove(int id);
 

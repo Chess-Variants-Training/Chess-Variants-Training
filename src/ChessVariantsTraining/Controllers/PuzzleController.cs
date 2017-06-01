@@ -345,7 +345,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 toBeExcluded = new List<int>();
             }
-            Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded, variant, loginHandler.LoggedInUserId(HttpContext));
+            Puzzle puzzle = puzzleRepository.GetOneRandomly(toBeExcluded, variant, loginHandler.LoggedInUserId(HttpContext), nearRating);
             if (puzzle != null)
             {
                 return Json(new { success = true, id = puzzle.ID });

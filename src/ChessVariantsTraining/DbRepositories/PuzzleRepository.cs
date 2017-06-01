@@ -49,38 +49,61 @@ namespace ChessVariantsTraining.DbRepositories
             return found.FirstOrDefault();
         }
 
-        public Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating = 1500)
+        public Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating)
         {
-            FilterDefinitionBuilder<Puzzle> filterBuilder = Builders<Puzzle>.Filter;
-            FilterDefinition<Puzzle> filter = filterBuilder.Nin("_id", excludedIds) & filterBuilder.Eq("inReview", false)
-                                              & filterBuilder.Eq("approved", true);
+            Dictionary<string, object> filterDict = new Dictionary<string, object>()
+            {
+                ["approved"] = true,
+                ["inReview"] = false,
+                ["_id"] = new Dictionary<string, object>()
+                {
+                    ["$nin"] = excludedIds
+                }
+            };
+
             if (variant != "Mixed")
             {
-                filter &= filterBuilder.Eq("variant", variant);
+                filterDict.Add("variant", new Dictionary<string, object>()
+                {
+                    ["$eq"] = variant
+                });
             }
             if (userId.HasValue)
             {
-                filter &= filterBuilder.Ne("author", userId.Value) & filterBuilder.Nin("reviewers", new int[] { userId.Value });
+                filterDict.Add("author", new Dictionary<string, object>()
+                {
+                    ["$ne"] = userId.Value
+                });
+
+                filterDict.Add("reviewers", new Dictionary<string, object>()
+                {
+                    ["$nin"] = new int[] { userId.Value }
+                });
             }
-            FilterDefinition<Puzzle> lteFilter = filter;
-            FilterDefinition<Puzzle> gtFilter = filter;
 
-            gtFilter &= filterBuilder.Gt("rating.value", nearRating);
-            lteFilter &= filterBuilder.Lte("rating.value", nearRating);
+            BsonDocument matchDoc = new BsonDocument(new Dictionary<string, object>()
+            {
+                ["$match"] = filterDict
+            });
 
-            var foundGt = puzzleCollection.Find(gtFilter);
-            var foundLte = puzzleCollection.Find(lteFilter);
+            BsonDocument sampleDoc = new BsonDocument(new Dictionary<string, object>()
+            {
+                ["$sample"] = new Dictionary<string, object>() { ["size"] = 30 }
+            });
 
-            if (foundGt == null && foundLte == null) return null;
+            List<Puzzle> selected = puzzleCollection.Aggregate(
+                PipelineDefinition<Puzzle, Puzzle>.Create(
+                    matchDoc,
+                    sampleDoc
+                )
+            ).ToList();
 
-            SortDefinitionBuilder<Puzzle> sortBuilder = Builders<Puzzle>.Sort;
-            foundGt = foundGt.Sort(sortBuilder.Ascending("rating.value")).Limit(5);
-            foundLte = foundLte.Sort(sortBuilder.Descending("rating.value")).Limit(5);
+            if (!selected.Any())
+            {
+                return null;
+            }
 
-            List<Puzzle> options = foundGt.ToList().Concat(foundLte.ToList()).ToList();
-            if (options.Count == 0) return null;
-
-            return options.OrderBy(x => Guid.NewGuid()).First();
+            return selected.Aggregate((x, y) => Math.Abs(x.Rating.Value - nearRating) < Math.Abs(y.Rating.Value - nearRating) ? x : y);
         }
 
         public DeleteResult Remove(int id)
