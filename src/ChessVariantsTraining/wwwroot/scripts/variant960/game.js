@@ -349,6 +349,14 @@
             var key = keys[i];
             var counterElement = document.querySelector("span[data-counter-for='" + key + "']");
             counterElement.textContent = pocket[key].toString();
+
+            var role = key.split('-')[1];
+            var color = key.split('-')[0];
+            if (pocket[key] === 0) {
+                document.querySelector(".pocket-piece[data-role=" + role + "][data-color=" + color + "]").classList.add("unavailable");
+            } else {
+                document.querySelector(".pocket-piece[data-role=" + role + "][data-color=" + color + "]").classList.remove("unavailable");
+            }
         }
     }
 

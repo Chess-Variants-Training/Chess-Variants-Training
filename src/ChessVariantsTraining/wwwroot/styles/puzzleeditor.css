@@ -5,6 +5,10 @@
     margin: 5px;
 }
 
+div.pocket-piece.unavailable {
+    opacity: 0.3;
+}
+
 div.selected {
     background-color: aquamarine;
 }
