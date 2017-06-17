@@ -518,7 +518,7 @@ namespace ChessVariantsTraining.Controllers
                 string url = Url.Action("Game", "Variant960", new { id = game.ID });
                 light.Add(new ViewModels.LightGame(white, black, result, url, game.StartedUtc.ToString("dd/MM/yyyy HH:mm")));
             }
-            IEnumerable<int> pagesToShow = Enumerable.Range(1, (int)Math.Ceiling(gameCount / 20F));
+            IEnumerable<int> pagesToShow = Enumerable.Range(1, (int)Math.Ceiling(gameCount / (float)perPage));
             ViewModels.GameListView model = new ViewModels.GameListView(player.Username, light, page, pagesToShow);
             return View(model);
         }
