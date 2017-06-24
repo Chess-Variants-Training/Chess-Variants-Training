@@ -14,7 +14,6 @@ namespace ChessVariantsTraining.DbRepositories
     {
         MongoSettings settings;
         IMongoCollection<Puzzle> puzzleCollection;
-        Random rnd = new Random();
         IRandomProvider randomProvider;
 
         public PuzzleRepository(IOptions<Settings> appSettings, IRandomProvider _randomProvider)
