@@ -1,5 +1,6 @@
 ﻿using ChessVariantsTraining.Configuration;
 using ChessVariantsTraining.Models;
+using ChessVariantsTraining.Services;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -14,10 +15,12 @@ namespace ChessVariantsTraining.DbRepositories
         MongoSettings settings;
         IMongoCollection<Puzzle> puzzleCollection;
         Random rnd = new Random();
+        IRandomProvider randomProvider;
 
-        public PuzzleRepository(IOptions<Settings> appSettings)
+        public PuzzleRepository(IOptions<Settings> appSettings, IRandomProvider _randomProvider)
         {
             settings = appSettings.Value.Mongo;
+            randomProvider = _randomProvider;
             GetCollection();
         }
 
@@ -79,6 +82,20 @@ namespace ChessVariantsTraining.DbRepositories
                 {
                     ["$nin"] = new int[] { userId.Value }
                 });
+            }
+
+            bool shouldGive1500ProvisionalPuzzle = randomProvider.RandomPositiveInt(6) == 5;
+            if (shouldGive1500ProvisionalPuzzle)
+            {
+                filterDict.Add("rating.value", 1500d);
+
+                Puzzle sel = puzzleCollection.Find(new BsonDocument(filterDict)).FirstOrDefault();
+                if (sel != null)
+                {
+                    return sel;
+                }
+
+                filterDict.Remove("rating.value");
             }
 
             BsonDocument matchDoc = new BsonDocument(new Dictionary<string, object>()
