@@ -77,13 +77,22 @@ namespace ChessVariantsTraining.Controllers
         [HttpPost]
         [Route("/Puzzle/Editor/RegisterPuzzleForEditing")]
         [Restricted(true, UserRole.NONE)]
-        public IActionResult RegisterPuzzleForEditing(string fen, string variant)
+        public IActionResult RegisterPuzzleForEditing(string fen, string variant, int checksByWhite, int checksByBlack)
         {
             fen += " - 0 1";
             variant = Utilities.NormalizeVariantNameCapitalization(variant);
             if (!Array.Exists(supportedVariants, x => x == variant))
             {
                 return Json(new { success = false, error = "Unsupported variant." });
+            }
+            if (variant == "ThreeCheck")
+            {
+                if (checksByWhite > 2 || checksByWhite < 0 || checksByBlack > 2 || checksByBlack < 0)
+                {
+                    return Json(new { success = false, error = "Invalid amount of checks." });
+                }
+
+                fen += String.Format(" +{0}+{1}", checksByWhite, checksByBlack);
             }
             Puzzle possibleDuplicate = puzzleRepository.FindByFenAndVariant(fen, variant);
             if (possibleDuplicate != null && possibleDuplicate.Approved)

@@ -101,7 +101,8 @@ function goToStep2(e) {
     clearSelection(e);
 
     jsonXhr("/Puzzle/Editor/RegisterPuzzleForEditing", "POST",
-        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML) + "&variant=" + window.variant, function (req, jsonResponse) {
+        "fen=" + encodeURIComponent(document.getElementById("fen").innerHTML) + "&variant=" + window.variant
+               + "&checksByWhite=" + document.getElementById("checks-by-white").value + "&checksByBlack=" + document.getElementById("checks-by-black").value, function (req, jsonResponse) {
             window.currentVariation = 0;
             var step1Elements = document.getElementsByClassName("step1");
             for (var i = 0; i < step1Elements.length; i++) {
@@ -305,6 +306,12 @@ function variantChanged(e) {
     } else {
         document.getElementById("pocket-zh").classList.add("nodisplay");
         document.getElementById("pocket-no-zh").classList.remove("nodisplay");
+    }
+
+    if (window.variant === "ThreeCheck") {
+        document.getElementById("three-check-checks").classList.remove("nodisplay");
+    } else {
+        document.getElementById("three-check-checks").classList.add("nodisplay");
     }
     updateFen();
 }
