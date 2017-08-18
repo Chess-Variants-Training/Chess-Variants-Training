@@ -132,9 +132,9 @@
             ws.addEventListener("message", wsMessageReceived);
             ws.addEventListener("close", wsClosed);
         },
-        function (req, err) {
-            displayError(err);
-        });
+            function (req, err) {
+                displayError(err);
+            });
 
         updatePocketCounters();
     });
@@ -570,7 +570,9 @@
             document.getElementById("controls-end").classList.add("orange-bg");
         }
 
-        pocket = replayPocket[currentReplayItem];
-        updatePocketCounters();
+        if (replayPocket) {
+            pocket = replayPocket[currentReplayItem];
+            updatePocketCounters();
+        }
     }
 }
