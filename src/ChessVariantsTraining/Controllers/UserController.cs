@@ -33,6 +33,7 @@ namespace ChessVariantsTraining.Controllers
         IEmailSender emailSender;
         IGameRepository gameRepository;
         string recaptchaKey;
+        bool requireEmailVerification;
 
         public UserController(IUserRepository _userRepository,
             IRatingRepository _ratingRepository,
@@ -58,6 +59,7 @@ namespace ChessVariantsTraining.Controllers
             emailSender = _emailSender;
             gameRepository = _gameRepository;
             recaptchaKey = settings.Value.RecaptchaKey;
+            requireEmailVerification = settings.Value.Email.RequireEmailVerification;
         }
 
         [HttpGet]
@@ -103,18 +105,21 @@ namespace ChessVariantsTraining.Controllers
                 ViewBag.Error.Add("The password does not match its confirmation.");
             }
 
-            Dictionary<string, string> captchaRequestValues = new Dictionary<string, string>()
+            if (!string.IsNullOrWhiteSpace(recaptchaKey))
             {
-                { "secret", recaptchaKey },
-                { "response", gRecaptchaResponse }
-            };
-            FormUrlEncodedContent content = new FormUrlEncodedContent(captchaRequestValues);
-            HttpResponseMessage response = await captchaClient.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
-            string responseString = await response.Content.ReadAsStringAsync();
-            Dictionary<string, dynamic> jsonResponse = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(responseString);
-            if (!((bool)jsonResponse["success"]))
-            {
-                ViewBag.Error.Add("Captcha verification failed.");
+                Dictionary<string, string> captchaRequestValues = new Dictionary<string, string>()
+                {
+                    { "secret", recaptchaKey },
+                    { "response", gRecaptchaResponse }
+                };
+                FormUrlEncodedContent content = new FormUrlEncodedContent(captchaRequestValues);
+                HttpResponseMessage response = await captchaClient.PostAsync("https://www.google.com/recaptcha/api/siteverify", content);
+                string responseString = await response.Content.ReadAsStringAsync();
+                Dictionary<string, dynamic> jsonResponse = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(responseString);
+                if (!((bool)jsonResponse["success"]))
+                {
+                    ViewBag.Error.Add("Captcha verification failed.");
+                }
             }
 
             if (ViewBag.Error.Count > 0)
@@ -140,8 +145,16 @@ namespace ChessVariantsTraining.Controllers
                     { "RacingKings", new Rating(1500, 350, 0.06) },
                     { "Crazyhouse", new Rating(1500, 350, 0.06) }
                 }, new List<int>());
+            if (!requireEmailVerification)
+            {
+                user.VerificationCode = 0;
+                user.Verified = true;
+            }
             bool added = userRepository.Add(user);
-            userVerifier.SendVerificationEmailTo(user.ID);
+            if (requireEmailVerification)
+            {
+                userVerifier.SendVerificationEmailTo(user.ID);
+            }
             loginHandler.RegisterLogin(user.ID, HttpContext);
             return RedirectToAction("Profile", new { id = user.ID });
         }
