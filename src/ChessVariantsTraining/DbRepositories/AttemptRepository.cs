@@ -2,6 +2,7 @@
 using ChessVariantsTraining.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Collections.Generic;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -25,6 +26,19 @@ namespace ChessVariantsTraining.DbRepositories
         public void Add(Attempt attempt)
         {
             attemptCollection.InsertOne(attempt);
+        }
+
+        public List<Attempt> Get(int user, int skip, int limit)
+        {
+            FilterDefinition<Attempt> eqDef = Builders<Attempt>.Filter.Eq("user", user);
+            SortDefinition<Attempt> sortDef = Builders<Attempt>.Sort.Descending("endTimestampUtc");
+            return attemptCollection.Find(eqDef).Sort(sortDef).Skip(skip).Limit(limit).ToList();
+        }
+
+        public long Count(int user)
+        {
+            FilterDefinition<Attempt> eqDef = Builders<Attempt>.Filter.Eq("user", user);
+            return attemptCollection.Count(eqDef);
         }
     }
 }
