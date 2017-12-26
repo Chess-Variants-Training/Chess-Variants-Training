@@ -18,6 +18,7 @@
         @if (num != Model.CurrentPage)
         {
             @Html.ActionLink(num.ToString(), "History", "User", new { page = num })
+            @:&nbsp;
         }
         else
         {

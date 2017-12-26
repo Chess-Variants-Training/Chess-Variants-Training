@@ -10,6 +10,7 @@
         @if (num != Model.CurrentPage)
         {
             @Html.ActionLink(num.ToString(), "GameList", "User", new { page = num })
+            @:&nbsp;
         }
         else
         {
