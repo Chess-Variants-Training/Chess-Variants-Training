@@ -1,0 +1,38 @@
+﻿@section Title{Your puzzle history}
+@section AddToHead{
+<style type="text/css">
+    .red { color: darkred; }
+    .green { color: green; }
+    td { text-align: center; }
+</style>
+}
+@using ChessVariantsTraining.Models
+@using ChessVariantsTraining.ViewModels
+@model PuzzleHistoryView
+
+<h1>Your puzzle history</h1>
+<p>
+    Page:
+    @foreach (int num in Model.Pages)
+    {
+        @if (num != Model.CurrentPage)
+        {
+            @Html.ActionLink(num.ToString(), "History", "User", new { page = num })
+        }
+        else
+        {
+            <strong>@Model.CurrentPage</strong>
+        }
+    }
+</p>
+<table>
+    <tr><th>Date/time ended (UTC)</th><th>Your rating change</th><th>Puzzle</th></tr>
+    @foreach (Attempt attempt in Model.Attempts)
+    {
+        <tr>
+            <td>@attempt.EndTimestampUtc</td>
+            <td>@(attempt.UserRatingChange >= 0 ? "+" + (int)attempt.UserRatingChange : ((int)attempt.UserRatingChange).ToString())</td>
+            <td>@Html.ActionLink("Puzzle " + attempt.PuzzleId.ToString(), "TrainId", "Puzzle", new { id = attempt.PuzzleId }, new { @class = attempt.Success ? "green" : "red" })</td>
+        </tr>
+    }
+</table>

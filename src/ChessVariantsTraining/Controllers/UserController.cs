@@ -32,6 +32,7 @@ namespace ChessVariantsTraining.Controllers
         IUserVerifier userVerifier;
         IEmailSender emailSender;
         IGameRepository gameRepository;
+        IAttemptRepository attemptRepository;
         string recaptchaKey;
         bool requireEmailVerification;
 
@@ -45,6 +46,7 @@ namespace ChessVariantsTraining.Controllers
             IUserVerifier _userVerifier,
             IEmailSender _emailSender,
             IGameRepository _gameRepository,
+            IAttemptRepository _attemptRepository,
             IOptions<Settings> settings)
             : base(_userRepository, _loginHandler)
         {
@@ -58,6 +60,7 @@ namespace ChessVariantsTraining.Controllers
             userVerifier = _userVerifier;
             emailSender = _emailSender;
             gameRepository = _gameRepository;
+            attemptRepository = _attemptRepository;
             recaptchaKey = settings.Value.RecaptchaKey;
             requireEmailVerification = settings.Value.Email.RequireEmailVerification;
         }
@@ -533,6 +536,32 @@ namespace ChessVariantsTraining.Controllers
             }
             IEnumerable<int> pagesToShow = Enumerable.Range(1, (int)Math.Ceiling(gameCount / (float)perPage));
             ViewModels.GameListView model = new ViewModels.GameListView(player.Username, light, page, pagesToShow);
+            return View(model);
+        }
+
+        [HttpGet]
+        [Route("/User/History")]
+        [Restricted(true, UserRole.NONE)]
+        public IActionResult History([FromQuery] int page = 1)
+        {
+            int perPage = 25;
+            if (page < 1)
+            {
+                return ViewResultForHttpError(HttpContext, new NotFound("Page number too low."));
+            }
+            int user = loginHandler.LoggedInUserId(HttpContext).Value;
+            long count = attemptRepository.Count(user);
+            if (count == 0)
+            {
+                return ViewResultForHttpError(HttpContext, new NotFound("You haven't done any puzzles."));
+            }
+            if ((page - 1) * perPage >= count)
+            {
+                return ViewResultForHttpError(HttpContext, new NotFound("Page number too high."));
+            }
+            IEnumerable<int> pagesToShow = Enumerable.Range(1, (int)Math.Ceiling(count / (float)perPage));
+            List<Attempt> attempts = attemptRepository.Get(user, (page - 1) * perPage, perPage);
+            ViewModels.PuzzleHistoryView model = new ViewModels.PuzzleHistoryView(pagesToShow, attempts, page);
             return View(model);
         }
     }
