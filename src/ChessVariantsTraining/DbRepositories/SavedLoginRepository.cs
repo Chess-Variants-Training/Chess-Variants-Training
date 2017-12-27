@@ -24,10 +24,6 @@ namespace ChessVariantsTraining.DbRepositories
             savedLoginCollection = client.GetDatabase(settings.Database).GetCollection<SavedLogin>(settings.SavedLoginCollectionName);
         }
 
-        public void Add(SavedLogin login)
-        {
-            savedLoginCollection.InsertOne(login);
-        }
 
         public bool ContainsID(long id)
         {
@@ -40,24 +36,6 @@ namespace ChessVariantsTraining.DbRepositories
             FilterDefinition<SavedLogin> filter = builder.Eq("_id", loginId) & builder.Eq("hashedToken", hashedToken);
             SavedLogin found = savedLoginCollection.Find(filter).FirstOrDefault();
             return found?.User;
-        }
-
-        public void Delete(long id)
-        {
-            FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Eq("_id", id);
-            savedLoginCollection.DeleteOne(filter);
-        }
-
-        public void DeleteAllOfExcept(int userId, long excludedId)
-        {
-            FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Ne("_id", excludedId) & Builders<SavedLogin>.Filter.Eq("user", userId);
-            savedLoginCollection.DeleteMany(filter);
-        }
-
-        public void DeleteAllOf(int userId)
-        {
-            FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Eq("user", userId);
-            savedLoginCollection.DeleteMany(filter);
         }
 
         public async Task AddAsync(SavedLogin login)

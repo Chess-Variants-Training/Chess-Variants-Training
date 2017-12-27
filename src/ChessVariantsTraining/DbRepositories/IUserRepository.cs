@@ -6,15 +6,6 @@ namespace ChessVariantsTraining.DbRepositories
 {
     public interface IUserRepository
     {
-        /*bool Add(User user);
-        void Update(User user);
-        void Delete(User user);
-
-        User FindByUsername(string username);
-        User FindByEmail(string email);
-        Dictionary<int, User> FindByIds(IEnumerable<int> ids);
-        User FindByPasswordResetToken(string token);*/
-
         User FindById(int id);
         Task<bool> AddAsync(User user);
         Task UpdateAsync(User user);
