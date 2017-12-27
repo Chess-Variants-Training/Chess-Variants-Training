@@ -49,7 +49,7 @@
                     <li>@Html.ActionLink("Endgames", "Index", "Endgames", null, null)</li>
                 </ul>
             </li>
-            @{ User loggedIn = LoginHandler.LoggedInUser(Context);
+            @{ User loggedIn = await LoginHandler.LoggedInUserAsync(Context);
             }
             @if (loggedIn != null)
             {
@@ -87,7 +87,7 @@
             {
                 <li class="right">@Html.ActionLink("Review", "Index", "Review")</li>
             }
-            @{ long unread = loggedIn == null ? 0 : NotificationRepository.UnreadCount(loggedIn.ID); }
+            @{ long unread = loggedIn == null ? 0 : await NotificationRepository.UnreadCountAsync(loggedIn.ID); }
             @if (unread != 0)
             {
               <li class="right">@Html.ActionLink(unread.ToString(), "Index", "Notification", null, new { @class = "unread-notifications" })</li>

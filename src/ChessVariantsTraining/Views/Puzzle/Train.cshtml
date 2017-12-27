@@ -13,7 +13,7 @@
     }
 }
 @section Description{Improve your tactics by solving chess variant puzzles!}
-@{ User loggedInUser = loginHandler.LoggedInUser(Context);
+@{ User loggedInUser = await loginHandler.LoggedInUserAsync(Context);
     bool loggedIn = loggedInUser != null;
     bool isReviewer = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_REVIEWER);
     bool isAuthor = loggedIn && Model != null && Model.Author == loggedInUser.ID;
