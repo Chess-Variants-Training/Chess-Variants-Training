@@ -2,6 +2,7 @@
 using ChessVariantsTraining.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -27,6 +28,13 @@ namespace ChessVariantsTraining.DbRepositories
             FilterDefinition<Counter> filter = Builders<Counter>.Filter.Eq("_id", id);
             UpdateDefinition<Counter> update = Builders<Counter>.Update.Inc("next", 1);
             return counterCollection.FindOneAndUpdate(filter, update).Next;
+        }
+
+        public async Task<int> GetAndIncreaseAsync(string id)
+        {
+            FilterDefinition<Counter> filter = Builders<Counter>.Filter.Eq("_id", id);
+            UpdateDefinition<Counter> update = Builders<Counter>.Update.Inc("next", 1);
+            return (await counterCollection.FindOneAndUpdateAsync(filter, update)).Next;
         }
     }
 }

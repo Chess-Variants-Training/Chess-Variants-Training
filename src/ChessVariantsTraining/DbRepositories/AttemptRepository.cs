@@ -3,6 +3,7 @@ using ChessVariantsTraining.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -28,6 +29,11 @@ namespace ChessVariantsTraining.DbRepositories
             attemptCollection.InsertOne(attempt);
         }
 
+        public async Task AddAsync(Attempt attempt)
+        {
+            await attemptCollection.InsertOneAsync(attempt);
+        }
+
         public List<Attempt> Get(int user, int skip, int limit)
         {
             FilterDefinition<Attempt> eqDef = Builders<Attempt>.Filter.Eq("user", user);
@@ -39,6 +45,19 @@ namespace ChessVariantsTraining.DbRepositories
         {
             FilterDefinition<Attempt> eqDef = Builders<Attempt>.Filter.Eq("user", user);
             return attemptCollection.Count(eqDef);
+        }
+
+        public async Task<List<Attempt>> GetAsync(int user, int skip, int limit)
+        {
+            FilterDefinition<Attempt> eqDef = Builders<Attempt>.Filter.Eq("user", user);
+            SortDefinition<Attempt> sortDef = Builders<Attempt>.Sort.Descending("endTimestampUtc");
+            return await attemptCollection.Find(eqDef).Sort(sortDef).Skip(skip).Limit(limit).ToListAsync();
+        }
+
+        public async Task<long> CountAsync(int user)
+        {
+            FilterDefinition<Attempt> eqDef = Builders<Attempt>.Filter.Eq("user", user);
+            return await attemptCollection.CountAsync(eqDef);
         }
     }
 }

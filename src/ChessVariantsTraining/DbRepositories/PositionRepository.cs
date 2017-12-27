@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -34,6 +35,17 @@ namespace ChessVariantsTraining.DbRepositories
             var found = positionCollection.Find(filter);
             if (found == null) return null;
             else return found.Limit(1).First();
+        }
+
+        public async Task<TrainingPosition> GetRandomAsync(string type)
+        {
+            double x = rnd.NextDouble();
+            double y = rnd.NextDouble();
+            FilterDefinitionBuilder<TrainingPosition> filterBuilder = Builders<TrainingPosition>.Filter;
+            FilterDefinition<TrainingPosition> filter = filterBuilder.Eq("type", type) & filterBuilder.Near("location", x, y);
+            var found = positionCollection.Find(filter);
+            if (found == null) return null;
+            else return await found.Limit(1).FirstAsync();
         }
     }
 }

@@ -3,6 +3,7 @@ using ChessVariantsTraining.Models;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -57,6 +58,42 @@ namespace ChessVariantsTraining.DbRepositories
         {
             FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Eq("user", userId);
             savedLoginCollection.DeleteMany(filter);
+        }
+
+        public async Task AddAsync(SavedLogin login)
+        {
+            await savedLoginCollection.InsertOneAsync(login);
+        }
+
+        public async Task<bool> ContainsIDAsync(long id)
+        {
+            return await savedLoginCollection.Find(Builders<SavedLogin>.Filter.Eq("_id", id)).AnyAsync();
+        }
+
+        public async Task<int?> AuthenticatedUserAsync(long loginId, byte[] hashedToken)
+        {
+            FilterDefinitionBuilder<SavedLogin> builder = Builders<SavedLogin>.Filter;
+            FilterDefinition<SavedLogin> filter = builder.Eq("_id", loginId) & builder.Eq("hashedToken", hashedToken);
+            SavedLogin found = await savedLoginCollection.Find(filter).FirstOrDefaultAsync();
+            return found?.User;
+        }
+
+        public async Task DeleteAsync(long id)
+        {
+            FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Eq("_id", id);
+            await savedLoginCollection.DeleteOneAsync(filter);
+        }
+
+        public async Task DeleteAllOfExceptAsync(int userId, long excludedId)
+        {
+            FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Ne("_id", excludedId) & Builders<SavedLogin>.Filter.Eq("user", userId);
+            await savedLoginCollection.DeleteManyAsync(filter);
+        }
+
+        public async Task DeleteAllOfAsync(int userId)
+        {
+            FilterDefinition<SavedLogin> filter = Builders<SavedLogin>.Filter.Eq("user", userId);
+            await savedLoginCollection.DeleteManyAsync(filter);
         }
     }
 }
