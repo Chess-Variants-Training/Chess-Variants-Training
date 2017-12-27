@@ -67,9 +67,9 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpGet]
         [Route("/User/Register")]
-        public IActionResult Register()
+        public async Task<IActionResult> Register()
         {
-            if (loginHandler.LoggedInUserId(HttpContext).HasValue)
+            if ((await loginHandler.LoggedInUserIdAsync(HttpContext)).HasValue)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -90,11 +90,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 ViewBag.Error.Add("Invalid email address.");
             }
-            if (userRepository.FindByUsername(username) != null)
+            if (await userRepository.FindByUsernameAsync(username) != null)
             {
                 ViewBag.Error.Add("The username is already taken.");
             }
-            if (userRepository.FindByEmail(email) != null)
+            if (await userRepository.FindByEmailAsync(email) != null)
             {
                 ViewBag.Error.Add("The email address is already taken.");
             }
@@ -133,11 +133,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 ViewBag.Error = null;
             }
+            Task<int> userId = counterRepository.GetAndIncreaseAsync(Counter.USER_ID);
             Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(password);
             string hash = hashAndSalt.Item1;
             string salt = hashAndSalt.Item2;
-            int userId = counterRepository.GetAndIncrease(Counter.USER_ID);
-            User user = new User(userId, username, email, hash, salt, "", 0, 0,
+            User user = new User(await userId, username, email, hash, salt, "", 0, 0,
                 new List<string>() { UserRole.NONE }, new Dictionary<string, Rating>()
                 {
                     { "Atomic", new Rating(1500, 350, 0.06) },
@@ -153,33 +153,33 @@ namespace ChessVariantsTraining.Controllers
                 user.VerificationCode = 0;
                 user.Verified = true;
             }
-            bool added = userRepository.Add(user);
+            await userRepository.AddAsync(user);
             if (requireEmailVerification)
             {
-                userVerifier.SendVerificationEmailTo(user.ID);
+                await userVerifier.SendVerificationEmailToAsync(user.ID);
             }
-            loginHandler.RegisterLogin(user.ID, HttpContext);
+            await loginHandler.RegisterLoginAsync(user.ID, HttpContext);
             return RedirectToAction("Profile", new { id = user.ID });
         }
 
         [Route("/User/Profile/{id:int}")]
-        public IActionResult Profile(int id)
+        public async Task<IActionResult> Profile(int id)
         {
-            User user = userRepository.FindById(id);
+            User user = await userRepository.FindByIdAsync(id);
             if (user == null)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user with ID '{0}' could not be found.", id)));
             }
-            long gamesPlayed = gameRepository.CountByPlayerId(id);
+            long gamesPlayed = await gameRepository.CountByPlayerIdAsync(id);
             ViewModels.User userViewModel = new ViewModels.User(user, gamesPlayed);
             return View(userViewModel);
         }
 
         [HttpGet]
         [Route("/User/Login", Name = "Login")]
-        public IActionResult Login()
+        public async Task<IActionResult> Login()
         {
-            if (loginHandler.LoggedInUserId(HttpContext).HasValue)
+            if ((await loginHandler.LoggedInUserIdAsync(HttpContext)).HasValue)
             {
                 return RedirectToAction("Index", "Home");
             }
@@ -196,16 +196,16 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/User/Login", Name = "LoginPost")]
-        public IActionResult LoginPost(string username, string password)
+        public async Task<IActionResult> LoginPost(string username, string password)
         {
             User user;
             if (!username.Contains("@"))
             {
-                user = userRepository.FindByUsername(username);
+                user = await userRepository.FindByUsernameAsync(username);
             }
             else
             {
-                user = userRepository.FindByEmail(username);
+                user = await userRepository.FindByEmailAsync(username);
             }
             if (user == null)
             {
@@ -224,60 +224,60 @@ namespace ChessVariantsTraining.Controllers
                 TempData["Error"] = "Invalid username/email or password.";
                 return RedirectToAction("Login");
             }
-            loginHandler.RegisterLogin(user.ID, HttpContext);
+            await loginHandler.RegisterLoginAsync(user.ID, HttpContext);
             return RedirectToAction("Profile", new { id = user.ID });
         }
 
         [Route("/User/Logout")]
         [NoVerificationNeeded]
-        public IActionResult Logout()
+        public async Task<IActionResult> Logout()
         {
-            loginHandler.Logout(HttpContext);
+            await loginHandler.LogoutAsync(HttpContext);
             return RedirectToAction("Index", "Home");
         }
 
         [Route("/User/LogoutEverywhereElse")]
         [NoVerificationNeeded]
-        public IActionResult LogoutEverywhereElse()
+        public async Task<IActionResult> LogoutEverywhereElse()
         {
-            loginHandler.LogoutEverywhereExceptHere(HttpContext);
+            await loginHandler.LogoutEverywhereExceptHereAsync(HttpContext);
             return RedirectToAction("Index", "Home");
         }
 
         [HttpGet]
         [Route("/User/Edit")]
         [NoVerificationNeeded]
-        public IActionResult Edit()
+        public async Task<IActionResult> Edit()
         {
-            int? userId = loginHandler.LoggedInUserId(HttpContext);
+            int? userId = await loginHandler.LoggedInUserIdAsync(HttpContext);
             if (!userId.HasValue)
             {
                 return RedirectToAction("Login");
             }
-            return View(userRepository.FindById(userId.Value));
+            return View(await userRepository.FindByIdAsync(userId.Value));
         }
 
         [HttpPost]
         [Route("/User/Edit", Name = "EditPost")]
         [NoVerificationNeeded]
-        public IActionResult Edit(string username, string email, string about)
+        public async Task<IActionResult> Edit(string username, string email, string about)
         {
-            int? userId = loginHandler.LoggedInUserId(HttpContext);
+            int? userId = await loginHandler.LoggedInUserIdAsync(HttpContext);
             if (!userId.HasValue)
             {
                 return RedirectToAction("Login");
             }
-            User user = userRepository.FindById(userId.Value);
+            User user = await userRepository.FindByIdAsync(userId.Value);
             user.Username = username;
             user.Email = email;
             user.About = about;
-            userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             return RedirectToAction("Profile", new { id = user.ID });
         }
 
         [HttpGet]
         [Route("/User/ChartData/{type}/{user:int}/{range}/{show}")]
-        public IActionResult ChartData(string type, int user, string range, string show)
+        public async Task<IActionResult> ChartData(string type, int user, string range, string show)
         {
             if (!new string[] { "Rating", "TimedTraining" }.Contains(type))
             {
@@ -293,7 +293,7 @@ namespace ChessVariantsTraining.Controllers
             DateTime? from;
             DateTime? to;
 
-            User u = userRepository.FindById(user);
+            User u = await userRepository.FindByIdAsync(user);
             if (u == null)
             {
                 return Json(new { success = false, error = "User not found." });
@@ -337,13 +337,13 @@ namespace ChessVariantsTraining.Controllers
 
             if (type == "Rating")
             {
-                List<RatingWithMetadata> ratings = ratingRepository.Get(userId, from, to, show);
+                List<RatingWithMetadata> ratings = await ratingRepository.GetAsync(userId, from, to, show);
                 RatingChartData chart = new RatingChartData(ratings, show == "each");
                 return Json(new { success = true, labels = chart.Labels, ratings = chart.Ratings });
             }
             else // type == "TimedTraining"
             {
-                List<TimedTrainingScore> scores = timedTrainingScoreRepository.Get(userId, from, to, show);
+                List<TimedTrainingScore> scores = await timedTrainingScoreRepository.GetAsync(userId, from, to, show);
                 TimedTrainingChartData chart = new TimedTrainingChartData(scores, show == "each");
                 return Json(new { success = true, labels = chart.Labels, scores = chart.Scores });
             }
@@ -353,7 +353,7 @@ namespace ChessVariantsTraining.Controllers
         [NoVerificationNeeded]
         [Restricted(true, UserRole.NONE)]
         [Route("/User/Verify")]
-        public IActionResult Verify(string verificationCode)
+        public async Task<IActionResult> Verify(string verificationCode)
         {
             int verificationCodeI;
             if (!int.TryParse(verificationCode, out verificationCodeI))
@@ -361,7 +361,7 @@ namespace ChessVariantsTraining.Controllers
                 return View("VerificationFailed");
             }
 
-            if (userVerifier.Verify(loginHandler.LoggedInUserId(HttpContext).Value, verificationCodeI))
+            if (await userVerifier.VerifyAsync((await loginHandler.LoggedInUserIdAsync(HttpContext)).Value, verificationCodeI))
             {
                 return View("Verified");
             }
@@ -379,14 +379,14 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/User/SendPasswordReset")]
-        public IActionResult SendPasswordReset(string email)
+        public async Task<IActionResult> SendPasswordReset(string email)
         {
             if (!validator.IsValidEmail(email))
             {
                 return View("NoResetLinkSent");
             }
 
-            User user = userRepository.FindByEmail(email);
+            User user = await userRepository.FindByEmailAsync(email);
             if (user == null)
             {
                 return View("NoResetLinkSent");
@@ -394,7 +394,7 @@ namespace ChessVariantsTraining.Controllers
 
             PasswordRecoveryToken token = new PasswordRecoveryToken();
             user.PasswordRecoveryToken = token;
-            userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             emailSender.Send(user.Email, user.Username, "Chess Variants Training: Password Reset",
                 string.Format("A password reset for your account was requested. Copy this link and paste it in your browser window to reset your password: {0}",
                 Url.Action("ResetPassword", "User", new { token = token.TokenUnhashed }, Request.Scheme)));
@@ -403,9 +403,9 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpGet]
         [Route("/User/ResetPassword")]
-        public IActionResult ResetPassword([FromQuery] string token)
+        public async Task<IActionResult> ResetPassword([FromQuery] string token)
         {
-            User associated = userRepository.FindByPasswordResetToken(token);
+            User associated = await userRepository.FindByPasswordResetTokenAsync(token);
             if (associated == null)
             {
                 return View("PasswordResetFailed");
@@ -416,9 +416,9 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/User/ResetPassword")]
-        public IActionResult ResetPasswordPost(string password, string confirm, string token)
+        public async Task<IActionResult> ResetPasswordPost(string password, string confirm, string token)
         {
-            User associated = userRepository.FindByPasswordResetToken(token);
+            User associated = await userRepository.FindByPasswordResetTokenAsync(token);
             if (associated == null)
             {
                 return View("PasswordResetFailed");
@@ -432,8 +432,8 @@ namespace ChessVariantsTraining.Controllers
             associated.PasswordHash = hashAndSalt.Item1;
             associated.Salt = hashAndSalt.Item2;
             associated.PasswordRecoveryToken = null;
-            userRepository.Update(associated);
-            loginHandler.LogoutEverywhere(associated.ID);
+            await userRepository.UpdateAsync(associated);
+            await loginHandler.LogoutEverywhereAsync(associated.ID);
             return View("PasswordUpdated");
         }
 
@@ -449,9 +449,9 @@ namespace ChessVariantsTraining.Controllers
         [HttpPost]
         [Route("/User/ChangePassword")]
         [Restricted(true, UserRole.NONE)]
-        public IActionResult ChangePasswordPost(string currentPassword, string newPassword, string newPasswordConfirm)
+        public async Task<IActionResult> ChangePasswordPost(string currentPassword, string newPassword, string newPasswordConfirm)
         {
-            User loggedIn = loginHandler.LoggedInUser(HttpContext);
+            User loggedIn = await loginHandler.LoggedInUserAsync(HttpContext);
             string salt = loggedIn.Salt;
             string hash = loggedIn.PasswordHash;
             if (string.IsNullOrEmpty(currentPassword) || hash != passwordHasher.HashPassword(currentPassword, salt))
@@ -472,26 +472,26 @@ namespace ChessVariantsTraining.Controllers
             Tuple<string, string> hashAndSalt = passwordHasher.HashPassword(newPassword);
             loggedIn.PasswordHash = hashAndSalt.Item1;
             loggedIn.Salt = hashAndSalt.Item2;
-            userRepository.Update(loggedIn);
-            loginHandler.LogoutEverywhereExceptHere(HttpContext);
+            await userRepository.UpdateAsync(loggedIn);
+            await loginHandler.LogoutEverywhereExceptHereAsync(HttpContext);
             return View("PasswordUpdated");
         }
 
         [HttpGet]
         [Route("/User/GameList/{id:int}")]
-        public IActionResult GameList(int id, [FromQuery] int page = 1)
+        public async Task<IActionResult> GameList(int id, [FromQuery] int page = 1)
         {
             int perPage = 25;
             if (page < 1)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("Page number too low.")));
             }
-            User player = userRepository.FindById(id);
+            User player = await userRepository.FindByIdAsync(id);
             if (player == null)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("The user with ID '{0}' could not be found.", id)));
             }
-            long gameCount = gameRepository.CountByPlayerId(id);
+            long gameCount = await gameRepository.CountByPlayerIdAsync(id);
             if (gameCount == 0)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("This user hasn't played any games.")));
@@ -500,11 +500,11 @@ namespace ChessVariantsTraining.Controllers
             {
                 return ViewResultForHttpError(HttpContext, new NotFound(string.Format("Page number too high.")));
             }
-            List<Game> gamesByPlayer = gameRepository.GetByPlayerId(id, (page - 1) * perPage, perPage);
+            List<Game> gamesByPlayer = await gameRepository.GetByPlayerIdAsync(id, (page - 1) * perPage, perPage);
             IEnumerable<int> opponentsWhenWhite = gamesByPlayer.Where(x => (x.White as RegisteredPlayer)?.UserId == id && x.Black is RegisteredPlayer).Select(x => (x.Black as RegisteredPlayer).UserId);
             IEnumerable<int> opponentsWhenBlack = gamesByPlayer.Where(x => (x.Black as RegisteredPlayer)?.UserId == id && x.White is RegisteredPlayer).Select(x => (x.White as RegisteredPlayer).UserId);
             IEnumerable<int> allOpponentIds = opponentsWhenBlack.Concat(opponentsWhenWhite).Distinct();
-            Dictionary<int, User> players = userRepository.FindByIds(allOpponentIds);
+            Dictionary<int, User> players = await userRepository.FindByIdsAsync(allOpponentIds);
             players[id] = player;
             List<ViewModels.LightGame> light = new List<ViewModels.LightGame>();
             foreach (Game game in gamesByPlayer)
@@ -542,15 +542,15 @@ namespace ChessVariantsTraining.Controllers
         [HttpGet]
         [Route("/User/History")]
         [Restricted(true, UserRole.NONE)]
-        public IActionResult History([FromQuery] int page = 1)
+        public async Task<IActionResult> History([FromQuery] int page = 1)
         {
             int perPage = 25;
             if (page < 1)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound("Page number too low."));
             }
-            int user = loginHandler.LoggedInUserId(HttpContext).Value;
-            long count = attemptRepository.Count(user);
+            int user = (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value;
+            long count = await attemptRepository.CountAsync(user);
             if (count == 0)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound("You haven't done any puzzles."));
@@ -559,9 +559,9 @@ namespace ChessVariantsTraining.Controllers
             {
                 return ViewResultForHttpError(HttpContext, new NotFound("Page number too high."));
             }
+            Task<List<Attempt>> attempts = attemptRepository.GetAsync(user, (page - 1) * perPage, perPage);
             IEnumerable<int> pagesToShow = Enumerable.Range(1, (int)Math.Ceiling(count / (float)perPage));
-            List<Attempt> attempts = attemptRepository.Get(user, (page - 1) * perPage, perPage);
-            ViewModels.PuzzleHistoryView model = new ViewModels.PuzzleHistoryView(pagesToShow, attempts, page);
+            ViewModels.PuzzleHistoryView model = new ViewModels.PuzzleHistoryView(pagesToShow, await attempts, page);
             return View(model);
         }
     }

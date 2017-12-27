@@ -5,7 +5,7 @@ namespace ChessVariantsTraining.DbRepositories
 {
     public interface IPositionRepository
     {
-        TrainingPosition GetRandom(string type);
+        // TrainingPosition GetRandom(string type);
 
         Task<TrainingPosition> GetRandomAsync(string type);
     }

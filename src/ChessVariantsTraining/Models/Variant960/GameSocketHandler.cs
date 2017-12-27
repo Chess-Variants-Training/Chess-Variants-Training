@@ -167,7 +167,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
                         if (Subject.ChessGame.IsValidMove(move))
                         {
-                            mt = gameRepository.RegisterMove(Subject, move);
+                            mt = await gameRepository.RegisterMoveAsync(Subject, move);
                         }
                         else if (moveMessage.Type == "move")
                         {
@@ -196,7 +196,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
                         if (zhGame.IsValidDrop(drop))
                         {
-                            gameRepository.RegisterDrop(Subject, drop);
+                            await gameRepository.RegisterDropAsync(Subject, drop);
                         }
                         else
                         {
@@ -216,17 +216,17 @@ namespace ChessVariantsTraining.Models.Variant960
                     if (Subject.ChessGame.IsWinner(Player.White))
                     {
                         outcome = "1-0, white wins";
-                        gameRepository.RegisterGameResult(Subject, Game.Results.WHITE_WINS, Game.Terminations.NORMAL);
+                        await gameRepository.RegisterGameResultAsync(Subject, Game.Results.WHITE_WINS, Game.Terminations.NORMAL);
                     }
                     else if (Subject.ChessGame.IsWinner(Player.Black))
                     {
                         outcome = "0-1, black wins";
-                        gameRepository.RegisterGameResult(Subject, Game.Results.BLACK_WINS, Game.Terminations.NORMAL);
+                        await gameRepository.RegisterGameResultAsync(Subject, Game.Results.BLACK_WINS, Game.Terminations.NORMAL);
                     }
                     else if (Subject.ChessGame.IsDraw() || Subject.ChessGame.DrawCanBeClaimed)
                     {
                         outcome = "½-½, draw";
-                        gameRepository.RegisterGameResult(Subject, Game.Results.DRAW, Game.Terminations.NORMAL);
+                        await gameRepository.RegisterGameResultAsync(Subject, Game.Results.DRAW, Game.Terminations.NORMAL);
                     }
 
                     Dictionary<string, object> messageForPlayerWhoseTurnItIs = new Dictionary<string, object>();
@@ -273,7 +273,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     if (client is RegisteredPlayer)
                     {
                         senderUserId = (client as RegisteredPlayer).UserId;
-                        displayName = userRepository.FindById(senderUserId.Value).Username;
+                        displayName = (await userRepository.FindByIdAsync(senderUserId.Value)).Username;
                     }
                     else
                     {
@@ -300,7 +300,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     string jsonSpectatorsChat = null;
                     if (chatSocketMessage.Channel == "player")
                     {
-                        gameRepository.RegisterPlayerChatMessage(Subject, chatMessage);
+                        await gameRepository.RegisterPlayerChatMessageAsync(Subject, chatMessage);
                         forPlayers = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "player" }, { "msg", chatMessage.GetHtml() } };
                         jsonPlayersChat = JsonConvert.SerializeObject(forPlayers);
                     }
@@ -311,7 +311,7 @@ namespace ChessVariantsTraining.Models.Variant960
                             await Send("{\"t\":\"error\",\"d\":\"Anonymous users cannot use the Spectators' chat.\"}");
                             return;
                         }
-                        gameRepository.RegisterSpectatorChatMessage(Subject, chatMessage);
+                        await gameRepository.RegisterSpectatorChatMessageAsync(Subject, chatMessage);
                         forSpectators = new Dictionary<string, string>() { { "t", "chat" }, { "channel", "spectator" }, { "msg", chatMessage.GetHtml() } };
                         jsonSpectatorsChat = JsonConvert.SerializeObject(forSpectators);
                         if (Subject.Result != Game.Results.ONGOING)
@@ -372,7 +372,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     bool createRematch = false;
                     if (isWhite)
                     {
-                        gameRepository.RegisterWhiteRematchOffer(Subject);
+                        await gameRepository.RegisterWhiteRematchOfferAsync(Subject);
                         if (Subject.BlackWantsRematch)
                         {
                             createRematch = true;
@@ -380,7 +380,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     else
                     {
-                        gameRepository.RegisterBlackRematchOffer(Subject);
+                        await gameRepository.RegisterBlackRematchOfferAsync(Subject);
                         if (Subject.WhiteWantsRematch)
                         {
                             createRematch = true;
@@ -407,7 +407,7 @@ namespace ChessVariantsTraining.Models.Variant960
                                 posBlack = randomProvider.RandomPositiveInt(Subject.ShortVariantName != "RacingKings" ? 960 : 1440);
                             }
                         }
-                        Game newGame = new Game(gameRepository.GenerateId(),
+                        Game newGame = new Game(await gameRepository.GenerateIdAsync(),
                             Subject.Black,
                             Subject.White,
                             Subject.ShortVariantName,
@@ -418,8 +418,8 @@ namespace ChessVariantsTraining.Models.Variant960
                             Subject.TimeControl,
                             DateTime.UtcNow,
                             Subject.RematchLevel + 1);
-                        gameRepository.Add(newGame);
-                        gameRepository.SetRematchID(Subject, newGame.ID);
+                        await gameRepository.AddAsync(newGame);
+                        await gameRepository.SetRematchIDAsync(Subject, newGame.ID);
                         string rematchJson = "{\"t\":\"rematch\",\"d\":\"" + newGame.ID + "\"}";
                         await Send(rematchJson);
                         await handlerRepository.SendAll(gameId, rematchJson, null, x => true);
@@ -443,7 +443,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"no permission\"}");
                         return;
                     }
-                    gameRepository.ClearRematchOffers(Subject);
+                    await gameRepository.ClearRematchOffersAsync(Subject);
                     await handlerRepository.SendAll(gameId, "{\"t\":\"rematch-decline\"}", null, x => x.Equals(isWhite_ ? Subject.Black : Subject.White));
                     break;
                 case "resign":
@@ -467,12 +467,12 @@ namespace ChessVariantsTraining.Models.Variant960
                     if (!whiteResigns)
                     {
                         outcomeAfterResign = "1-0, white wins";
-                        gameRepository.RegisterGameResult(Subject, Game.Results.WHITE_WINS, Game.Terminations.RESIGNATION);
+                        await gameRepository.RegisterGameResultAsync(Subject, Game.Results.WHITE_WINS, Game.Terminations.RESIGNATION);
                     }
                     else
                     {
                         outcomeAfterResign = "0-1, black wins";
-                        gameRepository.RegisterGameResult(Subject, Game.Results.BLACK_WINS, Game.Terminations.RESIGNATION);
+                        await gameRepository.RegisterGameResultAsync(Subject, Game.Results.BLACK_WINS, Game.Terminations.RESIGNATION);
                     }
                     Dictionary<string, string> outcomeResponseDict = new Dictionary<string, string>()
                     {
@@ -498,7 +498,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"It's too late to abort.\"}");
                         return;
                     }
-                    gameRepository.RegisterGameResult(Subject, Game.Results.ABORTED, Game.Terminations.ABORTED);
+                    await gameRepository.RegisterGameResultAsync(Subject, Game.Results.ABORTED, Game.Terminations.ABORTED);
                     Dictionary<string, string> abortResultDict = new Dictionary<string, string>()
                     {
                         { "t", "outcome" },
@@ -523,15 +523,15 @@ namespace ChessVariantsTraining.Models.Variant960
                     }
                     if (whiteOfferingDraw)
                     {
-                        gameRepository.RegisterWhiteDrawOffer(Subject);
+                        await gameRepository.RegisterWhiteDrawOfferAsync(Subject);
                     }
                     else
                     {
-                        gameRepository.RegisterBlackDrawOffer(Subject);
+                        await gameRepository.RegisterBlackDrawOfferAsync(Subject);
                     }
                     if (Subject.WhiteWantsDraw && Subject.BlackWantsDraw)
                     {
-                        gameRepository.RegisterGameResult(Subject, Game.Results.DRAW, Game.Terminations.NORMAL);
+                        await gameRepository.RegisterGameResultAsync(Subject, Game.Results.DRAW, Game.Terminations.NORMAL);
                         Dictionary<string, string> drawResultDict = new Dictionary<string, string>()
                         {
                             { "t", "outcome" },
@@ -569,7 +569,7 @@ namespace ChessVariantsTraining.Models.Variant960
                         await Send("{\"t\":\"error\",\"d\":\"You have no open draw offers.\"}");
                         return;
                     }
-                    gameRepository.ClearDrawOffers(Subject);
+                    await gameRepository.ClearDrawOffersAsync(Subject);
                     await handlerRepository.SendAll(gameId, "{\"t\":\"draw-decline\"}", null, x => x.Equals(whiteDecliningDraw ? Subject.Black : Subject.White));
                     break;
                 case "keepAlive":
@@ -589,7 +589,7 @@ namespace ChessVariantsTraining.Models.Variant960
             if (secondsLeft <= 0)
             {
                 (player == "white" ? Subject.ClockWhite : Subject.ClockBlack).AckFlag();
-                gameRepository.RegisterGameResult(Subject, player == "white" ? Game.Results.BLACK_WINS : Game.Results.WHITE_WINS, Game.Terminations.TIME_FORFEIT);
+                await gameRepository.RegisterGameResultAsync(Subject, player == "white" ? Game.Results.BLACK_WINS : Game.Results.WHITE_WINS, Game.Terminations.TIME_FORFEIT);
                 Dictionary<string, string> flagVerificationResponse = new Dictionary<string, string>()
                         {
                             { "t", "outcome" },

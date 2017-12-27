@@ -6,13 +6,13 @@ namespace ChessVariantsTraining.DbRepositories
 {
     public interface ICommentVoteRepository
     {
-        bool Add(CommentVote vote);
+        /*bool Add(CommentVote vote);
         bool Undo(string voteId);
         bool Undo(int voter, int commentId);
         bool UndoAllByVoter(int userId);
         bool ResetCommentScore(int commentId);
         int GetScoreForComment(int commentId);
-        Dictionary<int, VoteType> VotesByUserOnThoseComments(int voter, List<int> commentIds);
+        Dictionary<int, VoteType> VotesByUserOnThoseComments(int voter, List<int> commentIds);*/
 
         Task<bool> AddAsync(CommentVote vote);
         Task<bool> UndoAsync(string voteId);

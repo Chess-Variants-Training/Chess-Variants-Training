@@ -7,7 +7,7 @@ namespace ChessVariantsTraining.DbRepositories
 {
     public interface IPuzzleRepository
     {
-        bool Add(Puzzle puzzle);
+        /*bool Add(Puzzle puzzle);
         Puzzle Get(int id);
         Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating);
         DeleteResult Remove(int id);
@@ -16,7 +16,7 @@ namespace ChessVariantsTraining.DbRepositories
         List<Puzzle> InReview();
         bool Approve(int id, int reviewer);
         bool Reject(int id, int reviewer);
-        Puzzle FindByFenAndVariant(string fen, string variant);
+        Puzzle FindByFenAndVariant(string fen, string variant);*/
 
         Task<bool> AddAsync(Puzzle puzzle);
         Task<Puzzle> GetAsync(int id);

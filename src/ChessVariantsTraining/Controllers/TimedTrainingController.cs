@@ -5,6 +5,7 @@ using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -36,15 +37,15 @@ namespace ChessVariantsTraining.Controllers
             gameConstructor = _gameConstructor;
         }
 
-        IActionResult StartTimedTraining(string type, string variant)
+        async Task<IActionResult> StartTimedTraining(string type, string variant)
         {
             string sessionId = Guid.NewGuid().ToString();
             DateTime startTime = DateTime.UtcNow;
             DateTime endTime = startTime + new TimeSpan(0, 1, 0);
             TimedTrainingSession session = new TimedTrainingSession(sessionId, startTime, endTime,
-                                        loginHandler.LoggedInUserId(HttpContext), type, variant, gameConstructor);
+                                        await loginHandler.LoggedInUserIdAsync(HttpContext), type, variant, gameConstructor);
             timedTrainingSessionRepository.Add(session);
-            TrainingPosition randomPosition = positionRepository.GetRandom(type);
+            TrainingPosition randomPosition = await positionRepository.GetRandomAsync(type);
             session.SetPosition(randomPosition);
             return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
                               dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)), lastMove = session.CurrentLastMoveToDisplay });
@@ -58,14 +59,14 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Timed-Training/{variant:regex(Atomic|Horde|KingOfTheHill|ThreeCheck)}/Mate-In-One")]
-        public IActionResult MateInOneTrainingPage(string variant)
+        public async Task<IActionResult> MateInOneTrainingPage(string variant)
         {
             variant = Utilities.NormalizeVariantNameCapitalization(variant);
             List<TimedTrainingScore> latestScores = null;
             int? userId;
-            if ((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
+            if ((userId = await loginHandler.LoggedInUserIdAsync(HttpContext)).HasValue)
             {
-                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value, "mateInOne" + variant);
+                latestScores = await timedTrainingScoreRepository.GetLatestScoresAsync(userId.Value, "mateInOne" + variant);
             }
             switch (variant)
             {
@@ -88,13 +89,13 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Timed-Training/Antichess/Forced-Capture")]
-        public IActionResult ForcedCaptureTrainingPage()
+        public async Task<IActionResult> ForcedCaptureTrainingPage()
         {
             List<TimedTrainingScore> latestScores = null;
             int? userId;
-            if ((userId = loginHandler.LoggedInUserId(HttpContext)).HasValue)
+            if ((userId = await loginHandler.LoggedInUserIdAsync(HttpContext)).HasValue)
             {
-                latestScores = timedTrainingScoreRepository.GetLatestScores(userId.Value, "forcedCaptureAntichess");
+                latestScores = await timedTrainingScoreRepository.GetLatestScoresAsync(userId.Value, "forcedCaptureAntichess");
             }
             ViewBag.Description = "Find the forced capture!";
             ViewBag.Type = "Forced-Capture";
@@ -105,22 +106,22 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/Timed-Training/{variant:regex(Atomic|Horde|KingOfTheHill|ThreeCheck)}/Mate-In-One/Start")]
-        public IActionResult StartMateInOneTraining(string variant)
+        public async Task<IActionResult> StartMateInOneTraining(string variant)
         {
             variant = Utilities.NormalizeVariantNameCapitalization(variant);
-            return StartTimedTraining("mateInOne" + variant, variant);
+            return await StartTimedTraining("mateInOne" + variant, variant);
         }
 
         [HttpPost]
         [Route("/Timed-Training/Antichess/Forced-Capture/Start")]
-        public IActionResult StartForcedCaptureTraining()
+        public async Task<IActionResult> StartForcedCaptureTraining()
         {
-            return StartTimedTraining("forcedCaptureAntichess", "Antichess");
+            return await StartTimedTraining("forcedCaptureAntichess", "Antichess");
         }
 
         [HttpPost]
         [Route("/Timed-Training/VerifyAndGetNext")]
-        public IActionResult VerifyAndGetNext(string sessionId, string origin, string destination, string promotion = null)
+        public async Task<IActionResult> VerifyAndGetNext(string sessionId, string origin, string destination, string promotion = null)
         {
             TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
             if (session == null)
@@ -131,7 +132,7 @@ namespace ChessVariantsTraining.Controllers
             {
                 if (!session.RecordedInDb && session.Score.Owner.HasValue)
                 {
-                    timedTrainingScoreRepository.Add(session.Score);
+                    await timedTrainingScoreRepository.AddAsync(session.Score);
                     session.RecordedInDb = true;
                 }
                 return Json(new { success = true, ended = true });
@@ -139,7 +140,7 @@ namespace ChessVariantsTraining.Controllers
             bool correctMove = session.VerifyMove(origin, destination, promotion);
             if (correctMove)
             {
-                TrainingPosition randomPosition = positionRepository.GetRandom(session.Type);
+                TrainingPosition randomPosition = await positionRepository.GetRandomAsync(session.Type);
                 session.SetPosition(randomPosition);
             }
             else
@@ -153,7 +154,7 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/Timed-Training/AcknowledgeEnd")]
-        public IActionResult AcknowledgeEnd(string sessionId)
+        public async Task<IActionResult> AcknowledgeEnd(string sessionId)
         {
             TimedTrainingSession session = timedTrainingSessionRepository.Get(sessionId);
             if (session == null)
@@ -162,7 +163,7 @@ namespace ChessVariantsTraining.Controllers
             }
             if (!session.RecordedInDb && session.Score.Owner.HasValue)
             {
-                timedTrainingScoreRepository.Add(session.Score);
+                await timedTrainingScoreRepository.AddAsync(session.Score);
                 session.RecordedInDb = true;
             }
             double score = session.Score.Score;

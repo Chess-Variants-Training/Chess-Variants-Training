@@ -3,6 +3,7 @@ using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Models;
 using Microsoft.Extensions.Options;
 using System;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Services
 {
@@ -19,22 +20,22 @@ namespace ChessVariantsTraining.Services
             emailSender = _emailSender;
         }
 
-        public void SendVerificationEmailTo(int userId)
+        public async Task SendVerificationEmailToAsync(int userId)
         {
-            User user = userRepository.FindById(userId);
+            User user = await userRepository.FindByIdAsync(userId);
             emailSender.Send(user.Email, user.Username, "Chess Variants Training: email verification",
                 "Use this code to verify your Chess Variants Training account: " + user.VerificationCode + Environment.NewLine + "If you didn't register for this account, please reply to this email.");
         }
 
-        public bool Verify(int userId, int verificationCode)
+        public async Task<bool> VerifyAsync(int userId, int verificationCode)
         {
-            User user = userRepository.FindById(userId);
+            User user = await userRepository.FindByIdAsync(userId);
 
             if (user.VerificationCode == verificationCode)
             {
                 user.VerificationCode = 0;
                 user.Verified = true;
-                userRepository.Update(user);
+                await userRepository.UpdateAsync(user);
                 return true;
             }
             else

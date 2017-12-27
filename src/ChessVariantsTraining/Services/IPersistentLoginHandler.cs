@@ -1,20 +1,17 @@
 ﻿using ChessVariantsTraining.Models;
 using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Services
 {
     public interface IPersistentLoginHandler
     {
-        int? LoggedInUserId(HttpContext context);
-
         User LoggedInUser(HttpContext context);
-
-        void RegisterLogin(int user, HttpContext context);
-
-        void Logout(HttpContext context);
-
-        void LogoutEverywhereExceptHere(HttpContext context);
-
-        void LogoutEverywhere(int userId);
+        Task<int?> LoggedInUserIdAsync(HttpContext context);
+        Task<User> LoggedInUserAsync(HttpContext context);
+        Task RegisterLoginAsync(int user, HttpContext context);
+        Task LogoutAsync(HttpContext context);
+        Task LogoutEverywhereExceptHereAsync(HttpContext context);
+        Task LogoutEverywhereAsync(int userId);
     }
 }

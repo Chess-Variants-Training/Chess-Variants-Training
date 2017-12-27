@@ -1,6 +1,7 @@
 using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Models;
 using System;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Services
 {
@@ -19,11 +20,11 @@ namespace ChessVariantsTraining.Services
             attemptRepository = _attemptRepository;
         }
 
-        public void AdjustRating(int userId, int puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded, string variant)
+        public async Task AdjustRatingAsync(int userId, int puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded, string variant)
         {
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
-            User user = userRepository.FindById(userId);
-            Puzzle puzzle = puzzleRepository.Get(puzzleId);
+            User user = await userRepository.FindByIdAsync(userId);
+            Puzzle puzzle = await puzzleRepository.GetAsync(puzzleId);
             if (user.SolvedPuzzles.Contains(puzzle.ID) || puzzle.InReview || puzzle.Author == user.ID || puzzle.Reviewers.Contains(user.ID))
             {
                 return;
@@ -47,16 +48,20 @@ namespace ChessVariantsTraining.Services
             {
                 user.PuzzlesWrong++;
             }
-            userRepository.Update(user);
+            await userRepository.UpdateAsync(user);
             double newPuzzleRating = puzzleRating.GetRating();
-            puzzleRepository.UpdateRating(puzzle.ID, new Rating(newPuzzleRating, puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
+            Task urt = puzzleRepository.UpdateRatingAsync(puzzle.ID, new Rating(newPuzzleRating, puzzleRating.GetRatingDeviation(), puzzleRating.GetVolatility()));
 
 
             Attempt attempt = new Attempt(userId, puzzleId, attemptStarted, attemptEnded, newUserRating - oldUserRating, newPuzzleRating - oldPuzzleRating, correct);
-            attemptRepository.Add(attempt);
+            Task ara = attemptRepository.AddAsync(attempt);
 
             RatingWithMetadata rwm = new RatingWithMetadata(user.Ratings[variant], attemptEnded, user.ID, variant);
-            ratingRepository.Add(rwm);
+            Task rra = ratingRepository.AddAsync(rwm);
+
+            await urt;
+            await ara;
+            await rra;
         }
     }
 }

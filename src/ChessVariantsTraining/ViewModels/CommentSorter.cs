@@ -1,37 +1,39 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using ChessVariantsTraining.DbRepositories;
 
 namespace ChessVariantsTraining.ViewModels
 {
     public class CommentSorter
     {
-        public ReadOnlyCollection<Comment> Ordered
-        {
-            get;
-            private set;
-        }
-
         ICommentVoteRepository voteRepo;
         IUserRepository userRepo;
 
-        public CommentSorter(List<Models.Comment> list, ICommentVoteRepository _voteRepo, IUserRepository _userRepo)
+        public CommentSorter(ICommentVoteRepository _voteRepo, IUserRepository _userRepo)
         {
             voteRepo = _voteRepo;
             userRepo = _userRepo;
-            Ordered = new ReadOnlyCollection<Comment>(OrderRecursively(list, null, 0));
         }
 
-        List<Comment> OrderRecursively(List<Models.Comment> list, int? parent, int indentLevel)
+        public async Task<ReadOnlyCollection<Comment>> OrderAsync(List<Models.Comment> list)
+        {
+            return new ReadOnlyCollection<Comment>(await OrderRecursivelyAsync(list, null, 0));
+        }
+
+        async Task<List<Comment>> OrderRecursivelyAsync(List<Models.Comment> list, int? parent, int indentLevel)
         {
             List<Comment> result = new List<Comment>();
 
-            IEnumerable<Comment> currentTopLevel = list.Where(x => x.ParentID == parent).Select(x => new Comment(x, indentLevel, voteRepo.GetScoreForComment(x.ID), x.Deleted, userRepo.FindById(x.Author).Username)).OrderByDescending(x => x.Score);
-            foreach (Comment comment in currentTopLevel)
+            IEnumerable<Task<Comment>> currentTopLevel = list.Where(x => x.ParentID == parent)
+                .Select(async x => new Comment(x, indentLevel, await voteRepo.GetScoreForCommentAsync(x.ID), x.Deleted, (await userRepo.FindByIdAsync(x.Author)).Username))
+                .OrderByDescending(async x => (await x).Score);
+            foreach (Task<Comment> commentTask in currentTopLevel)
             {
+                Comment comment = await commentTask;
                 result.Add(comment);
-                result.AddRange(OrderRecursively(list, comment.ID, indentLevel + 1));
+                result.AddRange(await OrderRecursivelyAsync(list, comment.ID, indentLevel + 1));
             }
 
             return result;

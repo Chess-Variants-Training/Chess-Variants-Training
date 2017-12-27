@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -36,26 +37,26 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/PostComment", Name = "PostComment")]
-        public IActionResult PostComment(string commentBody, string puzzleId)
+        public async Task<IActionResult> PostComment(string commentBody, string puzzleId)
         {
             int puzzleIdI;
             if (!int.TryParse(puzzleId, out puzzleIdI))
             {
                 return Json(new { success = false, error = "Invalid puzzle ID." });
             }
-            Puzzle puzzle = puzzleRepository.Get(puzzleIdI);
+            Puzzle puzzle = await puzzleRepository.GetAsync(puzzleIdI);
             bool success = false;
             Comment comment = null;
             if (puzzle != null)
             {
-                comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, commentBody, null, puzzleIdI, false, DateTime.UtcNow);
-                success = commentRepository.Add(comment);
+                comment = new Comment(await counterRepository.GetAndIncreaseAsync(Counter.COMMENT_ID), (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value, commentBody, null, puzzleIdI, false, DateTime.UtcNow);
+                success = await commentRepository.AddAsync(comment);
             }
             if (success)
             {
                 Notification notificationForParentAuthor = new Notification(Guid.NewGuid().ToString(), puzzle.Author, "You received a comment on your puzzle.", false,
                     string.Format("/Puzzle/{0}?comment={1}", comment.PuzzleID, comment.ID), DateTime.UtcNow);
-                notificationRepository.Add(notificationForParentAuthor);
+                await notificationRepository.AddAsync(notificationForParentAuthor);
                 return Json(new { success = true });
             }
             else
@@ -66,26 +67,33 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpGet]
         [Route("/Comment/ViewComments/{puzzleId:int}", Name = "ViewComments")]
-        public IActionResult ViewComments(int puzzleId)
+        public async Task<IActionResult> ViewComments(int puzzleId)
         {
-            List<Comment> comments = commentRepository.GetByPuzzle(puzzleId);
-            ReadOnlyCollection<ViewModels.Comment> roComments = new ViewModels.CommentSorter(comments, commentVoteRepository, userRepository).Ordered;
+            Task<List<Comment>> commentsTask = commentRepository.GetByPuzzleAsync(puzzleId);
+
             Dictionary<int, VoteType> votesByCurrentUser = new Dictionary<int, VoteType>();
             bool hasCommentModerationPrivilege = false;
-            int? userId = loginHandler.LoggedInUserId(HttpContext);
+            int? userId = await loginHandler.LoggedInUserIdAsync(HttpContext);
+
+            List<Comment> comments = await commentsTask;
+            Task<ReadOnlyCollection<ViewModels.Comment>> roComments = new ViewModels.CommentSorter(commentVoteRepository, userRepository).OrderAsync(comments);
+
             if (userId.HasValue)
             {
-                votesByCurrentUser = commentVoteRepository.VotesByUserOnThoseComments(userId.Value, comments.Select(x => x.ID).ToList());
-                hasCommentModerationPrivilege = UserRole.HasAtLeastThePrivilegesOf(userRepository.FindById(userId.Value).Roles, UserRole.COMMENT_MODERATOR);
+                votesByCurrentUser = await commentVoteRepository.VotesByUserOnThoseCommentsAsync(userId.Value, comments.Select(x => x.ID).ToList());
+                hasCommentModerationPrivilege = UserRole.HasAtLeastThePrivilegesOf((await userRepository.FindByIdAsync(userId.Value)).Roles, UserRole.COMMENT_MODERATOR);
             }
-            Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool, bool> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool, bool>(roComments, votesByCurrentUser, hasCommentModerationPrivilege, loginHandler.LoggedInUserId(HttpContext).HasValue);
+            Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool, bool> model = new Tuple<ReadOnlyCollection<ViewModels.Comment>, Dictionary<int, VoteType>, bool, bool>(await roComments,
+                votesByCurrentUser,
+                hasCommentModerationPrivilege,
+                userId.HasValue);
             return View("Comments", model);
         }
 
         [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/Upvote")]
-        public IActionResult Upvote(string commentId)
+        public async Task<IActionResult> Upvote(string commentId)
         {
             int commentIdI;
             if (!int.TryParse(commentId, out commentIdI))
@@ -93,17 +101,17 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
-            Comment cmt = commentRepository.GetById(commentIdI);
+            Comment cmt = await commentRepository.GetByIdAsync(commentIdI);
             if (cmt == null)
             {
                 return Json(new { success = false, error = "Comment not found." });
             }
-            if (cmt.Author == loginHandler.LoggedInUserId(HttpContext).Value)
+            if (cmt.Author == (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value)
             {
                 return Json(new { success = false, error = "You can't vote for your own comments." });
             }
 
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Upvote, loginHandler.LoggedInUserId(HttpContext).Value, commentIdI));
+            bool success = await commentVoteRepository.AddAsync(new CommentVote(VoteType.Upvote, (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value, commentIdI));
             if (success)
             {
                 return Json(new { success = true });
@@ -117,7 +125,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/Downvote")]
-        public IActionResult Downvote(string commentId)
+        public async Task<IActionResult> Downvote(string commentId)
         {
             int commentIdI;
             if (!int.TryParse(commentId, out commentIdI))
@@ -125,17 +133,17 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
-            Comment cmt = commentRepository.GetById(commentIdI);
+            Comment cmt = await commentRepository.GetByIdAsync(commentIdI);
             if (cmt == null)
             {
                 return Json(new { success = false, error = "Comment not found." });
             }
-            if (cmt.Author == loginHandler.LoggedInUserId(HttpContext).Value)
+            if (cmt.Author == (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value)
             {
                 return Json(new { success = false, error = "You can't vote for your own comments." });
             }
 
-            bool success = commentVoteRepository.Add(new CommentVote(VoteType.Downvote, loginHandler.LoggedInUserId(HttpContext).Value, commentIdI));
+            bool success = await commentVoteRepository.AddAsync(new CommentVote(VoteType.Downvote, (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value, commentIdI));
             if (success)
             {
                 return Json(new { success = true });
@@ -149,7 +157,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/UndoVote")]
-        public IActionResult UndoVote(string commentId)
+        public async Task<IActionResult> UndoVote(string commentId)
         {
             int commentIdI;
             if (!int.TryParse(commentId, out commentIdI))
@@ -157,7 +165,7 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
-            bool success = commentVoteRepository.Undo(loginHandler.LoggedInUserId(HttpContext).Value, commentIdI);
+            bool success = await commentVoteRepository.UndoAsync((await loginHandler.LoggedInUserIdAsync(HttpContext)).Value, commentIdI);
             if (success)
             {
                 return Json(new { success = true });
@@ -171,7 +179,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         [HttpPost]
         [Route("/Comment/Reply")]
-        public IActionResult Reply(string to, string body, string puzzleId)
+        public async Task<IActionResult> Reply(string to, string body, string puzzleId)
         {
             int parentId;
             if (!int.TryParse(to, out parentId))
@@ -185,19 +193,19 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid puzzle ID." });
             }
 
-            Comment parent = commentRepository.GetById(parentId);
+            Comment parent = await commentRepository.GetByIdAsync(parentId);
             if (parent == null)
             {
                 return Json(new { success = false, error = "Invalid parent ID." });
             }
 
-            Comment comment = new Comment(counterRepository.GetAndIncrease(Counter.COMMENT_ID), loginHandler.LoggedInUserId(HttpContext).Value, body, parentId, puzzleIdI, false, DateTime.UtcNow);
-            bool success = commentRepository.Add(comment);
+            Comment comment = new Comment(await counterRepository.GetAndIncreaseAsync(Counter.COMMENT_ID), (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value, body, parentId, puzzleIdI, false, DateTime.UtcNow);
+            bool success = await commentRepository.AddAsync(comment);
             if (success)
             {
                 Notification notificationForParentAuthor = new Notification(Guid.NewGuid().ToString(), parent.Author, "You received a reply to your comment.", false,
                     string.Format("/Puzzle/{0}?comment={1}", comment.PuzzleID, comment.ID), DateTime.UtcNow);
-                notificationRepository.Add(notificationForParentAuthor);
+                await notificationRepository.AddAsync(notificationForParentAuthor);
                 return Json(new { success = true });
             }
             else
@@ -209,7 +217,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.COMMENT_MODERATOR)]
         [HttpPost]
         [Route("/Comment/Mod/Delete")]
-        public IActionResult DeleteComment(string commentId)
+        public async Task<IActionResult> DeleteComment(string commentId)
         {
             int commentIdI;
             if (!int.TryParse(commentId, out commentIdI))
@@ -217,7 +225,7 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
 
-            bool deleteSuccess = commentRepository.SoftDelete(commentIdI);
+            bool deleteSuccess = await commentRepository.SoftDeleteAsync(commentIdI);
             if (deleteSuccess)
             {
                 return Json(new { success = true });

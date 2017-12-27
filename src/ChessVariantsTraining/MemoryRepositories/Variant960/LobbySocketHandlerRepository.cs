@@ -39,7 +39,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         {
             Dictionary<string, object> msg = new Dictionary<string, object>();
             msg.Add("t", "add");
-            msg.Add("d", seek.SeekJson(userRepository));
+            msg.Add("d", await seek.SeekJson(userRepository));
             await SendAll(JsonConvert.SerializeObject(msg));
         }
 

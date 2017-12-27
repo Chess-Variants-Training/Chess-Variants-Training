@@ -1,39 +1,27 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Crazyhouse;
 using ChessVariantsTraining.Models.Variant960;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
 {
     public interface IGameRepoForSocketHandlers
     {
         Game Get(string id);
-
-        MoveType RegisterMove(Game subject, Move move);
-
-        void RegisterDrop(Game subject, Drop drop);
-
-        void RegisterGameResult(Game subject, string result, string termination);
-
-        void RegisterPlayerChatMessage(Game subject, ChatMessage msg);
-
-        void RegisterSpectatorChatMessage(Game subject, ChatMessage msg);
-
-        void RegisterWhiteRematchOffer(Game subject);
-
-        void RegisterBlackRematchOffer(Game subject);
-
-        void ClearRematchOffers(Game subject);
-
-        void RegisterWhiteDrawOffer(Game subject);
-
-        void RegisterBlackDrawOffer(Game subject);
-
-        void ClearDrawOffers(Game subject);
-
-        string GenerateId();
-
-        void Add(Game subject);
-
-        void SetRematchID(Game subject, string rematchId);
+        Task<Game> GetAsync(string id);
+        Task<MoveType> RegisterMoveAsync(Game subject, Move move);
+        Task RegisterDropAsync(Game subject, Drop drop);
+        Task RegisterGameResultAsync(Game subject, string result, string termination);
+        Task RegisterPlayerChatMessageAsync(Game subject, ChatMessage msg);
+        Task RegisterSpectatorChatMessageAsync(Game subject, ChatMessage msg);
+        Task RegisterWhiteRematchOfferAsync(Game subject);
+        Task RegisterBlackRematchOfferAsync(Game subject);
+        Task ClearRematchOffersAsync(Game subject);
+        Task RegisterWhiteDrawOfferAsync(Game subject);
+        Task RegisterBlackDrawOfferAsync(Game subject);
+        Task ClearDrawOffersAsync(Game subject);
+        Task<string> GenerateIdAsync();
+        Task AddAsync(Game subject);
+        Task SetRematchIDAsync(Game subject, string rematchId);
     }
 }

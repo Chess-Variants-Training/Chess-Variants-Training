@@ -1,9 +1,10 @@
-﻿namespace ChessVariantsTraining.Services
+﻿using System.Threading.Tasks;
+
+namespace ChessVariantsTraining.Services
 {
     public interface IUserVerifier
     {
-        void SendVerificationEmailTo(int userId);
-
-        bool Verify(int userId, int verificationCode);
+        Task SendVerificationEmailToAsync(int userId);
+        Task<bool> VerifyAsync(int userId, int verificationCode);
     }
 }

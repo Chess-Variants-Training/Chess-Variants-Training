@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -23,22 +24,22 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Review")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            List<Puzzle> inReview = puzzleRepository.InReview();
-            Dictionary<int, User> users = userRepository.FindByIds(inReview.Select(x => x.Author));
+            List<Puzzle> inReview = await puzzleRepository.InReviewAsync();
+            Dictionary<int, User> users = await userRepository.FindByIdsAsync(inReview.Select(x => x.Author));
             return View(new Tuple<List<Puzzle>, Dictionary<int, User>>(inReview, users));
         }
 
         [HttpPost]
         [Route("/Review/Approve/{id:int}")]
-        public IActionResult Approve(int id)
+        public async Task<IActionResult> Approve(int id)
         {
-            if (puzzleRepository.Approve(id, loginHandler.LoggedInUserId(HttpContext).Value))
+            if (await puzzleRepository.ApproveAsync(id, (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value))
             {
-                Puzzle approved = puzzleRepository.Get(id);
+                Puzzle approved = await puzzleRepository.GetAsync(id);
                 Notification notif = new Notification(Guid.NewGuid().ToString(), approved.Author, "Your puzzle has been approved!", false, Url.Action("TrainId", "Puzzle", new { id = id }), DateTime.UtcNow);
-                notificationRepository.Add(notif);
+                await notificationRepository.AddAsync(notif);
                 return Json(new { success = true });
             }
             else
@@ -49,9 +50,9 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/Review/Reject/{id:int}")]
-        public IActionResult Reject(int id)
+        public async Task<IActionResult> Reject(int id)
         {
-            if (puzzleRepository.Reject(id, loginHandler.LoggedInUserId(HttpContext).Value))
+            if (await puzzleRepository.RejectAsync(id, (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value))
             {
                 return Json(new { success = true });
             }
