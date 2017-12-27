@@ -6,6 +6,7 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -26,13 +27,13 @@ namespace ChessVariantsTraining.DbRepositories
             reportCollection = client.GetDatabase(settings.Database).GetCollection<Report>(settings.ReportCollectionName);
         }
 
-        public bool Add(Report report)
+        public async Task<bool> AddAsync(Report report)
         {
             var found = reportCollection.Find(new BsonDocument("_id", new BsonString(report.ID)));
-            if (found != null && found.Any()) return false;
+            if (found != null && await found.AnyAsync()) return false;
             try
             {
-                reportCollection.InsertOne(report);
+                await reportCollection.InsertOneAsync(report);
             }
             catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
             {
@@ -41,15 +42,15 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        public bool Handle(string reportId, string judgement)
+        public async Task<bool> HandleAsync(string reportId, string judgement)
         {
             UpdateDefinition<Report> updateDef = Builders<Report>.Update.Set("handled", true).Set("judgementAfterHandling", judgement);
             FilterDefinition<Report> filter = Builders<Report>.Filter.Eq("_id", reportId);
-            UpdateResult updateResult = reportCollection.UpdateOne(filter, updateDef);
+            UpdateResult updateResult = await reportCollection.UpdateOneAsync(filter, updateDef);
             return updateResult.IsAcknowledged && updateResult.MatchedCount != 0;
         }
 
-        public List<Report> GetUnhandledByType(string type)
+        public async Task<List<Report>> GetUnhandledByTypeAsync(string type)
         {
             FilterDefinition<Report> filter = Builders<Report>.Filter.Eq("type", type) & Builders<Report>.Filter.Eq("handled", false);
             var found = reportCollection.Find(filter);
@@ -57,18 +58,18 @@ namespace ChessVariantsTraining.DbRepositories
             {
                 return new List<Report>();
             }
-            return found.ToList();
+            return await found.ToListAsync();
         }
 
-        public List<Report> GetUnhandledByTypes(IEnumerable<string> types)
+        public async Task<List<Report>> GetUnhandledByTypesAsync(IEnumerable<string> types)
         {
             FilterDefinition<Report> filter = Builders<Report>.Filter.In("type", types) & Builders<Report>.Filter.Eq("handled", false);
-            return reportCollection.Find(filter).ToList();
+            return await reportCollection.Find(filter).ToListAsync();
         }
 
-        public Report GetById(string id)
+        public async Task<Report> GetByIdAsync(string id)
         {
-            return reportCollection.Find(Builders<Report>.Filter.Eq("_id", id)).FirstOrDefault();
+            return await reportCollection.Find(Builders<Report>.Filter.Eq("_id", id)).FirstOrDefaultAsync();
         }
     }
 }

@@ -126,8 +126,8 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         nBlack = randomProvider.RandomPositiveInt(max);
                     }
-                    Game game = new Game(gameRepository.GenerateId(), hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.Variant, joined.FullVariantName, nWhite, nBlack, joined.Symmetrical, joined.TimeControl, DateTime.UtcNow, 0);
-                    gameRepository.Add(game);
+                    Game game = new Game(await gameRepository.GenerateIdAsync(), hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.Variant, joined.FullVariantName, nWhite, nBlack, joined.Symmetrical, joined.TimeControl, DateTime.UtcNow, 0);
+                    await gameRepository.AddAsync(game);
                     string redirectJson = "{\"t\":\"redirect\",\"d\":\"" + game.ID + "\"}";
                     await Send(redirectJson);
                     await handlerRepository.SendTo(joined.Owner, redirectJson);
@@ -138,7 +138,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     {
                         Dictionary<string, object> msg = new Dictionary<string, object>();
                         msg.Add("t", "add");
-                        msg.Add("d", s.SeekJson(userRepository));
+                        msg.Add("d", await s.SeekJson(userRepository));
                         await Send(JsonConvert.SerializeObject(msg));
                     }
                     break;

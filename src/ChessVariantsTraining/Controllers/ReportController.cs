@@ -6,6 +6,7 @@ using ChessVariantsTraining.DbRepositories;
 using ChessVariantsTraining.Attributes;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -30,9 +31,9 @@ namespace ChessVariantsTraining.Controllers
 
         [Route("/Report/List/All")]
         [Restricted(true, UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR)]
-        public IActionResult ListAll()
+        public async Task<IActionResult> ListAll()
         {
-            User user = userRepository.FindById(loginHandler.LoggedInUserId(HttpContext).Value);
+            User user = await userRepository.FindByIdAsync((await loginHandler.LoggedInUserIdAsync(HttpContext)).Value);
             List<string> roles = user.Roles;
             List<string> types = new List<string>();
             if (UserRole.HasAtLeastThePrivilegesOf(roles, UserRole.COMMENT_MODERATOR))
@@ -43,33 +44,33 @@ namespace ChessVariantsTraining.Controllers
             {
                 types.Add("Puzzle");
             }
-            List<Report> reports = reportRepository.GetUnhandledByTypes(types);
-            Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
+            List<Report> reports = await reportRepository.GetUnhandledByTypesAsync(types);
+            Dictionary<int, User> users = await userRepository.FindByIdsAsync(reports.Select(x => x.Reporter));
             return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
 
         [Route("/Report/List/Comments")]
         [Restricted(true, UserRole.COMMENT_MODERATOR)]
-        public IActionResult ListCommentReports()
+        public async Task<IActionResult> ListCommentReports()
         {
-            List<Report> reports = reportRepository.GetUnhandledByType("Comment");
-            Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
+            List<Report> reports = await reportRepository.GetUnhandledByTypeAsync("Comment");
+            Dictionary<int, User> users = await userRepository.FindByIdsAsync(reports.Select(x => x.Reporter));
             return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
 
         [Route("/Report/List/Puzzles")]
         [Restricted(true, UserRole.PUZZLE_EDITOR)]
-        public IActionResult ListPuzzleReports()
+        public async Task<IActionResult> ListPuzzleReports()
         {
-            List<Report> reports = reportRepository.GetUnhandledByType("Comment");
-            Dictionary<int, User> users = userRepository.FindByIds(reports.Select(x => x.Reporter));
+            List<Report> reports = await reportRepository.GetUnhandledByTypeAsync("Comment");
+            Dictionary<int, User> users = await userRepository.FindByIdsAsync(reports.Select(x => x.Reporter));
             return View("List", new Tuple<List<Report>, Dictionary<int, User>>(reports, users));
         }
 
         [HttpPost]
         [Route("/Report/Submit/{type}")]
         [Restricted(true, UserRole.NONE)]
-        public IActionResult SubmitReport(string type, string item, string reason, string reasonExplanation)
+        public async Task<IActionResult> SubmitReport(string type, string item, string reason, string reasonExplanation)
         {
             string[] validTypes = new string[] { "Comment", "Puzzle" };
             if (!validTypes.Contains(type))
@@ -80,8 +81,8 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "Invalid reason" });
             }
-            Report report = new Report(Guid.NewGuid().ToString(), type, loginHandler.LoggedInUserId(HttpContext).Value, item, reason, reasonExplanation, false, null);
-            if (reportRepository.Add(report))
+            Report report = new Report(Guid.NewGuid().ToString(), type, (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value, item, reason, reasonExplanation, false, null);
+            if (await reportRepository.AddAsync(report))
             {
                 return Json(new { success = true });
             }
@@ -110,13 +111,13 @@ namespace ChessVariantsTraining.Controllers
         [HttpPost]
         [Route("/Report/Handle")]
         [Restricted(true, UserRole.COMMENT_MODERATOR, UserRole.PUZZLE_EDITOR)]
-        public IActionResult HandleReport(string id, string judgement)
+        public async Task<IActionResult> HandleReport(string id, string judgement)
         {
             if (!ValidReportJudgements.Contains(judgement))
             {
                 return Json(new { success = false, error = "Invalid report judgement." });
             }
-            Report report = reportRepository.GetById(id);
+            Report report = await reportRepository.GetByIdAsync(id);
             if (report == null)
             {
                 return Json(new { success = false, error = "Report not found." });
@@ -125,13 +126,13 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, error = "That report got handled already." });
             }
-            User handler = loginHandler.LoggedInUser(HttpContext);
+            User handler = await loginHandler.LoggedInUserAsync(HttpContext);
             if ((report.Type == "Comment" && !UserRole.HasAtLeastThePrivilegesOf(handler.Roles, UserRole.COMMENT_MODERATOR))
                 || (report.Type == "Puzzle" && !UserRole.HasAtLeastThePrivilegesOf(handler.Roles, UserRole.PUZZLE_EDITOR)))
             {
                 return Json(new { success = false, error = "You can't handle that type of reports." });
             }
-            if (!reportRepository.Handle(report.ID, judgement))
+            if (!await reportRepository.HandleAsync(report.ID, judgement))
             {
                 return Json(new { success = false, error = "An unexpected error happened while acknowledging the approval/rejection of the report." });
             }

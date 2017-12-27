@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Models.Variant960
 {
@@ -96,13 +97,13 @@ namespace ChessVariantsTraining.Models.Variant960
             return true;
         }
 
-        public Dictionary<string, string> SeekJson(IUserRepository userRepository)
+        public async Task<Dictionary<string, string>> SeekJson(IUserRepository userRepository)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
             data.Add("l", FullVariantName);
             if (Owner is RegisteredPlayer)
             {
-                data.Add("o", userRepository.FindById((Owner as RegisteredPlayer).UserId).Username);
+                data.Add("o", (await userRepository.FindByIdAsync((Owner as RegisteredPlayer).UserId)).Username);
             }
             else
             {

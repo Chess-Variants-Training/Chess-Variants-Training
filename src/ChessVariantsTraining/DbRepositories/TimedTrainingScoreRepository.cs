@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -38,15 +39,28 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        public List<TimedTrainingScore> GetLatestScores(int owner, string type)
+        public async Task<bool> AddAsync(TimedTrainingScore score)
         {
-            return scoreCollection.Find(Builders<TimedTrainingScore>.Filter.Eq("owner", owner) & Builders<TimedTrainingScore>.Filter.Eq("type", type))
-                                  .Sort(Builders<TimedTrainingScore>.Sort.Descending("dateRecorded"))
-                                  .Limit(15)
-                                  .ToList();
+            try
+            {
+                await scoreCollection.InsertOneAsync(score);
+            }
+            catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
+            {
+                return false;
+            }
+            return true;
         }
 
-        public List<TimedTrainingScore> Get(int user, DateTime? from, DateTime? to, string show)
+        public async Task<List<TimedTrainingScore>> GetLatestScoresAsync(int owner, string type)
+        {
+            return await scoreCollection.Find(Builders<TimedTrainingScore>.Filter.Eq("owner", owner) & Builders<TimedTrainingScore>.Filter.Eq("type", type))
+                                       .Sort(Builders<TimedTrainingScore>.Sort.Descending("dateRecorded"))
+                                       .Limit(15)
+                                       .ToListAsync();
+        }
+
+        public async Task<List<TimedTrainingScore>> GetAsync(int user, DateTime? from, DateTime? to, string show)
         {
             FilterDefinitionBuilder<TimedTrainingScore> builder = Builders<TimedTrainingScore>.Filter;
             FilterDefinition<TimedTrainingScore> filter = builder.Eq("owner", user);
@@ -54,7 +68,7 @@ namespace ChessVariantsTraining.DbRepositories
             {
                 filter &= builder.Lte("dateRecorded", to.Value) & builder.Gte("dateRecorded", from.Value);
             }
-            var found = scoreCollection.Find(filter).ToList();
+            var found = await scoreCollection.Find(filter).ToListAsync();
             if (show == "each")
             {
                 return found;

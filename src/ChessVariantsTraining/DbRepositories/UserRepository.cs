@@ -5,6 +5,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -25,13 +26,19 @@ namespace ChessVariantsTraining.DbRepositories
             userCollection = client.GetDatabase(settings.Database).GetCollection<User>(settings.UserCollectionName);
         }
 
-        public bool Add(User user)
+        public User FindById(int id)
+        {
+            FilterDefinition<User> filter = Builders<User>.Filter.Eq("_id", id);
+            return userCollection.Find(filter).FirstOrDefault();
+        }
+
+        public async Task<bool> AddAsync(User user)
         {
             var found = userCollection.FindSync<User>(new ExpressionFilterDefinition<User>(x => x.ID == user.ID));
             if (found != null && found.Any()) return false;
             try
             {
-                userCollection.InsertOne(user);
+                await userCollection.InsertOneAsync(user);
             }
             catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
             {
@@ -40,45 +47,45 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        public void Update(User user)
+        public async Task UpdateAsync(User user)
         {
-            userCollection.ReplaceOne(new ExpressionFilterDefinition<User>(x => x.ID == user.ID), user);
+            await userCollection.ReplaceOneAsync(new ExpressionFilterDefinition<User>(x => x.ID == user.ID), user);
         }
 
-        public void Delete(User user)
+        public async Task DeleteAsync(User user)
         {
-            userCollection.DeleteOne(new ExpressionFilterDefinition<User>(x => x.ID == user.ID));
+            await userCollection.DeleteOneAsync(new ExpressionFilterDefinition<User>(x => x.ID == user.ID));
         }
 
-        public User FindById(int id)
+        public async Task<User> FindByIdAsync(int id)
         {
             FilterDefinition<User> filter = Builders<User>.Filter.Eq("_id", id);
-            return userCollection.Find(filter).FirstOrDefault();
+            return await userCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public User FindByUsername(string username)
+        public async Task<User> FindByUsernameAsync(string username)
         {
             FilterDefinition<User> filter = Builders<User>.Filter.Regex("username", new MongoDB.Bson.BsonRegularExpression("^" + username + "$", "i"));
-            return userCollection.Find(filter).FirstOrDefault();
+            return await userCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public User FindByEmail(string email)
+        public async Task<User> FindByEmailAsync(string email)
         {
             FilterDefinition<User> filter = Builders<User>.Filter.Regex("email", new MongoDB.Bson.BsonRegularExpression("^" + email + "$", "i"));
-            return userCollection.Find(filter).FirstOrDefault();
+            return await userCollection.Find(filter).FirstOrDefaultAsync();
         }
 
-        public Dictionary<int, User> FindByIds(IEnumerable<int> ids)
+        public async Task<Dictionary<int, User>> FindByIdsAsync(IEnumerable<int> ids)
         {
             FilterDefinition<User> filter = Builders<User>.Filter.In("_id", ids);
-            return userCollection.Find(filter).ToEnumerable().ToDictionary(x => x.ID);
+            return (await userCollection.Find(filter).ToListAsync()).ToDictionary(x => x.ID);
         }
 
-        public User FindByPasswordResetToken(string token)
+        public async Task<User> FindByPasswordResetTokenAsync(string token)
         {
             string hashed = PasswordRecoveryToken.GetHashedFor(token);
             FilterDefinition<User> filter = Builders<User>.Filter.Eq("passwordRecoveryToken.tokenHashed", hashed) & Builders<User>.Filter.Gte("passwordRecoveryToken.expiry", DateTime.UtcNow);
-            return userCollection.Find(filter).FirstOrDefault();
+            return await userCollection.Find(filter).FirstOrDefaultAsync();
         }
     }
 }

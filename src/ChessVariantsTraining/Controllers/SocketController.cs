@@ -43,7 +43,7 @@ namespace ChessVariantsTraining.Controllers
 
             WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
             GamePlayer client;
-            int? userId = loginHandler.LoggedInUserId(HttpContext);
+            int? userId = await loginHandler.LoggedInUserIdAsync(HttpContext);
             if (userId.HasValue)
             {
                 client = new RegisteredPlayer() { UserId = userId.Value };
@@ -73,7 +73,7 @@ namespace ChessVariantsTraining.Controllers
 
             WebSocket ws = await HttpContext.WebSockets.AcceptWebSocketAsync();
             GamePlayer client;
-            int? userId = loginHandler.LoggedInUserId(HttpContext);
+            int? userId = await loginHandler.LoggedInUserIdAsync(HttpContext);
             if (userId.HasValue)
             {
                 client = new RegisteredPlayer() { UserId = userId.Value };

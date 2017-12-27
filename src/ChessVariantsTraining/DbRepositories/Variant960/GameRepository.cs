@@ -5,6 +5,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories.Variant960
 {
@@ -27,48 +28,53 @@ namespace ChessVariantsTraining.DbRepositories.Variant960
             gameCollection = client.GetDatabase(settings.Database).GetCollection<Game>(settings.GameCollectionName);
         }
 
-        public void Add(Game game)
-        {
-            gameCollection.InsertOne(game);
-        }
-
         public Game Get(string id)
         {
             return gameCollection.Find(Builders<Game>.Filter.Eq("_id", id)).FirstOrDefault();
         }
 
-        public void Update(Game game)
+        public async Task AddAsync(Game game)
         {
-            gameCollection.ReplaceOne(Builders<Game>.Filter.Eq("_id", game.ID), game);
+            await gameCollection.InsertOneAsync(game);
         }
 
-        public string GenerateId()
+        public async Task<Game> GetAsync(string id)
+        {
+            return await gameCollection.Find(Builders<Game>.Filter.Eq("_id", id)).FirstOrDefaultAsync();
+        }
+
+        public async Task UpdateAsync(Game game)
+        {
+            await gameCollection.ReplaceOneAsync(Builders<Game>.Filter.Eq("_id", game.ID), game);
+        }
+
+        public async Task<string> GenerateIdAsync()
         {
             bool okay;
             string generated;
             do
             {
                 generated = randomProvider.RandomString(8).ToLowerInvariant();
-                okay = Get(generated) == null;
+                okay = await GetAsync(generated) == null;
             } while (!okay);
             return generated;
         }
 
-        public List<Game> GetByPlayerId(int id, int skip, int limit)
+        public async Task<List<Game>> GetByPlayerIdAsync(int id, int skip, int limit)
         {
             FilterDefinitionBuilder<Game> filterBuilder = Builders<Game>.Filter;
             FilterDefinition<Game> whiteEq = filterBuilder.Eq("white.userId", id);
             FilterDefinition<Game> blackEq = filterBuilder.Eq("black.userId", id);
             SortDefinition<Game> sortDef = Builders<Game>.Sort.Descending("startedUtc");
-            return gameCollection.Find(filterBuilder.Or(whiteEq, blackEq)).Sort(sortDef).Skip(skip).Limit(limit).ToList();
+            return await gameCollection.Find(filterBuilder.Or(whiteEq, blackEq)).Sort(sortDef).Skip(skip).Limit(limit).ToListAsync();
         }
 
-        public long CountByPlayerId(int id)
+        public async Task<long> CountByPlayerIdAsync(int id)
         {
             FilterDefinitionBuilder<Game> filterBuilder = Builders<Game>.Filter;
             FilterDefinition<Game> whiteEq = filterBuilder.Eq("white.userId", id);
             FilterDefinition<Game> blackEq = filterBuilder.Eq("black.userId", id);
-            return gameCollection.Count(filterBuilder.Or(whiteEq, blackEq));
+            return await gameCollection.CountAsync(filterBuilder.Or(whiteEq, blackEq));
         }
     }
 }

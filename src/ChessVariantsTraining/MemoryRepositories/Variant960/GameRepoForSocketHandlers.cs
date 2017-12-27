@@ -5,6 +5,7 @@ using ChessVariantsTraining.Models.Variant960;
 using ChessVariantsTraining.Services;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.MemoryRepositories.Variant960
 {
@@ -39,7 +40,26 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             }
         }
 
-        public MoveType RegisterMove(Game subject, Move move)
+        public async Task<Game> GetAsync(string id)
+        {
+            if (cache.ContainsKey(id))
+            {
+                return cache[id];
+            }
+            else
+            {
+                Game g = await gameRepository.GetAsync(id);
+                if (g == null)
+                {
+                    return null;
+                }
+                g.ChessGame = gameConstructor.Construct(g.ShortVariantName, g.LatestFEN);
+                cache[id] = g;
+                return cache[id];
+            }
+        }
+
+        public async Task<MoveType> RegisterMoveAsync(Game subject, Move move)
         {
             MoveType ret;
             ret = subject.ChessGame.ApplyMove(move, true);
@@ -48,18 +68,18 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
                 move.NewPosition.ToString().ToLowerInvariant() +
                 (move.Promotion.HasValue ? move.Promotion.Value.ToString().ToLowerInvariant() : ""));
             ClockSwitchAfterMove(subject, move.Player == Player.White);
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
             return ret;
         }
 
-        public void RegisterDrop(Game subject, Drop drop)
+        public async Task RegisterDropAsync(Game subject, Drop drop)
         {
             CrazyhouseChessGame zhGame = subject.ChessGame as CrazyhouseChessGame;
             zhGame.ApplyDrop(drop, true);
             subject.LatestFEN = subject.ChessGame.GetFen();
             subject.UciMoves.Add(char.ToUpperInvariant(drop.ToDrop.GetFenCharacter()) + "@" + drop.Destination.ToString().ToLowerInvariant());
             ClockSwitchAfterMove(subject, drop.Player == Player.White);
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
         void ClockSwitchAfterMove(Game subject, bool didWhiteMove)
@@ -88,80 +108,80 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             }
         }
 
-        public void RegisterGameResult(Game subject, string result, string termination)
+        public async Task RegisterGameResultAsync(Game subject, string result, string termination)
         {
             subject.ClockWhite.End();
             subject.ClockBlack.End();
             subject.Result = result;
             subject.Termination = termination;
             subject.EndedUtc = DateTime.UtcNow;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void RegisterPlayerChatMessage(Game subject, ChatMessage msg)
+        public async Task RegisterPlayerChatMessageAsync(Game subject, ChatMessage msg)
         {
             subject.PlayerChats.Add(msg);
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void RegisterSpectatorChatMessage(Game subject, ChatMessage msg)
+        public async Task RegisterSpectatorChatMessageAsync(Game subject, ChatMessage msg)
         {
             subject.SpectatorChats.Add(msg);
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void RegisterWhiteRematchOffer(Game subject)
+        public async Task RegisterWhiteRematchOfferAsync(Game subject)
         {
             subject.WhiteWantsRematch = true;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void RegisterBlackRematchOffer(Game subject)
+        public async Task RegisterBlackRematchOfferAsync(Game subject)
         {
             subject.BlackWantsRematch = true;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void ClearRematchOffers(Game subject)
+        public async Task ClearRematchOffersAsync(Game subject)
         {
             subject.WhiteWantsRematch = false;
             subject.BlackWantsRematch = false;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void RegisterWhiteDrawOffer(Game subject)
+        public async Task RegisterWhiteDrawOfferAsync(Game subject)
         {
             subject.WhiteWantsDraw = true;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void RegisterBlackDrawOffer(Game subject)
+        public async Task RegisterBlackDrawOfferAsync(Game subject)
         {
             subject.BlackWantsDraw = true;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public void ClearDrawOffers(Game subject)
+        public async Task ClearDrawOffersAsync(Game subject)
         {
             subject.WhiteWantsDraw = false;
             subject.BlackWantsDraw = false;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
 
-        public string GenerateId()
+        public async Task<string> GenerateIdAsync()
         {
-            return gameRepository.GenerateId();
+            return await gameRepository.GenerateIdAsync();
         }
 
-        public void Add(Game subject)
+        public async Task AddAsync(Game subject)
         {
-            gameRepository.Add(subject);
+            await gameRepository.AddAsync(subject);
         }
 
-        public void SetRematchID(Game subject, string rematchId)
+        public async Task SetRematchIDAsync(Game subject, string rematchId)
         {
             subject.RematchID = rematchId;
-            gameRepository.Update(subject);
+            await gameRepository.UpdateAsync(subject);
         }
     }
 }

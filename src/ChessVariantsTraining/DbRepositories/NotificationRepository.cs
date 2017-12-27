@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -26,11 +27,11 @@ namespace ChessVariantsTraining.DbRepositories
             notificationCollection = client.GetDatabase(settings.Database).GetCollection<Notification>(settings.NotificationCollectionName);
         }
 
-        public bool Add(Notification notification)
+        public async Task<bool> AddAsync(Notification notification)
         {
             try
             {
-                notificationCollection.InsertOne(notification);
+                await notificationCollection.InsertOneAsync(notification);
                 return true;
             }
             catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
@@ -39,27 +40,26 @@ namespace ChessVariantsTraining.DbRepositories
             }
         }
 
-
-        public bool Exists(string id)
+        public async Task<bool> ExistsAsync(string id)
         {
-            return notificationCollection.Count(Builders<Notification>.Filter.Eq("_id", id)) > 0;
+            return (await notificationCollection.CountAsync(Builders<Notification>.Filter.Eq("_id", id))) > 0;
         }
 
-        public void MarkAllRead(int user)
+        public async Task MarkAllReadAsync(int user)
         {
             FilterDefinition<Notification> filter = Builders<Notification>.Filter.Eq("user", user);
             UpdateDefinition<Notification> update = Builders<Notification>.Update.Set("read", true);
-            notificationCollection.UpdateMany(filter, update);
+            await notificationCollection.UpdateManyAsync(filter, update);
         }
 
-        public long UnreadCount(int user)
+        public async Task<long> UnreadCountAsync(int user)
         {
-            return notificationCollection.Count(Builders<Notification>.Filter.Eq("user", user) & Builders<Notification>.Filter.Eq("read", false));
+            return await notificationCollection.CountAsync(Builders<Notification>.Filter.Eq("user", user) & Builders<Notification>.Filter.Eq("read", false));
         }
 
-        public List<Notification> GetNotificationsFor(int user)
+        public async Task<List<Notification>> GetNotificationsForAsync(int user)
         {
-            return notificationCollection.Find(Builders<Notification>.Filter.Eq("user", user)).Sort(Builders<Notification>.Sort.Descending("timestampUtc")).ToList();
+            return await notificationCollection.Find(Builders<Notification>.Filter.Eq("user", user)).Sort(Builders<Notification>.Sort.Descending("timestampUtc")).ToListAsync();
         }
     }
 }

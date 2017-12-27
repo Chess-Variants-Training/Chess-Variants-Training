@@ -7,6 +7,7 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -29,13 +30,13 @@ namespace ChessVariantsTraining.DbRepositories
             puzzleCollection = client.GetDatabase(settings.Database).GetCollection<Puzzle>(settings.PuzzleCollectionName);
         }
 
-        public bool Add(Puzzle puzzle)
+        public async Task<bool> AddAsync(Puzzle puzzle)
         {
             var found = puzzleCollection.Find(new BsonDocument("_id", new BsonInt32(puzzle.ID)));
             if (found != null && found.Any()) return false;
             try
             {
-                puzzleCollection.InsertOne(puzzle);
+                await puzzleCollection.InsertOneAsync(puzzle);
             }
             catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
             {
@@ -44,14 +45,14 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        public Puzzle Get(int id)
+        public async Task<Puzzle> GetAsync(int id)
         {
             var found = puzzleCollection.Find(new BsonDocument("_id", new BsonInt32(id)));
             if (found == null) return null;
-            return found.FirstOrDefault();
+            return await found.FirstOrDefaultAsync();
         }
 
-        public Puzzle GetOneRandomly(List<int> excludedIds, string variant, int? userId, double nearRating)
+        public async Task<Puzzle> GetOneRandomlyAsync(List<int> excludedIds, string variant, int? userId, double nearRating)
         {
             Dictionary<string, object> filterDict = new Dictionary<string, object>()
             {
@@ -88,7 +89,7 @@ namespace ChessVariantsTraining.DbRepositories
             {
                 filterDict.Add("rating.value", 1500d);
 
-                Puzzle sel = puzzleCollection.Find(new BsonDocument(filterDict)).FirstOrDefault();
+                Puzzle sel = await puzzleCollection.Find(new BsonDocument(filterDict)).FirstOrDefaultAsync();
                 if (sel != null)
                 {
                     return sel;
@@ -107,12 +108,12 @@ namespace ChessVariantsTraining.DbRepositories
                 ["$sample"] = new Dictionary<string, object>() { ["size"] = 30 }
             });
 
-            List<Puzzle> selected = puzzleCollection.Aggregate(
+            List<Puzzle> selected = await (await puzzleCollection.AggregateAsync(
                 PipelineDefinition<Puzzle, Puzzle>.Create(
                     matchDoc,
                     sampleDoc
                 )
-            ).ToList();
+            )).ToListAsync();
 
             if (!selected.Any())
             {
@@ -122,50 +123,50 @@ namespace ChessVariantsTraining.DbRepositories
             return selected.Aggregate((x, y) => Math.Abs(x.Rating.Value - nearRating) < Math.Abs(y.Rating.Value - nearRating) ? x : y);
         }
 
-        public DeleteResult Remove(int id)
+        public async Task<DeleteResult> RemoveAsync(int id)
         {
-            return puzzleCollection.DeleteOne(new BsonDocument("_id", new BsonInt32(id)));
+            return await puzzleCollection.DeleteOneAsync(new BsonDocument("_id", new BsonInt32(id)));
         }
 
-        public DeleteResult RemoveAllBy(int author)
+        public async Task<DeleteResult> RemoveAllByAsync(int author)
         {
-            return puzzleCollection.DeleteMany(new BsonDocument("author", new BsonInt32(author)));
+            return await puzzleCollection.DeleteManyAsync(new BsonDocument("author", new BsonInt32(author)));
         }
 
-        public bool UpdateRating(int id, Rating newRating)
+        public async Task<bool> UpdateRatingAsync(int id, Rating newRating)
         {
             UpdateDefinitionBuilder<Puzzle> builder = new UpdateDefinitionBuilder<Puzzle>();
             UpdateDefinition<Puzzle> def = builder.Set("rating", newRating);
-            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
+            UpdateResult result = await puzzleCollection.UpdateOneAsync(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
 
-        public List<Puzzle> InReview()
+        public async Task<List<Puzzle>> InReviewAsync()
         {
             FilterDefinition<Puzzle> filter = Builders<Puzzle>.Filter.Eq("inReview", true);
-            return puzzleCollection.Find(filter).ToList();
+            return await puzzleCollection.Find(filter).ToListAsync();
         }
 
-        public bool Approve(int id, int reviewer)
+        public async Task<bool> ApproveAsync(int id, int reviewer)
         {
             UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
             UpdateDefinition<Puzzle> def = builder.Set("approved", true).Set("inReview", false).Push("reviewers", reviewer);
-            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
+            UpdateResult result = await puzzleCollection.UpdateOneAsync(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
 
-        public bool Reject(int id, int reviewer)
+        public async Task<bool> RejectAsync(int id, int reviewer)
         {
             UpdateDefinitionBuilder<Puzzle> builder = Builders<Puzzle>.Update;
             UpdateDefinition<Puzzle> def = builder.Set("approved", false).Set("inReview", false).Push("reviewers", reviewer);
-            UpdateResult result = puzzleCollection.UpdateOne(new BsonDocument("_id", new BsonInt32(id)), def);
+            UpdateResult result = await puzzleCollection.UpdateOneAsync(new BsonDocument("_id", new BsonInt32(id)), def);
             return result.IsAcknowledged && result.MatchedCount != 0;
         }
 
-        public Puzzle FindByFenAndVariant(string fen, string variant)
+        public async Task<Puzzle> FindByFenAndVariantAsync(string fen, string variant)
         {
             FilterDefinition<Puzzle> filter = Builders<Puzzle>.Filter.Eq("initialfen", fen) & Builders<Puzzle>.Filter.Eq("variant", variant);
-            return puzzleCollection.Find(filter).FirstOrDefault();
+            return await puzzleCollection.Find(filter).FirstOrDefaultAsync();
         }
     }
 }

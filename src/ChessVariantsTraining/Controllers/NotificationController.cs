@@ -4,6 +4,7 @@ using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -19,11 +20,11 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Notifications")]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            int loggedIn = loginHandler.LoggedInUserId(HttpContext).Value;
-            List<Notification> notifications = notificationRepository.GetNotificationsFor(loggedIn);
-            notificationRepository.MarkAllRead(loggedIn);
+            int loggedIn = (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value;
+            List<Notification> notifications = await notificationRepository.GetNotificationsForAsync(loggedIn);
+            await notificationRepository.MarkAllReadAsync(loggedIn);
             return View(notifications);
         }
     }

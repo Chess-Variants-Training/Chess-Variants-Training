@@ -5,6 +5,7 @@ using MongoDB.Bson;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.DbRepositories
 {
@@ -26,13 +27,13 @@ namespace ChessVariantsTraining.DbRepositories
             commentCollection = client.GetDatabase(settings.Database).GetCollection<Comment>(settings.CommentCollectionName);
         }
 
-        public bool Add(Comment comment)
+        public async Task<bool> AddAsync(Comment comment)
         {
             var found = commentCollection.Find(new BsonDocument("_id", new BsonInt32(comment.ID)));
             if (found != null && found.Any()) return false;
             try
             {
-                commentCollection.InsertOne(comment);
+                await commentCollection.InsertOneAsync(comment);
             }
             catch (Exception e) when (e is MongoWriteException || e is MongoBulkWriteException)
             {
@@ -41,31 +42,30 @@ namespace ChessVariantsTraining.DbRepositories
             return true;
         }
 
-        public Comment GetById(int id)
+        public async Task<Comment> GetByIdAsync(int id)
         {
             var found = commentCollection.Find(new BsonDocument("_id", new BsonInt32(id)));
-            if (found == null) return null;
-            return found.FirstOrDefault();
+            return await found.FirstOrDefaultAsync();
         }
 
-        public List<Comment> GetByPuzzle(int puzzleId)
+        public async Task<List<Comment>> GetByPuzzleAsync(int puzzleId)
         {
-            return commentCollection.Find(new BsonDocument("puzzleId", new BsonInt32(puzzleId))).ToList();
+            return await commentCollection.Find(new BsonDocument("puzzleId", new BsonInt32(puzzleId))).ToListAsync();
         }
 
-        public bool Edit(int id, string newBodyUnsanitized)
+        public async Task<bool> EditAsync(int id, string newBodyUnsanitized)
         {
             FilterDefinition<Comment> filter = Builders<Comment>.Filter.Eq("_id", id);
             UpdateDefinition<Comment> update = Builders<Comment>.Update.Set("bodyUnsanitized", newBodyUnsanitized);
-            UpdateResult res = commentCollection.UpdateOne(filter, update);
+            UpdateResult res = await commentCollection.UpdateOneAsync(filter, update);
             return res.IsAcknowledged && res.MatchedCount != 0;
         }
 
-        public bool SoftDelete(int id)
+        public async Task<bool> SoftDeleteAsync(int id)
         {
             FilterDefinition<Comment> filter = Builders<Comment>.Filter.Eq("_id", id);
             UpdateDefinition<Comment> update = Builders<Comment>.Update.Set("deleted", true);
-            UpdateResult res = commentCollection.UpdateOne(filter, update);
+            UpdateResult res = await commentCollection.UpdateOneAsync(filter, update);
             return res.IsAcknowledged && res.MatchedCount != 0;
         }
     }

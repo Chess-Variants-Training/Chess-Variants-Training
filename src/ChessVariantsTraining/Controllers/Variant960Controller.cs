@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -36,10 +37,10 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [Route("/Variant960/Game/{id}")]
-        public IActionResult Game(string id)
+        public async Task<IActionResult> Game(string id)
         {
             id = id.ToLowerInvariant();
-            Game game = gameRepository.Get(id);
+            Game game = await gameRepository.GetAsync(id);
             if (game == null)
             {
                 return ViewResultForHttpError(HttpContext, new NotFound("This game could not be found."));
@@ -64,9 +65,9 @@ namespace ChessVariantsTraining.Controllers
             else
             {
                 whiteId = (game.White as RegisteredPlayer).UserId;
-                whiteUsername = userRepository.FindById(whiteId.Value).Username;
+                whiteUsername = (await userRepository.FindByIdAsync(whiteId.Value)).Username;
 
-                int? loggedOnUserId = loginHandler.LoggedInUserId(HttpContext);
+                int? loggedOnUserId = await loginHandler.LoggedInUserIdAsync(HttpContext);
                 if (loggedOnUserId.HasValue && loggedOnUserId.Value == whiteId)
                 {
                     requester = Player.White;
@@ -87,9 +88,9 @@ namespace ChessVariantsTraining.Controllers
             else
             {
                 blackId = (game.Black as RegisteredPlayer).UserId;
-                blackUsername = userRepository.FindById(blackId.Value).Username;
+                blackUsername = (await userRepository.FindByIdAsync(blackId.Value)).Username;
 
-                int? loggedOnUserId = loginHandler.LoggedInUserId(HttpContext);
+                int? loggedOnUserId = await loginHandler.LoggedInUserIdAsync(HttpContext);
                 if (loggedOnUserId.HasValue && loggedOnUserId.Value == blackId)
                 {
                     requester = Player.Black;
@@ -224,9 +225,9 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Variant960/Lobby/StoreAnonymousIdentifier")]
         [Route("/Variant960/Game/StoreAnonymousIdentifier")]
         [HttpPost]
-        public IActionResult StoreAnonymousIdentifier()
+        public async Task<IActionResult> StoreAnonymousIdentifier()
         {
-            if (loginHandler.LoggedInUserId(HttpContext).HasValue || HttpContext.Session.GetString("anonymousIdentifier") != null)
+            if ((await loginHandler.LoggedInUserIdAsync(HttpContext)).HasValue || HttpContext.Session.GetString("anonymousIdentifier") != null)
             {
                 return Json(new { success = true });
             }
