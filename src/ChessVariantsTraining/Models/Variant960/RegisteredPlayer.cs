@@ -22,7 +22,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public override int GetHashCode()
         {
-            return new { Type = "Registered", UserId = UserId }.GetHashCode();
+            return new { Type = "Registered", UserId }.GetHashCode();
         }
 
         public override bool Equals(GamePlayer other)

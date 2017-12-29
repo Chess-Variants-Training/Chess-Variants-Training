@@ -355,8 +355,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Verify")]
         public async Task<IActionResult> Verify(string verificationCode)
         {
-            int verificationCodeI;
-            if (!int.TryParse(verificationCode, out verificationCodeI))
+            if (!int.TryParse(verificationCode, out int verificationCodeI))
             {
                 return View("VerificationFailed");
             }

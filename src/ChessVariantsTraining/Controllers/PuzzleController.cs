@@ -123,8 +123,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         public async Task<IActionResult> GetValidMoves(string id)
         {
-            int puzzleId;
-            if (!int.TryParse(id, out puzzleId))
+            if (!int.TryParse(id, out int puzzleId))
             {
                 return Json(new { success = false, error = "The given ID is invalid." });
             }
@@ -149,7 +148,7 @@ namespace ChessVariantsTraining.Controllers
                 validMoves = puzzle.Game.GetValidMoves(puzzle.Game.WhoseTurn);
             }
             Dictionary<string, List<string>> dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(validMoves);
-            return Json(new { success = true, dests = dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant(), pocket = puzzle.Game.GenerateJsonPocket() });
+            return Json(new { success = true, dests, whoseturn = puzzle.Game.WhoseTurn.ToString().ToLowerInvariant(), pocket = puzzle.Game.GenerateJsonPocket() });
         }
 
         [HttpPost]
@@ -157,8 +156,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         public async Task<IActionResult> SubmitMove(string id, string origin, string destination, string promotion = null)
         {
-            int puzzleId;
-            if (!int.TryParse(id, out puzzleId))
+            if (!int.TryParse(id, out int puzzleId))
             {
                 return Json(new { success = false, error = "The given ID is invalid." });
             }
@@ -190,8 +188,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         public async Task<IActionResult> SubmitDrop(string id, string role, string pos)
         {
-            int puzzleId;
-            if (!int.TryParse(id, out puzzleId))
+            if (!int.TryParse(id, out int puzzleId))
             {
                 return Json(new { success = false, error = "The given ID is invalid." });
             }
@@ -233,8 +230,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         public async Task<IActionResult> NewVariation(string id)
         {
-            int puzzleId;
-            if (!int.TryParse(id, out puzzleId))
+            if (!int.TryParse(id, out int puzzleId))
             {
                 return Json(new { success = false, error = "The given ID is invalid." });
             }
@@ -258,8 +254,7 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.NONE)]
         public async Task<IActionResult> SubmitPuzzle(string id, string solution, string explanation)
         {
-            int puzzleId;
-            if (!int.TryParse(id, out puzzleId))
+            if (!int.TryParse(id, out int puzzleId))
             {
                 return Json(new { success = false, error = "The given ID is invalid." });
             }
@@ -374,8 +369,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Puzzle/Train/Setup")]
         public async Task<IActionResult> SetupTraining(string id, string trainingSessionId = null)
         {
-            int puzzleId;
-            if (!int.TryParse(id, out puzzleId))
+            if (!int.TryParse(id, out int puzzleId))
             {
                 return Json(new { success = false, error = "Invalid puzzle ID." });
             }
@@ -420,7 +414,7 @@ namespace ChessVariantsTraining.Controllers
                 dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.Current.Game.GetValidMoves(session.Current.Game.WhoseTurn)),
                 whoseTurn = session.Current.Game.WhoseTurn.ToString().ToLowerInvariant(),
                 variant = puzzle.Variant,
-                additionalInfo = additionalInfo,
+                additionalInfo,
                 authorUrl = Url.Action("Profile", "User", new { id = session.Current.Author }),
                 pocket = session.Current.Game.GenerateJsonPocket(),
                 check = session.Current.Game.IsInCheck(Player.White) ? "white" : (session.Current.Game.IsInCheck(Player.Black) ? "black" : null)
@@ -482,7 +476,7 @@ namespace ChessVariantsTraining.Controllers
             SubmittedMoveResponse response = session.ApplyDrop(role, pos);
             if (response.Success && response.Correct == SubmittedMoveResponse.INVALID_MOVE)
             {
-                return Json(new { success = true, invalidDrop = true, pos = pos });
+                return Json(new { success = true, invalidDrop = true, pos });
             }
             return await JsonAfterMove(response, session);
         }
@@ -572,16 +566,20 @@ namespace ChessVariantsTraining.Controllers
         [Restricted(true, UserRole.GENERATOR)]
         public async Task<IActionResult> SubmitGeneratedCrazyhousePuzzle(string json)
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings();
-            settings.MissingMemberHandling = MissingMemberHandling.Ignore;
+            JsonSerializerSettings settings = new JsonSerializerSettings
+            {
+                MissingMemberHandling = MissingMemberHandling.Ignore
+            };
 
             GeneratedPuzzle gen = JsonConvert.DeserializeObject<GeneratedPuzzle>(json, settings);
 
-            Puzzle puzzle = new Puzzle();
-            puzzle.Variant = "Crazyhouse";
-            puzzle.Rating = new Rating(1500, 350, 0.06);
-            puzzle.Author = (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value;
-            puzzle.Approved = (await loginHandler.LoggedInUserAsync(HttpContext)).Roles.Contains(UserRole.GENERATOR);
+            Puzzle puzzle = new Puzzle
+            {
+                Variant = "Crazyhouse",
+                Rating = new Rating(1500, 350, 0.06),
+                Author = (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value,
+                Approved = (await loginHandler.LoggedInUserAsync(HttpContext)).Roles.Contains(UserRole.GENERATOR)
+            };
             puzzle.InReview = !puzzle.Approved;
             if (!puzzle.InReview)
             {

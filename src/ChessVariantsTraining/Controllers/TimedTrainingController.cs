@@ -47,7 +47,7 @@ namespace ChessVariantsTraining.Controllers
             timedTrainingSessionRepository.Add(session);
             TrainingPosition randomPosition = await positionRepository.GetRandomAsync(type);
             session.SetPosition(randomPosition);
-            return Json(new { success = true, sessionId = sessionId, seconds = 60, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
+            return Json(new { success = true, sessionId, seconds = 60, fen = randomPosition.FEN, color = session.AssociatedGame.WhoseTurn.ToString().ToLowerInvariant(),
                               dests = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(session.AssociatedGame.GetValidMoves(session.AssociatedGame.WhoseTurn)), lastMove = session.CurrentLastMoveToDisplay });
         
         }
@@ -168,7 +168,7 @@ namespace ChessVariantsTraining.Controllers
             }
             double score = session.Score.Score;
             timedTrainingSessionRepository.Remove(session.SessionID);
-            return Json(new { success = true, score = score });
+            return Json(new { success = true, score });
         }
     }
 }

@@ -33,12 +33,14 @@ namespace ChessVariantsTraining.Controllers
 
         IActionResult StartNewSession(Piece[][] board, string variant)
         {
-            GameCreationData gcd = new GameCreationData();
-            gcd.Board = board;
-            gcd.EnPassant = null;
-            gcd.HalfMoveClock = 0;
-            gcd.FullMoveNumber = 1;
-            gcd.WhoseTurn = Player.White;
+            GameCreationData gcd = new GameCreationData
+            {
+                Board = board,
+                EnPassant = null,
+                HalfMoveClock = 0,
+                FullMoveNumber = 1,
+                WhoseTurn = Player.White
+            };
             gcd.CanBlackCastleKingSide = gcd.CanBlackCastleQueenSide = gcd.CanWhiteCastleKingSide = gcd.CanWhiteCastleQueenSide = false;
 
             ChessGame game = variant == "Atomic" ? (ChessGame)new AtomicChessGame(gcd) : new AntichessGame(gcd);
@@ -58,7 +60,7 @@ namespace ChessVariantsTraining.Controllers
 
             endgameTrainingSessionRepository.Add(session);
             string fen = session.InitialFEN;
-            return Json(new { success = true, fen = fen, sessionId = sessionId });
+            return Json(new { success = true, fen, sessionId });
         }
 
         [HttpGet]

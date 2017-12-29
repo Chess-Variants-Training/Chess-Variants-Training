@@ -42,10 +42,9 @@ namespace ChessVariantsTraining.Services
                 return null;
             }
 
-            long identifier;
             string[] cookieParts = requestCookies["login"].Split(':');
 
-            if (!long.TryParse(cookieParts[0], out identifier))
+            if (!long.TryParse(cookieParts[0], out long identifier))
             {
                 return null;
             }
@@ -78,10 +77,9 @@ namespace ChessVariantsTraining.Services
                 return null;
             }
 
-            long identifier;
             string[] cookieParts = requestCookies["login"].Split(':');
 
-            if (!long.TryParse(cookieParts[0], out identifier))
+            if (!long.TryParse(cookieParts[0], out long identifier))
             {
                 return null;
             }
@@ -128,8 +126,7 @@ namespace ChessVariantsTraining.Services
 
             string[] cookieParts = requestCookies["login"].Split(':');
 
-            long identifier;
-            if (!long.TryParse(cookieParts[0], out identifier))
+            if (!long.TryParse(cookieParts[0], out long identifier))
             {
                 return;
             }

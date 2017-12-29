@@ -122,11 +122,15 @@ namespace ChessVariantsTraining.Controllers
                 check = "black";
             }
 
-            List<string> replay = new List<string>();
-            replay.Add(game.InitialFEN);
+            List<string> replay = new List<string>
+            {
+                game.InitialFEN
+            };
 
-            List<string> replayChecks = new List<string>();
-            replayChecks.Add(null);
+            List<string> replayChecks = new List<string>
+            {
+                null
+            };
 
             List<string> replayMoves = new List<string>();
 
@@ -135,8 +139,10 @@ namespace ChessVariantsTraining.Controllers
             List<Dictionary<string, int>> replayPocket;
             if (replayGame is CrazyhouseChessGame)
             {
-                replayPocket = new List<Dictionary<string, int>>();
-                replayPocket.Add(replayGame.GenerateJsonPocket());
+                replayPocket = new List<Dictionary<string, int>>
+                {
+                    replayGame.GenerateJsonPocket()
+                };
             }
             else
             {

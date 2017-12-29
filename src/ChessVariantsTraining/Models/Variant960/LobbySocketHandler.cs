@@ -136,9 +136,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     List<LobbySeek> seeks = seekRepository.GetShallowCopy();
                     foreach (LobbySeek s in seeks)
                     {
-                        Dictionary<string, object> msg = new Dictionary<string, object>();
-                        msg.Add("t", "add");
-                        msg.Add("d", await s.SeekJson(userRepository));
+                        Dictionary<string, object> msg = new Dictionary<string, object>
+                        {
+                            { "t", "add" },
+                            { "d", await s.SeekJson(userRepository) }
+                        };
                         await Send(JsonConvert.SerializeObject(msg));
                     }
                     break;

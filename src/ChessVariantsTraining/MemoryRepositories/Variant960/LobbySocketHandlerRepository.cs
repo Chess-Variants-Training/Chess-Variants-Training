@@ -37,9 +37,11 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
 
         public async Task SendSeekAddition(LobbySeek seek)
         {
-            Dictionary<string, object> msg = new Dictionary<string, object>();
-            msg.Add("t", "add");
-            msg.Add("d", await seek.SeekJson(userRepository));
+            Dictionary<string, object> msg = new Dictionary<string, object>
+            {
+                { "t", "add" },
+                { "d", await seek.SeekJson(userRepository) }
+            };
             await SendAll(JsonConvert.SerializeObject(msg));
         }
 

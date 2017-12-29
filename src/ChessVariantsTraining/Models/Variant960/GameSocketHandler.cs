@@ -237,9 +237,11 @@ namespace ChessVariantsTraining.Models.Variant960
                     messageForPlayerWhoseTurnItIs["lastMove"] = messageForOthers["lastMove"] = new string[] { moveParts[0], moveParts[1] };
                     messageForPlayerWhoseTurnItIs["turnColor"] = messageForOthers["turnColor"] = Subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();
                     messageForPlayerWhoseTurnItIs["plies"] = messageForOthers["plies"] = Subject.ChessGame.Moves.Count;
-                    Dictionary<string, double> clockDictionary = new Dictionary<string, double>();
-                    clockDictionary["white"] = Subject.ClockWhite.GetSecondsLeft();
-                    clockDictionary["black"] = Subject.ClockBlack.GetSecondsLeft();
+                    Dictionary<string, double> clockDictionary = new Dictionary<string, double>
+                    {
+                        ["white"] = Subject.ClockWhite.GetSecondsLeft(),
+                        ["black"] = Subject.ClockBlack.GetSecondsLeft()
+                    };
                     messageForPlayerWhoseTurnItIs["clock"] = messageForOthers["clock"] = clockDictionary;
                     messageForPlayerWhoseTurnItIs["check"] = messageForOthers["check"] = check;
                     messageForPlayerWhoseTurnItIs["isCapture"] = messageForOthers["isCapture"] = mt.HasFlag(MoveType.Capture);
@@ -343,8 +345,10 @@ namespace ChessVariantsTraining.Models.Variant960
                     await HandlePotentialFlag(flagMessage.Player);
                     break;
                 case "syncChat":
-                    Dictionary<string, object> syncedChat = new Dictionary<string, object>();
-                    syncedChat["t"] = "chatSync";
+                    Dictionary<string, object> syncedChat = new Dictionary<string, object>
+                    {
+                        ["t"] = "chatSync"
+                    };
                     if (Subject.White.Equals(client) || Subject.Black.Equals(client))
                     {
                         syncedChat["player"] = Subject.PlayerChats.Select(x => x.GetHtml());

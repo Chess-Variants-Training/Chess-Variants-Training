@@ -38,7 +38,7 @@ namespace ChessVariantsTraining.Controllers
             if (await puzzleRepository.ApproveAsync(id, (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value))
             {
                 Puzzle approved = await puzzleRepository.GetAsync(id);
-                Notification notif = new Notification(Guid.NewGuid().ToString(), approved.Author, "Your puzzle has been approved!", false, Url.Action("TrainId", "Puzzle", new { id = id }), DateTime.UtcNow);
+                Notification notif = new Notification(Guid.NewGuid().ToString(), approved.Author, "Your puzzle has been approved!", false, Url.Action("TrainId", "Puzzle", new { id }), DateTime.UtcNow);
                 await notificationRepository.AddAsync(notif);
                 return Json(new { success = true });
             }

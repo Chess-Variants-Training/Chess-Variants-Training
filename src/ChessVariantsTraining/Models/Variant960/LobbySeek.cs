@@ -53,8 +53,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 return false;
             }
 
-            int secondsInitial;
-            if (!int.TryParse(parts[0], out secondsInitial))
+            if (!int.TryParse(parts[0], out int secondsInitial))
             {
                 seek = null;
                 return false;
@@ -65,8 +64,7 @@ namespace ChessVariantsTraining.Models.Variant960
                 return false;
             }
 
-            int secondsIncrement;
-            if (!int.TryParse(parts[1], out secondsIncrement))
+            if (!int.TryParse(parts[1], out int secondsIncrement))
             {
                 seek = null;
                 return false;
@@ -99,8 +97,10 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public async Task<Dictionary<string, string>> SeekJson(IUserRepository userRepository)
         {
-            Dictionary<string, string> data = new Dictionary<string, string>();
-            data.Add("l", FullVariantName);
+            Dictionary<string, string> data = new Dictionary<string, string>
+            {
+                { "l", FullVariantName }
+            };
             if (Owner is RegisteredPlayer)
             {
                 data.Add("o", (await userRepository.FindByIdAsync((Owner as RegisteredPlayer).UserId)).Username);

@@ -22,7 +22,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public override int GetHashCode()
         {
-            return new { Type = "Anonymous", AnonymousIdentifier = AnonymousIdentifier }.GetHashCode();
+            return new { Type = "Anonymous", AnonymousIdentifier }.GetHashCode();
         }
 
         public override bool Equals(GamePlayer other)
