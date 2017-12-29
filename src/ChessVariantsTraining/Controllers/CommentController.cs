@@ -39,8 +39,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/PostComment", Name = "PostComment")]
         public async Task<IActionResult> PostComment(string commentBody, string puzzleId)
         {
-            int puzzleIdI;
-            if (!int.TryParse(puzzleId, out puzzleIdI))
+            if (!int.TryParse(puzzleId, out int puzzleIdI))
             {
                 return Json(new { success = false, error = "Invalid puzzle ID." });
             }
@@ -95,8 +94,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/Upvote")]
         public async Task<IActionResult> Upvote(string commentId)
         {
-            int commentIdI;
-            if (!int.TryParse(commentId, out commentIdI))
+            if (!int.TryParse(commentId, out int commentIdI))
             {
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
@@ -127,8 +125,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/Downvote")]
         public async Task<IActionResult> Downvote(string commentId)
         {
-            int commentIdI;
-            if (!int.TryParse(commentId, out commentIdI))
+            if (!int.TryParse(commentId, out int commentIdI))
             {
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
@@ -159,8 +156,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/UndoVote")]
         public async Task<IActionResult> UndoVote(string commentId)
         {
-            int commentIdI;
-            if (!int.TryParse(commentId, out commentIdI))
+            if (!int.TryParse(commentId, out int commentIdI))
             {
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
@@ -181,14 +177,12 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/Reply")]
         public async Task<IActionResult> Reply(string to, string body, string puzzleId)
         {
-            int parentId;
-            if (!int.TryParse(to, out parentId))
+            if (!int.TryParse(to, out int parentId))
             {
                 return Json(new { success = false, error = "Invalid parent ID." });
             }
 
-            int puzzleIdI;
-            if (!int.TryParse(puzzleId, out puzzleIdI))
+            if (!int.TryParse(puzzleId, out int puzzleIdI))
             {
                 return Json(new { success = false, error = "Invalid puzzle ID." });
             }
@@ -219,8 +213,7 @@ namespace ChessVariantsTraining.Controllers
         [Route("/Comment/Mod/Delete")]
         public async Task<IActionResult> DeleteComment(string commentId)
         {
-            int commentIdI;
-            if (!int.TryParse(commentId, out commentIdI))
+            if (!int.TryParse(commentId, out int commentIdI))
             {
                 return Json(new { success = false, error = "Invalid comment ID." });
             }
