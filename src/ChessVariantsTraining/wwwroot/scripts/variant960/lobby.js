@@ -46,19 +46,19 @@
                 var initialTimeSeconds = "0";
                 break;
             case 1:
-                var initialTimeSeconds = "30";
+                initialTimeSeconds = "30";
                 break;
             case 2:
-                var initialTimeSeconds = "45";
+                initialTimeSeconds = "45";
                 break;
             case 3:
-                var initialTimeSeconds = "60";
+                initialTimeSeconds = "60";
                 break;
             case 4:
-                var initialTimeSeconds = "90";
+                initialTimeSeconds = "90";
                 break;
             default:
-                var initialTimeSeconds = ((initialTimeValue - 3) * 60).toString(10);
+                initialTimeSeconds = ((initialTimeValue - 3) * 60).toString(10);
                 break;
         }
         var inc = document.getElementById("inc-range").value;
@@ -83,7 +83,7 @@
             if (e.target.getAttribute("id") && e.target.getAttribute("id").startsWith("seek-")) {
                 var seekId = e.target.getAttribute("id").slice(5);
             } else {
-                var seekId = e.target.parentElement.getAttribute("id").slice(5);
+                seekId = e.target.parentElement.getAttribute("id").slice(5);
             }
             ws.send(JSON.stringify({ "t": "join", "d": seekId }));
         }

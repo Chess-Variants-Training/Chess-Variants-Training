@@ -26,7 +26,7 @@ function setup(puzzleId) {
         window.ground.set({
             fen: jsonResponse.fen,
             check: null,
-            orientation: jsonResponse.whoseTurn == "white" || window.currentVariant == "RacingKings" ? "white" : "black",
+            orientation: jsonResponse.whoseTurn === "white" || window.currentVariant === "RacingKings" ? "white" : "black",
             turnColor: jsonResponse.whoseTurn,
             lastMove: null,
             selected: null,
@@ -109,7 +109,7 @@ function clearExplanation() {
 
 function processPuzzleMove(origin, destination, metadata) {
     if (ChessgroundExtensions.needsPromotion(window.ground, destination)) {
-        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitPuzzleMove, window.ground, window.currentVariant == "Antichess");
+        ChessgroundExtensions.drawPromotionDialog(origin, destination, document.getElementById("chessground"), submitPuzzleMove, window.ground, window.currentVariant === "Antichess");
     } else {
         submitPuzzleMove(origin, destination, null);
     }
@@ -241,30 +241,30 @@ function loadComments() {
         document.getElementById("commentContainer").innerHTML = req.responseText;
         var comments = document.getElementById("commentContainer").querySelectorAll(".comment");
         for (var i = 0; i < comments.length; i++) {
-            comments[i].style.marginLeft = (parseInt(comments[i].dataset.indentlevel, 10) * 1.5) + "%";
+            comments[i].style.marginLeft = parseInt(comments[i].dataset.indentlevel, 10) * 1.5 + "%";
         }
         var voteLinks = document.getElementById("commentContainer").querySelectorAll("a[data-vote]");
-        for (var i = 0; i < voteLinks.length; i++) {
+        for (i = 0; i < voteLinks.length; i++) {
             voteLinks[i].addEventListener("click", voteClicked);
         }
         var replyLinks = document.getElementById("commentContainer").querySelectorAll("a[data-to]");
-        for (var i = 0; i < replyLinks.length; i++) {
+        for (i = 0; i < replyLinks.length; i++) {
             replyLinks[i].addEventListener("click", replyLinkClicked);
         }
         var sendLinks = document.getElementById("commentContainer").getElementsByClassName("send-reply");
-        for (var i = 0; i < sendLinks.length; i++) {
+        for (i = 0; i < sendLinks.length; i++) {
             sendLinks[i].addEventListener("click", sendLinkClicked);
         }
         var cancelLinks = document.getElementById("commentContainer").getElementsByClassName("cancel-reply");
-        for (var i = 0; i < cancelLinks.length; i++) {
+        for (i = 0; i < cancelLinks.length; i++) {
             cancelLinks[i].addEventListener("click", cancelLinkClicked);
         }
         var reportLinks = document.getElementById("commentContainer").getElementsByClassName("report-link");
-        for (var i = 0; i < reportLinks.length; i++) {
+        for (i = 0; i < reportLinks.length; i++) {
             reportLinks[i].addEventListener("click", reportCommentLinkClicked);
         }
         var modLinks = document.getElementById("commentContainer").getElementsByClassName("mod-link");
-        for (var i = 0; i < modLinks.length; i++) {
+        for (i = 0; i < modLinks.length; i++) {
             modLinks[i].addEventListener("click", modLinkClicked);
         }
         if (window.location.search !== "") {
@@ -501,7 +501,7 @@ function startDragNewPiece(e) {
     e = e || window.event;
 
     var color = e.target.dataset.color;
-    if (color != window.yourColor) return;
+    if (color !== window.yourColor) return;
 
     var role = e.target.dataset.role;
     if (!window.pocket[color + "-" + role] || window.pocket[color + "-" + role] < 1) return;

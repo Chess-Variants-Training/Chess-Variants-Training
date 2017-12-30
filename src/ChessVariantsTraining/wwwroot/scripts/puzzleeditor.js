@@ -151,7 +151,7 @@ function startDragNewPiece(e) {
     e = e || window.event;
 
     var color = e.target.dataset.color;
-    if (color != window.ground.state.turnColor) return;
+    if (color !== window.ground.state.turnColor) return;
 
     var role = e.target.dataset.role;
     if (window.zhPocketCount[color + "-" + role] < 1) return;

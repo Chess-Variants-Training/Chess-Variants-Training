@@ -37,7 +37,7 @@
         }
     });
     function atLastReplayItem() {
-        return currentReplayItem + 1 == replayFens.length;
+        return currentReplayItem + 1 === replayFens.length;
     }
 
     window.addEventListener("load", function () {
@@ -53,11 +53,11 @@
             soundTurnedOn = !soundTurnedOn;
             localStorage.setItem("sound", soundTurnedOn ? "yes" : "no");
             renderSoundText();
-        })
+        });
         ground = Chessground(document.getElementById("chessground"), {
             fen: fen,
             coordinates: true,
-            orientation: isRacingKings ? "white" : (myColor || "white"),
+            orientation: isRacingKings ? "white" : myColor || "white",
             turnColor: whoseTurn,
             lastMove: lastMove,
             viewOnly: !isPlayer || isFinished,
@@ -90,7 +90,7 @@
 
         window.addEventListener("beforeunload", function () {
             closing = true;
-        })
+        });
 
         document.getElementById("chat-input").addEventListener("keydown", chatKeyDown);
         if (document.getElementById("switch-to-players")) {
@@ -193,7 +193,7 @@
                     replayPocket.push(message.pocket);
                 }
                 latestDests = message.dests;
-                needsReplayWarning = isPlayer && myColor == message.turnColor;
+                needsReplayWarning = isPlayer && myColor === message.turnColor;
                 if (!atLastReplayItem() && needsReplayWarning) {
                     document.getElementById("controls-end").classList.add("orange-bg");
                 }
@@ -202,7 +202,7 @@
                     gotOutcome(message.outcome, message.termination);
                 }
 
-                if (isPlayer && myColor == message.turnColor && premove && !message.outcome) {
+                if (isPlayer && myColor === message.turnColor && premove && !message.outcome) {
                     ws.send(JSON.stringify({ "t": "premove", "d": premove.origin + '-' + premove.destination }));
                     premoveUnset();
                     ground.cancelPremove();
@@ -393,7 +393,7 @@
     function clockDisplay(time) {
         time = Math.max(0, time);
         var minutes = Math.floor(time / 60);
-        var seconds = Math.floor((time % 60) * 10) / 10;
+        var seconds = Math.floor(time % 60 * 10) / 10;
         return minutes + ":" + (seconds < 10 ? "0" + seconds.toFixed(1) : seconds.toFixed(1));
     }
 
@@ -403,7 +403,7 @@
         var latestUpdate = new Date();
         clockInfo[which + "Value"] = clockInfo[which + "Value"] - (latestUpdate - clockInfo[which + "Update"]) / 1000;
         clockInfo[which + "Update"] = latestUpdate;
-        if (clockInfo[which + "Value"] <= 0 && (new Date() - latestFlagRequest) > 500) {
+        if (clockInfo[which + "Value"] <= 0 && new Date() - latestFlagRequest > 500) {
             latestFlagRequest = new Date();
             ws.send(JSON.stringify({ "t": "flag", "d": which }));
         }
@@ -532,7 +532,7 @@
     }
 
     function replayControlClickedPrev(e) {
-        if (currentReplayItem == 0) return;
+        if (currentReplayItem === 0) return;
 
         currentReplayItem--;
         updateBoardAfterReplayStateChanged();
@@ -556,7 +556,7 @@
         var destsToUse = atLastReplayItem() ? latestDests : {};
         ground.set({
             fen: replayFens[currentReplayItem],
-            turnColor: replayFens.length % 2 == 0 ? 'black' : 'white',
+            turnColor: replayFens.length % 2 === 0 ? 'black' : 'white',
             lastMove: replayMoves[currentReplayItem] ? replayMoves[currentReplayItem].split("-") : null,
             movable: {
                 dests: destsToUse

@@ -59,12 +59,12 @@ function updateChartData(ctx, labels, data, variable) {
             pointBackgroundColor: window.borderColors[keys[i]]
         });
     }
-    var data = {
+    var data1 = {
         labels: labels,
         datasets: datasets
     };
     window[variable] = Chart.Line(ctx, {
-        data: data,
+        data: data1,
         options: {
             responsive: true,
             maintainAspectRatio: false,
