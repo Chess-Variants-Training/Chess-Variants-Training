@@ -388,6 +388,11 @@
 
     function updateClockElement(which) {
         document.getElementById(which + "-clock").textContent = clockDisplay(clockInfo[which + "Value"]);
+        if (clockInfo[which + "Value"] < 20) {
+            document.getElementById(which + "-clock").style.color = "red";
+        } else {
+            document.getElementById(which + "-clock").style.color = "";
+        }
     }
 
     function clockDisplay(time) {

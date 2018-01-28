@@ -17,5 +17,5 @@
     "GameCollectionName": "games"
   },
   "TimedTrainingSessionAutoAcknowledgerDelay": 10,
-  "AssetVersion": 5
+  "AssetVersion": 6
 }
