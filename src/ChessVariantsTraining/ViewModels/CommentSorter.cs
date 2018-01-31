@@ -26,12 +26,12 @@ namespace ChessVariantsTraining.ViewModels
         {
             List<Comment> result = new List<Comment>();
 
-            IEnumerable<Task<Comment>> currentTopLevel = list.Where(x => x.ParentID == parent)
-                .Select(async x => new Comment(x, indentLevel, await voteRepo.GetScoreForCommentAsync(x.ID), x.Deleted, (await userRepo.FindByIdAsync(x.Author)).Username))
-                .OrderByDescending(async x => (await x).Score);
-            foreach (Task<Comment> commentTask in currentTopLevel)
+            IEnumerable<Task<Comment>> currentTopLevelTask = list.Where(x => x.ParentID == parent)
+                .Select(async x => new Comment(x, indentLevel, await voteRepo.GetScoreForCommentAsync(x.ID), x.Deleted, (await userRepo.FindByIdAsync(x.Author)).Username));
+            IEnumerable<Comment> currentTopLevel = await Task.WhenAll(currentTopLevelTask);
+            currentTopLevel = currentTopLevel.OrderByDescending(x => x.Score);
+            foreach (Comment comment in currentTopLevel)
             {
-                Comment comment = await commentTask;
                 result.Add(comment);
                 result.AddRange(await OrderRecursivelyAsync(list, comment.ID, indentLevel + 1));
             }
