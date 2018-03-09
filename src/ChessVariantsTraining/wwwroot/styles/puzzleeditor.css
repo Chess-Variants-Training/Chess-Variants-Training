@@ -9,6 +9,10 @@ div.pocket-piece.unavailable {
     opacity: 0.3;
 }
 
+div.pocket-piece {
+    touch-action: none;
+}
+
 div.selected {
     background-color: aquamarine;
 }
