@@ -35,7 +35,7 @@ div.selected {
     cursor: pointer;
 }
 
-span[data-counter-for] {
+span[data-counter-for], .pocket-table, .pocket-zh {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
