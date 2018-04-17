@@ -19,8 +19,9 @@ namespace ChessVariantsTraining.Controllers
         IGameSocketHandlerRepository gameSocketHandlerRepository;
         IGameRepoForSocketHandlers gameRepoForSocketHandlers;
         IMoveCollectionTransformer moveCollectionTransformer;
+        IGameConstructor gameConstructor;
 
-        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IGameSocketHandlerRepository _gameSocketHandlerRepository, IGameRepoForSocketHandlers _gameRepoForSocketHandlers, IMoveCollectionTransformer _moveCollectionTransformer)
+        public SocketController(IUserRepository _userRepository, IPersistentLoginHandler _loginHandler, ILobbySocketHandlerRepository _lobbySocketHandlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IGameSocketHandlerRepository _gameSocketHandlerRepository, IGameRepoForSocketHandlers _gameRepoForSocketHandlers, IMoveCollectionTransformer _moveCollectionTransformer, IGameConstructor _gameConstructor)
             : base(_userRepository, _loginHandler)
         {
             lobbySocketHandlerRepository = _lobbySocketHandlerRepository;
@@ -30,6 +31,7 @@ namespace ChessVariantsTraining.Controllers
             gameSocketHandlerRepository = _gameSocketHandlerRepository;
             gameRepoForSocketHandlers = _gameRepoForSocketHandlers;
             moveCollectionTransformer = _moveCollectionTransformer;
+            gameConstructor = _gameConstructor;
         }
 
         [Route("/Socket/Lobby")]
@@ -57,7 +59,7 @@ namespace ChessVariantsTraining.Controllers
                 }
                 client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
             }
-            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider, userRepository);
+            LobbySocketHandler handler = new LobbySocketHandler(ws, client, lobbySocketHandlerRepository, seekRepository, gameRepository, randomProvider, userRepository, gameConstructor);
             lobbySocketHandlerRepository.Add(handler);
             await handler.LobbyLoop();
         }
@@ -87,7 +89,7 @@ namespace ChessVariantsTraining.Controllers
                 }
                 client = new AnonymousPlayer() { AnonymousIdentifier = HttpContext.Session.GetString("anonymousIdentifier") };
             }
-            GameSocketHandler handler = new GameSocketHandler(ws, client, gameRepoForSocketHandlers, gameSocketHandlerRepository, moveCollectionTransformer, userRepository, randomProvider, id);
+            GameSocketHandler handler = new GameSocketHandler(ws, client, gameRepoForSocketHandlers, gameSocketHandlerRepository, moveCollectionTransformer, userRepository, randomProvider, gameConstructor, id);
             if (!handler.GameExists)
             {
                 HttpContext.Response.StatusCode = 400;

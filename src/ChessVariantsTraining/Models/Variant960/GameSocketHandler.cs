@@ -28,6 +28,7 @@ namespace ChessVariantsTraining.Models.Variant960
         IMoveCollectionTransformer moveCollectionTransformer;
         IUserRepository userRepository;
         IRandomProvider randomProvider;
+        IGameConstructor gameConstructor;
         string gameId;
 
         public string SubjectID
@@ -79,7 +80,7 @@ namespace ChessVariantsTraining.Models.Variant960
             }
         }
 
-        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, IRandomProvider _randomProvider, string _gameId)
+        public GameSocketHandler(WebSocket socket, GamePlayer _client, IGameRepoForSocketHandlers _gameRepository, IGameSocketHandlerRepository _handlerRepository, IMoveCollectionTransformer _moveCollectionTransformer, IUserRepository _userRepository, IRandomProvider _randomProvider, IGameConstructor _gameConstructor, string _gameId)
         {
             ws = socket;
             client = _client;
@@ -89,6 +90,7 @@ namespace ChessVariantsTraining.Models.Variant960
             userRepository = _userRepository;
             randomProvider = _randomProvider;
             gameId = _gameId;
+            gameConstructor = _gameConstructor;
             Disposed = false;
         }
 
@@ -421,7 +423,8 @@ namespace ChessVariantsTraining.Models.Variant960
                             Subject.IsSymmetrical,
                             Subject.TimeControl,
                             DateTime.UtcNow,
-                            Subject.RematchLevel + 1);
+                            Subject.RematchLevel + 1,
+                            gameConstructor);
                         await gameRepository.AddAsync(newGame);
                         await gameRepository.SetRematchIDAsync(Subject, newGame.ID);
                         string rematchJson = "{\"t\":\"rematch\",\"d\":\"" + newGame.ID + "\"}";

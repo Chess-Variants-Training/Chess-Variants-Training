@@ -6,6 +6,7 @@ using ChessDotNet.Variants.Horde;
 using ChessDotNet.Variants.KingOfTheHill;
 using ChessDotNet.Variants.RacingKings;
 using ChessDotNet.Variants.ThreeCheck;
+using ChessVariantsTraining.Services;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.Collections.Generic;
@@ -53,23 +54,6 @@ namespace ChessVariantsTraining.Models.Variant960
             public const string UNTERMINATED = "Unterminated";
             public const string ADJUDICATION = "Adjudication";
             public const string ABORTED = "Aborted";
-        }
-
-        public static class Variants
-        {
-            public const string ANTICHESS960SYMMETRICAL = "Antichess 960 (symmetrical)";
-            public const string ANTICHESS960ASYMMETRICAL = "Antichess 960 (asymmetrical)";
-            public const string ATOMIC960SYMMETRICAL = "Atomic 960 (symmetrical)";
-            public const string ATOMIC960ASYMMETRICAL = "Atomic 960 (asymmetrical)";
-            public const string CRAZYHOUSE960SYMMETRICAL = "Crazyhouse 960 (symmetrical)";
-            public const string CRAZYHOUSE960ASYMMETRICAL = "Crazyhouse 960 (asymmetrical)";
-            public const string HORDE960 = "Horde 960";
-            public const string KOTH960SYMMETRICAL = "King of the Hill 960 (symmetrical)";
-            public const string KOTH960ASYMMETRICAL = "King of the Hill 960 (asymmetrical)";
-            public const string RK1440SYMMETRICAL = "Racing Kings 1440 (symmetrical)";
-            public const string RK1440ASYMMETRICAL = "Racing Kings 1440 (asymmetrical)";
-            public const string THREECHECK960SYMMETRICAL = "Three-check 960 (symmetrical)";
-            public const string THREECHECK960ASYMMETRICAL = "Three-check 960 (asymmetrical)";
         }
 
         [BsonElement("_id")]
@@ -161,7 +145,7 @@ namespace ChessVariantsTraining.Models.Variant960
 
         public Game() { }
 
-        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, bool isSymmetrical, TimeControl tc, DateTime startedUtc, int rematchLevel)
+        public Game(string id, GamePlayer white, GamePlayer black, string shortVariant, string fullVariant, int nWhite, int nBlack, bool isSymmetrical, TimeControl tc, DateTime startedUtc, int rematchLevel, IGameConstructor gameConstructor)
         {
             ID = id;
             White = white;
@@ -174,50 +158,20 @@ namespace ChessVariantsTraining.Models.Variant960
             TimeControl = tc;
             ShortVariantName = shortVariant;
             FullVariantName = fullVariant;
-            switch (fullVariant)
+            string fen;
+            if (shortVariant == "Horde")
             {
-                case Variants.ANTICHESS960ASYMMETRICAL:
-                    ChessGame = new AntichessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
-                    break;
-                case Variants.ANTICHESS960SYMMETRICAL:
-                    ChessGame = new AntichessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
-                    break;
-                case Variants.ATOMIC960ASYMMETRICAL:
-                    ChessGame = new AtomicChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
-                    break;
-                case Variants.ATOMIC960SYMMETRICAL:
-                    ChessGame = new AtomicChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
-                    break;
-                case Variants.CRAZYHOUSE960ASYMMETRICAL:
-                    ChessGame = new CrazyhouseChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
-                    break;
-                case Variants.CRAZYHOUSE960SYMMETRICAL:
-                    ChessGame = new CrazyhouseChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
-                    break;
-                case Variants.HORDE960:
-                    ChessGame = new HordeChessGame(ChessUtilities.FenForHorde960(nWhite));
-                    break;
-                case Variants.KOTH960ASYMMETRICAL:
-                    ChessGame = new KingOfTheHillChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
-                    break;
-                case Variants.KOTH960SYMMETRICAL:
-                    ChessGame = new KingOfTheHillChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
-                    break;
-                case Variants.RK1440ASYMMETRICAL:
-                    ChessGame = new RacingKingsChessGame(ChessUtilities.FenForRacingKings1440Asymmetrical(nWhite, nBlack));
-                    break;
-                case Variants.RK1440SYMMETRICAL:
-                    ChessGame = new RacingKingsChessGame(ChessUtilities.FenForRacingKings1440Symmetrical(nWhite));
-                    break;
-                case Variants.THREECHECK960ASYMMETRICAL:
-                    ChessGame = new ThreeCheckChessGame(ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack));
-                    break;
-                case Variants.THREECHECK960SYMMETRICAL:
-                    ChessGame = new ThreeCheckChessGame(ChessUtilities.FenForChess960Symmetrical(nWhite));
-                    break;
-                default:
-                    throw new InvalidOperationException("Game constructor: invalid variant '" + fullVariant + "'");
+                fen = ChessUtilities.FenForHorde960(nBlack);
             }
+            else if (shortVariant == "RacingKings")
+            {
+                fen = ChessUtilities.FenForRacingKings1440Asymmetrical(nWhite, nBlack);
+            }
+            else
+            {
+                fen = ChessUtilities.FenForChess960Asymmetrical(nWhite, nBlack);
+            }
+            ChessGame = gameConstructor.Construct(shortVariant, fen);
             InitialFEN = LatestFEN = ChessGame.GetFen();
             PlayerChats = new List<ChatMessage>();
             SpectatorChats = new List<ChatMessage>();

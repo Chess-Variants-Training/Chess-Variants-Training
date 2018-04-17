@@ -36,13 +36,15 @@
                 <option value="ThreeCheck">Three-Check 960</option>
             </select>
         </p>
-        <p>
-            Board:
-            <select id="symmetry-selector">
-                <option value="symmetrical">Symmetrical</option>
-                <option value="asymetrical">Asymmetrical</option>
-            </select>
-        </p>
+        <hr>
+        <input type="radio" name="pos-radio" checked="checked" value="random">Random:
+        <select id="symmetry-selector">
+            <option value="symmetrical">Symmetrical</option>
+            <option value="asymetrical">Asymmetrical</option>
+        </select><br><br>
+        <input type="radio" name="pos-radio" value="number">Position from numbers:<br>
+        White: <input type="number" id="white-position" min="0" max="1439"><br>
+        Black: <input type="number" id="black-position" min="0" max="1439"><br>
         <hr>
         <button id="create-game">Create game</button>
     </div>

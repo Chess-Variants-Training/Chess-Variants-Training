@@ -21,6 +21,7 @@ namespace ChessVariantsTraining.Models.Variant960
         IGameRepository gameRepository;
         IRandomProvider randomProvider;
         IUserRepository userRepository;
+        IGameConstructor gameConstructor;
 
         public bool Closed
         {
@@ -45,7 +46,7 @@ namespace ChessVariantsTraining.Models.Variant960
         }
         public bool Disposed { get; private set; }
 
-        public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IUserRepository _userRepository)
+        public LobbySocketHandler(WebSocket socket, GamePlayer _client, ILobbySocketHandlerRepository _handlerRepository, ILobbySeekRepository _seekRepository, IGameRepository _gameRepository, IRandomProvider _randomProvider, IUserRepository _userRepository, IGameConstructor _gameConstructor)
         {
             ws = socket;
             client = _client;
@@ -54,6 +55,7 @@ namespace ChessVariantsTraining.Models.Variant960
             gameRepository = _gameRepository;
             randomProvider = _randomProvider;
             userRepository = _userRepository;
+            gameConstructor = _gameConstructor;
             Disposed = false;
         }
 
@@ -117,16 +119,24 @@ namespace ChessVariantsTraining.Models.Variant960
                     int nWhite;
                     int nBlack;
                     int max = joined.Variant != "RacingKings" ? 960 : 1440;
-                    nWhite = randomProvider.RandomPositiveInt(max);
-                    if (joined.Symmetrical)
+                    if (joined.ChosenPosition == LobbySeek.Position.Random)
                     {
-                        nBlack = nWhite;
+                        nWhite = randomProvider.RandomPositiveInt(max);
+                        if (joined.Symmetrical)
+                        {
+                            nBlack = nWhite;
+                        }
+                        else
+                        {
+                            nBlack = randomProvider.RandomPositiveInt(max);
+                        }
                     }
                     else
                     {
-                        nBlack = randomProvider.RandomPositiveInt(max);
+                        nWhite = joined.WhitePosition;
+                        nBlack = joined.BlackPosition;
                     }
-                    Game game = new Game(await gameRepository.GenerateIdAsync(), hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.Variant, joined.FullVariantName, nWhite, nBlack, joined.Symmetrical, joined.TimeControl, DateTime.UtcNow, 0);
+                    Game game = new Game(await gameRepository.GenerateIdAsync(), hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.Variant, joined.FullVariantName, nWhite, nBlack, nWhite == nBlack, joined.TimeControl, DateTime.UtcNow, 0, gameConstructor);
                     await gameRepository.AddAsync(game);
                     string redirectJson = "{\"t\":\"redirect\",\"d\":\"" + game.ID + "\"}";
                     await Send(redirectJson);
