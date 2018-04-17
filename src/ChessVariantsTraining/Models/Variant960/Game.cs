@@ -1,11 +1,4 @@
 ﻿using ChessDotNet;
-using ChessDotNet.Variants.Antichess;
-using ChessDotNet.Variants.Atomic;
-using ChessDotNet.Variants.Crazyhouse;
-using ChessDotNet.Variants.Horde;
-using ChessDotNet.Variants.KingOfTheHill;
-using ChessDotNet.Variants.RacingKings;
-using ChessDotNet.Variants.ThreeCheck;
 using ChessVariantsTraining.Services;
 using MongoDB.Bson.Serialization.Attributes;
 using System;
