@@ -1,5 +1,4 @@
 ﻿using ChessVariantsTraining.DbRepositories;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +8,12 @@ namespace ChessVariantsTraining.Models.Variant960
 {
     public class LobbySeek
     {
+        public enum Position
+        {
+            Random,
+            FromNumbers
+        }
+
         public string ID { get; set; }
         public TimeControl TimeControl { get; set; }
         public string Variant { get; private set; }
@@ -29,25 +34,31 @@ namespace ChessVariantsTraining.Models.Variant960
                 {
                     beautifiedVariantName = "King of the Hill";
                 }
-                return string.Format("{0} {1}{2}", beautifiedVariantName, Variant != "RacingKings" ? 960 : 1440, Variant != "Horde" ? string.Format(" ({0})", Symmetrical ? "symmetrical" : "asymmetrical") : "");
+                return string.Format("{0} {1}{2}", beautifiedVariantName, Variant != "RacingKings" ? 960 : 1440, Variant != "Horde" ? string.Format(" ({0}, {1})", Symmetrical ? "symmetrical" : "asymmetrical", ChosenPosition == Position.Random ? "random" : WhitePosition + "-" + BlackPosition) : (ChosenPosition == Position.Random ? " (random)" : " (" + BlackPosition + ")"));
             }
         }
+        public Position ChosenPosition { get; private set; }
         public bool Symmetrical { get; private set; }
+        public int WhitePosition { get; private set; }
+        public int BlackPosition { get; private set; }
         public GamePlayer Owner { get; private set; }
         public DateTime LatestBump { get; set; }
 
-        public LobbySeek(TimeControl timeControl, string variant, bool symmetrical, GamePlayer owner)
+        public LobbySeek(TimeControl timeControl, string variant, Position position, bool symmetrical, int whitePosition, int blackPosition, GamePlayer owner)
         {
             TimeControl = timeControl;
             Variant = variant;
-            Symmetrical = symmetrical;
+            ChosenPosition = position;
+            Symmetrical = position == Position.Random ? symmetrical : whitePosition == blackPosition;
+            WhitePosition = whitePosition;
+            BlackPosition = blackPosition;
             Owner = owner;
         }
 
         public static bool TryParse(string encoded, GamePlayer owner, out LobbySeek seek)
         {
             string[] parts = encoded.Split(';');
-            if (parts.Length != 4)
+            if (parts.Length != 7)
             {
                 seek = null;
                 return false;
@@ -84,14 +95,39 @@ namespace ChessVariantsTraining.Models.Variant960
                 return false;
             }
 
-            if (parts[3] != "true" && parts[3] != "false")
+            if (parts[3] != "random" && parts[3] != "number")
             {
                 seek = null;
                 return false;
             }
-            bool symmetrical = parts[3] == "true";
+            Position position = parts[3] == "random" ? Position.Random : Position.FromNumbers;
 
-            seek = new LobbySeek(new TimeControl(secondsInitial, secondsIncrement), variant, symmetrical, owner);
+            if (parts[4] != "true" && parts[4] != "false")
+            {
+                seek = null;
+                return false;
+            }
+            bool symmetrical = parts[4] == "true";
+
+            if (!int.TryParse(parts[5], out int whitePosition) || whitePosition < 0 || whitePosition > (variant != "RacingKings" ? 959 : 1439))
+            {
+                seek = null;
+                return false;
+            }
+
+            if (!int.TryParse(parts[6], out int blackPosition) || blackPosition < 0 || blackPosition > (variant != "RacingKings" ? 959 : 1439))
+            {
+                seek = null;
+                return false;
+            }
+
+            if (whitePosition == 518 && blackPosition == 518 && variant != "RacingKings")
+            {
+                seek = null;
+                return false;
+            }
+
+            seek = new LobbySeek(new TimeControl(secondsInitial, secondsIncrement), variant, position, symmetrical, whitePosition, blackPosition, owner);
             return true;
         }
 

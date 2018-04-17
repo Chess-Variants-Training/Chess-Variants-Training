@@ -63,8 +63,16 @@
         }
         var inc = document.getElementById("inc-range").value;
         var variant = document.getElementById("variant-selector").value;
+        var position = document.querySelector('input[name="pos-radio"]:checked').value;
         var sym = document.getElementById("symmetry-selector").value === "symmetrical" ? "true" : "false";
-        var message = { "t": "create", "d": initialTimeSeconds + ";" + inc + ";" + variant + ";" + sym };
+        var whitePosition = parseInt(document.getElementById("white-position").value, 10) || 0;
+        var blackPosition = parseInt(document.getElementById("black-position").value, 10) || 0;
+        if (whitePosition === 518 && blackPosition === 518 && variant !== "RacingKings") {
+            displayError("You chose the standard starting position; you can play this on lichess.org.");
+            return;
+        }
+        var message = { "t": "create", "d": [initialTimeSeconds, inc, variant, position, sym, whitePosition, blackPosition].join(";") };
+        console.log(message);
         ws.send(JSON.stringify(message));
     }
 
