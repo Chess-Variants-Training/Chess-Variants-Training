@@ -100,6 +100,7 @@
             }
         }
         <p>@Model.RenderWhiteText() @Model.RenderWhiteLink(Url)<br>@Model.RenderBlackText() @Model.RenderBlackLink(Url)</p>
+        <p>@(Model.ShortVariant == "Horde" ? "White's position: standard" : "White's position: " + Model.WhitePosition)<br>Black's position: @Model.BlackPosition</p>
         <p>White clock: <span id="white-clock"></span><br>Black clock: <span id="black-clock"></span></p>
         <p>Variant: @Model.Variant</p>
         <p>Time control: @Model.TimeControl</p>

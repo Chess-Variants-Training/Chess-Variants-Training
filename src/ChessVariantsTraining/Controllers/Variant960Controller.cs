@@ -223,7 +223,9 @@ namespace ChessVariantsTraining.Controllers
                 replayMoves,
                 replayChecks,
                 g.GenerateJsonPocket(),
-                replayPocket);
+                replayPocket,
+                game.PositionWhite,
+                game.PositionBlack);
 
             return View(model);
         }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace ChessVariantsTraining.ViewModels
@@ -175,6 +176,18 @@ namespace ChessVariantsTraining.ViewModels
             private set;
         }
 
+        public int WhitePosition
+        {
+            get;
+            private set;
+        }
+
+        public int BlackPosition
+        {
+            get;
+            private set;
+        }
+
         public Game(string gameId,
             string whiteUsername,
             string blackUsername,
@@ -202,7 +215,9 @@ namespace ChessVariantsTraining.ViewModels
             List<string> replayMoves,
             List<string> replayChecks,
             Dictionary<string, int> zhPocket,
-            List<Dictionary<string, int>> replayPocket)
+            List<Dictionary<string, int>> replayPocket,
+            int whitePosition,
+            int blackPosition)
         {
             GameID = gameId;
             WhiteUsername = whiteUsername;
@@ -210,7 +225,7 @@ namespace ChessVariantsTraining.ViewModels
             WhiteId = whiteId;
             BlackId = blackId;
             ShortVariant = shortVariant;
-            Variant = variant;
+            Variant = variant.Split(new string[] { " (" }, StringSplitOptions.None)[0];
             TimeControl = timeControl;
             FEN = fen;
             IsPlayer = isPlayer;
@@ -232,6 +247,8 @@ namespace ChessVariantsTraining.ViewModels
             ReplayChecks = replayChecks;
             ZhPocket = zhPocket;
             ReplayPocket = replayPocket;
+            WhitePosition = whitePosition;
+            BlackPosition = blackPosition;
         }
 
         public HtmlString RenderWhiteLink(IUrlHelper helper)
