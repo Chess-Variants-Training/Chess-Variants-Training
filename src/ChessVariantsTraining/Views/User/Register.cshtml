@@ -13,7 +13,7 @@
 <p>Password: <input type="password" name="password"></p>
 <p>Password confirmation: <input type="password" name="passwordConfirmation"></p>
 <p>Email: <input type="text" placeholder="Email" name="email"></p>
+<p><input type="checkbox" name="consent" value="true"> I agree with the @Html.ActionLink("Terms of Service", "TermsOfService", "Misc") and @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Misc").</p>
 <div class="g-recaptcha" data-sitekey="6Le28SIUAAAAAFsIbAkUzYvJqqCUZwdgMBVayWvW"></div>
 <input type="submit" value="Sign up">
 @{ Html.EndForm(); }
-<p>By signing up you agree with our @Html.ActionLink("Terms of Service", "TermsOfService", "Misc") and @Html.ActionLink("Privacy Policy", "PrivacyPolicy", "Misc").</p>

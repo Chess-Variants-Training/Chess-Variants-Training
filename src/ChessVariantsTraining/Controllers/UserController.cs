@@ -79,7 +79,7 @@ namespace ChessVariantsTraining.Controllers
 
         [HttpPost]
         [Route("/User/Register", Name = "NewUser")]
-        public async Task<IActionResult> New(string username, string email, string password, string passwordConfirmation, [FromForm(Name = "g-recaptcha-response")] string gRecaptchaResponse)
+        public async Task<IActionResult> New(string username, string email, string password, string passwordConfirmation, bool consent, [FromForm(Name = "g-recaptcha-response")] string gRecaptchaResponse)
         {
             ViewBag.Error = new List<string>();
             if (!validator.IsValidUsername(username))
@@ -106,6 +106,11 @@ namespace ChessVariantsTraining.Controllers
             else if (!password.Equals(passwordConfirmation))
             {
                 ViewBag.Error.Add("The password does not match its confirmation.");
+            }
+
+            if (!consent)
+            {
+                ViewBag.Error.Add("You must consent to your Terms and Privacy Policy to register.");
             }
 
             if (!string.IsNullOrWhiteSpace(recaptchaKey))
