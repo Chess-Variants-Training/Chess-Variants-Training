@@ -43,11 +43,13 @@
             piece.style.width = "100%";
             piece.style.height = "100%";
             piece.dataset.role = promotionPiece.role;
-            piece.addEventListener("mousedown", function (e) {
+            var promotionClick = function (e) {
                 e.stopPropagation();
                 ChessgroundExtensions.removePromotionDialog(element);
                 pieceSelected(origin, destination, ChessgroundExtensions.pieceNameToPieceChar(e.target.dataset.role));
-            });
+            };
+            piece.addEventListener("mousedown", promotionClick);
+            piece.addEventListener("touchstart", promotionClick);
             square.appendChild(piece);
             promotionChoiceElement.appendChild(square);
         }
