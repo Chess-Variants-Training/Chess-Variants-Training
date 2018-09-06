@@ -20,14 +20,14 @@ namespace ChessVariantsTraining.Services
             attemptRepository = _attemptRepository;
         }
 
-        public async Task AdjustRatingAsync(int userId, int puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded, string variant)
+        public async Task<int?> AdjustRatingAsync(int userId, int puzzleId, bool correct, DateTime attemptStarted, DateTime attemptEnded, string variant)
         {
             // Glicko-2 library: https://github.com/MaartenStaa/glicko2-csharp
             User user = await userRepository.FindByIdAsync(userId);
             Puzzle puzzle = await puzzleRepository.GetAsync(puzzleId);
             if (user.SolvedPuzzles.Contains(puzzle.ID) || puzzle.InReview || puzzle.Author == user.ID || puzzle.Reviewers.Contains(user.ID))
             {
-                return;
+                return null;
             }
             Glicko2.RatingCalculator calculator = new Glicko2.RatingCalculator();
             double oldUserRating = user.Ratings[variant].Value;
@@ -62,6 +62,8 @@ namespace ChessVariantsTraining.Services
             await urt;
             await ara;
             await rra;
+
+            return (int)newUserRating - (int)oldUserRating;
         }
     }
 }

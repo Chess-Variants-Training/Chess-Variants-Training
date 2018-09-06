@@ -427,11 +427,13 @@ namespace ChessVariantsTraining.Controllers
             if (response.Correct == 1 || response.Correct == -1)
             {
                 int? loggedInUser = await loginHandler.LoggedInUserIdAsync(HttpContext);
+                int? ratingChange = null;
                 if (loggedInUser.HasValue)
                 {
-                    await ratingUpdater.AdjustRatingAsync(loggedInUser.Value, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value, session.Current.Variant);
+                    ratingChange = await ratingUpdater.AdjustRatingAsync(loggedInUser.Value, session.Current.ID, response.Correct == 1, session.CurrentPuzzleStartedUtc.Value, session.CurrentPuzzleEndedUtc.Value, session.Current.Variant);
                 }
                 jsonResp.rating = (int)session.Current.Rating.Value;
+                jsonResp.ratingChange = ratingChange;
             }
             jsonResp.success = response.Success;
             jsonResp.correct = response.Correct;
