@@ -106,6 +106,7 @@
         <p>Time control: @Model.TimeControl</p>
         <p id="additional-info"></p>
         <p><em>Result: </em><em id="game-result">@ChessVariantsTraining.Models.Variant960.Game.Results.ToFriendlyString(Model.Result)</em><br><em>Termination: </em><em id="game-termination">@Model.Termination</em></p>
+        <a href="#" id="flip-board">Flip board</a>
         @if (Model.IsPlayer)
         {
             @if (Model.Plies < 2)

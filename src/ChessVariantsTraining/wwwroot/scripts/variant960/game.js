@@ -97,6 +97,7 @@
             document.getElementById("switch-to-players").addEventListener("click", switchToPlayersChat);
             document.getElementById("switch-to-spectators").addEventListener("click", switchToSpectatorsChat);
         }
+        document.getElementById("flip-board").addEventListener("click", flipBoard);
 
         if (isPlayer) {
             if (document.getElementById("abort-link")) {
@@ -579,5 +580,11 @@
             pocket = replayPocket[currentReplayItem];
             updatePocketCounters();
         }
+    }
+
+    function flipBoard(e) {
+        e.preventDefault();
+
+        ground.toggleOrientation();
     }
 }
