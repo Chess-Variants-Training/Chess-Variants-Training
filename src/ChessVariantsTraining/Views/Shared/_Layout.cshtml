@@ -23,6 +23,8 @@
         }
     </title>
     <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/solid.css" integrity="sha384-Rw5qeepMFvJVEZdSo1nDQD5B6wX0m7c5Z/pLNvjkB14W6Yki1hKbSEQaX9ffUbWe" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.13/css/fontawesome.css" integrity="sha384-GVa9GOgVQgOk+TNYXu7S/InPTfSDTtBalSgkgqQ7sCik56N9ztlkoTr2f/T44oKV" crossorigin="anonymous">
     <link href="@Url.ContentWithAssetVersion("~/styles/topbar.css")" rel="stylesheet">
     <link href="@Url.ContentWithAssetVersion("~/styles/main.css")" rel="stylesheet">
     <link href="~/images/favicon.ico" rel="icon">
@@ -44,9 +46,9 @@
             <li class="dropdown">
                 @Html.ActionLink("Train", "Index", "Puzzle", null, null)
                 <ul>
-                    <li>@Html.ActionLink("Puzzles", "Index", "Puzzle", null, null)</li>
-                    <li>@Html.ActionLink("Timed training", "Index", "TimedTraining", null, null)</li>
-                    <li>@Html.ActionLink("Endgames", "Index", "Endgames", null, null)</li>
+                    <li><a href='@Url.Action("Index", "Puzzle")'><i class="fas fa-puzzle-piece"></i>Puzzles</a></li>
+                    <li><a href='@Url.Action("Index", "TimedTraining")'><i class="fas fa-hourglass-half"></i>Timed Training</a></li>
+                    <li><a href='@Url.Action("Index", "Engames")'><i class="fas fa-chess-king"></i>Endgames</a></li>
                 </ul>
             </li>
             @{ User loggedIn = await LoginHandler.LoggedInUserAsync(Context);
