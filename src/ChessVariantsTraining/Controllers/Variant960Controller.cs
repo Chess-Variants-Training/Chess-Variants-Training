@@ -189,6 +189,11 @@ namespace ChessVariantsTraining.Controllers
                     replayPocket.Add(replayGame.GenerateJsonPocket());
                 }
             }
+            if (game.PGN == null)
+            {
+                game.PGN = replayGame.GetPGN();
+                await gameRepository.UpdateAsync(game);
+            }
 
             string lastMove = game.UciMoves.LastOrDefault();
             if (lastMove != null && lastMove.Contains('@'))
@@ -203,7 +208,7 @@ namespace ChessVariantsTraining.Controllers
                 blackId,
                 game.ShortVariantName,
                 game.FullVariantName,
-                game.TimeControl.ToString(),
+                game.TimeControl,
                 game.LatestFEN,
                 requester != Player.None,
                 requester == Player.None ? null : requester.ToString().ToLowerInvariant(),
@@ -225,7 +230,9 @@ namespace ChessVariantsTraining.Controllers
                 g.GenerateJsonPocket(),
                 replayPocket,
                 game.PositionWhite,
-                game.PositionBlack);
+                game.PositionBlack,
+                game.PGN,
+                game.InitialFEN);
 
             return View(model);
         }

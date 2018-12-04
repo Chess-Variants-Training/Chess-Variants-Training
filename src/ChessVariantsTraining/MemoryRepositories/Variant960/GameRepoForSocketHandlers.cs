@@ -68,6 +68,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
                 move.NewPosition.ToString().ToLowerInvariant() +
                 (move.Promotion.HasValue ? move.Promotion.Value.ToString().ToLowerInvariant() : ""));
             ClockSwitchAfterMove(subject, move.Player == Player.White);
+            subject.PGN = subject.ChessGame.GetPGN();
             await gameRepository.UpdateAsync(subject);
             return ret;
         }

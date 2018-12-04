@@ -35,3 +35,8 @@
 #sound-toggle {
     cursor: pointer;
 }
+
+.pgn {
+    font-family: monospace;
+    font-size: 9pt;
+}
