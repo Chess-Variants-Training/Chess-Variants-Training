@@ -51,7 +51,7 @@ namespace ChessVariantsTraining.Models
                 }
                 else
                 {
-                    Game.ApplyMove(validMoves[rnd.Next(0, validMoves.Count)], true);
+                    Game.MakeMove(validMoves[rnd.Next(0, validMoves.Count)], true);
                     Game = new AtomicChessGame(string.Join(" ", Game.GetFen().Split(' ').Take(4)) + " 0 1");
                 }
             }
@@ -68,13 +68,13 @@ namespace ChessVariantsTraining.Models
                     foreach (Move valid in antiValidMoves)
                     {
                         AntichessGame copy = new AntichessGame(Game.GetFen());
-                        copy.ApplyMove(valid, true);
+                        copy.MakeMove(valid, true);
                         ReadOnlyCollection<Move> validMoves2 = copy.GetValidMoves(copy.WhoseTurn);
                         bool wonForAll = true;
                         foreach (Move valid2 in validMoves2)
                         {
                             AntichessGame copy2 = new AntichessGame(copy.GetFen());
-                            copy2.ApplyMove(valid2, true);
+                            copy2.MakeMove(valid2, true);
                             if (copy2.GetValidMoves(copy2.WhoseTurn).Any(x => copy2.GetPieceAt(x.NewPosition) != null))
                             {
                                 wonForAll = false;
@@ -95,7 +95,7 @@ namespace ChessVariantsTraining.Models
         public SubmittedMoveResponse SubmitMove(Move move)
         {
             SubmittedMoveResponse response = new SubmittedMoveResponse();
-            MoveType type = Game.ApplyMove(move, false);
+            MoveType type = Game.MakeMove(move, false);
             if (type == MoveType.Invalid)
             {
                 response.Success = false;
@@ -181,7 +181,7 @@ namespace ChessVariantsTraining.Models
                 foreach (Move validMove in validMovesBlack)
                 {
                     AntichessGame copy = new AntichessGame(Game.GetFen());
-                    copy.ApplyMove(validMove, true);
+                    copy.MakeMove(validMove, true);
                     ReadOnlyCollection<Move> validMovesWhite = copy.GetValidMoves(Player.White);
                     if (validMovesWhite.Any(x => copy.GetPieceAt(x.NewPosition) != null))
                     {
@@ -194,7 +194,7 @@ namespace ChessVariantsTraining.Models
                         foreach (Move vmWhite in validMovesWhite)
                         {
                             AntichessGame copy2 = new AntichessGame(copy.GetFen());
-                            copy2.ApplyMove(vmWhite, true);
+                            copy2.MakeMove(vmWhite, true);
                             ReadOnlyCollection<Move> validMovesBlackStep2 = copy2.GetValidMoves(Player.Black);
                             if (validMovesBlackStep2.Any(x => copy2.GetPieceAt(x.NewPosition) != null))
                             {
@@ -212,7 +212,7 @@ namespace ChessVariantsTraining.Models
                     chosen = validMovesBlack[rnd.Next(0, validMovesBlack.Count)];
                 }
             }
-            Game.ApplyMove(chosen, true);
+            Game.MakeMove(chosen, true);
             response.CheckAfterAutoMove = Game.IsInCheck(Game.WhoseTurn) ? Game.WhoseTurn.ToString().ToLowerInvariant() : null;
             response.WinAfterAutoMove = Game.IsWinner(Game.WhoseTurn);
             response.FenAfterPlay = Game.GetFen();

@@ -65,7 +65,7 @@ namespace ChessVariantsTraining.Models
             return string.Compare(move1, move2, true);
         }
 
-        SubmittedMoveResponse ApplyMoveAndDropCommon(SubmittedMoveResponse response, string moveStr)
+        SubmittedMoveResponse MakeMoveAndDropCommon(SubmittedMoveResponse response, string moveStr)
         {
             response.Check = Current.Game.IsInCheck(Current.Game.WhoseTurn) ? Current.Game.WhoseTurn.ToString().ToLowerInvariant() : null;
             Checks.Add(response.Check);
@@ -101,7 +101,7 @@ namespace ChessVariantsTraining.Models
             if (!moveToPlay.Contains("@"))
             {
                 string[] parts = moveToPlay.Split('-', '=');
-                Current.Game.ApplyMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : new char?(parts[2][0])), true);
+                Current.Game.MakeMove(new Move(parts[0], parts[1], Current.Game.WhoseTurn, parts.Length == 2 ? null : new char?(parts[2][0])), true);
             }
             else
             {
@@ -131,7 +131,7 @@ namespace ChessVariantsTraining.Models
             return response;
         }
 
-        public SubmittedMoveResponse ApplyMove(string origin, string destination, string promotion)
+        public SubmittedMoveResponse MakeMove(string origin, string destination, string promotion)
         {
             SubmittedMoveResponse response = new SubmittedMoveResponse()
             {
@@ -146,7 +146,7 @@ namespace ChessVariantsTraining.Models
                 return response;
             }
 
-            MoveType type = Current.Game.ApplyMove(new Move(origin, destination, Current.Game.WhoseTurn, promotion?[0]), false);
+            MoveType type = Current.Game.MakeMove(new Move(origin, destination, Current.Game.WhoseTurn, promotion?[0]), false);
             if (type == MoveType.Invalid)
             {
                 response.Success = false;
@@ -159,7 +159,7 @@ namespace ChessVariantsTraining.Models
 
             string moveStr = origin + "-" + destination + (promotion != null ? "=" + promotionUpper : "");
 
-            return ApplyMoveAndDropCommon(response, moveStr);
+            return MakeMoveAndDropCommon(response, moveStr);
         }
 
         public SubmittedMoveResponse ApplyDrop(string role, string pos)
@@ -199,7 +199,7 @@ namespace ChessVariantsTraining.Models
             string moveStr = (pieceChar == 'P' ? "" : pieceChar.ToString()) + "@" + pos;
             Moves.Add(moveStr);
 
-            return ApplyMoveAndDropCommon(response, moveStr);
+            return MakeMoveAndDropCommon(response, moveStr);
         }
 
         void PuzzleFinished(SubmittedMoveResponse response, bool correct)
@@ -273,7 +273,7 @@ namespace ChessVariantsTraining.Models
                     if (!move.Contains("@"))
                     {
                         string[] p = move.Split('-', '=');
-                        correctGame.ApplyMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : new char?(p[2][0])), true);
+                        correctGame.MakeMove(new Move(p[0], p[1], correctGame.WhoseTurn, p.Length == 2 ? null : new char?(p[2][0])), true);
                     }
                     else
                     {

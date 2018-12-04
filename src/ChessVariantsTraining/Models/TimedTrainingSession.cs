@@ -54,7 +54,7 @@ namespace ChessVariantsTraining.Models
             {
                 return false;
             }
-            MoveType moveType = AssociatedGame.ApplyMove(new Move(origin, destination, AssociatedGame.WhoseTurn, promotion?[0]), false);
+            MoveType moveType = AssociatedGame.MakeMove(new Move(origin, destination, AssociatedGame.WhoseTurn, promotion?[0]), false);
             if (moveType != MoveType.Invalid)
             {
                 if (Type == "forcedCaptureAntichess")

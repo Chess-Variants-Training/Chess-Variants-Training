@@ -62,7 +62,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         public async Task<MoveType> RegisterMoveAsync(Game subject, Move move)
         {
             MoveType ret;
-            ret = subject.ChessGame.ApplyMove(move, true);
+            ret = subject.ChessGame.MakeMove(move, true);
             subject.LatestFEN = subject.ChessGame.GetFen();
             subject.UciMoves.Add(move.OriginalPosition.ToString().ToLowerInvariant() +
                 move.NewPosition.ToString().ToLowerInvariant() +

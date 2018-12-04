@@ -160,7 +160,7 @@ namespace ChessVariantsTraining.Controllers
                     {
                         promotion = uciMove[4];
                     }
-                    replayGame.ApplyMove(new Move(from, to, replayGame.WhoseTurn, promotion), true);
+                    replayGame.MakeMove(new Move(from, to, replayGame.WhoseTurn, promotion), true);
                 }
                 else
                 {
