@@ -80,6 +80,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             subject.LatestFEN = subject.ChessGame.GetFen();
             subject.UciMoves.Add(char.ToUpperInvariant(drop.ToDrop.GetFenCharacter()) + "@" + drop.Destination.ToString().ToLowerInvariant());
             ClockSwitchAfterMove(subject, drop.Player == Player.White);
+            subject.PGN = subject.ChessGame.GetPGN();
             await gameRepository.UpdateAsync(subject);
         }
 
