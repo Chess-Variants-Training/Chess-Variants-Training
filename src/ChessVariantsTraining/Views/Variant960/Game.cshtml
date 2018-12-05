@@ -204,7 +204,7 @@
 <div>
     <div class="pgn">
         <br>
-        [Variant "@Model.Variant"]<br>
+        [Variant "@Model.Variant.Replace(" 960", "")"]<br>
         [FEN "@Model.InitialFEN"]<br>
         [White "@(Model.WhiteUsername ?? "(Anonymous)")"]<br>
         [Black "@(Model.BlackUsername ?? "(Anonymous)")"]<br>
