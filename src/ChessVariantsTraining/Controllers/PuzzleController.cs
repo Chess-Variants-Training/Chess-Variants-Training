@@ -196,7 +196,7 @@ namespace ChessVariantsTraining.Controllers
             Puzzle puzzle = puzzlesBeingEdited.Get(puzzleId);
             if (puzzle == null)
             {
-                return Json(new { success = false, error = "The given ID doe snot correspond to a puzzle." });
+                return Json(new { success = false, error = "The given ID does not correspond to a puzzle." });
             }
             if (puzzle.Author != (await loginHandler.LoggedInUserIdAsync(HttpContext)).Value)
             {
