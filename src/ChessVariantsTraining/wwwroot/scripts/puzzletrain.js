@@ -184,6 +184,7 @@ function processResponseAfterMoveOrDrop(req, jsonResponse) {
             }
             document.getElementById("result").textContent = "Success!";
             document.getElementById("result").setAttribute("class", "green");
+            window.ground.set({ movable: { dests: [] } });
             loadComments();
             break;
         case -1:
@@ -195,13 +196,12 @@ function processResponseAfterMoveOrDrop(req, jsonResponse) {
             document.getElementById("result").innerHTML = "<div>Puzzle failed.</div><div><small>But you can keep making moves to solve it.</small></div><div><small>Or, if you want to see the solution instead, click the arrows below.</small></div>";
             document.getElementById("result").setAttribute("class", "red");
             loadComments();
-            console.log(jsonResponse);
     }
     if (jsonResponse.analysisUrl) {
         document.getElementById("analysis-board-p").classList.remove("nodisplay");
         document.getElementById("analysis-board-link").setAttribute("href", jsonResponse.analysisUrl);
     }
-    if (jsonResponse.dests) {
+    if (jsonResponse.dests && jsonResponse.correct !== 1) {
         window.ground.set({
             movable: {
                 dests: jsonResponse.dests
