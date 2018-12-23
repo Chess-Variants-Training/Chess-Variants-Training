@@ -235,6 +235,7 @@ namespace ChessVariantsTraining.Models.Variant960
                     Dictionary<string, object> messageForOthers = new Dictionary<string, object>();
                     messageForPlayerWhoseTurnItIs["t"] = messageForOthers["t"] = "moved";
                     messageForPlayerWhoseTurnItIs["fen"] = messageForOthers["fen"] = Subject.ChessGame.GetFen();
+                    messageForPlayerWhoseTurnItIs["pgn"] = messageForOthers["pgn"] = Subject.PGN;
                     messageForPlayerWhoseTurnItIs["dests"] = moveCollectionTransformer.GetChessgroundDestsForMoveCollection(Subject.ChessGame.GetValidMoves(Subject.ChessGame.WhoseTurn));
                     messageForPlayerWhoseTurnItIs["lastMove"] = messageForOthers["lastMove"] = new string[] { moveParts[0], moveParts[1] };
                     messageForPlayerWhoseTurnItIs["turnColor"] = messageForOthers["turnColor"] = Subject.ChessGame.WhoseTurn.ToString().ToLowerInvariant();

@@ -175,7 +175,7 @@ namespace ChessVariantsTraining.Controllers
                 return Json(new { success = false, error = "Only the puzzle author can access this right now." });
             }
 
-            MoveType type = puzzle.Game.ApplyMove(new Move(origin, destination, puzzle.Game.WhoseTurn, promotion?[0]), false);
+            MoveType type = puzzle.Game.MakeMove(new Move(origin, destination, puzzle.Game.WhoseTurn, promotion?[0]), false);
             if (type.HasFlag(MoveType.Invalid))
             {
                 return Json(new { success = false, error = "The given move is invalid." });
@@ -466,7 +466,7 @@ namespace ChessVariantsTraining.Controllers
         public async Task<IActionResult> SubmitTrainingMove(string id, string trainingSessionId, string origin, string destination, string promotion = null)
         {
             PuzzleTrainingSession session = puzzleTrainingSessionRepository.Get(trainingSessionId);
-            SubmittedMoveResponse response = session.ApplyMove(origin, destination, promotion);
+            SubmittedMoveResponse response = session.MakeMove(origin, destination, promotion);
             return await JsonAfterMove(response, session);
         }
 
@@ -517,7 +517,7 @@ namespace ChessVariantsTraining.Controllers
 
             ChessGame game = gameConstructor.Construct(generated.Variant, last_pos);
 
-            MoveType moveType = game.ApplyMove(new Move(last_move.Substring(0, 2), last_move.Substring(2, 2), game.WhoseTurn, last_move.Length == 4 ? null : new char?(last_move[last_move.Length - 1])),
+            MoveType moveType = game.MakeMove(new Move(last_move.Substring(0, 2), last_move.Substring(2, 2), game.WhoseTurn, last_move.Length == 4 ? null : new char?(last_move[last_move.Length - 1])),
                 false);
             if (moveType == MoveType.Invalid)
             {

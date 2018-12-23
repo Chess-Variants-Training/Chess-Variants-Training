@@ -227,6 +227,7 @@
                     pocket = message.pocket;
                     updatePocketCounters();
                 }
+                document.getElementById("pgn-moves").textContent = message.pgn;
                 break;
             case "chat":
                 chats[message.channel].push(message.msg);

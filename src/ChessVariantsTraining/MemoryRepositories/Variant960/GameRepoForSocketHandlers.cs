@@ -62,12 +62,13 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
         public async Task<MoveType> RegisterMoveAsync(Game subject, Move move)
         {
             MoveType ret;
-            ret = subject.ChessGame.ApplyMove(move, true);
+            ret = subject.ChessGame.MakeMove(move, true);
             subject.LatestFEN = subject.ChessGame.GetFen();
             subject.UciMoves.Add(move.OriginalPosition.ToString().ToLowerInvariant() +
                 move.NewPosition.ToString().ToLowerInvariant() +
                 (move.Promotion.HasValue ? move.Promotion.Value.ToString().ToLowerInvariant() : ""));
             ClockSwitchAfterMove(subject, move.Player == Player.White);
+            subject.PGN = subject.ChessGame.GetPGN();
             await gameRepository.UpdateAsync(subject);
             return ret;
         }
@@ -79,6 +80,7 @@ namespace ChessVariantsTraining.MemoryRepositories.Variant960
             subject.LatestFEN = subject.ChessGame.GetFen();
             subject.UciMoves.Add(char.ToUpperInvariant(drop.ToDrop.GetFenCharacter()) + "@" + drop.Destination.ToString().ToLowerInvariant());
             ClockSwitchAfterMove(subject, drop.Player == Player.White);
+            subject.PGN = subject.ChessGame.GetPGN();
             await gameRepository.UpdateAsync(subject);
         }
 

@@ -203,6 +203,11 @@ namespace ChessVariantsTraining.Controllers
         [Route("/User/Login", Name = "LoginPost")]
         public async Task<IActionResult> LoginPost(string username, string password)
         {
+            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
+            {
+                TempData["Error"] = "Invalid username/email or password.";
+                return RedirectToAction("Login");
+            }
             User user;
             if (!username.Contains("@"))
             {
