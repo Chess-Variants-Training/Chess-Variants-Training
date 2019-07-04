@@ -55,6 +55,7 @@ namespace ChessVariantsTraining
             services.AddSingleton<ISavedLoginRepository, SavedLoginRepository>();
             services.AddSingleton<ITimedTrainingScoreRepository, TimedTrainingScoreRepository>();
             services.AddSingleton<IUserRepository, UserRepository>();
+            services.AddSingleton<ITagRepository, TagRepository>();
 
             // Memory repositories
             services.AddSingleton<IEndgameTrainingSessionRepository, EndgameTrainingSessionRepository>();

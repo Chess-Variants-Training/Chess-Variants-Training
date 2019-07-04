@@ -14,7 +14,8 @@
     "CounterCollectionName": "counters",
     "SavedLoginCollectionName": "savedlogins",
     "NotificationCollectionName": "notifications",
-    "GameCollectionName": "games"
+    "GameCollectionName": "games",
+    "TagCollectionName": "tags"
   },
   "TimedTrainingSessionAutoAcknowledgerDelay": 10,
   "AssetVersion": 10

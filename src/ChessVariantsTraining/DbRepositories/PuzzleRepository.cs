@@ -168,5 +168,11 @@ namespace ChessVariantsTraining.DbRepositories
             FilterDefinition<Puzzle> filter = Builders<Puzzle>.Filter.Eq("initialfen", fen) & Builders<Puzzle>.Filter.Eq("variant", variant);
             return await puzzleCollection.Find(filter).FirstOrDefaultAsync();
         }
+
+        public async Task<List<Puzzle>> FindByVariantAndTag(string variant, string tag)
+        {
+            FilterDefinition<Puzzle> filter = Builders<Puzzle>.Filter.Eq("variant", variant) & Builders<Puzzle>.Filter.All("tags", new string[] { tag });
+            return await puzzleCollection.Find(filter).ToListAsync();
+        }
     }
 }

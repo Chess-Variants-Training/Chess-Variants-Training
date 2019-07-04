@@ -140,6 +140,14 @@
         }
     </div>
 </div>
+@if (Model != null && Model.Tags != null && Model.Tags.Count > 0)
+{
+    <strong>Tags: </strong>
+    @foreach (string tag in Model.Tags)
+    {
+        @Html.ActionLink(tag, "ByTag", "Puzzle", new { variant = ViewBag.Variant, tag })
+    }
+}
 @if (Model != null && isReviewer)
 {
     @if (Model.InReview)
@@ -151,14 +159,14 @@
     else if (isEditor)
     {
         <p data-object="@Model.ID">
-        @if (Model.Approved)
-        {
-            <a href="#" id="reject-puzzle">Disable</a>
-        }
-        else
-        {
-            <a href="#" id="approve-puzzle">Still approve</a>
-        }
+            @if (Model.Approved)
+            {
+                <a href="#" id="reject-puzzle">Disable</a>
+            }
+            else
+            {
+                <a href="#" id="approve-puzzle">Still approve</a>
+            }
         </p>
     }
 }

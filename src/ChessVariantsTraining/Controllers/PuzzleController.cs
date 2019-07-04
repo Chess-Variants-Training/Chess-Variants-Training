@@ -29,6 +29,7 @@ namespace ChessVariantsTraining.Controllers
         ICounterRepository counterRepository;
         IGameConstructor gameConstructor;
         IRandomProvider randomProvider;
+        ITagRepository tagRepository;
 
         static readonly string[] supportedVariants = new string[] { "Atomic", "KingOfTheHill", "ThreeCheck", "Antichess", "Horde", "RacingKings", "Crazyhouse" };
 
@@ -41,7 +42,8 @@ namespace ChessVariantsTraining.Controllers
             ICounterRepository _counterRepository,
             IPersistentLoginHandler _loginHandler,
             IGameConstructor _gameConstructor,
-            IRandomProvider _randomProvider) : base(_userRepository, _loginHandler)
+            IRandomProvider _randomProvider,
+            ITagRepository _tagRepository) : base(_userRepository, _loginHandler)
         {
             puzzlesBeingEdited = _puzzlesBeingEdited;
             puzzleRepository = _puzzleRepository;
@@ -51,6 +53,7 @@ namespace ChessVariantsTraining.Controllers
             counterRepository = _counterRepository;
             gameConstructor = _gameConstructor;
             randomProvider = _randomProvider;
+            tagRepository = _tagRepository;
         }
 
         [Route("/Puzzle")]
@@ -633,6 +636,22 @@ namespace ChessVariantsTraining.Controllers
             {
                 return Json(new { success = false, failure = "database" });
             }
+        }
+
+        [HttpGet]
+        [Route("/Puzzle/Tags/{variant}/{tag}")]
+        public async Task<IActionResult> ByTag(string variant, string tag)
+        {
+            List<Puzzle> puzzles = await puzzleRepository.FindByVariantAndTag(variant, tag) ?? new List<Puzzle>();
+            return View(puzzles.OrderBy(p => p.ID));
+        }
+
+        [HttpGet]
+        [Route("/Puzzle/Tags/{variant}")]
+        public async Task<IActionResult> Tags(string variant)
+        {
+            List<PuzzleTag> tags = await tagRepository.TagsByVariantAsync(variant) ?? new List<PuzzleTag>();
+            return View(tags.Select(x => x.Name).OrderBy(x => x));
         }
     }
 }
