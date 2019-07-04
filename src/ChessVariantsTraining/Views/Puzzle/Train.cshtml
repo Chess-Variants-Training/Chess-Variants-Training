@@ -16,6 +16,7 @@
 @{ User loggedInUser = await loginHandler.LoggedInUserAsync(Context);
     bool loggedIn = loggedInUser != null;
     bool isReviewer = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_REVIEWER);
+    bool isEditor = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_EDITOR);
     bool isAuthor = loggedIn && Model != null && Model.Author == loggedInUser.ID;
     bool isReviewerOrAuthor = isReviewer || isAuthor;
     bool immediatelyShowComments = Model != null && (isAuthor || Context.Request.Query.ContainsKey("comment") || (isReviewer && Model.InReview));
@@ -139,11 +140,27 @@
         }
     </div>
 </div>
-@if (Model != null && Model.InReview && isReviewer)
+@if (Model != null && isReviewer)
 {
-    <p data-object="@Model.ID">
-        <a href="#" id="approve-puzzle">Approve</a> | <a href="#" id="reject-puzzle">Reject</a>
-    </p>
+    @if (Model.InReview)
+    {
+        <p data-object="@Model.ID">
+            <a href="#" id="approve-puzzle">Approve</a> | <a href="#" id="reject-puzzle">Reject</a>
+        </p>
+    }
+    else if (isEditor)
+    {
+        <p data-object="@Model.ID">
+        @if (Model.Approved)
+        {
+            <a href="#" id="reject-puzzle">Disable</a>
+        }
+        else
+        {
+            <a href="#" id="approve-puzzle">Still approve</a>
+        }
+        </p>
+    }
 }
 @if (loggedIn)
 {
