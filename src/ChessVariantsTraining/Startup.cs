@@ -78,7 +78,11 @@ namespace ChessVariantsTraining
             services.AddSingleton<IUserVerifier, UserVerifier>();
             services.AddSingleton<IValidator, Validator>();
 
-            services.Configure<RouteOptions>(options => options.ConstraintMap.Add("supportedVariantOrMixed", typeof(SupportedVariantOrMixedRouteConstraint)));
+            services.Configure<RouteOptions>(options =>
+            {
+                options.ConstraintMap.Add("supportedVariantOrMixed", typeof(SupportedVariantOrMixedRouteConstraint));
+                options.ConstraintMap.Add("supportedVariant", typeof(SupportedVariantRouteConstraint));
+            });
             services.AddSession();
         }
 

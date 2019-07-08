@@ -174,5 +174,13 @@ namespace ChessVariantsTraining.DbRepositories
             FilterDefinition<Puzzle> filter = Builders<Puzzle>.Filter.Eq("variant", variant) & Builders<Puzzle>.Filter.All("tags", new string[] { tag });
             return await puzzleCollection.Find(filter).ToListAsync();
         }
+
+        public async Task<bool> RetagAsync(int id, string[] tags)
+        {
+            UpdateDefinitionBuilder<Puzzle> builder = new UpdateDefinitionBuilder<Puzzle>();
+            UpdateDefinition<Puzzle> def = builder.Set("tags", tags);
+            UpdateResult result = await puzzleCollection.UpdateOneAsync(new BsonDocument("_id", new BsonInt32(id)), def);
+            return result.IsAcknowledged && result.MatchedCount != 0;
+        }
     }
 }

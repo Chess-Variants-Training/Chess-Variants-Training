@@ -18,5 +18,6 @@ namespace ChessVariantsTraining.DbRepositories
         Task<bool> RejectAsync(int id, int reviewer);
         Task<Puzzle> FindByFenAndVariantAsync(string fen, string variant);
         Task<List<Puzzle>> FindByVariantAndTag(string variant, string tag);
+        Task<bool> RetagAsync(int id, string[] tags);
     }
 }

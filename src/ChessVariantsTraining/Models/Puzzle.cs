@@ -101,7 +101,8 @@ namespace ChessVariantsTraining.Models
         }
 
         [BsonElement("tags")]
-        public List<string> Tags
+        [BsonDefaultValue(new string[] { })]
+        public string[] Tags
         {
             get;
             set;

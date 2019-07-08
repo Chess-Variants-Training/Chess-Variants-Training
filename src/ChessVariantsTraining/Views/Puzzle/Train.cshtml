@@ -15,6 +15,7 @@
 @section Description{Improve your tactics by solving chess variant puzzles!}
 @{ User loggedInUser = await loginHandler.LoggedInUserAsync(Context);
     bool loggedIn = loggedInUser != null;
+    bool isTagger = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_TAGGER);
     bool isReviewer = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_REVIEWER);
     bool isEditor = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_EDITOR);
     bool isAuthor = loggedIn && Model != null && Model.Author == loggedInUser.ID;
@@ -140,13 +141,14 @@
         }
     </div>
 </div>
-@if (Model != null && Model.Tags != null && Model.Tags.Count > 0)
+<p>
+<strong>Tags: </strong><span id="puzzle-tags"></span>
+</p>
+@if (isTagger)
 {
-    <strong>Tags: </strong>
-    @foreach (string tag in Model.Tags)
-    {
-        @Html.ActionLink(tag, "ByTag", "Puzzle", new { variant = ViewBag.Variant, tag })
-    }
+     <p>
+     Edit tags (comma-separated, Enter to submit): <input id="retag">
+     </p>
 }
 @if (Model != null && isReviewer)
 {

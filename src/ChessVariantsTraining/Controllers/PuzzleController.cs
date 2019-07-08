@@ -15,6 +15,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Dynamic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ChessVariantsTraining.Controllers
@@ -420,7 +421,8 @@ namespace ChessVariantsTraining.Controllers
                 additionalInfo,
                 authorUrl = Url.Action("Profile", "User", new { id = session.Current.Author }),
                 pocket = session.Current.Game.GenerateJsonPocket(),
-                check = session.Current.Game.IsInCheck(Player.White) ? "white" : (session.Current.Game.IsInCheck(Player.Black) ? "black" : null)
+                check = session.Current.Game.IsInCheck(Player.White) ? "white" : (session.Current.Game.IsInCheck(Player.Black) ? "black" : null),
+                tags = puzzle.Tags
             });
         }
 
@@ -639,19 +641,62 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpGet]
-        [Route("/Puzzle/Tags/{variant}/{tag}")]
+        [Route("/Puzzle/Tags/{variant:supportedVariant}/{tag}")]
         public async Task<IActionResult> ByTag(string variant, string tag)
         {
+            if (Regex.IsMatch(tag, "[^0-9a-zA-Z-]"))
+            {
+                return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("Invalid tag."));
+            }
+
+            tag = tag.ToLowerInvariant();
             List<Puzzle> puzzles = await puzzleRepository.FindByVariantAndTag(variant, tag) ?? new List<Puzzle>();
-            return View(puzzles.OrderBy(p => p.ID));
+            if (puzzles.Count == 0)
+            {
+                await tagRepository.MaybeRemoveTagAsync(variant, tag);
+                return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("That tag has no puzzles for this variant."));
+            }
+            ViewBag.Variant = variant;
+            ViewBag.Tag = tag;
+            return View(puzzles.Select(p => p.ID).OrderBy(x => x).ToList());
         }
 
         [HttpGet]
-        [Route("/Puzzle/Tags/{variant}")]
+        [Route("/Puzzle/Tags/{variant:supportedVariant}")]
         public async Task<IActionResult> Tags(string variant)
         {
+            ViewBag.Variant = variant;
             List<PuzzleTag> tags = await tagRepository.TagsByVariantAsync(variant) ?? new List<PuzzleTag>();
-            return View(tags.Select(x => x.Name).OrderBy(x => x));
+            return View(tags.Select(x => x.Name).OrderBy(x => x).ToList());
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Retag/{id:int}")]
+        [Restricted(true, UserRole.PUZZLE_TAGGER)]
+        public async Task<IActionResult> Retag(int id, string tags)
+        {
+            tags = tags ?? "";
+            if (Regex.IsMatch(tags, "[^0-9a-zA-Z,-]"))
+            {
+                return Json(new { success = false, error = "Invalid tags. Separate your tags with commas. Tags can only contain letters and digits 0 to 9." });
+            }
+            string[] tagArray = String.IsNullOrWhiteSpace(tags) ? new string[] { } : tags.ToLower().Split(',');
+
+            Puzzle p = await puzzleRepository.GetAsync(id);
+            if (p == null)
+            {
+                return Json(new { success = false, error = "Puzzle not found." });
+            }
+            p.Tags = tagArray;
+            bool retagSuccess = await puzzleRepository.RetagAsync(id, tagArray);
+            if (!retagSuccess)
+            {
+                return Json(new { success = false, error = "An unexpected error while attempting to change the database occurred." });
+            }
+
+            Task.WaitAll(tagArray.Select(x => tagRepository.MaybeAddTagAsync(p.Variant, x)).ToArray());
+
+            return Json(new { success = true });
         }
     }
 }
