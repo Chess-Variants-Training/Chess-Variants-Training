@@ -60,7 +60,8 @@ function setup(puzzleId) {
         document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;
         document.getElementById("permalink").setAttribute("href", "/Puzzle/" + window.puzzleId);
         document.getElementById("analysis-board-p").classList.add("nodisplay");
-        showTags(jsonResponse.tags);
+        hideTags();
+        setTags(jsonResponse.tags);
         window.trainingSessionId = jsonResponse.trainingSessionId;
         if (window.immediatelyShowComments) {
             loadComments();
@@ -117,7 +118,7 @@ function clearExplanation() {
     document.getElementById("explanationInner").innerHTML = "";
 }
 
-function showTags(tags) {
+function setTags(tags) {
     if (tags.length === 0) {
         document.getElementById("puzzle-tags").innerHTML = "&lt;none&gt;";
     } else {
@@ -127,6 +128,14 @@ function showTags(tags) {
         }
         document.getElementById("puzzle-tags").innerHTML = tagHtmls.join(", ");
     }
+}
+
+function showTags() {
+    document.getElementById("tag-container").classList.remove("nodisplay");
+}
+
+function hideTags() {
+    document.getElementById("tag-container").classList.add("nodisplay");
 }
 
 function processPuzzleMove(origin, destination, metadata) {
@@ -199,6 +208,7 @@ function processResponseAfterMoveOrDrop(req, jsonResponse) {
             document.getElementById("result").setAttribute("class", "green");
             window.ground.set({ movable: { dests: [] } });
             loadComments();
+            showTags();
             break;
         case -1:
             document.getElementById("puzzleLinkContainer").classList.remove("nodisplay");
@@ -209,6 +219,7 @@ function processResponseAfterMoveOrDrop(req, jsonResponse) {
             document.getElementById("result").innerHTML = "<div>Puzzle failed.</div><div><small>But you can keep making moves to solve it.</small></div><div><small>Or, if you want to see the solution instead, click the arrows below.</small></div>";
             document.getElementById("result").setAttribute("class", "red");
             loadComments();
+            showTags();
     }
     if (jsonResponse.analysisUrl) {
         document.getElementById("analysis-board-p").classList.remove("nodisplay");

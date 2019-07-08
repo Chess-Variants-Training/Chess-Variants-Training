@@ -18,5 +18,5 @@
     "TagCollectionName": "tags"
   },
   "TimedTrainingSessionAutoAcknowledgerDelay": 10,
-  "AssetVersion": 10
+  "AssetVersion": 11
 }
