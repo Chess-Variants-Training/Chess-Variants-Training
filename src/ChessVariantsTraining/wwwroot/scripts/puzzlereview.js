@@ -1,5 +1,3 @@
-window.inReview = true;
-
 function approvePuzzle(e) {
     e = e || window.event;
     e.preventDefault();
@@ -22,7 +20,11 @@ function rejectPuzzle(e) {
     });
 }
 
-window.addEventListener("load", function() {
-    document.getElementById("approve-puzzle").addEventListener("click", approvePuzzle);
-    document.getElementById("reject-puzzle").addEventListener("click", rejectPuzzle);
+window.addEventListener("load", function () {
+    if (document.getElementById("approve-puzzle")) {
+        document.getElementById("approve-puzzle").addEventListener("click", approvePuzzle);
+    }
+    if (document.getElementById("reject-puzzle")) {
+        document.getElementById("reject-puzzle").addEventListener("click", rejectPuzzle);
+    }
 });

@@ -37,7 +37,7 @@
     {
         <script type="text/javascript">window.selectedPuzzle = "@Model.ID";</script>
     }
-    @if (Model != null && Model.InReview && isReviewer)
+    @if (Model != null && isReviewer)
     {
         <script type="text/javascript" src="/scripts/puzzlereview.js"></script>
     }
