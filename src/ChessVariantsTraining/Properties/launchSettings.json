@@ -2,6 +2,10 @@
   "iisSettings": {
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
+    "iis": {
+      "applicationUrl": "http://localhost/ChessVariantsTraining",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:57211/",
       "sslPort": 44321

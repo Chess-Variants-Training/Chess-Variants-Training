@@ -99,5 +99,13 @@ namespace ChessVariantsTraining.Models
             get;
             set;
         }
+
+        [BsonElement("tags")]
+        [BsonDefaultValue(new string[] { })]
+        public string[] Tags
+        {
+            get;
+            set;
+        }
     }
 }

@@ -60,6 +60,7 @@ function setup(puzzleId) {
         document.getElementById("colorToPlay").textContent = jsonResponse.whoseTurn;
         document.getElementById("permalink").setAttribute("href", "/Puzzle/" + window.puzzleId);
         document.getElementById("analysis-board-p").classList.add("nodisplay");
+        showTags(jsonResponse.tags);
         window.trainingSessionId = jsonResponse.trainingSessionId;
         if (window.immediatelyShowComments) {
             loadComments();
@@ -114,6 +115,18 @@ function hideExplanation() {
 function clearExplanation() {
     document.getElementById("explanation").classList.add("nodisplay");
     document.getElementById("explanationInner").innerHTML = "";
+}
+
+function showTags(tags) {
+    if (tags.length === 0) {
+        document.getElementById("puzzle-tags").innerHTML = "&lt;none&gt;";
+    } else {
+        var tagHtmls = [];
+        for (var i = 0; i < tags.length; i++) {
+            tagHtmls.push("<a href='/Puzzle/Tags/-variant-/-tag-'>-tag-</a>".replace("-variant-", window.variant).replace(/-tag-/g, tags[i]));
+        }
+        document.getElementById("puzzle-tags").innerHTML = tagHtmls.join(", ");
+    }
 }
 
 function processPuzzleMove(origin, destination, metadata) {
@@ -541,6 +554,23 @@ function updatePocketCounters() {
     }
 }
 
+function retagKeydown(e) {
+    if (/[^0-9a-zA-Z,-]/.test(e.key)) {
+        e.preventDefault();
+    }
+
+    if (e.key === "Enter") {
+        e.preventDefault();
+        var tags = document.getElementById("retag").value;
+        jsonXhr("/Puzzle/Retag/" + window.selectedPuzzle.toString(), "POST", "tags=" + encodeURIComponent(tags), function (req, jsonResponse) {
+            showTags(tags.split(","));
+            document.getElementById("retag").value = "";
+        }, function (req, err) {
+            displayError(err);
+        });
+    }
+}
+
 window.addEventListener("load", function () {
     window.ground = Chessground(document.getElementById("chessground"), {
         coordinates: true,
@@ -582,5 +612,9 @@ window.addEventListener("load", function () {
         pocketPieces[i].classList.add("draggable");
         pocketPieces[i].addEventListener("mousedown", startDragNewPiece);
         pocketPieces[i].addEventListener("touchstart", startDragNewPiece);
+    }
+
+    if (document.getElementById("retag")) {
+        document.getElementById("retag").addEventListener("keydown", retagKeydown);
     }
 });

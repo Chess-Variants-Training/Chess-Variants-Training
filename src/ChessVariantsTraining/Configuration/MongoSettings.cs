@@ -17,5 +17,6 @@
         public string SavedLoginCollectionName { get; set; }
         public string NotificationCollectionName { get; set; }
         public string GameCollectionName { get; set; }
+        public string TagCollectionName { get; set; }
     }
 }

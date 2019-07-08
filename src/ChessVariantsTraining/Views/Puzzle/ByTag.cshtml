@@ -1,0 +1,9 @@
+﻿@model List<int>
+@section Title { @ViewBag.Variant puzzles tagged '@ViewBag.Tag' }
+<h2>@ViewBag.Variant puzzles @Html.ActionLink("tagged", "Tags", "Puzzle", new { variant = ViewBag.Variant }) '@ViewBag.Tag'</h2>
+<ul>
+    @foreach (int id in Model)
+    {
+        <li>@Html.ActionLink(string.Format("Puzzle {0}", id), "TrainId", "Puzzle", new { id })</li>
+    }
+</ul>
