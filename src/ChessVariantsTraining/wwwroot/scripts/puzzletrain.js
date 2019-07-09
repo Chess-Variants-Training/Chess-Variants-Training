@@ -119,7 +119,7 @@ function clearExplanation() {
 }
 
 function setTags(tags) {
-    if (tags.length === 0) {
+    if (!tags || tags.length === 0) {
         document.getElementById("puzzle-tags").innerHTML = "&lt;none&gt;";
     } else {
         var tagHtmls = [];
