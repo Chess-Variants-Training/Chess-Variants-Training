@@ -574,7 +574,7 @@ function retagKeydown(e) {
         e.preventDefault();
         var tags = document.getElementById("retag").value;
         jsonXhr("/Puzzle/Retag/" + window.puzzleId.toString(), "POST", "tags=" + encodeURIComponent(tags), function (req, jsonResponse) {
-            showTags(tags.split(","));
+            showTags(tags.toLowerCase().split(","));
             document.getElementById("retag").value = "";
         }, function (req, err) {
             displayError(err);
