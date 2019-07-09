@@ -573,7 +573,7 @@ function retagKeydown(e) {
     if (e.key === "Enter") {
         e.preventDefault();
         var tags = document.getElementById("retag").value;
-        jsonXhr("/Puzzle/Retag/" + window.selectedPuzzle.toString(), "POST", "tags=" + encodeURIComponent(tags), function (req, jsonResponse) {
+        jsonXhr("/Puzzle/Retag/" + window.puzzleId.toString(), "POST", "tags=" + encodeURIComponent(tags), function (req, jsonResponse) {
             showTags(tags.split(","));
             document.getElementById("retag").value = "";
         }, function (req, err) {
