@@ -1,0 +1,1 @@
+Code taken from https://github.com/MaartenStaa/glicko2-csharp and included here because that's way more convenient than messing with a local NuGet package.

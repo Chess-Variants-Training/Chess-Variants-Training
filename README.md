@@ -22,5 +22,3 @@ In the src/ChessVariantsTraining directory, you have to add a config-secret.json
   "RecaptchaKey": ""
 }
 ```
-
-ChessVariantsTraining requires a glicko2-csharp dependency. You have to create a local NuGet package for https://github.com/MaartenStaa/glicko2-csharp and add it to the project.

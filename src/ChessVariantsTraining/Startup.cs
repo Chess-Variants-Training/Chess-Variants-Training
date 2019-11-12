@@ -30,7 +30,9 @@ namespace ChessVariantsTraining
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc(options => {
+                options.EnableEndpointRouting = false;
+            });
 
             // Configuration
             services.AddOptions();
