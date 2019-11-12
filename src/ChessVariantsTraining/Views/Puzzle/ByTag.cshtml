@@ -1,6 +1,25 @@
-﻿@model List<int>
+﻿@using ChessVariantsTraining.Models
+@using ChessVariantsTraining.Extensions
+@model List<int>
 @section Title { @ViewBag.Variant puzzles tagged '@ViewBag.Tag' }
+
+@inject ChessVariantsTraining.Services.IPersistentLoginHandler loginHandler
+@{ User loggedInUser = await loginHandler.LoggedInUserAsync(Context);
+    bool loggedIn = loggedInUser != null;
+    bool isTagger = loggedIn && UserRole.HasAtLeastThePrivilegesOf(loggedInUser.Roles, UserRole.PUZZLE_TAGGER);
+}
+
 <h2>@ViewBag.Variant puzzles @Html.ActionLink("tagged", "Tags", "Puzzle", new { variant = ViewBag.Variant }) '@ViewBag.Tag'</h2>
+@if (!isTagger && !string.IsNullOrEmpty(ViewBag.Description)) {
+    <p>Tag description: @ViewBag.Description</p>
+} else if (isTagger) {
+    <form method="POST" action="/Puzzle/Tags/SetDescription">
+        <input type="hidden" name="variant" value="@ViewBag.Variant">
+        <input type="hidden" name="tag" value="@ViewBag.Tag">
+        <textarea name="tagDescription" style="width:100%">@ViewBag.Description</textarea>
+        <input type="submit" value="Submit description">
+    </form>
+}
 <ul>
     @foreach (int id in Model)
     {

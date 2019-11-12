@@ -30,6 +30,18 @@ namespace ChessVariantsTraining.DbRepositories
             return await tagCollection.Find(new FilterDefinitionBuilder<PuzzleTag>().Eq("variant", variant)).ToListAsync();
         }
 
+        public async Task<PuzzleTag> FindTag(string variant, string tag)
+        {
+            return await tagCollection.Find(
+                new BsonDocument(
+                    new List<BsonElement>
+                    {
+                        new BsonElement("variant", new BsonString(variant)),
+                        new BsonElement("name", new BsonString(tag)) 
+                    })
+            ).FirstOrDefaultAsync();
+        }
+
         public async Task MaybeAddTagAsync(string variant, string tag)
         {
             FilterDefinitionBuilder<PuzzleTag> builder = new FilterDefinitionBuilder<PuzzleTag>();
@@ -42,6 +54,21 @@ namespace ChessVariantsTraining.DbRepositories
         public async Task MaybeRemoveTagAsync(string variant, string tag)
         {
             await tagCollection.DeleteOneAsync(new BsonDocument(new List<BsonElement> { new BsonElement("variant", new BsonString(variant)), new BsonElement("name", new BsonString(tag)) }));
+        }
+
+        public async Task SetDescription(string variant, string tag, string description)
+        {
+            UpdateDefinitionBuilder<PuzzleTag> builder = new UpdateDefinitionBuilder<PuzzleTag>();
+            UpdateDefinition<PuzzleTag> def = builder.Set("description", description);
+            await tagCollection.UpdateOneAsync(
+                new BsonDocument(
+                    new List<BsonElement>
+                    {
+                        new BsonElement("variant", new BsonString(variant)),
+                        new BsonElement("name", new BsonString(tag)) 
+                    }),
+                def
+            );
         }
     }
 }

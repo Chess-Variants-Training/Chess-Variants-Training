@@ -16,5 +16,9 @@ namespace ChessVariantsTraining.Models
 
         [BsonElement("name")]
         public string Name { get; set; }
+
+        [BsonElement("description")]
+        [BsonDefaultValue(null)]
+        public string Description { get; set; }
     }
 }

@@ -658,8 +658,11 @@ namespace ChessVariantsTraining.Controllers
                 await tagRepository.MaybeRemoveTagAsync(variant, tag);
                 return ViewResultForHttpError(HttpContext, new HttpErrors.NotFound("That tag has no puzzles for this variant."));
             }
-            ViewBag.Variant = variant;
-            ViewBag.Tag = tag;
+
+            PuzzleTag tagDetails = await tagRepository.FindTag(variant, tag);
+            ViewBag.Variant = tagDetails.Variant;
+            ViewBag.Tag = tagDetails.Name;
+            ViewBag.Description = tagDetails.Description;
             return View(puzzles.Select(p => p.ID).OrderBy(x => x).ToList());
         }
 
@@ -670,6 +673,15 @@ namespace ChessVariantsTraining.Controllers
             ViewBag.Variant = variant;
             List<PuzzleTag> tags = await tagRepository.TagsByVariantAsync(variant) ?? new List<PuzzleTag>();
             return View(tags.Select(x => x.Name).OrderBy(x => x).ToList());
+        }
+
+        [HttpPost]
+        [Route("/Puzzle/Tags/SetDescription")]
+        [Restricted(true, UserRole.PUZZLE_TAGGER)]
+        public async Task<IActionResult> SetDescription(string variant, string tag, string tagDescription)
+        {
+            await tagRepository.SetDescription(variant, tag, tagDescription);
+            return RedirectToAction("ByTag", "Puzzle", new { variant = variant, tag = tag });
         }
 
         [HttpPost]
