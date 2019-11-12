@@ -463,7 +463,9 @@ namespace ChessVariantsTraining.Controllers
             if (response.Pocket != null) jsonResp.pocket = response.Pocket;
             if (response.PocketAfterAutoMove != null) jsonResp.pocketAfterAutoMove = response.PocketAfterAutoMove;
             if (response.AnalysisUrl != null) jsonResp.analysisUrl = response.AnalysisUrl;
-            return Json(jsonResp);
+
+            string jsonStr = JsonConvert.SerializeObject(jsonResp);
+            return Content(jsonStr, "application/json");
         }
 
         [HttpPost]

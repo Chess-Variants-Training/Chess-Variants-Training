@@ -8,6 +8,7 @@ using System;
 using System.Dynamic;
 using ChessDotNet.Variants.Antichess;
 using ChessVariantsTraining.DbRepositories;
+using Newtonsoft.Json;
 
 namespace ChessVariantsTraining.Controllers
 {
@@ -271,7 +272,8 @@ namespace ChessVariantsTraining.Controllers
             if (response.LastMove != null) jsonResp.lastMove = response.LastMove;
             jsonResp.drawAfterAutoMove = response.DrawAfterAutoMove;
             jsonResp.winAfterAutoMove = response.WinAfterAutoMove;
-            return Json(jsonResp);
+            string jsonStr = JsonConvert.SerializeObject(jsonResp);
+            return Content(jsonStr, "application/json");
         }
     }
 }
