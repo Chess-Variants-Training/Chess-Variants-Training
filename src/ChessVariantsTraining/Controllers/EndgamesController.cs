@@ -65,7 +65,7 @@ namespace ChessVariantsTraining.Controllers
         }
 
         [HttpGet]
-        [Route("/Endgames/Atomic/{type:regex(KRR-K-Adjacent-Kings|KQQ-K-Adjacent-Kings|KQ-K-Adjacent-Kings-Blocked-Pawn|KRN-K-Separated-Kings|KRN-K-Adjacent-Kings)}")]
+        [Route("/Endgames/Atomic/{type:regex(KRR-K-Adjacent-Kings|KQQ-K-Adjacent-Kings|KQ-K-Adjacent-Kings-Blocked-Pawn|KRN-K-Separated-Kings|KRN-K-Adjacent-Kings|KRB-K-Separated-Kings|KRB-K-Adjacent-Kings)}")]
         public IActionResult AtomicEndgame(string type)
         {
             return View("Train");
