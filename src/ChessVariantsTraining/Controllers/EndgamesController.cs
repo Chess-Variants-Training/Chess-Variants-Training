@@ -1,4 +1,4 @@
-﻿using ChessVariantsTraining.MemoryRepositories;
+using ChessVariantsTraining.MemoryRepositories;
 using ChessVariantsTraining.Models;
 using ChessVariantsTraining.Services;
 using ChessDotNet;
@@ -135,6 +135,33 @@ namespace ChessVariantsTraining.Controllers
                                              .AddAdjacentKings()
                                              .AddWhiteRook()
                                              .AddWhiteKnight();
+            return StartNewSession(board, "Atomic");
+        }
+
+        [HttpPost]
+        [Route("/Endgames/Atomic/KRB-K-Separated-Kings/Start")]
+        public IActionResult KRBvsKWithSeparatedKingsStart()
+        {
+            IActionResult result;
+            do
+            {
+                Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                                 .AddSeparatedKings()
+                                                 .AddWhiteRook()
+                                                 .AddWhiteBishop();
+                result = StartNewSession(board, "Atomic");
+            } while (result == null);
+            return result;
+        }
+
+        [HttpPost]
+        [Route("/Endgames/Atomic/KRB-K-Adjacent-Kings/Start")]
+        public IActionResult KRBvsKWithAdjacentKingsStart()
+        {
+            Piece[][] board = BoardExtensions.GenerateEmptyBoard()
+                                             .AddAdjacentKings()
+                                             .AddWhiteRook()
+                                             .AddWhiteBishop();
             return StartNewSession(board, "Atomic");
         }
 
