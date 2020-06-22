@@ -76,3 +76,16 @@ table.align-left th {
 #error-overlay-close {
     font-size: 0.5em;
 }
+
+.clocks {
+    font-size: 40px;
+    color: #4d4d4d;
+}
+
+.turn {
+    background-color: #d0e0bd;
+}
+
+.low-time {
+    background-color: indianred;
+}

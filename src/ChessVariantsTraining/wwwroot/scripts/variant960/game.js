@@ -387,9 +387,16 @@
         clockInfo[which + "Value"] = seconds;
         updateClockElement(which);
     }
-
+    // opponent's color
+    function opponent(which) {
+        if (which == "white") 
+            return "black";
+        else return "white";
+    }
     function updateClockElement(which) {
         document.getElementById(which + "-clock").textContent = clockDisplay(clockInfo[which + "Value"]);
+        document.getElementById(opponent(which) + "-clock").className = "clocks";
+        document.getElementById(which + "-clock").className = "clocks turn";
         if (clockInfo[which + "Value"] < 20) {
             document.getElementById(which + "-clock").style.color = "red";
         } else {
