@@ -1,5 +1,6 @@
 ﻿using ChessDotNet;
 using ChessDotNet.Variants.Antichess;
+using ChessDotNet.Variants.Atomar;
 using ChessDotNet.Variants.Atomic;
 using ChessDotNet.Variants.Crazyhouse;
 using ChessDotNet.Variants.Horde;
