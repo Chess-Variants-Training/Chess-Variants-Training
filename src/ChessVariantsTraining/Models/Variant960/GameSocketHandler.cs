@@ -404,14 +404,28 @@ namespace ChessVariantsTraining.Models.Variant960
                         }
                         else
                         {
-                            posWhite = randomProvider.RandomPositiveInt(Subject.ShortVariantName != "RacingKings" ? 960 : 1440);
+                            if (Subject.ShortVariantName != "Atomar")
+                            {
+                                posWhite = randomProvider.RandomPositiveInt(Subject.ShortVariantName != "RacingKings" ? 960 : 1440);
+                            }
+                            else
+                            {
+                                posWhite = 518;
+                            }
                             if (Subject.IsSymmetrical)
                             {
                                 posBlack = posWhite;
                             }
                             else
                             {
-                                posBlack = randomProvider.RandomPositiveInt(Subject.ShortVariantName != "RacingKings" ? 960 : 1440);
+                                if (Subject.ShortVariantName != "Atomar")
+                                {
+                                    posBlack = randomProvider.RandomPositiveInt(Subject.ShortVariantName != "RacingKings" ? 960 : 1440);
+                                }
+                                else
+                                {
+                                    posBlack = 518;
+                                }
                             }
                         }
                         Game newGame = new Game(await gameRepository.GenerateIdAsync(),

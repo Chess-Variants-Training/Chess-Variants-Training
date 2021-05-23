@@ -53,6 +53,9 @@ namespace ChessVariantsTraining.Services
                     return new RacingKingsChessGame(fen);
                 case "ThreeCheck":
                     return new ThreeCheckChessGame(fen);
+                case "Atomar":
+                case "Atomar960":
+                    return new AtomarChessGame(fen);
                 default:
                     throw new NotImplementedException("Variant not implemented: " + variant);
             }
