@@ -16,6 +16,10 @@ namespace ChessVariantsTraining.Services
 
         public void Send(string toAddress, string toName, string subject, string body)
         {
+            if (toAddress.EndsWith("@thefmail.com"))
+            {
+                return;
+            }
             MimeMessage message = new MimeMessage();
             message.From.Add(new MailboxAddress(settings.SenderName, settings.FromAddress));
             message.To.Add(new MailboxAddress(toName, toAddress));

@@ -21,7 +21,9 @@
 <h1>@Model.Username</h1>
 About:
 <p class="ws-pre-line">
+@if (Model.Verified) {
     @Model.About
+}
 </p>
 <hr>
 <p>
