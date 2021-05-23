@@ -168,7 +168,7 @@
                 if (atLastReplayItem()) {
                     if (soundTurnedOn) {
                         if (message.isCapture) {
-                            if (shortVariant === "Atomic") {
+                            if (shortVariant === "Atomic" || shortVariant.startsWith("Atomar")) {
                                 sounds.explosion.play();
                             } else {
                                 sounds.capture.play();
