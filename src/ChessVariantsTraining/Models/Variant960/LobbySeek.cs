@@ -39,6 +39,10 @@ namespace ChessVariantsTraining.Models.Variant960
                 {
                     beautifiedVariantName = "King of the Hill";
                 }
+                else if (beautifiedVariantName == "Atomar960")
+                {
+                    beautifiedVariantName = "Atomar";
+                }
                 return string.Format("{0} {1}{2}", beautifiedVariantName, Variant != "RacingKings" ? 960 : 1440, Variant != "Horde" ? string.Format(" ({0}, {1})", Symmetrical ? "symmetrical" : "asymmetrical", ChosenPosition == Position.Random ? "random" : WhitePosition + "-" + BlackPosition) : (ChosenPosition == Position.Random ? " (random)" : " (" + BlackPosition + ")"));
             }
         }
