@@ -68,7 +68,7 @@
                 showDests: false,
                 dests: dests,
                 color: myColor,
-                rookCastle: false,
+                rookCastle: true,
                 events: {
                     after: pieceMoved,
                     afterNewPiece: pieceDropped
