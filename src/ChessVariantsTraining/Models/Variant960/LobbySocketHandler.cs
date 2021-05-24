@@ -119,22 +119,30 @@ namespace ChessVariantsTraining.Models.Variant960
                     int nWhite;
                     int nBlack;
                     int max = joined.Variant != "RacingKings" ? 960 : 1440;
-                    if (joined.ChosenPosition == LobbySeek.Position.Random)
+                    if (joined.Variant != "Atomar")
                     {
-                        nWhite = randomProvider.RandomPositiveInt(max);
-                        if (joined.Symmetrical)
+                        if (joined.ChosenPosition == LobbySeek.Position.Random)
                         {
-                            nBlack = nWhite;
+                            nWhite = randomProvider.RandomPositiveInt(max);
+                            if (joined.Symmetrical)
+                            {
+                                nBlack = nWhite;
+                            }
+                            else
+                            {
+                                nBlack = randomProvider.RandomPositiveInt(max);
+                            }
                         }
                         else
                         {
-                            nBlack = randomProvider.RandomPositiveInt(max);
+                            nWhite = joined.WhitePosition;
+                            nBlack = joined.BlackPosition;
                         }
                     }
                     else
                     {
-                        nWhite = joined.WhitePosition;
-                        nBlack = joined.BlackPosition;
+                        nWhite = 518;
+                        nBlack = 518;
                     }
                     Game game = new Game(await gameRepository.GenerateIdAsync(), hostIsWhite ? joined.Owner : client, hostIsWhite ? client : joined.Owner, joined.Variant, joined.FullVariantName, nWhite, nBlack, nWhite == nBlack, joined.TimeControl, DateTime.UtcNow, 0, gameConstructor);
                     await gameRepository.AddAsync(game);
