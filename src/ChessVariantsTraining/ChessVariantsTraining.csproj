@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="MongoDB.Driver" Version="2.8.1" />
     <PackageReference Include="ChessDotNet" Version="0.12.3" />
-    <PackageReference Include="ChessDotNet.Variants" Version="0.13.5" />
+    <PackageReference Include="ChessDotNet.Variants" Version="0.13.6" />
     <PackageReference Include="MailKit" Version="2.10.0" />
     <PackageReference Include="NewtonSoft.Json" Version="12.0.3" />
   </ItemGroup>
