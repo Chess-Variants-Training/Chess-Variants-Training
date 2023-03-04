@@ -9,7 +9,7 @@
     <None Include="config-secret.json" CopyToPublishDirectory="Always" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="MongoDB.Driver" Version="2.18.0" />
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
     <PackageReference Include="ChessDotNet" Version="0.12.3" />
     <PackageReference Include="ChessDotNet.Variants" Version="0.13.6" />
     <PackageReference Include="MailKit" Version="2.15.0" />
